@@ -1,0 +1,27 @@
+# Environments
+backend/venv/
+venv/
+env/
+.env
+backend/.env
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.class
+
+# Databases
+*.sqlite3
+*.db
+email_marketer.db
+marketer.db
+backend/sql_app.db
+
+# Misc
+.pytest_cache/
+.vscode/
+.idea/
+*.log
+backend/*.log
+backend/pixel.gif

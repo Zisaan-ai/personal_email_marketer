@@ -116,6 +116,24 @@ class SendingAccount(Base):
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
+    # --- Health Tracking (Smart Deliverability) ---
+    total_sent = Column(Integer, default=0)
+    total_bounced = Column(Integer, default=0)
+    total_opened = Column(Integer, default=0)
+    total_replied = Column(Integer, default=0)
+    bounce_streak = Column(Integer, default=0)
+    last_health_check = Column(DateTime, nullable=True)
+    auto_paused = Column(Boolean, default=False)
+    auto_paused_reason = Column(String, nullable=True)
+
+    # --- Sending Window ---
+    send_window_start = Column(Integer, default=9)    # 9 AM
+    send_window_end = Column(Integer, default=17)      # 5 PM
+    send_window_timezone = Column(String, default="UTC")
+
+    # --- Custom Tracking ---
+    custom_tracking_domain = Column(String, nullable=True)
+
 class Reply(Base):
     __tablename__ = "replies"
 
@@ -142,6 +160,46 @@ class Webhook(Base):
     url = Column(String, nullable=False)
     events = Column(String, default="all")
 
+# --- Seed Test Results (Inbox Placement Testing) ---
+class SeedTestResult(Base):
+    __tablename__ = "seed_test_results"
+
+    id = Column(String, primary_key=True, default=generate_uuid)
+    account_id = Column(String, ForeignKey("sending_accounts.id"), index=True)
+    seed_email = Column(String, nullable=False)
+    provider = Column(String, nullable=True)       # gmail, outlook, yahoo
+    landed_in = Column(String, default="pending")  # inbox, spam, not_found, pending
+    tested_at = Column(DateTime, default=datetime.utcnow)
+
+# --- Domain Health Cache (SPF/DKIM/DMARC/Blacklist) ---
+class DomainHealthCache(Base):
+    __tablename__ = "domain_health_cache"
+
+    id = Column(String, primary_key=True, default=generate_uuid)
+    domain = Column(String, unique=True, index=True, nullable=False)
+    has_spf = Column(Boolean, default=False)
+    has_dkim = Column(Boolean, default=False)
+    has_dmarc = Column(Boolean, default=False)
+    spf_record = Column(String, nullable=True)
+    dmarc_record = Column(String, nullable=True)
+    is_blacklisted = Column(Boolean, default=False)
+    blacklist_details = Column(String, nullable=True)
+    is_catch_all = Column(Boolean, default=False)
+    last_checked = Column(DateTime, default=datetime.utcnow)
+
+# --- Per-Account Daily Stats (Analytics) ---
+class AccountDailyStats(Base):
+    __tablename__ = "account_daily_stats"
+
+    id = Column(String, primary_key=True, default=generate_uuid)
+    account_id = Column(String, ForeignKey("sending_accounts.id"), index=True)
+    date = Column(String, index=True)   # "2026-07-11"
+    sent = Column(Integer, default=0)
+    bounced = Column(Integer, default=0)
+    opened = Column(Integer, default=0)
+    clicked = Column(Integer, default=0)
+    replied = Column(Integer, default=0)
+
 # Dependency for FastAPI
 def get_db():
     db = SessionLocal()
@@ -158,4 +216,44 @@ class InactiveLeadList(Base):
     tagged_at = Column(DateTime, default=datetime.utcnow)
 
 Base.metadata.create_all(bind=engine)
+
+# --- Safe Migration for existing SQLite databases ---
+def _safe_add_column(table_name: str, column_name: str, column_type: str, default=None):
+    """Add a column to an existing table if it doesn't exist (SQLite safe)."""
+    from sqlalchemy import text, inspect
+    insp = inspect(engine)
+    existing_cols = [c['name'] for c in insp.get_columns(table_name)]
+    if column_name not in existing_cols:
+        default_clause = ""
+        if default is not None:
+            if isinstance(default, str):
+                default_clause = f" DEFAULT '{default}'"
+            elif isinstance(default, bool):
+                default_clause = f" DEFAULT {1 if default else 0}"
+            else:
+                default_clause = f" DEFAULT {default}"
+        with engine.begin() as conn:
+            conn.execute(text(f"ALTER TABLE {table_name} ADD COLUMN {column_name} {column_type}{default_clause}"))
+        print(f"[Migration] Added column {table_name}.{column_name}")
+
+def run_migrations():
+    """Run safe migrations for new columns on existing tables."""
+    try:
+        _safe_add_column("sending_accounts", "total_sent", "INTEGER", 0)
+        _safe_add_column("sending_accounts", "total_bounced", "INTEGER", 0)
+        _safe_add_column("sending_accounts", "total_opened", "INTEGER", 0)
+        _safe_add_column("sending_accounts", "total_replied", "INTEGER", 0)
+        _safe_add_column("sending_accounts", "bounce_streak", "INTEGER", 0)
+        _safe_add_column("sending_accounts", "last_health_check", "DATETIME", None)
+        _safe_add_column("sending_accounts", "auto_paused", "BOOLEAN", False)
+        _safe_add_column("sending_accounts", "auto_paused_reason", "VARCHAR", None)
+        _safe_add_column("sending_accounts", "send_window_start", "INTEGER", 9)
+        _safe_add_column("sending_accounts", "send_window_end", "INTEGER", 17)
+        _safe_add_column("sending_accounts", "send_window_timezone", "VARCHAR", "UTC")
+        _safe_add_column("sending_accounts", "custom_tracking_domain", "VARCHAR", None)
+        print("[Migration] All migrations completed successfully.")
+    except Exception as e:
+        print(f"[Migration] Error: {e}")
+
+run_migrations()
 

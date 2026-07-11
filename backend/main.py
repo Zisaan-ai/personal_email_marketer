@@ -21,9 +21,13 @@ import pytz
 
 # Setup APScheduler
 import warmup_service
+import health_monitor
+import domain_checker
 scheduler = BackgroundScheduler()
 scheduler.add_job(warmup_service.run_warmup_cycle, 'interval', minutes=30, id='warmup_job')
 scheduler.add_job(warmup_service.reset_daily_warmup_counts, 'cron', hour=0, minute=0, id='warmup_reset')
+scheduler.add_job(health_monitor.run_health_audit, 'interval', hours=2, id='health_audit_job')
+scheduler.add_job(domain_checker.run_domain_health_check, 'cron', hour=6, minute=0, id='domain_check_job')
 scheduler.start()
 
 
@@ -689,18 +693,68 @@ def _run_campaign(db, campaign_id):
     delay_min = campaign.delay_min if campaign.delay_min else 45
     delay_max = campaign.delay_max if campaign.delay_max else 120
     
+    _last_domain_used = [None]  # Track for multi-domain rotation
+
+    def is_within_sending_window(acc_doc):
+        """Check if current time is within the account's sending window."""
+        try:
+            tz = pytz.timezone(acc_doc.send_window_timezone or "UTC")
+            now_hour = datetime.now(tz).hour
+            start = acc_doc.send_window_start if acc_doc.send_window_start is not None else 0
+            end = acc_doc.send_window_end if acc_doc.send_window_end is not None else 24
+            if start == 0 and end == 24:
+                return True  # No window restriction
+            return start <= now_hour < end
+        except Exception:
+            return True  # If timezone is invalid, allow sending
+
     def get_available_account():
-        # BUG FIX: Re-fetch from DB to get accurate sent_today count
-        for acc_doc in db.query(database.SendingAccount).filter(database.SendingAccount.is_active == True, database.SendingAccount.user_id == campaign.user_id).all():
-            # DELIVERABILITY: Enforce warmup limits
+        # SMART SELECTION: Health-based ordering, skip auto-paused, check sending window
+        all_accounts = db.query(database.SendingAccount).filter(
+            database.SendingAccount.is_active == True,
+            database.SendingAccount.auto_paused == False,
+            database.SendingAccount.user_id == campaign.user_id
+        ).order_by(database.SendingAccount.health_score.desc()).all()
+
+        # Multi-domain rotation: prefer accounts from a different domain
+        last_domain = _last_domain_used[0]
+        preferred = []
+        fallback = []
+        for acc_doc in all_accounts:
+            domain = acc_doc.email.split('@')[-1] if '@' in acc_doc.email else ''
+            if last_domain and domain == last_domain:
+                fallback.append(acc_doc)
+            else:
+                preferred.append(acc_doc)
+
+        ordered = preferred + fallback  # Try different domain first
+
+        for acc_doc in ordered:
+            # Check sending window
+            if not is_within_sending_window(acc_doc):
+                continue
+            # Enforce warmup limits
             if acc_doc.warmup_enabled:
                 effective_limit = acc_doc.warmup_daily_limit or 5
                 if acc_doc.warmup_sent_today >= effective_limit:
                     continue
-            if acc_doc.sent_today < (acc_doc.daily_limit or 500):
+            # Use smart suggested limit instead of raw daily_limit
+            smart_limit = health_monitor.suggest_daily_limit(acc_doc)
+            effective_daily = min(acc_doc.daily_limit or 500, smart_limit)
+            if acc_doc.sent_today < effective_daily:
+                # Track domain for rotation
+                _last_domain_used[0] = acc_doc.email.split('@')[-1] if '@' in acc_doc.email else ''
                 return acc_doc
         return None
     
+    # Build replied leads set for auto-stop
+    replied_emails = set()
+    try:
+        replies = db.query(database.Reply).all()
+        replied_emails = set(r.sender_email.lower() for r in replies if r.sender_email)
+    except Exception:
+        pass
+
     def send_to_lead(lead, subject, body, variant_label=None):
         nonlocal success_count_a, success_count_b
         
@@ -713,6 +767,13 @@ def _run_campaign(db, campaign_id):
             lead.status = "unsubscribed"
             db.commit()
             return True
+
+        # REPLY AUTO-STOP: Skip leads who already replied
+        if lead.email.lower() in replied_emails:
+            lead.status = "replied"
+            db.commit()
+            print(f"Skipping replied lead: {lead.email}")
+            return True
             
         # Deliverability: Validate email format & MX record before sending
         validation = email_service.validate_email_address(lead.email)
@@ -724,7 +785,7 @@ def _run_campaign(db, campaign_id):
             
         acc = get_available_account()
         if not acc:
-            print("All accounts reached daily limit.")
+            print("All accounts reached daily limit or outside sending window.")
             return False  # signal to stop
         pixel_url = f"{base_url}/api/track/lead_open/{campaign_id}/{lead.id}"
         body_with_pixel = email_service.inject_tracking_pixel(body, pixel_url)
@@ -736,7 +797,6 @@ def _run_campaign(db, campaign_id):
             sent = email_service.send_single_email(subject, body_with_tracking, lead.email, account=acc, lead_name=lead.name or '', lead_company=lead.company or '')
             if sent:
                 lead.status = "sent"
-                # BUG FIX: Persist sent_today to DB immediately
                 acc.sent_today += 1
                 db.commit()
                 if acc.warmup_enabled:
@@ -746,11 +806,20 @@ def _run_campaign(db, campaign_id):
                     success_count_b += 1
                 else:
                     success_count_a += 1
+                # HEALTH TRACKING: Update on success
+                health_monitor.update_health_after_send(db, str(acc.id), True)
             else:
                 lead.status = "bounced"
+                # HEALTH TRACKING: Update on failure + auto-pause check
+                health_monitor.update_health_after_send(db, str(acc.id), False)
         except Exception as e:
             print(f"Send error for {lead.email}: {e}")
             lead.status = "bounced"
+            # HEALTH TRACKING: Update on exception
+            try:
+                health_monitor.update_health_after_send(db, str(acc.id), False)
+            except Exception:
+                pass
         db.commit()
         return True
 
@@ -871,6 +940,10 @@ def get_sending_accounts(current_user: database.User = Depends(auth.get_current_
     # Mask passwords for safety
     result = []
     for acc in accounts:
+        # Get domain health from cache
+        domain = acc.email.split('@')[-1] if '@' in acc.email else ''
+        domain_cache = db.query(database.DomainHealthCache).filter(database.DomainHealthCache.domain == domain).first() if domain else None
+
         result.append({
             "id": str(acc.id),
             "name": acc.name,
@@ -887,8 +960,32 @@ def get_sending_accounts(current_user: database.User = Depends(auth.get_current_
             "warmup_daily_limit": acc.warmup_daily_limit,
             "warmup_increment_per_day": acc.warmup_increment_per_day,
             "warmup_sent_today": acc.warmup_sent_today,
-            "health_score": acc.health_score,
-            "created_at": acc.created_at
+            "health_score": acc.health_score or 100,
+            "created_at": acc.created_at,
+            # --- New health fields ---
+            "total_sent": acc.total_sent or 0,
+            "total_bounced": acc.total_bounced or 0,
+            "total_opened": acc.total_opened or 0,
+            "total_replied": acc.total_replied or 0,
+            "bounce_streak": acc.bounce_streak or 0,
+            "auto_paused": acc.auto_paused or False,
+            "auto_paused_reason": acc.auto_paused_reason,
+            "suggested_daily_limit": health_monitor.suggest_daily_limit(acc),
+            # --- Sending window ---
+            "send_window_start": acc.send_window_start if acc.send_window_start is not None else 9,
+            "send_window_end": acc.send_window_end if acc.send_window_end is not None else 17,
+            "send_window_timezone": acc.send_window_timezone or "UTC",
+            # --- Custom tracking ---
+            "custom_tracking_domain": acc.custom_tracking_domain,
+            # --- Domain health ---
+            "domain_health": {
+                "has_spf": domain_cache.has_spf if domain_cache else None,
+                "has_dkim": domain_cache.has_dkim if domain_cache else None,
+                "has_dmarc": domain_cache.has_dmarc if domain_cache else None,
+                "is_blacklisted": domain_cache.is_blacklisted if domain_cache else None,
+                "is_catch_all": domain_cache.is_catch_all if domain_cache else None,
+                "last_checked": str(domain_cache.last_checked) if domain_cache and domain_cache.last_checked else None,
+            } if domain_cache else None,
         })
     return result
 
@@ -1005,6 +1102,224 @@ def check_spam_score_endpoint(req: SpamCheckRequest, db: Session = Depends(datab
     # Use enhanced spam checker from email_service
     result = email_service.check_spam_score(req.subject or '', req.content or '')
     return result
+
+# ============================================================
+# EMAIL HEALTH & DELIVERABILITY ENDPOINTS
+# ============================================================
+
+@app.get("/api/account-health/{acc_id}")
+def get_account_health(acc_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    """Get detailed health report for a specific sending account."""
+    acc = db.query(database.SendingAccount).filter(database.SendingAccount.id == acc_id, database.SendingAccount.user_id == str(current_user.id)).first()
+    if not acc:
+        raise HTTPException(status_code=404, detail="Account not found")
+    return health_monitor.get_health_report(db, acc_id)
+
+@app.get("/api/account-health-all")
+def get_all_account_health(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    """Get health reports and suggested limits for all accounts."""
+    accounts = db.query(database.SendingAccount).filter(database.SendingAccount.user_id == str(current_user.id)).all()
+    return [health_monitor.get_health_report(db, str(acc.id)) for acc in accounts]
+
+@app.post("/api/sending-accounts/{acc_id}/reactivate")
+def reactivate_account(acc_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    """Manually reactivate an auto-paused account."""
+    acc = db.query(database.SendingAccount).filter(database.SendingAccount.id == acc_id, database.SendingAccount.user_id == str(current_user.id)).first()
+    if not acc:
+        raise HTTPException(status_code=404, detail="Account not found")
+    result = health_monitor.reactivate_account(db, acc_id)
+    if result["status"] == "error":
+        raise HTTPException(status_code=400, detail=result["detail"])
+    return result
+
+@app.get("/api/account-stats/{acc_id}")
+def get_account_stats(acc_id: str, days: int = 30, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    """Get per-account daily stats for analytics charts."""
+    acc = db.query(database.SendingAccount).filter(database.SendingAccount.id == acc_id, database.SendingAccount.user_id == str(current_user.id)).first()
+    if not acc:
+        raise HTTPException(status_code=404, detail="Account not found")
+    stats = health_monitor.get_account_stats(db, acc_id, days)
+    return {"account_id": acc_id, "email": acc.email, "days": days, "stats": stats}
+
+# --- Domain Health Endpoints ---
+@app.get("/api/domain-health/{domain}")
+def get_domain_health(domain: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    """Run a full domain health audit (SPF/DKIM/DMARC/Blacklist/Catch-all)."""
+    result = domain_checker.full_domain_audit(domain)
+    # Cache the result
+    domain_checker.cache_domain_health(db, domain, result)
+    return result
+
+@app.get("/api/domain-health-all")
+def get_all_domains_health(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    """Get cached domain health for all sending account domains."""
+    accounts = db.query(database.SendingAccount).filter(database.SendingAccount.user_id == str(current_user.id)).all()
+    domains = set()
+    for acc in accounts:
+        if '@' in acc.email:
+            domains.add(acc.email.split('@')[1])
+
+    results = []
+    for domain in domains:
+        cache = db.query(database.DomainHealthCache).filter(database.DomainHealthCache.domain == domain).first()
+        if cache:
+            results.append({
+                "domain": domain,
+                "has_spf": cache.has_spf,
+                "has_dkim": cache.has_dkim,
+                "has_dmarc": cache.has_dmarc,
+                "is_blacklisted": cache.is_blacklisted,
+                "blacklist_details": cache.blacklist_details,
+                "is_catch_all": cache.is_catch_all,
+                "last_checked": str(cache.last_checked) if cache.last_checked else None,
+            })
+        else:
+            results.append({"domain": domain, "status": "not_checked"})
+    return results
+
+# --- Inbox Placement Test (Seed Testing) ---
+class InboxTestRequest(BaseModel):
+    seed_email: str
+    seed_imap_server: Optional[str] = None
+    seed_imap_port: int = 993
+    seed_imap_password: Optional[str] = None
+
+@app.post("/api/inbox-test/{acc_id}")
+def run_inbox_test(acc_id: str, req: InboxTestRequest, background_tasks: BackgroundTasks, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    """Send a test email and check if it lands in inbox or spam."""
+    acc = db.query(database.SendingAccount).filter(database.SendingAccount.id == acc_id, database.SendingAccount.user_id == str(current_user.id)).first()
+    if not acc:
+        raise HTTPException(status_code=404, detail="Account not found")
+
+    # Create seed test record
+    test = database.SeedTestResult(
+        account_id=acc_id,
+        seed_email=req.seed_email,
+        provider=req.seed_email.split('@')[-1] if '@' in req.seed_email else 'unknown',
+        landed_in="pending"
+    )
+    db.add(test)
+    db.commit()
+    test_id = str(test.id)
+
+    # Send test email in background
+    def _run_seed_test():
+        import time
+        test_db = database.SessionLocal()
+        try:
+            # Send a test email
+            subject = f"Inbox Test {datetime.utcnow().strftime('%H:%M')}"
+            body = "<p>This is an automated inbox placement test. If you can read this, your email is landing in the inbox!</p>"
+            sent = email_service.send_single_email(subject, body, req.seed_email, account=acc)
+
+            if not sent:
+                t = test_db.query(database.SeedTestResult).filter(database.SeedTestResult.id == test_id).first()
+                if t:
+                    t.landed_in = "send_failed"
+                    test_db.commit()
+                return
+
+            # Wait for email to arrive
+            time.sleep(120)  # 2 minutes
+
+            # Check via IMAP if provided
+            if req.seed_imap_server and req.seed_imap_password:
+                import imaplib
+                import email as email_module
+                try:
+                    imap = imaplib.IMAP4_SSL(req.seed_imap_server, req.seed_imap_port, timeout=15)
+                    imap.login(req.seed_email, req.seed_imap_password)
+
+                    # Check inbox first
+                    imap.select('INBOX')
+                    typ, data = imap.search(None, f'SUBJECT "{subject}"')
+                    if typ == 'OK' and data[0]:
+                        landed = "inbox"
+                    else:
+                        # Check spam
+                        spam_folders = ['[Gmail]/Spam', 'Spam', 'Junk', 'Junk Email']
+                        landed = "not_found"
+                        for folder in spam_folders:
+                            try:
+                                imap.select(folder)
+                                typ, data = imap.search(None, f'SUBJECT "{subject}"')
+                                if typ == 'OK' and data[0]:
+                                    landed = "spam"
+                                    break
+                            except Exception:
+                                continue
+
+                    imap.logout()
+
+                    t = test_db.query(database.SeedTestResult).filter(database.SeedTestResult.id == test_id).first()
+                    if t:
+                        t.landed_in = landed
+                        test_db.commit()
+                except Exception as e:
+                    print(f"[Inbox Test] IMAP check failed: {e}")
+                    t = test_db.query(database.SeedTestResult).filter(database.SeedTestResult.id == test_id).first()
+                    if t:
+                        t.landed_in = "check_failed"
+                        test_db.commit()
+            else:
+                # No IMAP credentials — mark as sent (user checks manually)
+                t = test_db.query(database.SeedTestResult).filter(database.SeedTestResult.id == test_id).first()
+                if t:
+                    t.landed_in = "sent_check_manually"
+                    test_db.commit()
+        except Exception as e:
+            print(f"[Inbox Test] Error: {e}")
+        finally:
+            test_db.close()
+
+    background_tasks.add_task(_run_seed_test)
+    return {"status": "test_started", "test_id": test_id, "message": "Test email sent. Results will be available in ~2 minutes."}
+
+@app.get("/api/inbox-test/{acc_id}/results")
+def get_inbox_test_results(acc_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    """Get inbox placement test results for an account."""
+    tests = db.query(database.SeedTestResult).filter(
+        database.SeedTestResult.account_id == acc_id
+    ).order_by(database.SeedTestResult.tested_at.desc()).limit(20).all()
+    return [{
+        "id": str(t.id),
+        "seed_email": t.seed_email,
+        "provider": t.provider,
+        "landed_in": t.landed_in,
+        "tested_at": str(t.tested_at) if t.tested_at else None
+    } for t in tests]
+
+# --- Sending Window Configuration ---
+class SendWindowRequest(BaseModel):
+    send_window_start: int = 9
+    send_window_end: int = 17
+    send_window_timezone: str = "UTC"
+
+@app.post("/api/sending-accounts/{acc_id}/send-window")
+def update_send_window(acc_id: str, req: SendWindowRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    """Update sending window for an account."""
+    acc = db.query(database.SendingAccount).filter(database.SendingAccount.id == acc_id, database.SendingAccount.user_id == str(current_user.id)).first()
+    if not acc:
+        raise HTTPException(status_code=404, detail="Account not found")
+    acc.send_window_start = req.send_window_start
+    acc.send_window_end = req.send_window_end
+    acc.send_window_timezone = req.send_window_timezone
+    db.commit()
+    return {"status": "success"}
+
+# --- Custom Tracking Domain ---
+class TrackingDomainRequest(BaseModel):
+    custom_tracking_domain: Optional[str] = None
+
+@app.post("/api/sending-accounts/{acc_id}/tracking-domain")
+def update_tracking_domain(acc_id: str, req: TrackingDomainRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    """Update custom tracking domain for an account."""
+    acc = db.query(database.SendingAccount).filter(database.SendingAccount.id == acc_id, database.SendingAccount.user_id == str(current_user.id)).first()
+    if not acc:
+        raise HTTPException(status_code=404, detail="Account not found")
+    acc.custom_tracking_domain = req.custom_tracking_domain
+    db.commit()
+    return {"status": "success"}
 
 # NOTE: BUG-45 FIX - Duplicate unprotected AI endpoints removed.
 # The authenticated versions are defined above at /api/ai/chat, /api/ai/generate,

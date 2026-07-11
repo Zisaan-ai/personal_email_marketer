@@ -88,13 +88,16 @@ def check_bounces():
                 
                 mail.logout()
                 
-                # Update leads in DB
+                # Update leads in DB + health tracking
                 if bounced_emails:
                     print(f"Found {len(bounced_emails)} bounced emails for account {account.smtp_username}")
+                    import health_monitor
                     for email_address in bounced_emails:
                         db.query(database.CampaignLead).filter(
                             database.CampaignLead.email == email_address
                         ).update({"status": "bounced"})
+                        # HEALTH TRACKING: Update account health for each bounce
+                        health_monitor.update_health_after_send(db, str(account.id), False)
                     db.commit()
                         
             except Exception as e:

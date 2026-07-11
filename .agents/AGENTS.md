@@ -38,3 +38,16 @@ Your final answer should be:
 - Easy to understand
 
 Never skip the planning and review stages, even if the task seems simple.
+
+# Deployment Workflow Rule
+When making changes to this project, ALWAYS follow these steps for deployment:
+1. **Commit and Push to GitHub**:
+   - git add .
+   - git commit -m "Your descriptive commit message"
+   - git push
+2. **Deploy to Hosting (cPanel - xcomic.xyz)**:
+   - To upload frontend changes (e.g., frontend/index.html), run:
+     powershell -ExecutionPolicy Bypass -File "C:\Users\higan\.antigravity-ide\personal_email_marketer\.agents\deploy_frontend.ps1"
+   - To upload backend changes (e.g., main.py), run:
+     powershell -ExecutionPolicy Bypass -File "C:\Users\higan\.antigravity-ide\personal_email_marketer\.agents\deploy_backend.ps1"
+Always ensure you run these after any completed tasks unless the user specifies otherwise.

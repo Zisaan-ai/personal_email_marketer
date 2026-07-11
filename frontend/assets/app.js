@@ -555,6 +555,51 @@ function initOrUpdateChart(campaigns) {
             }
         });
     }
+
+    // --- Account Health Summary ---
+    try {
+        const healthRes = await apiCall('/account-health-all');
+        if (healthRes && healthRes.ok) {
+            const healthData = await healthRes.json();
+            const container = document.getElementById('dashboard-health-cards');
+            const wrapper = document.getElementById('dashboard-health-summary');
+            if (container && wrapper && healthData.length > 0) {
+                wrapper.style.display = 'block';
+                container.innerHTML = '';
+                healthData.forEach(h => {
+                    let color = '#059669';
+                    const score = h.health_score || 100;
+                    if (score < 50) color = '#ef4444';
+                    else if (score < 70) color = '#f97316';
+                    else if (score < 90) color = '#f59e0b';
+
+                    const autoPauseBanner = h.auto_paused 
+                        ? `<div style="background:#fef2f2;color:#dc2626;padding:6px 10px;border-radius:6px;font-size:11px;margin-top:8px;">⚠️ Auto-paused: ${h.auto_paused_reason || 'Poor health'}</div>` 
+                        : '';
+
+                    container.innerHTML += `
+                        <div style="background:#fff;padding:20px;border-radius:12px;border:1px solid rgba(0,0,0,0.06);box-shadow:0 2px 8px rgba(0,0,0,0.02);transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                                <div style="font-weight:600;font-size:14px;color:var(--text);">${h.email || 'Unknown'}</div>
+                                <div style="font-size:20px;font-weight:800;color:${color};">${score}%</div>
+                            </div>
+                            <div style="width:100%;height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden;margin-bottom:8px;">
+                                <div style="width:${score}%;height:100%;background:${color};border-radius:3px;transition:width 0.8s ease;"></div>
+                            </div>
+                            <div style="display:flex;gap:12px;font-size:12px;color:var(--text-muted);">
+                                <span>📧 ${(h.metrics || {}).total_sent || 0} sent</span>
+                                <span>💥 ${(h.metrics || {}).bounce_rate || 0}% bounce</span>
+                                <span>📊 ${h.suggested_daily_limit || '-'}/day</span>
+                            </div>
+                            ${autoPauseBanner}
+                        </div>
+                    `;
+                });
+            }
+        }
+    } catch(e) {
+        console.warn('Health summary fetch error:', e);
+    }
 }
 
 // Add event listener for dashboard tabs filtering

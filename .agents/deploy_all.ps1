@@ -25,9 +25,9 @@ $files = @(
     @{ local="backend\health_monitor.py"; remoteDir="/home/terapkco/xcomic_backend"; remoteFile="health_monitor.py" },
     @{ local="backend\domain_checker.py"; remoteDir="/home/terapkco/xcomic_backend"; remoteFile="domain_checker.py" },
     @{ local="backend\bounce_processor.py"; remoteDir="/home/terapkco/xcomic_backend"; remoteFile="bounce_processor.py" },
-    @{ local="frontend\index.html"; remoteDir="/home/terapkco/public_html"; remoteFile="index.html" },
-    @{ local="frontend\assets\app.js"; remoteDir="/home/terapkco/public_html/assets"; remoteFile="app.js" },
-    @{ local="frontend\assets\sending_accounts.js"; remoteDir="/home/terapkco/public_html/assets"; remoteFile="sending_accounts.js" }
+    @{ local="frontend\index.html"; remoteDir="/home/terapkco/xcomic.xyz"; remoteFile="index.html" },
+    @{ local="frontend\assets\app.js"; remoteDir="/home/terapkco/xcomic.xyz/assets"; remoteFile="app.js" },
+    @{ local="frontend\assets\sending_accounts.js"; remoteDir="/home/terapkco/xcomic.xyz/assets"; remoteFile="sending_accounts.js" }
 )
 
 foreach ($file in $files) {

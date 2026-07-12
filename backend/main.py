@@ -1574,6 +1574,18 @@ def get_bounces(current_user: database.User = Depends(auth.get_current_user), db
 
 
 # --- REPLIES ENDPOINT ---
+@app.get('/api/debug-bounce')
+def debug_bounce(db: Session = Depends(database.get_db)):
+    import email_service
+    acc = db.query(database.SendingAccount).filter_by(email='gazisaifa428@gmail.com').first()
+    if not acc: return {"error": "Account not found"}
+    try:
+        email_service.send_single_email("Test", "Test", "zmonemrahman@gmail.com", account=acc)
+        return {"success": True}
+    except Exception as e:
+        import traceback
+        return {"error": str(e), "trace": traceback.format_exc()}
+
 class ReplySendRequest(BaseModel):
     content: str
 

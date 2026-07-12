@@ -749,7 +749,7 @@ def pause_campaign(campaign_id: str, current_user: database.User = Depends(auth.
         raise HTTPException(status_code=404, detail="Campaign not found")
     if campaign.user_id != str(current_user.id) and not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Not authorized")
-    if campaign.status == "processing":
+    if campaign.status in ["processing", "scheduled"]:
         campaign.status = "paused"
         db.commit()
     return {"status": "success"}
@@ -761,7 +761,7 @@ def resume_campaign(campaign_id: str, background_tasks: BackgroundTasks, current
         raise HTTPException(status_code=404, detail="Campaign not found")
     if campaign.user_id != str(current_user.id) and not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Not authorized")
-    if campaign.status == "paused":
+    if campaign.status in ["paused", "failed", "completed"]:
         campaign.status = "processing"
         db.commit()
         background_tasks.add_task(process_isolated_campaign, str(campaign.id))

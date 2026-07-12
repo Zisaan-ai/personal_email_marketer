@@ -180,14 +180,14 @@ async function apiCall(endpoint, method = 'GET', body = null) {
 
     if (body) headers['Content-Type'] = 'application/json';
 
+    if (method === 'GET') {
+        endpoint += (endpoint.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
+    }
     const res = await fetch(`${API_URL}${endpoint}`, {
-
         method,
-
         headers,
-
-        body: body ? JSON.stringify(body) : null
-
+        body: body ? JSON.stringify(body) : null,
+        cache: 'no-store'
     });
 
     if (res.status === 401) {

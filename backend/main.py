@@ -1724,10 +1724,39 @@ def delete_media(media_id: str, current_user: database.User = Depends(auth.get_c
     file_path = os.path.join("uploads", media.filename)
     if os.path.exists(file_path):
         os.remove(file_path)
-        
     db.delete(media)
     db.commit()
     return {"status": "success"}
+
+@app.get("/api/dump-replies")
+def dump_replies(db: Session = Depends(database.get_db)):
+    try:
+        with open("error.log", "r") as f:
+            log = f.read()[-5000:]
+    except:
+        log = "no log"
+    return {"log": log}
+
+@app.get("/api/recalculate-stats")
+def recalculate_stats(db: Session = Depends(database.get_db)):
+    campaigns = db.query(database.Campaign).all()
+    for c in campaigns:
+        leads = db.query(database.CampaignLead).filter(database.CampaignLead.campaign_id == str(c.id)).all()
+        sent = 0
+        opens = 0
+        clicks = 0
+        for l in leads:
+            if l.status in ['sent', 'opened', 'clicked', 'replied']:
+                sent += 1
+            if l.status in ['opened', 'clicked', 'replied']:
+                opens += 1
+            if l.status == 'clicked':
+                clicks += 1
+        c.sent_count = sent
+        c.opens = opens
+        c.clicks = clicks
+    db.commit()
+    return {"status": "ok"}
 
 @app.get("/api/debug-imap")
 def debug_imap(db: Session = Depends(database.get_db)):

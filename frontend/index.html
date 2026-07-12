@@ -946,7 +946,10 @@
                         <div id="builder-sidebar-edit" style="display:none;flex-direction:column;flex:1;">
                             <div class="mc-edit-header" style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:#f8fafc;">
                                 <h3 id="mc-edit-title" style="font-size:15px;font-weight:700;margin:0;">Text</h3>
-                                <button class="btn primary" id="save-block-btn" style="padding:6px 12px;font-size:12px;">Save & Close</button>
+                                <div style="display:flex;gap:8px;">
+                                    <button class="btn" id="cancel-block-btn" style="padding:6px 12px;font-size:12px;background:var(--surface-1);border:1px solid var(--border);color:var(--text-muted);">Cancel</button>
+                                    <button class="btn primary" id="save-block-btn" style="padding:6px 12px;font-size:12px;">Save & Close</button>
+                                </div>
                             </div>
                             <div id="property-fields" style="padding:20px;flex:1;">
                                 <p class="placeholder-text" style="text-align:center;margin-top:20px;">Select a block to edit</p>

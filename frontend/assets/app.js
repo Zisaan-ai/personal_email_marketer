@@ -3822,11 +3822,13 @@ function setupCampaignBuilder() {
         }
 
         window.saveState();
-
         window.closeMcEdit();
-
         showToast('Changes applied');
+    });
 
+    const cancelBlockBtn = document.getElementById('cancel-block-btn');
+    if (cancelBlockBtn) cancelBlockBtn.addEventListener('click', () => {
+        window.closeMcEdit();
     });
 
 

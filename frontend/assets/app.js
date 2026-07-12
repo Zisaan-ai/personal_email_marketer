@@ -4185,160 +4185,21 @@ function setupCampaignBuilder() {
 
 
 
-    function renderTemplateGallery(filter = 'all', search = '') {
-
-        const gallery = document.getElementById('template-gallery');
-
-        if (!gallery || !window.EmailTemplates) return;
-
-        const templates = window.EmailTemplates.filter(t => {
-
-            const matchCat = filter === 'all' || t.category === filter;
-
-            const matchSearch = !search || t.name.toLowerCase().includes(search.toLowerCase()) || (t.category || '').toLowerCase().includes(search.toLowerCase());
-
-            return matchCat && matchSearch;
-
-        });
-
-
-
-        if (templates.length === 0) {
-
-            gallery.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:32px;color:#94a3b8;font-size:13px;">No templates found</div>';
-
-            return;
-
-        }
-
-
-
-        gallery.innerHTML = templates.map(t => {
-
-            const colors = {
-
-                'E-Commerce': '#059669', 'Newsletter': '#2563eb', 'Cold Email': '#0891b2',
-
-                'Onboarding': '#7c3aed', 'Events': '#db2777', 'Transactional': '#d97706',
-
-                'Announcement': '#dc2626', 'Retention': '#4f46e5', 'SaaS': '#0f172a', 'Minimal': '#64748b'
-
-            };
-
-            const color = colors[t.category] || '#4f46e5';
-
-            return `<div onclick="window._loadTemplate('${t.id}')" style="cursor:pointer;border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:all 0.2s;background:var(--surface);" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-
-                <div style="height:64px;background:${color};display:flex;align-items:center;justify-content:center;font-size:24px;">${t.name.split(' ')[0]}</div>
-
-                <div style="padding:10px;">
-
-                    <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${t.name.replace(/^[^\s]*\s/, '')}</div>
-
-                    <div style="font-size:11px;color:${color};font-weight:600;">${t.category || ''}</div>
-
-                </div>
-
-            </div>`;
-
-        }).join('');
-
-    }
-
-
-
-    function renderCategoryPills(activeFilter) {
-
-        const container = document.getElementById('template-category-pills');
-
-        if (!container || !window.EmailTemplateCategories) return;
-
-        container.innerHTML = window.EmailTemplateCategories.map(cat => {
-
-            const isActive = cat.id === activeFilter;
-
-            return `<button onclick="window._filterTemplates('${cat.id}')" style="padding:4px 10px;border-radius:20px;border:1px solid ${isActive ? 'var(--p)' : 'var(--border)'};background:${isActive ? 'var(--p)' : 'transparent'};color:${isActive ? '#fff' : 'var(--text-muted)'};font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;">${cat.name}</button>`;
-
-        }).join('');
-
-    }
-
-
-
-    let _currentFilter = 'all';
-
-    window._filterTemplates = function(filter) {
-
-        _currentFilter = filter;
-
-        const search = (document.getElementById('template-search') || {}).value || '';
-
-        renderCategoryPills(filter);
-
-        renderTemplateGallery(filter, search);
-
-    };
-
-    window._loadTemplate = loadTemplate;
-
-
-
-    // Search handler
-
-    const searchEl = document.getElementById('template-search');
-
-    if (searchEl) {
-
-        searchEl.addEventListener('input', () => {
-
-            renderTemplateGallery(_currentFilter, searchEl.value);
-
-        });
-
-    }
-
-
-
-    // Initialize gallery when styles tab opens
-
-    const stylesTabBtn = document.querySelector('.mc-tab[data-mctab="styles"]');
-
-    if (stylesTabBtn) {
-
-        stylesTabBtn.addEventListener('click', () => {
-
-            setTimeout(() => {
-
-                renderCategoryPills('all');
-
-                renderTemplateGallery('all', '');
-
-            }, 50);
-
-        });
-
-    }
-
-
-
-    // Also initialize immediately if already visible
-
-    renderCategoryPills('all');
-
-    renderTemplateGallery('all', '');
-
-
-
-    // Hidden select fallback (for old code)
-
     const tmplSelect = document.getElementById('premade-templates');
-
-    if (tmplSelect) tmplSelect.addEventListener('change', e => {
-
-        if (e.target.value) loadTemplate(e.target.value);
-
-    });
-
+    if (tmplSelect && window.EmailTemplates) {
+        window.EmailTemplates.forEach(t => {
+            const opt = document.createElement('option');
+            opt.value = t.id;
+            opt.innerText = t.name;
+            tmplSelect.appendChild(opt);
+        });
+        tmplSelect.addEventListener('change', e => {
+            if (e.target.value) {
+                loadTemplate(e.target.value);
+                e.target.value = '';
+            }
+        });
+    }
 }
 
 

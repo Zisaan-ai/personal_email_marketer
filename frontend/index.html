@@ -925,20 +925,13 @@
                                     <input type="color" id="global-bg-color" value="#ffffff" style="height:40px;padding:4px;cursor:pointer;width:100%;border-radius:6px;border:1px solid var(--border);">
                                 </div>
 
-                                <!-- Template Gallery -->
-                                <div style="padding:16px 20px 8px;">
-                                    <label style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:10px;">Template Gallery</label>
-                                    <input type="text" id="template-search" placeholder="🔍 Search templates..." style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;box-sizing:border-box;outline:none;">
+                                <!-- Template Selection -->
+                                <div style="padding:16px 20px 24px;">
+                                    <label style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:10px;">Select a Template</label>
+                                    <select id="premade-templates" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;box-sizing:border-box;outline:none;background:#fff;cursor:pointer;">
+                                        <option value="">-- Choose a Template --</option>
+                                    </select>
                                 </div>
-
-                                <!-- Category Pills -->
-                                <div id="template-category-pills" style="padding:0 20px 12px;display:flex;flex-wrap:wrap;gap:6px;"></div>
-
-                                <!-- Template Grid -->
-                                <div id="template-gallery" style="padding:0 16px 24px;display:grid;grid-template-columns:1fr 1fr;gap:10px;"></div>
-
-                                <!-- Hidden select for JS compatibility -->
-                                <select id="premade-templates" style="display:none;"></select>
                             </div>
                         </div>
 

@@ -738,7 +738,7 @@ def send_campaign(campaign: CampaignCreate, background_tasks: BackgroundTasks, c
                 db.commit()
                 raise HTTPException(status_code=400, detail=f"Failed to schedule: {str(e)}")
         else:
-            background_tasks.add_task(process_isolated_campaign, str(new_campaign.id))
+            import threading; threading.Thread(target=process_isolated_campaign, args=(str(new_campaign.id),), daemon=True).start()
             
     return {"status": "success", "campaign_id": str(new_campaign.id)}
 
@@ -764,7 +764,7 @@ def resume_campaign(campaign_id: str, background_tasks: BackgroundTasks, current
     if campaign.status in ["paused", "failed", "completed"]:
         campaign.status = "processing"
         db.commit()
-        background_tasks.add_task(process_isolated_campaign, str(campaign.id))
+        import threading; threading.Thread(target=process_isolated_campaign, args=(str(campaign.id),), daemon=True).start()
     return {"status": "success"}
 
 @app.delete("/api/campaigns/{campaign_id}")
@@ -1457,7 +1457,7 @@ def run_inbox_test(acc_id: str, req: InboxTestRequest, background_tasks: Backgro
         finally:
             test_db.close()
 
-    background_tasks.add_task(_run_seed_test)
+    import threading; threading.Thread(target=_run_seed_test, daemon=True).start()
     return {"status": "test_started", "test_id": test_id, "message": "Test email sent. Results will be available in ~2 minutes."}
 
 @app.get("/api/inbox-test/{acc_id}/results")

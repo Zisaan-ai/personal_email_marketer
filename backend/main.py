@@ -1735,79 +1735,24 @@ def delete_media(media_id: str, current_user: database.User = Depends(auth.get_c
 
 @app.get("/api/debug-imap")
 def debug_imap(db: Session = Depends(database.get_db)):
-    import imaplib, email, datetime, re
-    from email.header import decode_header
+    import sys, io
+    import bounce_processor
     
-    logs = []
-    accounts = db.query(database.SendingAccount).filter(database.SendingAccount.is_active == True).all()
+    out = io.StringIO()
+    old_stdout = sys.stdout
+    old_stderr = sys.stderr
+    sys.stdout = out
+    sys.stderr = out
     
-    for account in accounts:
-        imap_server = account.imap_server
-        imap_port = account.imap_port
-        if not imap_server:
-            if "gmail.com" in account.smtp_server:
-                imap_server = "imap.gmail.com"
-            else:
-                imap_server = account.smtp_server.replace("smtp.", "imap.")
-            imap_port = 993
-            
-        logs.append(f"Account: {account.smtp_username} ({imap_server}:{imap_port})")
+    try:
+        bounce_processor.check_bounces()
+    except Exception as e:
+        print(f"CRASH: {str(e)}")
+    finally:
+        sys.stdout = old_stdout
+        sys.stderr = old_stderr
         
-        try:
-            mail = imaplib.IMAP4_SSL(imap_server, imap_port)
-            mail.login(account.smtp_username, account.imap_password or account.smtp_password)
-            mail.select("inbox")
-            
-            date_since = (datetime.date.today() - datetime.timedelta(days=4)).strftime("%d-%b-%Y")
-            status, messages = mail.search(None, f'(SENTSINCE {date_since})')
-            
-            if status != "OK" or not messages[0]:
-                logs.append("No messages found.")
-                continue
-                
-            msg_nums = messages[0].split()
-            logs.append(f"Found {len(msg_nums)} messages since {date_since}")
-            
-            account_leads = {lead.email.lower() for lead in db.query(database.CampaignLead).join(database.Campaign).filter(database.Campaign.user_id == account.user_id).all()}
-            logs.append(f"Found {len(account_leads)} leads for this account.")
-            
-            for num in msg_nums[-20:]: # Check last 20
-                status, header_data = mail.fetch(num, "(BODY.PEEK[HEADER])")
-                if status != "OK": continue
-                
-                header_msg = None
-                for response_part in header_data:
-                    if isinstance(response_part, tuple):
-                        header_msg = email.message_from_bytes(response_part[1])
-                        break
-                
-                if not header_msg: continue
-                
-                subject = ""
-                if header_msg["Subject"]:
-                    decoded_subj = decode_header(header_msg["Subject"])[0]
-                    subject = decoded_subj[0].decode(decoded_subj[1] or "utf-8", errors="ignore") if isinstance(decoded_subj[0], bytes) else decoded_subj[0]
-                
-                from_header = header_msg.get("From", "")
-                email_match = re.search(r'<([^>]+)>', from_header)
-                sender_email = email_match.group(1).lower().strip() if email_match else from_header.lower().strip()
-                
-                is_lead = sender_email in account_leads
-                logs.append(f"Msg: From={sender_email} | Subj={subject[:30]}... | IsLead={is_lead}")
-                if is_lead:
-                    try:
-                        existing = db.query(database.Reply).filter_by(message_id=header_msg.get("Message-ID", f"unknown-{num.decode()}")).first()
-                        logs.append(f"DB Check Existing: {existing}")
-                        if not existing:
-                            logs.append(f"Would create new Reply in DB!")
-                    except Exception as ex:
-                        logs.append(f"DB Error simulating reply check: {str(ex)}")
-                
-            mail.logout()
-        except Exception as e:
-            logs.append(f"Error: {str(e)}")
-            
-    return {"debug_logs": logs}
+    return {"debug_logs": out.getvalue().split('\n')}
 
 # ============================================================
 # CATCH-ALL: Serve Frontend (MUST be LAST route)

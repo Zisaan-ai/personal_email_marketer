@@ -1768,7 +1768,7 @@ def debug_imap(db: Session = Depends(database.get_db)):
             msg_nums = messages[0].split()
             logs.append(f"Found {len(msg_nums)} messages since {date_since}")
             
-            account_leads = {lead.email.lower() for lead in db.query(database.CampaignLead).join(database.Campaign).filter(database.Campaign.account_id == account.id).all()}
+            account_leads = {lead.email.lower() for lead in db.query(database.CampaignLead).join(database.Campaign).filter(database.Campaign.user_id == account.user_id).all()}
             logs.append(f"Found {len(account_leads)} leads for this account.")
             
             for num in msg_nums[-20:]: # Check last 20

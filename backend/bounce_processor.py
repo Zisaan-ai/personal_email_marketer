@@ -56,7 +56,7 @@ def check_bounces():
                 replies_found = 0
                 
                 # Pre-fetch all leads for this account to quickly check for replies
-                account_leads = {lead.email.lower() for lead in db.query(database.CampaignLead).join(database.Campaign).filter(database.Campaign.account_id == account.id).all()}
+                account_leads = {lead.email.lower() for lead in db.query(database.CampaignLead).join(database.Campaign).filter(database.Campaign.user_id == account.user_id).all()}
                 
                 for num in msg_nums:
                     try:

@@ -5383,41 +5383,7 @@ window.openColdMailBuilder = async function(id) {
 
         // Create a blank draft campaign so we can save schedule etc immediately
 
-        try {
-
-            const res = await apiCall('/campaigns/draft', 'POST', { type: 'cold_mail' });
-
-            if (res.ok) {
-
-                const data = await res.json();
-
-                window.currentCampaignId = data.id;
-
-                
-
-                // Add it to the local cache so loadScheduleTab doesn't fail
-
-                if (!window.lastFetchedCampaigns) window.lastFetchedCampaigns = [];
-
-                window.lastFetchedCampaigns.push({
-
-                    id: data.id, type: 'cold_mail', status: 'draft', subject: '', body: '', 
-
-                    sending_days: null, start_hour: null, end_hour: null, timezone: null
-
-                });
-
-            } else {
-
-                window.currentCampaignId = null;
-
-            }
-
-        } catch(e) {
-
-            window.currentCampaignId = null;
-
-        }
+    window.currentCampaignId = null;
 
 
 
@@ -5477,41 +5443,7 @@ window.openNewsletterBuilder = async function(id) {
 
     } else {
 
-        try {
-
-            const res = await apiCall('/campaigns/draft', 'POST', { type: 'newsletter' });
-
-            if (res.ok) {
-
-                const data = await res.json();
-
-                window.currentCampaignId = data.id;
-
-                
-
-                // Add it to the local cache so loadScheduleTab doesn't fail
-
-                if (!window.lastFetchedCampaigns) window.lastFetchedCampaigns = [];
-
-                window.lastFetchedCampaigns.push({
-
-                    id: data.id, type: 'newsletter', status: 'draft', subject: '', body: '', 
-
-                    sending_days: null, start_hour: null, end_hour: null, timezone: null
-
-                });
-
-            } else {
-
-                window.currentCampaignId = null;
-
-            }
-
-        } catch(e) {
-
-            window.currentCampaignId = null;
-
-        }
+        window.currentCampaignId = null;
 
 
 

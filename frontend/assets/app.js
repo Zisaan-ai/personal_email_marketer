@@ -5570,13 +5570,10 @@ window.checkSpamScore = async function() {
     
 
     try {
-
-        const data = await apiCall('/preflight', 'POST', {body: text, subject: subject});
-
-        if (data && data.score !== undefined) {
-
+        const res = await apiCall('/preflight', 'POST', {body: text, subject: subject});
+        if (res && res.ok) {
+            const data = await res.json();
             let msg = '';
-
             if (data.score >= 9) {
 
                 msg = `Spam Score: ${data.score}/10 (${data.rating})`;
@@ -5604,7 +5601,9 @@ window.checkSpamScore = async function() {
                 showToast(msg, 'error');
 
             }
-
+        } else {
+            const err = await res.json().catch(() => ({}));
+            showToast(err.detail || 'Failed to check spam score', 'error');
         }
 
     } catch(e) {

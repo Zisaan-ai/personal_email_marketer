@@ -21,6 +21,7 @@ $filesToUpload = @(
     @{ Local = "C:\Users\higan\.antigravity-ide\personal_email_marketer\frontend\index.html"; RemoteDir = "/home/terapkco/xcomic.xyz"; RemoteFile = "index.html" },
     @{ Local = "C:\Users\higan\.antigravity-ide\personal_email_marketer\frontend\assets\app.js"; RemoteDir = "/home/terapkco/xcomic.xyz/assets"; RemoteFile = "app.js" },
     @{ Local = "C:\Users\higan\.antigravity-ide\personal_email_marketer\frontend\assets\sending_accounts.js"; RemoteDir = "/home/terapkco/xcomic.xyz/assets"; RemoteFile = "sending_accounts.js" },
+    @{ Local = "C:\Users\higan\.antigravity-ide\personal_email_marketer\frontend\assets\templates.js"; RemoteDir = "/home/terapkco/xcomic.xyz/assets"; RemoteFile = "templates.js" },
     @{ Local = "C:\Users\higan\.antigravity-ide\personal_email_marketer\backend\main.py"; RemoteDir = "/home/terapkco/xcomic_backend"; RemoteFile = "main.py" },
     @{ Local = "C:\Users\higan\.antigravity-ide\personal_email_marketer\backend\email_service.py"; RemoteDir = "/home/terapkco/xcomic_backend"; RemoteFile = "email_service.py" },
     @{ Local = "C:\Users\higan\.antigravity-ide\personal_email_marketer\backend\passenger_wsgi.py"; RemoteDir = "/home/terapkco/xcomic_backend"; RemoteFile = "passenger_wsgi.py" },

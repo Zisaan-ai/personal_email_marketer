@@ -8,79 +8,79 @@
   {
     "name": "Page /",
     "status": "OK",
-    "time_ms": 1225,
-    "detail": "162.6KB"
+    "time_ms": 1534,
+    "detail": "177.1KB"
   },
   {
     "name": "Page /assets/app.js",
     "status": "OK",
-    "time_ms": 1404,
-    "detail": "187.8KB"
+    "time_ms": 1543,
+    "detail": "192.0KB"
   },
   {
     "name": "Page /assets/style.css",
     "status": "OK",
-    "time_ms": 987,
+    "time_ms": 1225,
     "detail": "24.0KB"
   },
   {
     "name": "Page /assets/sending_accounts.js",
     "status": "OK",
-    "time_ms": 925,
+    "time_ms": 1230,
     "detail": "32.7KB"
   },
   {
     "name": "Page /assets/templates.js",
     "status": "OK",
-    "time_ms": 966,
-    "detail": "47.5KB"
+    "time_ms": 1260,
+    "detail": "200.1KB"
   },
   {
     "name": "Page /assets/deliverability_v2.js",
     "status": "OK",
-    "time_ms": 980,
+    "time_ms": 1048,
     "detail": "4.0KB"
   },
   {
     "name": "Page /assets/ai_features.js",
     "status": "OK",
-    "time_ms": 937,
+    "time_ms": 1276,
     "detail": "9.5KB"
   },
   {
     "name": "Ping",
     "status": "OK",
-    "time_ms": 1847,
+    "time_ms": 1328,
     "detail": "{'status': 'ok', 'msg': 'Server is alive'}"
   },
   {
     "name": "Test DB",
     "status": "OK",
-    "time_ms": 1014,
-    "detail": "{'count': '5', 'url': 'sqlite:////home/terapkco/xcomi'}"
+    "time_ms": 1222,
+    "detail": "{'count': '3', 'url': 'sqlite:////home/terapkco/xcomi'}"
   },
   {
     "name": "List Campaigns",
     "status": "OK",
-    "time_ms": 1049,
-    "detail": "returned 0 items"
+    "time_ms": 1149,
+    "detail": "returned 2 items"
   },
   {
     "name": "Create Draft (Cold Mail)",
     "status": "OK",
-    "time_ms": 1536,
-    "detail": "{'status': 'success', 'campaign_id': 'd5e7d8bc-ecd7-480e-ab5e-51be8c'}"
+    "time_ms": 1121,
+    "detail": "{'status': 'success', 'campaign_id': 'c702255a-df71-4264-93fd-17d043'}"
   },
   {
     "name": "Create Draft (Newsletter)",
     "status": "OK",
-    "time_ms": 965,
-    "detail": "{'status': 'success', 'campaign_id': 'f0b528bc-a064-46d5-94c9-b9e902'}"
+    "time_ms": 1207,
+    "detail": "{'status': 'success', 'campaign_id': '5bbd0c27-f6d4-4e38-8a80-340811'}"
   },
   {
     "name": "Save Schedule (newsletter)",
     "status": "OK",
-    "time_ms": 949,
+    "time_ms": 1221,
     "detail": "{'status': 'success'}"
   },
   {
@@ -92,31 +92,31 @@
   {
     "name": "Get Leads (newsletter)",
     "status": "OK",
-    "time_ms": 954,
+    "time_ms": 1107,
     "detail": "returned 0 items"
   },
   {
     "name": "Pause Campaign (newsletter)",
     "status": "OK",
-    "time_ms": 1014,
+    "time_ms": 1138,
     "detail": "{'status': 'success'}"
   },
   {
     "name": "Resume Campaign (newsletter)",
     "status": "OK",
-    "time_ms": 1028,
+    "time_ms": 1328,
     "detail": "{'status': 'success'}"
   },
   {
     "name": "Delete Campaign (newsletter)",
     "status": "OK",
-    "time_ms": 1057,
+    "time_ms": 1327,
     "detail": "{'status': 'success'}"
   },
   {
     "name": "Save Schedule (cold_mail)",
     "status": "OK",
-    "time_ms": 1035,
+    "time_ms": 1226,
     "detail": "{'status': 'success'}"
   },
   {
@@ -128,151 +128,151 @@
   {
     "name": "Get Leads (cold_mail)",
     "status": "OK",
-    "time_ms": 1015,
+    "time_ms": 1065,
     "detail": "returned 0 items"
   },
   {
     "name": "Pause Campaign (cold_mail)",
     "status": "OK",
-    "time_ms": 996,
+    "time_ms": 1272,
     "detail": "{'status': 'success'}"
   },
   {
     "name": "Resume Campaign (cold_mail)",
     "status": "OK",
-    "time_ms": 928,
+    "time_ms": 1228,
     "detail": "{'status': 'success'}"
   },
   {
     "name": "Delete Campaign (cold_mail)",
     "status": "OK",
-    "time_ms": 963,
+    "time_ms": 1226,
     "detail": "{'status': 'success'}"
   },
   {
     "name": "Launch with Full Limits",
-    "status": "FAIL(400)",
-    "time_ms": 1790,
-    "detail": "All sending accounts have reached their daily limit. Campaign will be queued and"
+    "status": "OK",
+    "time_ms": 1145,
+    "detail": "{'status': 'success', 'campaign_id': '6df409cf-fa7d-40bb-8803-749071'}"
   },
   {
     "name": "List Sending Accounts",
     "status": "OK",
-    "time_ms": 1024,
+    "time_ms": 1105,
     "detail": "returned 1 items"
   },
   {
     "name": "Account Health (gazisaifa428@gmail.c)",
     "status": "OK",
-    "time_ms": 949,
-    "detail": "{'account_id': '24ef93b4-ccfa-4fc4-b8d4-7bd598', 'email': 'gazisaifa428@gmail.com', 'health_score': '97'}"
+    "time_ms": 1116,
+    "detail": "{'account_id': '24ef93b4-ccfa-4fc4-b8d4-7bd598', 'email': 'gazisaifa428@gmail.com', 'health_score': '98'}"
   },
   {
     "name": "Account Stats (gazisaifa428@gmail.c)",
     "status": "OK",
-    "time_ms": 1669,
+    "time_ms": 1225,
     "detail": "{'account_id': '24ef93b4-ccfa-4fc4-b8d4-7bd598', 'email': 'gazisaifa428@gmail.com', 'days': '30'}"
   },
   {
     "name": "All Domains Health",
     "status": "OK",
-    "time_ms": 998,
+    "time_ms": 1125,
     "detail": "returned 1 items"
   },
   {
     "name": "All Accounts Health",
     "status": "OK",
-    "time_ms": 930,
+    "time_ms": 1174,
     "detail": "returned 1 items"
   },
   {
     "name": "AI Chat",
     "status": "OK",
-    "time_ms": 1340,
+    "time_ms": 1514,
     "detail": "{'reply': \"I'm a Senior Cold Email Copywr\"}"
   },
   {
     "name": "AI Generate Email",
     "status": "OK",
-    "time_ms": 1940,
+    "time_ms": 1909,
     "detail": "{'html': '<p>{Hi|Hello} {Name|Friend},</'}"
   },
   {
     "name": "AI Optimize Subject",
     "status": "OK",
-    "time_ms": 1283,
+    "time_ms": 1395,
     "detail": "{'subject': '{Take a look|Check out|Explore'}"
   },
   {
     "name": "AI Generate Icebreakers",
     "status": "OK",
-    "time_ms": 1589,
+    "time_ms": 1473,
     "detail": "{'csv': 'Email,Name,Company\\njohn@exampl'}"
   },
   {
     "name": "Preflight Check",
     "status": "OK",
-    "time_ms": 1005,
+    "time_ms": 1138,
     "detail": "{'score': '9.5', 'found_words': '[]', 'warnings': \"['No personalization tags foun\"}"
   },
   {
     "name": "Spam Score Check",
     "status": "OK",
-    "time_ms": 1031,
+    "time_ms": 1319,
     "detail": "{'score': '4.0', 'found_words': \"['free', 'buy now', 'prize', '\", 'warnings': \"['Too many ALL CAPS words (3 f\"}"
   },
   {
     "name": "Validate Leads",
     "status": "OK",
-    "time_ms": 1121,
+    "time_ms": 1119,
     "detail": "{'results': \"[{'email': 'test@gmail.com', '\"}"
   },
   {
     "name": "Clean Inactive Leads",
     "status": "OK",
-    "time_ms": 965,
+    "time_ms": 1264,
     "detail": "{'status': 'success', 'tagged_count': '0'}"
   },
   {
     "name": "Get Settings",
     "status": "OK",
-    "time_ms": 954,
+    "time_ms": 1033,
     "detail": "{'gemini_api_key': '', 'groq_api_key': ''}"
   },
   {
     "name": "Get Bounces",
     "status": "OK",
-    "time_ms": 1054,
+    "time_ms": 1210,
     "detail": "returned 0 items"
   },
   {
     "name": "Get Unsubscribes",
     "status": "OK",
-    "time_ms": 899,
+    "time_ms": 2009,
     "detail": "returned 0 items"
   },
   {
     "name": "Get Replies",
     "status": "OK",
-    "time_ms": 1081,
+    "time_ms": 1123,
     "detail": "returned 2 items"
   },
   {
     "name": "Get Webhook",
     "status": "OK",
-    "time_ms": 983,
+    "time_ms": 1126,
     "detail": "{'url': ''}"
   },
   {
     "name": "List All Users (Admin)",
     "status": "OK",
-    "time_ms": 1038,
-    "detail": "returned 5 items"
+    "time_ms": 1037,
+    "detail": "returned 3 items"
   },
   {
     "name": "Get Gallery",
     "status": "OK",
-    "time_ms": 1046,
+    "time_ms": 961,
     "detail": "returned 0 items"
   }
 ]

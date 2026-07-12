@@ -4605,9 +4605,9 @@ function setupSequenceBuilder() {
 
         const s1 = steps[0];
 
-        const delayMin = parseInt((document.getElementById('campaign-delay-min') || {}).value) || 30;
+        let delayMin = parseInt((document.getElementById('campaign-delay-min') || {}).value); if(isNaN(delayMin)) delayMin = 30;
 
-        const delayMax = parseInt((document.getElementById('campaign-delay-max') || {}).value) || 90;
+        let delayMax = parseInt((document.getElementById('campaign-delay-max') || {}).value); if(isNaN(delayMax)) delayMax = 90;
 
         const payload = {
 
@@ -4722,9 +4722,9 @@ function setupSequenceBuilder() {
 
         const s1 = steps[0];
 
-        const delayMin = parseInt((document.getElementById('campaign-delay-min') || {}).value) || 30;
+        let delayMin = parseInt((document.getElementById('campaign-delay-min') || {}).value); if(isNaN(delayMin)) delayMin = 30;
 
-        const delayMax = parseInt((document.getElementById('campaign-delay-max') || {}).value) || 90;
+        let delayMax = parseInt((document.getElementById('campaign-delay-max') || {}).value); if(isNaN(delayMax)) delayMax = 90;
 
         const payload = {
 

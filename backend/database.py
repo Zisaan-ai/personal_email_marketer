@@ -163,6 +163,7 @@ class Reply(Base):
 
     id = Column(String, primary_key=True, default=generate_uuid)
     account_id = Column(String, ForeignKey("sending_accounts.id"))
+    message_id = Column(String, nullable=True, unique=True)
     sender_email = Column(String, nullable=False)
     subject = Column(String, nullable=True)
     body = Column(Text, nullable=True)
@@ -275,6 +276,7 @@ def run_migrations():
         _safe_add_column("sending_accounts", "send_window_end", "INTEGER", 24)
         _safe_add_column("sending_accounts", "send_window_timezone", "VARCHAR", "UTC")
         _safe_add_column("sending_accounts", "custom_tracking_domain", "VARCHAR", None)
+        _safe_add_column("replies", "message_id", "VARCHAR", None)
         print("[Migration] All migrations completed successfully.")
     except Exception as e:
         print(f"[Migration] Error: {e}")

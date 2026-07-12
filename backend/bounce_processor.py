@@ -45,50 +45,105 @@ def check_bounces():
                 
                 date_since = (datetime.date.today() - datetime.timedelta(days=3)).strftime("%d-%b-%Y")
                 
-                subjects = [
-                    "Undelivered Mail Returned to Sender",
-                    "Delivery Status Notification (Failure)",
-                    "Mail delivery failed",
-                    "Returned mail: see transcript for details"
-                ]
-                
-                all_bounce_msgs = []
-                for subj in subjects:
-                    status, messages = mail.search(None, f'(SENTSINCE {date_since} SUBJECT "{subj}")')
-                    if status == "OK":
-                        msg_nums = messages[0].split()
-                        all_bounce_msgs.extend(msg_nums)
-                
-                all_bounce_msgs = list(set(all_bounce_msgs))
+                status, messages = mail.search(None, f'(SENTSINCE {date_since})')
+                if status != "OK" or not messages[0]:
+                    mail.logout()
+                    continue
+
+                msg_nums = messages[0].split()
                 
                 bounced_emails = set()
+                replies_found = 0
                 
-                for num in all_bounce_msgs:
+                # Pre-fetch all leads for this account to quickly check for replies
+                account_leads = {lead.email.lower() for lead in db.query(database.CampaignLead).join(database.Campaign).filter(database.Campaign.account_id == account.id).all()}
+                
+                for num in msg_nums:
                     try:
-                        status, msg_data = mail.fetch(num, "(RFC822)")
-                        for response_part in msg_data:
+                        # Fetch header first to determine if we need the body
+                        status, header_data = mail.fetch(num, "(BODY.PEEK[HEADER])")
+                        if status != "OK": continue
+                        
+                        header_msg = None
+                        for response_part in header_data:
                             if isinstance(response_part, tuple):
-                                msg = email.message_from_bytes(response_part[1])
-                                body = ""
-                                if msg.is_multipart():
-                                    for part in msg.walk():
-                                        if part.get_content_type() == "text/plain":
-                                            body += part.get_payload(decode=True).decode(errors="ignore")
-                                else:
-                                    body = msg.get_payload(decode=True).decode(errors="ignore")
+                                header_msg = email.message_from_bytes(response_part[1])
+                                break
+                        
+                        if not header_msg: continue
+                        
+                        subject = ""
+                        if header_msg["Subject"]:
+                            decoded_subj = decode_header(header_msg["Subject"])[0]
+                            subject = decoded_subj[0].decode(decoded_subj[1] or "utf-8", errors="ignore") if isinstance(decoded_subj[0], bytes) else decoded_subj[0]
+                        
+                        from_header = header_msg.get("From", "")
+                        sender_email = ""
+                        # Extract email address using regex
+                        email_match = re.search(r'<([^>]+)>', from_header)
+                        if email_match:
+                            sender_email = email_match.group(1).lower().strip()
+                        else:
+                            sender_email = from_header.lower().strip()
+                            
+                        message_id = header_msg.get("Message-ID", f"unknown-{num.decode()}")
+                        
+                        is_bounce = False
+                        bounce_subjects = ["Undelivered Mail Returned to Sender", "Delivery Status Notification (Failure)", "Mail delivery failed", "Returned mail: see transcript for details"]
+                        if any(bs.lower() in subject.lower() for bs in bounce_subjects) or "mailer-daemon" in sender_email:
+                            is_bounce = True
+                            
+                        is_lead_reply = sender_email in account_leads
+                        
+                        # Process if it's a bounce or a lead reply
+                        if is_bounce or is_lead_reply:
+                            # Fetch full body
+                            status, msg_data = mail.fetch(num, "(RFC822)")
+                            if status != "OK": continue
+                            
+                            for response_part in msg_data:
+                                if isinstance(response_part, tuple):
+                                    msg = email.message_from_bytes(response_part[1])
+                                    body = ""
+                                    if msg.is_multipart():
+                                        for part in msg.walk():
+                                            if part.get_content_type() == "text/plain":
+                                                body += part.get_payload(decode=True).decode(errors="ignore")
+                                    else:
+                                        body = msg.get_payload(decode=True).decode(errors="ignore")
                                     
-                                for pattern in bounce_patterns:
-                                    match = pattern.search(body)
-                                    if match:
-                                        bounced_email = match.group(1).lower().strip()
-                                        bounced_emails.add(bounced_email)
-                                        break
+                                    if is_bounce:
+                                        for pattern in bounce_patterns:
+                                            match = pattern.search(body)
+                                            if match:
+                                                bounced_emails.add(match.group(1).lower().strip())
+                                                break
+                                                
+                                    if is_lead_reply and not is_bounce:
+                                        # Check if we already have this reply
+                                        existing = db.query(database.Reply).filter_by(message_id=message_id).first()
+                                        if not existing:
+                                            new_reply = database.Reply(
+                                                account_id=account.id,
+                                                message_id=message_id,
+                                                sender_email=sender_email,
+                                                subject=subject,
+                                                body=body
+                                            )
+                                            db.add(new_reply)
+                                            
+                                            # Update lead status to replied
+                                            db.query(database.CampaignLead).filter(
+                                                database.CampaignLead.email == sender_email
+                                            ).update({"status": "replied"})
+                                            
+                                            replies_found += 1
                     except Exception as e:
                         print(f"Error reading message {num}: {e}")
                 
                 mail.logout()
                 
-                # Update leads in DB + health tracking
+                # Update leads in DB + health tracking for bounces
                 if bounced_emails:
                     print(f"Found {len(bounced_emails)} bounced emails for account {account.smtp_username}")
                     import health_monitor
@@ -98,7 +153,14 @@ def check_bounces():
                         ).update({"status": "bounced"})
                         # HEALTH TRACKING: Update account health for each bounce
                         health_monitor.update_health_after_send(db, str(account.id), False)
-                    db.commit()
+                        
+                if replies_found > 0:
+                    print(f"Found {replies_found} new replies for account {account.smtp_username}")
+                    import health_monitor
+                    for _ in range(replies_found):
+                        health_monitor.update_health_after_reply(db, str(account.id))
+                        
+                db.commit()
                         
             except Exception as e:
                 print(f"Failed to process IMAP bounces for {account.smtp_username}: {e}")

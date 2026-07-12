@@ -977,7 +977,7 @@ def _run_campaign(db, campaign_id):
                 health_monitor.update_health_after_send(db, str(acc.id), False)
         except Exception as e:
             print(f"Send error for {lead.email}: {e}")
-            lead.status = "bounced"
+            lead.status = f"bounced: {str(e)[:30]}"
             # HEALTH TRACKING: Update on exception
             try:
                 health_monitor.update_health_after_send(db, str(acc.id), False)
@@ -1574,17 +1574,22 @@ def get_bounces(current_user: database.User = Depends(auth.get_current_user), db
 
 
 # --- REPLIES ENDPOINT ---
-@app.get('/api/debug-bounce')
-def debug_bounce(db: Session = Depends(database.get_db)):
-    import email_service
-    acc = db.query(database.SendingAccount).filter_by(email='gazisaifa428@gmail.com').first()
-    if not acc: return {"error": "Account not found"}
+@app.get('/api/run-campaign-debug/{campaign_id}')
+def debug_campaign(campaign_id: str, db: Session = Depends(database.get_db)):
     try:
-        email_service.send_single_email("Test", "Test", "zmonemrahman@gmail.com", account=acc)
-        return {"success": True}
+        _run_campaign(db, campaign_id)
+        leads = db.query(database.CampaignLead).filter_by(campaign_id=campaign_id).all()
+        return {"status": "done", "leads": [{"email": l.email, "status": l.status} for l in leads]}
     except Exception as e:
         import traceback
         return {"error": str(e), "trace": traceback.format_exc()}
+
+@app.get('/api/reset-lead/{campaign_id}')
+def reset_lead(campaign_id: str, db: Session = Depends(database.get_db)):
+    leads = db.query(database.CampaignLead).filter_by(campaign_id=campaign_id).all()
+    for l in leads: l.status = 'pending'
+    db.commit()
+    return {"status": "reset"}
 
 class ReplySendRequest(BaseModel):
     content: str

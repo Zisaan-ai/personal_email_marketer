@@ -1104,7 +1104,9 @@ class SendingAccountCreate(BaseModel):
     warmup_increment_per_day: int = 2
 
 class SendingAccountUpdate(BaseModel):
-    is_active: bool
+    is_active: Optional[bool] = None
+    smart_limit_enabled: Optional[bool] = None
+    warmup_enabled: Optional[bool] = None
 
 # --- Sending Accounts API Endpoints ---
 @app.get("/api/sending-accounts")
@@ -1133,6 +1135,7 @@ def get_sending_accounts(current_user: database.User = Depends(auth.get_current_
             "warmup_daily_limit": acc.warmup_daily_limit,
             "warmup_increment_per_day": acc.warmup_increment_per_day,
             "warmup_sent_today": acc.warmup_sent_today,
+            "smart_limit_enabled": getattr(acc, "smart_limit_enabled", False),
             "health_score": acc.health_score or 100,
             "created_at": acc.created_at,
             # --- New health fields ---
@@ -1269,7 +1272,12 @@ def update_sending_account_status(acc_id: str, update_data: SendingAccountUpdate
     acc = db.query(database.SendingAccount).filter(database.SendingAccount.id == acc_id, database.SendingAccount.user_id == str(current_user.id)).first()
     if not acc:
         raise HTTPException(status_code=404, detail="Account not found")
-    acc.is_active = update_data.is_active
+    if update_data.is_active is not None:
+        acc.is_active = update_data.is_active
+    if update_data.smart_limit_enabled is not None:
+        acc.smart_limit_enabled = update_data.smart_limit_enabled
+    if update_data.warmup_enabled is not None:
+        acc.warmup_enabled = update_data.warmup_enabled
     db.commit()
     return {"status": "success"}
 

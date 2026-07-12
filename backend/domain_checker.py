@@ -40,7 +40,7 @@ def check_dkim(domain: str, selector: str = "google") -> dict:
     Check if domain has a DKIM record.
     Common selectors: google, default, selector1, selector2, dkim, mail
     """
-    selectors_to_try = [selector, "google", "default", "selector1", "selector2", "dkim", "s1", "k1"]
+    selectors_to_try = [selector, "google", "default", "selector1", "selector2", "dkim", "s1", "k1", "20230601", "20221208", "20210112"]
     
     for sel in selectors_to_try:
         try:

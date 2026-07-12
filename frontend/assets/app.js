@@ -6396,3 +6396,4 @@ window.selectGalleryImage = function(url) {
     }
     closeGalleryModal();
 };
+setInterval(async function() { try { await apiCall('/ping', 'GET'); } catch(e) {} }, 30000); 

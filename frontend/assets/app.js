@@ -5038,10 +5038,13 @@ async function loadReplies() {
                 <td style="padding:16px 24px; color:var(--text-muted); font-size:13px;">${new Date(item.received_at).toLocaleString()}</td>
                 
                 <td style="padding:16px 24px;">
-                    <button class="btn secondary" style="padding:6px 12px; font-size:12px;" onclick='openReplyModal(${JSON.stringify(item).replace(/'/g, "&#39;")})'><i class="fa-solid fa-eye"></i> View & Reply</button>
+                    <button class="btn secondary" style="padding:6px 12px; font-size:12px;" onclick="openReplyModal(window._replyData['${item.id}'])"><i class="fa-solid fa-eye"></i> View & Reply</button>
                 </td>
 
             `;
+
+            window._replyData = window._replyData || {};
+            window._replyData[item.id] = item;
 
             tbody.appendChild(tr);
 
@@ -5113,10 +5116,6 @@ async function sendAiReply() {
         btn.innerHTML = oldHtml;
         btn.disabled = false;
     }
-
-
-    } catch(e) { console.error(e); }
-
 }
 
 

@@ -261,13 +261,13 @@ class AutopilotRequest(BaseModel):
 def ai_chat(req: ChatRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     import ai_core
     history_dict = [msg.dict() for msg in req.history] if req.history else []
-    response = ai_core.chat_with_assistant(req.message, history_dict)
+    response = ai_core.chat_with_assistant(req.message, history_dict, current_user.groq_api_key)
     return {"reply": response}
 
 @app.post("/api/ai/generate")
 def ai_generate_email(req: EmailGenerateRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     import ai_core
-    result = ai_core.generate_email_content(req.prompt)
+    result = ai_core.generate_email_content(req.prompt, current_user.groq_api_key)
     if isinstance(result, dict) and "error" in result:
         raise HTTPException(status_code=500, detail=result["error"])
     return result  # returns {"html": "..."}
@@ -275,7 +275,7 @@ def ai_generate_email(req: EmailGenerateRequest, current_user: database.User = D
 @app.post("/api/ai/optimize-subject")
 def ai_optimize_subject(req: SubjectOptimizeRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     import ai_core
-    result = ai_core.optimize_subject(req.subject)
+    result = ai_core.optimize_subject(req.subject, current_user.groq_api_key)
     if isinstance(result, dict) and "error" in result:
         raise HTTPException(status_code=500, detail=result["error"])
     return result  # returns {"subject": "..."}
@@ -283,7 +283,7 @@ def ai_optimize_subject(req: SubjectOptimizeRequest, current_user: database.User
 @app.post("/api/ai/generate-icebreakers")
 def ai_generate_icebreakers(req: IcebreakerRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     import ai_core
-    result = ai_core.generate_icebreakers(req.leads_csv)
+    result = ai_core.generate_icebreakers(req.leads_csv, current_user.groq_api_key)
     if isinstance(result, dict) and "error" in result:
         raise HTTPException(status_code=500, detail=result["error"])
     return result  # returns {"csv": "..."}
@@ -291,7 +291,7 @@ def ai_generate_icebreakers(req: IcebreakerRequest, current_user: database.User 
 @app.post("/api/ai/autopilot")
 def ai_autopilot(req: AutopilotRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     import ai_core
-    result = ai_core.generate_autopilot_campaign(req.prompt)
+    result = ai_core.generate_autopilot_campaign(req.prompt, current_user.groq_api_key)
     if isinstance(result, dict) and "error" in result:
         raise HTTPException(status_code=500, detail=result["error"])
     return result  # returns {"subject_a", "body_a", "subject_b", "body_b"}
@@ -1592,7 +1592,7 @@ def draft_reply(reply_id: str, current_user: database.User = Depends(auth.get_cu
         raise HTTPException(status_code=404, detail="Reply not found or unauthorized")
         
     import ai_core
-    draft = ai_core.draft_reply_to_email(reply.body or "")
+    draft = ai_core.draft_reply_to_email(reply.body or "", current_user.groq_api_key)
     return {"draft": draft}
 
 @app.post("/api/replies/{reply_id}/send")
@@ -1758,9 +1758,11 @@ def debug_imap(db: Session = Depends(database.get_db)):
 def dump_replies(db: Session = Depends(database.get_db)):
     replies = db.query(database.Reply).all()
     accounts = db.query(database.SendingAccount).all()
+    users = db.query(database.User).all()
     return {
         "replies": [{"id": r.id, "account_id": r.account_id, "subject": r.subject} for r in replies],
-        "accounts": [{"id": a.id, "user_id": a.user_id, "email": a.smtp_username} for a in accounts]
+        "accounts": [{"id": a.id, "user_id": a.user_id, "email": a.smtp_username} for a in accounts],
+        "users": [{"id": u.id, "email": u.email} for u in users]
     }
 
 # ============================================================

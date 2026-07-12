@@ -34,9 +34,10 @@ def extract_url_content(text: str) -> str:
             context += f"\nURL: {url}\n(Could not read content)\n"
     return context
 
-def _call_ai_api(prompt: str) -> str:
+def _call_ai_api(prompt: str, api_key: str = None) -> str:
     """Helper to make a direct REST API call to Groq."""
-    api_key = os.getenv("GROQ_API_KEY")
+    if not api_key:
+        api_key = os.getenv("GROQ_API_KEY")
     if not api_key:
         raise ValueError("Groq API Key is missing. Please go to Settings → AI Configuration and add your Groq API key.")
     
@@ -74,7 +75,7 @@ def handle_ai_error(e: Exception) -> dict:
     print(f"AI ERROR: {msg}")
     return {"error": msg}
 
-def generate_email_content(prompt: str) -> dict:
+def generate_email_content(prompt: str, api_key: str = None) -> dict:
     try:
         full_prompt = f"""
         You are an expert cold email copywriter. Write a highly converting cold email based on these instructions.
@@ -84,7 +85,7 @@ def generate_email_content(prompt: str) -> dict:
         User instructions: {prompt}
         {extract_url_content(prompt)}
         """
-        text = _call_ai_api(full_prompt).strip()
+        text = _call_ai_api(full_prompt, api_key).strip()
         if text.startswith("```html"):
             text = text[7:]
         if text.startswith("```"):
@@ -95,7 +96,7 @@ def generate_email_content(prompt: str) -> dict:
     except Exception as e:
         return handle_ai_error(e)
 
-def optimize_subject(subject: str) -> dict:
+def optimize_subject(subject: str, api_key: str = None) -> dict:
     try:
         prompt = f"""
         Rewrite the following email subject line into a Spintax format to bypass spam filters.
@@ -103,12 +104,12 @@ def optimize_subject(subject: str) -> dict:
         
         Subject to rewrite: {subject}
         """
-        text = _call_ai_api(prompt).strip()
+        text = _call_ai_api(prompt, api_key).strip()
         return {"subject": text}
     except Exception as e:
         return handle_ai_error(e)
 
-def generate_icebreakers(csv_content: str) -> dict:
+def generate_icebreakers(leads_csv: str, api_key: str = None) -> dict:
     try:
         prompt = f"""
         You are an AI sales assistant. I have a list of leads in comma-separated format.
@@ -121,9 +122,9 @@ def generate_icebreakers(csv_content: str) -> dict:
         4. Make the icebreakers professional but conversational.
         
         Input Data:
-        {csv_content}
+        {leads_csv}
         """
-        text = _call_ai_api(prompt).strip()
+        text = _call_ai_api(prompt, api_key).strip()
         if text.startswith("```csv"):
             text = text[6:]
         if text.startswith("```"):
@@ -134,7 +135,7 @@ def generate_icebreakers(csv_content: str) -> dict:
     except Exception as e:
         return handle_ai_error(e)
 
-def analyze_sentiment(text: str) -> str:
+def analyze_reply_sentiment(text: str, api_key: str = None) -> str:
     try:
         prompt = f"""
         You are an AI sales assistant. Read this email reply and classify its sentiment.
@@ -149,7 +150,7 @@ def analyze_sentiment(text: str) -> str:
         Email:
         {text}
         """
-        sentiment = _call_ai_api(prompt).strip()
+        sentiment = _call_ai_api(prompt, api_key).strip()
         valid = ["Interested", "Not Interested", "Meeting Booked", "Out of Office", "Questions / Objections", "Unknown"]
         for v in valid:
             if v.lower() in sentiment.lower():
@@ -159,7 +160,7 @@ def analyze_sentiment(text: str) -> str:
         print(f"Sentiment Analysis Error: {e}")
         return "Unknown"
 
-def generate_autopilot_campaign(prompt: str) -> dict:
+def generate_autopilot_campaign(prompt: str, api_key: str = None) -> dict:
     try:
         full_prompt = f"""
         You are an expert email marketing copywriter. 
@@ -176,7 +177,7 @@ def generate_autopilot_campaign(prompt: str) -> dict:
         User Input: {prompt}
         {extract_url_content(prompt)}
         """
-        text = _call_ai_api(full_prompt).strip()
+        text = _call_ai_api(full_prompt, api_key).strip()
         if text.startswith("```json"):
             text = text[7:]
         if text.startswith("```"):
@@ -190,7 +191,7 @@ def generate_autopilot_campaign(prompt: str) -> dict:
     except Exception as e:
         return handle_ai_error(e)
 
-def chat_with_assistant(message: str, history: list = None) -> str:
+def chat_with_assistant(message: str, history: list = None, api_key: str = None) -> str:
     try:
         if not history:
             history = []
@@ -215,7 +216,8 @@ def chat_with_assistant(message: str, history: list = None) -> str:
         groq_history.append({'role': 'user', 'content': message})
         
         import os, requests
-        api_key = os.getenv('GROQ_API_KEY')
+        if not api_key:
+            api_key = os.getenv('GROQ_API_KEY')
         if not api_key: return 'API Key is missing.'
         
         payload = {
@@ -236,7 +238,7 @@ def chat_with_assistant(message: str, history: list = None) -> str:
     except Exception as e:
         return f'AI Error: {str(e)}'
 
-def draft_reply_to_email(client_message: str) -> str:
+def draft_reply_to_email(client_message: str, api_key: str = None) -> str:
     try:
         prompt = f"""
         You are an expert sales assistant. Read the following reply from a client and draft a polite, professional response.
@@ -249,7 +251,7 @@ def draft_reply_to_email(client_message: str) -> str:
         Client's Reply:
         {client_message}
         """
-        text = _call_ai_api(prompt).strip()
+        text = _call_ai_api(prompt, api_key).strip()
         if text.startswith("```html"):
             text = text[7:]
         if text.startswith("```"):

@@ -4113,7 +4113,7 @@ function setupCampaignBuilder() {
 
             if (res.ok) {
 
-                showToast('Campaign sent successfully! 🚀', 'success');
+                showToast('Campaign sent successfully!', 'success');
 
                 canvas.innerHTML = '<div class="canvas-placeholder">Drag blocks here to build your email</div>';
 
@@ -4121,7 +4121,9 @@ function setupCampaignBuilder() {
 
                 if (leadsEl) leadsEl.value = '';
 
-                window.switchVbTab('audience');
+                // Redirect to Newsletters list
+
+                window.navTo('campaigns-list');
 
             } else {
 
@@ -4660,9 +4662,14 @@ function setupSequenceBuilder() {
         try {
             const res = await apiCall('/campaigns/send', 'POST', payload);
             if (res.ok) {
-                showToast('Campaign launched successfully! 🚀', 'success');
-                // Refresh campaigns list in background
-                apiCall('/campaigns').then(r => r.json()).then(c => { window.lastFetchedCampaigns = c; }).catch(() => {});
+                showToast('Campaign launched successfully!', 'success');
+                // Refresh campaigns list and redirect
+                apiCall('/campaigns').then(r => r.json()).then(c => { 
+                    window.lastFetchedCampaigns = c; 
+                    window.navTo('cold-mail-list');
+                }).catch(() => {
+                    window.navTo('cold-mail-list');
+                });
             } else {
                 const d = await res.json();
                 showToast(d.detail || 'Failed to launch', 'error');

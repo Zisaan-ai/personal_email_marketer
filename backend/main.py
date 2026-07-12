@@ -126,6 +126,9 @@ async def startup_event():
         # Warmup is handled by APScheduler in main.py
         if not scheduler.get_job('check_bounces_job'):
             scheduler.add_job(check_bounces, 'interval', hours=1, id='check_bounces_job')
+            # Trigger immediately on startup
+            import threading
+            threading.Thread(target=check_bounces).start()
 
         # Resume processing campaigns
         processing_campaigns = db.query(database.Campaign).filter(database.Campaign.status == "processing").all()

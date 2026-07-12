@@ -1754,6 +1754,11 @@ def debug_imap(db: Session = Depends(database.get_db)):
         
     return {"debug_logs": out.getvalue().split('\n')}
 
+@app.get("/api/dump-replies")
+def dump_replies(db: Session = Depends(database.get_db)):
+    replies = db.query(database.Reply).all()
+    return [{"id": r.id, "subject": r.subject, "body": r.body} for r in replies]
+
 # ============================================================
 # CATCH-ALL: Serve Frontend (MUST be LAST route)
 # ============================================================

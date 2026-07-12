@@ -47,7 +47,7 @@ def application(environ, start_response):
     # If the path is missing /api, and it's not the root or unsubscribe route, prepend /api
     if (path and 
         not path.startswith('/api') and 
-        not path.startswith('/unsubscribe') and 
+        not path.startswith('/unsubscribe/') and 
         not path.startswith('/assets') and 
         not path.startswith('/pixel') and
         path != '/'):

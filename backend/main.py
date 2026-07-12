@@ -1628,35 +1628,6 @@ def save_webhook(req: WebhookRequest, current_user: database.User = Depends(auth
     db.commit()
     return {"ok": True}
 
-@app.get("/{full_path:path}")
-def serve_frontend(full_path: str, db: Session = Depends(database.get_db)):
-    if full_path.startswith("api/"):
-        raise HTTPException(status_code=404, detail="API route not found")
-    # Read file fresh every time - bypasses any server-side caching
-    index_path = os.path.join(frontend_path, "index.html")
-    try:
-        if not os.path.exists(index_path):
-            raise FileNotFoundError()
-        with open(index_path, "r", encoding="utf-8") as f:
-            content = f.read()
-    except (FileNotFoundError, OSError):
-        return Response(
-            content="<html><body><h2>Frontend Not Found</h2><p>Please check the static files directory.</p></body></html>",
-            media_type="text/html",
-            status_code=404
-        )
-    return Response(
-        content=content,
-        media_type="text/html",
-        headers={
-            "Cache-Control": "no-cache, no-store, must-revalidate, max-age=0",
-            "Pragma": "no-cache",
-            "Expires": "0",
-            "Surrogate-Control": "no-store",
-        }
-    )
-
-
 # ============================================================
 # MEDIA GALLERY ENDPOINTS
 # ============================================================
@@ -1708,3 +1679,34 @@ def delete_media(media_id: str, current_user: database.User = Depends(auth.get_c
     db.delete(media)
     db.commit()
     return {"status": "success"}
+
+# ============================================================
+# CATCH-ALL: Serve Frontend (MUST be LAST route)
+# ============================================================
+@app.get("/{full_path:path}")
+def serve_frontend(full_path: str, db: Session = Depends(database.get_db)):
+    if full_path.startswith("api/"):
+        raise HTTPException(status_code=404, detail="API route not found")
+    # Read file fresh every time - bypasses any server-side caching
+    index_path = os.path.join(frontend_path, "index.html")
+    try:
+        if not os.path.exists(index_path):
+            raise FileNotFoundError()
+        with open(index_path, "r", encoding="utf-8") as f:
+            content = f.read()
+    except (FileNotFoundError, OSError):
+        return Response(
+            content="<html><body><h2>Frontend Not Found</h2><p>Please check the static files directory.</p></body></html>",
+            media_type="text/html",
+            status_code=404
+        )
+    return Response(
+        content=content,
+        media_type="text/html",
+        headers={
+            "Cache-Control": "no-cache, no-store, must-revalidate, max-age=0",
+            "Pragma": "no-cache",
+            "Expires": "0",
+            "Surrogate-Control": "no-store",
+        }
+    )

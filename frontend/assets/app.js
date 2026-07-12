@@ -1500,6 +1500,11 @@ window.editCampaign = function(id) {
             if (eh === 24) eh = 0;
             coldEndEl.value = String(eh).padStart(2,'0') + ':00';
         }
+        
+        const cDelayMinEl = document.getElementById('campaign-delay-min');
+        const cDelayMaxEl = document.getElementById('campaign-delay-max');
+        if (cDelayMinEl) cDelayMinEl.value = c.delay_min !== null ? c.delay_min : 30;
+        if (cDelayMaxEl) cDelayMaxEl.value = c.delay_max !== null ? c.delay_max : 90;
 
         window.switchColdTab('sequences');
         showToast('Cold Mail sequence loaded for editing');
@@ -1628,6 +1633,11 @@ window.editCampaign = function(id) {
             endEl.value = String(eh).padStart(2,'0') + ':00';
 
         }
+
+        const vbDelayMinEl = document.getElementById('vb-delay-min');
+        const vbDelayMaxEl = document.getElementById('vb-delay-max');
+        if (vbDelayMinEl) vbDelayMinEl.value = c.delay_min !== null ? c.delay_min : 30;
+        if (vbDelayMaxEl) vbDelayMaxEl.value = c.delay_max !== null ? c.delay_max : 90;
 
 
 
@@ -2049,15 +2059,15 @@ function loadScheduleTab(campaignId) {
     }
 
     if (endEl) {
-
         let h = c.end_hour !== null && c.end_hour !== undefined ? c.end_hour : 0;
-
         if (h === 24) h = 0;
-
         endEl.value = String(h).padStart(2,'0') + ':00';
-
     }
 
+    const cDelayMinEl = document.getElementById('campaign-delay-min');
+    const cDelayMaxEl = document.getElementById('campaign-delay-max');
+    if (cDelayMinEl) cDelayMinEl.value = c.delay_min !== null ? c.delay_min : 30;
+    if (cDelayMaxEl) cDelayMaxEl.value = c.delay_max !== null ? c.delay_max : 90;
 }
 
 
@@ -3937,28 +3947,22 @@ function setupCampaignBuilder() {
 
 
 
+        const delayMin = parseInt(document.getElementById('vb-delay-min')?.value) || 30;
+        const delayMax = parseInt(document.getElementById('vb-delay-max')?.value) || 90;
+
         const payload = {
-
             subject: subject || 'Draft Campaign',
-
             body: finalHTML,
-
             type: 'newsletter',
-
             leads: leads,
-
             is_draft: true,
-
             campaign_id: window.currentCampaignId || null,
-
             sending_days: JSON.stringify(selectedDays),
-
             start_hour: startHour,
-
             end_hour: endHourVal === 0 ? 24 : endHourVal,
-
-            timezone: document.getElementById('vb-sch-timezone')?.value || 'UTC'
-
+            timezone: document.getElementById('vb-sch-timezone')?.value || 'UTC',
+            delay_min: delayMin,
+            delay_max: delayMax
         };
 
         saveNewsletterDraftBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
@@ -4838,9 +4842,9 @@ function setupABTest() {
 
         try {
 
-        const delayMin = parseInt(document.getElementById('campaign-delay-min')?.value) || 30;
+        const delayMin = parseInt(document.getElementById('vb-delay-min')?.value) || 30;
 
-        const delayMax = parseInt(document.getElementById('campaign-delay-max')?.value) || 90;
+        const delayMax = parseInt(document.getElementById('vb-delay-max')?.value) || 90;
 
         const payload = { 
 

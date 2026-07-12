@@ -856,8 +856,8 @@ def _run_campaign(db, campaign_id):
     success_count_a = 0
     success_count_b = 0
     base_url = os.getenv("BACKEND_URL", "https://xcomic.xyz")
-    delay_min = campaign.delay_min if campaign.delay_min else 45
-    delay_max = campaign.delay_max if campaign.delay_max else 120
+    delay_min = campaign.delay_min if campaign.delay_min is not None else 30
+    delay_max = campaign.delay_max if campaign.delay_max is not None else 90
     
     _last_domain_used = [None]  # Track for multi-domain rotation
 

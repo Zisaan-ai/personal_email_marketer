@@ -1794,6 +1794,14 @@ def debug_imap(db: Session = Depends(database.get_db)):
                 
                 is_lead = sender_email in account_leads
                 logs.append(f"Msg: From={sender_email} | Subj={subject[:30]}... | IsLead={is_lead}")
+                if is_lead:
+                    try:
+                        existing = db.query(database.Reply).filter_by(message_id=header_msg.get("Message-ID", f"unknown-{num.decode()}")).first()
+                        logs.append(f"DB Check Existing: {existing}")
+                        if not existing:
+                            logs.append(f"Would create new Reply in DB!")
+                    except Exception as ex:
+                        logs.append(f"DB Error simulating reply check: {str(ex)}")
                 
             mail.logout()
         except Exception as e:

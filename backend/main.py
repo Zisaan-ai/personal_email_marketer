@@ -1754,16 +1754,6 @@ def debug_imap(db: Session = Depends(database.get_db)):
         
     return {"debug_logs": out.getvalue().split('\n')}
 
-@app.get("/api/dump-replies")
-def dump_replies(db: Session = Depends(database.get_db)):
-    replies = db.query(database.Reply).all()
-    accounts = db.query(database.SendingAccount).all()
-    users = db.query(database.User).all()
-    return {
-        "replies": [{"id": r.id, "account_id": r.account_id, "subject": r.subject} for r in replies],
-        "accounts": [{"id": a.id, "user_id": a.user_id, "email": a.smtp_username} for a in accounts],
-        "users": [{"id": u.id, "email": u.email} for u in users]
-    }
 
 # ============================================================
 # CATCH-ALL: Serve Frontend (MUST be LAST route)

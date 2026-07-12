@@ -27,7 +27,8 @@ $filesToUpload = @(
     @{ Local = "C:\Users\higan\.antigravity-ide\personal_email_marketer\backend\database.py"; RemoteDir = "/home/terapkco/xcomic_backend"; RemoteFile = "database.py" },
     @{ Local = "C:\Users\higan\.antigravity-ide\personal_email_marketer\backend\health_monitor.py"; RemoteDir = "/home/terapkco/xcomic_backend"; RemoteFile = "health_monitor.py" },
     @{ Local = "C:\Users\higan\.antigravity-ide\personal_email_marketer\backend\domain_checker.py"; RemoteDir = "/home/terapkco/xcomic_backend"; RemoteFile = "domain_checker.py" },
-    @{ Local = "C:\Users\higan\.antigravity-ide\personal_email_marketer\backend\bounce_processor.py"; RemoteDir = "/home/terapkco/xcomic_backend"; RemoteFile = "bounce_processor.py" }
+    @{ Local = "C:\Users\higan\.antigravity-ide\personal_email_marketer\backend\bounce_processor.py"; RemoteDir = "/home/terapkco/xcomic_backend"; RemoteFile = "bounce_processor.py" },
+    @{ Local = "C:\Users\higan\.antigravity-ide\personal_email_marketer\backend\ai_core.py"; RemoteDir = "/home/terapkco/xcomic_backend"; RemoteFile = "ai_core.py" }
 )
 
 foreach ($f in $filesToUpload) {

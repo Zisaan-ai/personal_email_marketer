@@ -13,6 +13,1919 @@ window.EmailTemplateCategories = [
 ];
 
 window.EmailTemplates = [
+{
+        "id": "gen_announcement_0",
+        "name": "Dynamic Report 1",
+        "category": "Announcement",
+        "subject": "Your Dynamic Report 1 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Announcement Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#ef4444;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_announcement_1",
+        "name": "Elite Invitation 2",
+        "category": "Announcement",
+        "subject": "Your Elite Invitation 2 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Announcement Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#4f46e5;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_announcement_2",
+        "name": "Starter Update 3",
+        "category": "Announcement",
+        "subject": "Your Starter Update 3 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Announcement Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#ef4444;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#ef4444;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#ef4444;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_announcement_3",
+        "name": "Dynamic Update 4",
+        "category": "Announcement",
+        "subject": "Your Dynamic Update 4 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Announcement Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#f97316;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_announcement_4",
+        "name": "Sleek Summary 5",
+        "category": "Announcement",
+        "subject": "Your Sleek Summary 5 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Announcement Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#3b82f6;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_announcement_5",
+        "name": "Ultimate Offer 6",
+        "category": "Announcement",
+        "subject": "Your Ultimate Offer 6 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Announcement Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#ef4444;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_announcement_6",
+        "name": "Starter Invitation 7",
+        "category": "Announcement",
+        "subject": "Your Starter Invitation 7 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Announcement Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#ef4444;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#ef4444;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#ef4444;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_announcement_7",
+        "name": "Premium Update 8",
+        "category": "Announcement",
+        "subject": "Your Premium Update 8 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Announcement Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#8b5cf6;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_announcement_8",
+        "name": "Modern Alert 9",
+        "category": "Announcement",
+        "subject": "Your Modern Alert 9 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Announcement Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#ef4444;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#ef4444;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#ef4444;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_announcement_9",
+        "name": "Dynamic Boost 10",
+        "category": "Announcement",
+        "subject": "Your Dynamic Boost 10 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Announcement Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#0ea5e9;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_cold_email_0",
+        "name": "Sleek Summary 1",
+        "category": "Cold Email",
+        "subject": "Your Sleek Summary 1 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Cold Email Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#f97316;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_cold_email_1",
+        "name": "Elite Digest 2",
+        "category": "Cold Email",
+        "subject": "Your Elite Digest 2 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Cold Email Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#3b82f6;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_cold_email_2",
+        "name": "Starter Offer 3",
+        "category": "Cold Email",
+        "subject": "Your Starter Offer 3 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Cold Email Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#f97316;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_cold_email_3",
+        "name": "Starter Invitation 4",
+        "category": "Cold Email",
+        "subject": "Your Starter Invitation 4 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Cold Email Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#f59e0b;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_cold_email_4",
+        "name": "Dynamic Boost 5",
+        "category": "Cold Email",
+        "subject": "Your Dynamic Boost 5 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Cold Email Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#f59e0b;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#f59e0b;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#f59e0b;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_cold_email_5",
+        "name": "Modern Report 6",
+        "category": "Cold Email",
+        "subject": "Your Modern Report 6 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Cold Email Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#14b8a6;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_cold_email_6",
+        "name": "Bold Welcome 7",
+        "category": "Cold Email",
+        "subject": "Your Bold Welcome 7 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Cold Email Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#3b82f6;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#3b82f6;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#3b82f6;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_cold_email_7",
+        "name": "Sleek Offer 8",
+        "category": "Cold Email",
+        "subject": "Your Sleek Offer 8 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Cold Email Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#f97316;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#f97316;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#f97316;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_cold_email_8",
+        "name": "Elite Digest 9",
+        "category": "Cold Email",
+        "subject": "Your Elite Digest 9 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Cold Email Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#8b5cf6;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_cold_email_9",
+        "name": "Bold Launch 10",
+        "category": "Cold Email",
+        "subject": "Your Bold Launch 10 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Cold Email Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#0ea5e9;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_e_commerce_0",
+        "name": "Modern Alert 1",
+        "category": "E-Commerce",
+        "subject": "Your Modern Alert 1 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive E-Commerce Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#10b981;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_e_commerce_1",
+        "name": "Premium Welcome 2",
+        "category": "E-Commerce",
+        "subject": "Your Premium Welcome 2 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive E-Commerce Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#f97316;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_e_commerce_2",
+        "name": "Classic Report 3",
+        "category": "E-Commerce",
+        "subject": "Your Classic Report 3 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive E-Commerce Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#10b981;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_e_commerce_3",
+        "name": "Classic Summary 4",
+        "category": "E-Commerce",
+        "subject": "Your Classic Summary 4 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive E-Commerce Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#f97316;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_e_commerce_4",
+        "name": "Ultimate Launch 5",
+        "category": "E-Commerce",
+        "subject": "Your Ultimate Launch 5 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive E-Commerce Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#ec4899;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_e_commerce_5",
+        "name": "Starter Boost 6",
+        "category": "E-Commerce",
+        "subject": "Your Starter Boost 6 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive E-Commerce Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#0ea5e9;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_e_commerce_6",
+        "name": "Starter Summary 7",
+        "category": "E-Commerce",
+        "subject": "Your Starter Summary 7 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive E-Commerce Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#ef4444;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#ef4444;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#ef4444;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_e_commerce_7",
+        "name": "Modern Update 8",
+        "category": "E-Commerce",
+        "subject": "Your Modern Update 8 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive E-Commerce Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#4f46e5;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#4f46e5;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#4f46e5;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_e_commerce_8",
+        "name": "Premium Launch 9",
+        "category": "E-Commerce",
+        "subject": "Your Premium Launch 9 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive E-Commerce Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#ef4444;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_e_commerce_9",
+        "name": "Elite Report 10",
+        "category": "E-Commerce",
+        "subject": "Your Elite Report 10 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive E-Commerce Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#10b981;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_events_0",
+        "name": "Classic Digest 1",
+        "category": "Events",
+        "subject": "Your Classic Digest 1 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Events Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#0ea5e9;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#0ea5e9;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#0ea5e9;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_events_1",
+        "name": "Starter Boost 2",
+        "category": "Events",
+        "subject": "Your Starter Boost 2 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Events Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#10b981;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_events_2",
+        "name": "Sleek Offer 3",
+        "category": "Events",
+        "subject": "Your Sleek Offer 3 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Events Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#3b82f6;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_events_3",
+        "name": "Sleek Alert 4",
+        "category": "Events",
+        "subject": "Your Sleek Alert 4 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Events Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#4f46e5;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_events_4",
+        "name": "Elite Digest 5",
+        "category": "Events",
+        "subject": "Your Elite Digest 5 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Events Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#10b981;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#10b981;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#10b981;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_events_5",
+        "name": "Elite Report 6",
+        "category": "Events",
+        "subject": "Your Elite Report 6 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Events Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#4f46e5;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#4f46e5;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#4f46e5;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_events_6",
+        "name": "Classic Report 7",
+        "category": "Events",
+        "subject": "Your Classic Report 7 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Events Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#3b82f6;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#3b82f6;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#3b82f6;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_events_7",
+        "name": "Sleek Report 8",
+        "category": "Events",
+        "subject": "Your Sleek Report 8 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Events Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#f59e0b;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#f59e0b;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#f59e0b;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_events_8",
+        "name": "Ultimate Report 9",
+        "category": "Events",
+        "subject": "Your Ultimate Report 9 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Events Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#3b82f6;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#3b82f6;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#3b82f6;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_events_9",
+        "name": "Bold Report 10",
+        "category": "Events",
+        "subject": "Your Bold Report 10 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Events Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#4f46e5;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_minimal_0",
+        "name": "Classic Welcome 1",
+        "category": "Minimal",
+        "subject": "Your Classic Welcome 1 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Minimal Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#f59e0b;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_minimal_1",
+        "name": "Pro Invitation 2",
+        "category": "Minimal",
+        "subject": "Your Pro Invitation 2 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Minimal Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#0ea5e9;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#0ea5e9;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#0ea5e9;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_minimal_2",
+        "name": "Pro Digest 3",
+        "category": "Minimal",
+        "subject": "Your Pro Digest 3 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Minimal Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#4f46e5;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_minimal_3",
+        "name": "Premium Alert 4",
+        "category": "Minimal",
+        "subject": "Your Premium Alert 4 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Minimal Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#8b5cf6;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#8b5cf6;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#8b5cf6;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_minimal_4",
+        "name": "Ultimate Boost 5",
+        "category": "Minimal",
+        "subject": "Your Ultimate Boost 5 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Minimal Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#4f46e5;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_minimal_5",
+        "name": "Dynamic Alert 6",
+        "category": "Minimal",
+        "subject": "Your Dynamic Alert 6 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Minimal Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#ef4444;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_minimal_6",
+        "name": "Ultimate Invitation 7",
+        "category": "Minimal",
+        "subject": "Your Ultimate Invitation 7 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Minimal Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#f59e0b;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#f59e0b;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#f59e0b;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_minimal_7",
+        "name": "Modern Digest 8",
+        "category": "Minimal",
+        "subject": "Your Modern Digest 8 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Minimal Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#f59e0b;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_minimal_8",
+        "name": "Sleek Digest 9",
+        "category": "Minimal",
+        "subject": "Your Sleek Digest 9 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Minimal Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#14b8a6;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_minimal_9",
+        "name": "Bold Boost 10",
+        "category": "Minimal",
+        "subject": "Your Bold Boost 10 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Minimal Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#ef4444;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_newsletter_0",
+        "name": "Pro Boost 1",
+        "category": "Newsletter",
+        "subject": "Your Pro Boost 1 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Newsletter Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#ec4899;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_newsletter_1",
+        "name": "Pro Summary 2",
+        "category": "Newsletter",
+        "subject": "Your Pro Summary 2 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Newsletter Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#4f46e5;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#4f46e5;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#4f46e5;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_newsletter_2",
+        "name": "Bold Launch 3",
+        "category": "Newsletter",
+        "subject": "Your Bold Launch 3 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Newsletter Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#ec4899;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#ec4899;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#ec4899;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_newsletter_3",
+        "name": "Modern Update 4",
+        "category": "Newsletter",
+        "subject": "Your Modern Update 4 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Newsletter Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#14b8a6;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_newsletter_4",
+        "name": "Modern Welcome 5",
+        "category": "Newsletter",
+        "subject": "Your Modern Welcome 5 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Newsletter Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#f97316;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_newsletter_5",
+        "name": "Bold Invitation 6",
+        "category": "Newsletter",
+        "subject": "Your Bold Invitation 6 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Newsletter Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#0ea5e9;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_newsletter_6",
+        "name": "Starter Alert 7",
+        "category": "Newsletter",
+        "subject": "Your Starter Alert 7 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Newsletter Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#8b5cf6;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#8b5cf6;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#8b5cf6;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_newsletter_7",
+        "name": "Ultimate Boost 8",
+        "category": "Newsletter",
+        "subject": "Your Ultimate Boost 8 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Newsletter Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#4f46e5;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#4f46e5;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#4f46e5;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_newsletter_8",
+        "name": "Elite Update 9",
+        "category": "Newsletter",
+        "subject": "Your Elite Update 9 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Newsletter Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#f97316;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_newsletter_9",
+        "name": "Elite Invitation 10",
+        "category": "Newsletter",
+        "subject": "Your Elite Invitation 10 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Newsletter Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#10b981;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#10b981;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#10b981;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_onboarding_0",
+        "name": "Elite Alert 1",
+        "category": "Onboarding",
+        "subject": "Your Elite Alert 1 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Onboarding Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#10b981;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_onboarding_1",
+        "name": "Ultimate Offer 2",
+        "category": "Onboarding",
+        "subject": "Your Ultimate Offer 2 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Onboarding Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#f59e0b;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#f59e0b;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#f59e0b;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_onboarding_2",
+        "name": "Classic Welcome 3",
+        "category": "Onboarding",
+        "subject": "Your Classic Welcome 3 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Onboarding Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#3b82f6;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_onboarding_3",
+        "name": "Pro Report 4",
+        "category": "Onboarding",
+        "subject": "Your Pro Report 4 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Onboarding Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#8b5cf6;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_onboarding_4",
+        "name": "Sleek Digest 5",
+        "category": "Onboarding",
+        "subject": "Your Sleek Digest 5 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Onboarding Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#ec4899;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_onboarding_5",
+        "name": "Sleek Report 6",
+        "category": "Onboarding",
+        "subject": "Your Sleek Report 6 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Onboarding Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#8b5cf6;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#8b5cf6;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#8b5cf6;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_onboarding_6",
+        "name": "Ultimate Digest 7",
+        "category": "Onboarding",
+        "subject": "Your Ultimate Digest 7 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Onboarding Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#ec4899;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_onboarding_7",
+        "name": "Modern Summary 8",
+        "category": "Onboarding",
+        "subject": "Your Modern Summary 8 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Onboarding Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#0ea5e9;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#0ea5e9;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#0ea5e9;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_onboarding_8",
+        "name": "Modern Digest 9",
+        "category": "Onboarding",
+        "subject": "Your Modern Digest 9 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Onboarding Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#f97316;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#f97316;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#f97316;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_onboarding_9",
+        "name": "Bold Digest 10",
+        "category": "Onboarding",
+        "subject": "Your Bold Digest 10 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Onboarding Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#4f46e5;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_retention_0",
+        "name": "Starter Report 1",
+        "category": "Retention",
+        "subject": "Your Starter Report 1 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Retention Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#ec4899;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#ec4899;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#ec4899;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_retention_1",
+        "name": "Bold Boost 2",
+        "category": "Retention",
+        "subject": "Your Bold Boost 2 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Retention Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#0ea5e9;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_retention_2",
+        "name": "Bold Update 3",
+        "category": "Retention",
+        "subject": "Your Bold Update 3 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Retention Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#f59e0b;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#f59e0b;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#f59e0b;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_retention_3",
+        "name": "Ultimate Boost 4",
+        "category": "Retention",
+        "subject": "Your Ultimate Boost 4 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Retention Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#10b981;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#10b981;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#10b981;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_retention_4",
+        "name": "Sleek Invitation 5",
+        "category": "Retention",
+        "subject": "Your Sleek Invitation 5 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Retention Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#ef4444;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#ef4444;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#ef4444;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_retention_5",
+        "name": "Classic Alert 6",
+        "category": "Retention",
+        "subject": "Your Classic Alert 6 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Retention Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#f97316;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_retention_6",
+        "name": "Modern Offer 7",
+        "category": "Retention",
+        "subject": "Your Modern Offer 7 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Retention Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#f59e0b;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_retention_7",
+        "name": "Classic Digest 8",
+        "category": "Retention",
+        "subject": "Your Classic Digest 8 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Retention Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#0ea5e9;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#0ea5e9;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#0ea5e9;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_retention_8",
+        "name": "Elite Report 9",
+        "category": "Retention",
+        "subject": "Your Elite Report 9 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Retention Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#f97316;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#f97316;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#f97316;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_retention_9",
+        "name": "Pro Welcome 10",
+        "category": "Retention",
+        "subject": "Your Pro Welcome 10 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Retention Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#f97316;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_saas_0",
+        "name": "Classic Alert 1",
+        "category": "SaaS",
+        "subject": "Your Classic Alert 1 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive SaaS Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#14b8a6;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_saas_1",
+        "name": "Pro Alert 2",
+        "category": "SaaS",
+        "subject": "Your Pro Alert 2 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive SaaS Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#f97316;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_saas_2",
+        "name": "Pro Boost 3",
+        "category": "SaaS",
+        "subject": "Your Pro Boost 3 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive SaaS Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#ef4444;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_saas_3",
+        "name": "Sleek Welcome 4",
+        "category": "SaaS",
+        "subject": "Your Sleek Welcome 4 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive SaaS Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#0ea5e9;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_saas_4",
+        "name": "Modern Digest 5",
+        "category": "SaaS",
+        "subject": "Your Modern Digest 5 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive SaaS Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#ef4444;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#ef4444;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#ef4444;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_saas_5",
+        "name": "Premium Summary 6",
+        "category": "SaaS",
+        "subject": "Your Premium Summary 6 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive SaaS Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#f97316;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#f97316;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#f97316;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_saas_6",
+        "name": "Starter Welcome 7",
+        "category": "SaaS",
+        "subject": "Your Starter Welcome 7 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive SaaS Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#14b8a6;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_saas_7",
+        "name": "Ultimate Offer 8",
+        "category": "SaaS",
+        "subject": "Your Ultimate Offer 8 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive SaaS Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#3b82f6;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_saas_8",
+        "name": "Ultimate Summary 9",
+        "category": "SaaS",
+        "subject": "Your Ultimate Summary 9 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive SaaS Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#ef4444;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_saas_9",
+        "name": "Starter Invitation 10",
+        "category": "SaaS",
+        "subject": "Your Starter Invitation 10 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive SaaS Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#f97316;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_transactional_0",
+        "name": "Elite Alert 1",
+        "category": "Transactional",
+        "subject": "Your Elite Alert 1 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Transactional Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#f59e0b;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#f59e0b;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#f59e0b;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_transactional_1",
+        "name": "Premium Report 2",
+        "category": "Transactional",
+        "subject": "Your Premium Report 2 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Transactional Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#4f46e5;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_transactional_2",
+        "name": "Elite Summary 3",
+        "category": "Transactional",
+        "subject": "Your Elite Summary 3 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Transactional Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#0ea5e9;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_transactional_3",
+        "name": "Modern Offer 4",
+        "category": "Transactional",
+        "subject": "Your Modern Offer 4 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Transactional Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#f97316;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_transactional_4",
+        "name": "Pro Report 5",
+        "category": "Transactional",
+        "subject": "Your Pro Report 5 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Transactional Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#ec4899;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_transactional_5",
+        "name": "Bold Report 6",
+        "category": "Transactional",
+        "subject": "Your Bold Report 6 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Transactional Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#f59e0b;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#f59e0b;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#f59e0b;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_transactional_6",
+        "name": "Sleek Offer 7",
+        "category": "Transactional",
+        "subject": "Your Sleek Offer 7 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Transactional Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#10b981;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#10b981;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#10b981;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_transactional_7",
+        "name": "Sleek Welcome 8",
+        "category": "Transactional",
+        "subject": "Your Sleek Welcome 8 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Transactional Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "columns2",
+                "content": "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background:#fff;\"><tr><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#0ea5e9;\">Feature 1</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Amazing new capability.</p></div></td><td width=\"50%\" valign=\"top\" style=\"padding:20px;font-family:Helvetica,Arial,sans-serif;\"><div style=\"background:#f8fafc;padding:20px;border-radius:8px;text-align:center;\"><h3 style=\"margin-top:0;color:#0ea5e9;\">Feature 2</h3><p style=\"font-size:14px;color:#666;margin-bottom:0;\">Enhanced performance.</p></div></td></tr></table>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#0ea5e9;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_transactional_8",
+        "name": "Pro Invitation 9",
+        "category": "Transactional",
+        "subject": "Your Pro Invitation 9 inside!",
+        "blocks": [
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Transactional Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#14b8a6;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+    {
+        "id": "gen_transactional_9",
+        "name": "Dynamic Launch 10",
+        "category": "Transactional",
+        "subject": "Your Dynamic Launch 10 inside!",
+        "blocks": [
+            {
+                "type": "image",
+                "content": "<img src=\"https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&w=600&h=300&q=80\" style=\"max-width:100%;height:auto;display:block;border-radius:8px 8px 0 0;\">"
+            },
+            {
+                "type": "text",
+                "content": "<div style=\"background:#fff;padding:32px 28px;text-align:center;\"><h1 style=\"font-family:Georgia,serif;font-size:26px;color:#1a1a1a;margin:0 0 12px;\">Exclusive Transactional Insight</h1><p style=\"font-family:Helvetica,Arial,sans-serif;font-size:15px;color:#666;margin:0;line-height:1.6;\">Hello {{first_name}}, we are excited to share our latest updates with you. Discover what is new and how it can help you grow.</p></div>"
+            },
+            {
+                "type": "button",
+                "content": "<div style=\"text-align:center;padding:8px 28px 32px;background:#fff;\"><a href=\"#\" style=\"background:#4f46e5;color:#fff;padding:14px 40px;text-decoration:none;display:inline-block;border-radius:6px;font-weight:700;font-family:Helvetica,Arial,sans-serif;font-size:15px;\">Read More</a></div>"
+            }
+        ]
+    },
+
 
 // =====================================================
 // CATEGORY: E-COMMERCE

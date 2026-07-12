@@ -1,0 +1,3 @@
+Line 1550: <input type="url" id="webhook-url" placeholder="https://your-server.com/webhook" style="font-family:
+Line 1692: <p style="color:var(--text-muted); font-size:15px; margin-bottom:12px; line-height:1.6;"><strong>Eng
+Line 1693: <p style="color:var(--text-muted); font-size:15px; margin-bottom:0; line-height:1.6;"><strong>Bangla

@@ -101,7 +101,7 @@ def inject_click_tracking(body_html: str, base_tracking_url: str) -> str:
 
 def inject_unsubscribe(body_html: str, recipient: str) -> str:
     if "unsubscribe" not in body_html.lower():
-        base_url = os.getenv("BACKEND_URL", "http://localhost:8000")
+        base_url = os.getenv("BACKEND_URL", "https://xcomic.xyz")
         token = base64.b64encode(recipient.encode('utf-8')).decode('utf-8')
         unsub_link = f"{base_url}/unsubscribe/{token}"
         unsub_html = f'<br><br><hr><p style="font-size:12px; color:#666;">If you no longer wish to receive these emails, you can <a href="{unsub_link}">unsubscribe here</a>.</p>'
@@ -114,7 +114,7 @@ def inject_unsubscribe(body_html: str, recipient: str) -> str:
 
 def _get_unsubscribe_url(recipient: str) -> str:
     """Generate the HTTPS unsubscribe URL for a recipient."""
-    base_url = os.getenv("BACKEND_URL", "http://localhost:8000")
+    base_url = os.getenv("BACKEND_URL", "https://xcomic.xyz")
     token = base64.b64encode(recipient.encode('utf-8')).decode('utf-8')
     return f"{base_url}/unsubscribe/{token}"
 
@@ -195,19 +195,30 @@ def generate_clean_plaintext(html: str) -> str:
 # ============================================================
 # EMAIL VALIDATION (MX CHECK)
 # ============================================================
+MX_CACHE = {}
+
 def validate_email_address(email: str) -> dict:
     """Validate email format and MX record before sending."""
     pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     if not re.match(pattern, email):
         return {'valid': False, 'reason': 'Invalid format'}
     
-    domain = email.split('@')[1]
+    domain = email.split('@')[1].lower()
+    
+    if domain in MX_CACHE:
+        if not MX_CACHE[domain]:
+            return {'valid': False, 'reason': 'No MX record - domain cannot receive email'}
+        return {'valid': True, 'reason': 'OK'}
+        
     try:
         # Check MX record to ensure domain can receive email
         records = dns.resolver.resolve(domain, 'MX')
         if not records:
+            MX_CACHE[domain] = False
             return {'valid': False, 'reason': 'No MX record found'}
+        MX_CACHE[domain] = True
     except Exception:
+        MX_CACHE[domain] = False
         return {'valid': False, 'reason': 'No MX record - domain cannot receive email'}
     
     return {'valid': True, 'reason': 'OK'}

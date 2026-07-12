@@ -200,9 +200,10 @@ def suggest_daily_limit(account) -> int:
     - Good health (85-95): 300/day
     - Excellent (95-100): 500/day
     """
-    # If warmup is enabled, use warmup limit
-    if account.warmup_enabled:
-        return account.warmup_daily_limit or 5
+    # NOTE: Warmup and Campaign are INDEPENDENT modules.
+    # Warmup has its own limit (warmup_daily_limit) tracked by warmup_sent_today.
+    # Campaign has its own limit (daily_limit) tracked by sent_today.
+    # DO NOT reduce campaign limit based on warmup status.
 
     # Check account age
     if account.created_at:
@@ -210,29 +211,37 @@ def suggest_daily_limit(account) -> int:
     else:
         age_days = 999  # Unknown age, assume old
 
-    # Age-based limits (for new accounts)
+    user_limit = account.daily_limit or 5000
+    
+    # If user explicitly turned off smart limit, just use their limit (with a minor check for critical health)
+    if not getattr(account, 'smart_limit_enabled', False):
+        if account.health_score and account.health_score < 50:
+            return min(user_limit, 20)
+        return user_limit
+    
+    # Age-based limits (for new accounts) when Smart Limit is ON
     if age_days < 3:
-        return 5
+        return min(user_limit, 5)
     elif age_days < 7:
-        return 20
+        return min(user_limit, 20)
     elif age_days < 14:
-        return 50
+        return min(user_limit, 50)
     elif age_days < 30:
-        return 100
+        return min(user_limit, 100)
 
-    # Health-based limits (for established accounts)
+    # Health-based limits (for established accounts) when Smart Limit is ON
     health = account.health_score or 100
 
     if health < 50:
-        return 20  # Critical - minimal sending
+        return min(user_limit, 20)  # Critical - minimal sending
     elif health < 70:
-        return 50
+        return min(user_limit, 50)
     elif health < 85:
-        return 150
+        return min(user_limit, 150)
     elif health < 95:
-        return 300
+        return min(user_limit, 300)
     else:
-        return 500
+        return user_limit
 
 
 # ============================================================

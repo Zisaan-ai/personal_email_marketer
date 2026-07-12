@@ -436,34 +436,34 @@
             <h2>MailClone</h2>
         </div>
         <nav>
-            <a class="nav-item active" data-target="dashboard">
+            <a class="nav-item active" data-target="dashboard" onclick="window.navTo('dashboard')">
                 <i class="fa-solid fa-chart-line"></i><span>Dashboard</span>
             </a>
-            <a class="nav-item" data-target="campaigns-list">
+            <a class="nav-item" data-target="campaigns-list" onclick="window.navTo('campaigns-list')">
                 <i class="fa-solid fa-wand-magic-sparkles"></i><span>Visual Builder</span>
             </a>
-            <a class="nav-item" data-target="cold-mail-list">
+            <a class="nav-item" data-target="cold-mail-list" onclick="window.navTo('cold-mail-list')">
                 <i class="fa-solid fa-snowflake"></i><span>Cold Mail</span>
             </a>
-            <a class="nav-item" data-target="sending-accounts-view">
+            <a class="nav-item" data-target="sending-accounts-view" onclick="window.navTo('sending-accounts-view')">
                 <i class="fa-solid fa-at"></i><span>Sending Accounts</span>
             </a>
-            <a class="nav-item" data-target="unsubscribes-view">
+            <a class="nav-item" data-target="unsubscribes-view" onclick="window.navTo('unsubscribes-view')">
                 <i class="fa-solid fa-user-xmark"></i><span>Unsubscribes</span>
             </a>
-            <a class="nav-item" data-target="audience-health">
+            <a class="nav-item" data-target="audience-health" onclick="window.navTo('audience-health')">
                 <i class="fa-solid fa-heart-pulse"></i><span>Audience Health</span>
             </a>
-            <a class="nav-item" data-target="replies-view">
+            <a class="nav-item" data-target="replies-view" onclick="window.navTo('replies-view')">
                 <i class="fa-solid fa-inbox"></i><span>AI Replies</span>
             </a>
-            <a class="nav-item" data-target="settings">
+            <a class="nav-item" data-target="settings" onclick="window.navTo('settings')">
                 <i class="fa-solid fa-gear"></i><span>Settings</span>
             </a>
-            <a class="nav-item" data-target="admin-view" id="nav-admin" style="display:none;">
+            <a class="nav-item" data-target="admin-view" id="nav-admin" style="display:none;" onclick="window.navTo('admin-view')">
                 <i class="fa-solid fa-shield-halved"></i><span>Admin</span>
             </a>
-            <a class="nav-item" data-target="guide-view">
+            <a class="nav-item" data-target="guide-view" onclick="window.navTo('guide-view')">
                 <i class="fa-solid fa-circle-question"></i><span>How to Use</span>
             </a>
             <div style="border-top:1px solid var(--border); margin:12px 0;"></div>
@@ -751,12 +751,64 @@
 
             <!-- VISUAL BUILDER TABS -->
             <div class="clean-tabs-bar" style="margin-bottom:32px;border-bottom:2px solid var(--border);padding-bottom:0;display:flex;gap:32px;">
+                <div class="vb-tab" data-vbtab="analytics" style="padding-bottom:12px;font-weight:600;color:var(--text-muted);cursor:pointer;">Analytics</div>
                 <div class="vb-tab active" data-vbtab="audience" style="padding-bottom:12px;font-weight:700;color:var(--p);cursor:pointer;border-bottom:3px solid var(--p);">1. Select Audience</div>
                 <div class="vb-tab" data-vbtab="design" style="padding-bottom:12px;font-weight:600;color:var(--text-muted);cursor:pointer;">2. Design Editor</div>
                 <div class="vb-tab" data-vbtab="send" style="padding-bottom:12px;font-weight:600;color:var(--text-muted);cursor:pointer;">3. Send / Schedule</div>
             </div>
 
             <div id="tab-builder">
+
+            <!-- ANALYTICS TAB -->
+            <div id="vb-tab-analytics" class="vb-tab-content" style="display:none;">
+                <div style="display:flex;align-items:center;margin-bottom:32px;background:#f8fafc;padding:16px 24px;border-radius:12px;border:1px solid var(--border);">
+                    <span style="font-size:14px;color:var(--text-muted);font-weight:600;margin-right:12px;">Campaign Status:</span>
+                    <span class="status-pill" id="vb-analytics-status" style="font-size:13px;padding:4px 12px;">Loading</span>
+                    <div style="flex:1;"></div>
+                    <div id="vb-analytics-actions" style="display:flex;gap:12px;"></div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:24px;margin-bottom:32px;">
+                    <div class="stat-card" style="background:#fff;padding:24px;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.03);border:1px solid rgba(0,0,0,0.04);">
+                        <div style="font-size:14px;color:var(--text-muted);font-weight:600;margin-bottom:8px;">Leads Contacted</div>
+                        <div style="font-size:32px;font-weight:800;color:var(--text);" id="vb-analytics-seq-started">0</div>
+                    </div>
+                    <div class="stat-card" style="background:#fff;padding:24px;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.03);border:1px solid rgba(0,0,0,0.04);">
+                        <div style="font-size:14px;color:var(--text-muted);font-weight:600;margin-bottom:8px;">Open Rate</div>
+                        <div style="display:flex;align-items:baseline;gap:12px;">
+                            <div style="font-size:32px;font-weight:800;color:var(--text);" id="vb-analytics-open-rate">0%</div>
+                            <div style="font-size:14px;color:var(--text-muted);font-weight:600;" id="vb-analytics-open-count">(0 opens)</div>
+                        </div>
+                    </div>
+                    <div class="stat-card" style="background:#fff;padding:24px;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.03);border:1px solid rgba(0,0,0,0.04);">
+                        <div style="font-size:14px;color:var(--text-muted);font-weight:600;margin-bottom:8px;">Click Rate</div>
+                        <div style="display:flex;align-items:baseline;gap:12px;">
+                            <div style="font-size:32px;font-weight:800;color:var(--text);" id="vb-analytics-click-rate">0%</div>
+                            <div style="font-size:14px;color:var(--text-muted);font-weight:600;" id="vb-analytics-click-count">(0 clicks)</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="glass" style="padding:24px;border-radius:16px;">
+                    <h4 style="font-size:16px;font-weight:700;margin-bottom:16px;">Campaign Leads Analytics</h4>
+                    <div style="overflow-x:auto;">
+                        <table class="table" style="margin:0;">
+                            <thead>
+                                <tr>
+                                    <th style="padding:12px 16px; font-weight:600; color:var(--text-muted); font-size:12px;">Email</th>
+                                    <th style="padding:12px 16px; font-weight:600; color:var(--text-muted); font-size:12px;">Name</th>
+                                    <th style="padding:12px 16px; font-weight:600; color:var(--text-muted); font-size:12px;">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="vb-analytics-leads-tbody">
+                                <!-- Populated dynamically by JS -->
+                                <tr><td colspan="3" style="text-align:center;padding:24px;color:var(--text-muted);">Loading leads...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
                 <!-- AUDIENCE TAB -->
                 <div id="vb-tab-audience" class="vb-tab-content" style="display:block;">
                     <div class="glass" style="max-width:800px;">
@@ -783,9 +835,21 @@
                     <div class="builder-top-bar" style="display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-bottom:1px solid var(--border);background:var(--surface);">
                         <div class="builder-top-left" style="flex:1;">
                             <input type="text" id="campaign-subject" placeholder="Campaign Subject Line..." style="border:1px solid transparent;background:transparent;font-size:18px;font-weight:700;padding:8px;width:100%;max-width:500px;outline:none;border-radius:8px;transition:all 0.2s;" onfocus="this.style.background='#f1f5f9';this.style.borderColor='var(--border)'" onblur="this.style.background='transparent';this.style.borderColor='transparent'">
-                    </div>
+                            
+                            <!-- Visual Builder Helper -->
+                            <div style="margin-left:8px; display:inline-flex; align-items:center; gap:8px;">
+                                <span style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;"><i class="fa-solid fa-copy"></i> Helpers:</span>
+                                <button type="button" onclick="navigator.clipboard.writeText('{{firstName}}'); showToast('Copied {{firstName}}')" style="background:#dbeafe; color:#1d4ed8; border:1px solid #bfdbfe; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:600; cursor:pointer; outline:none;">{{firstName}}</button>
+                                <button type="button" onclick="navigator.clipboard.writeText('{{company}}'); showToast('Copied {{company}}')" style="background:#dbeafe; color:#1d4ed8; border:1px solid #bfdbfe; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:600; cursor:pointer; outline:none;">{{company}}</button>
+                                <button type="button" onclick="navigator.clipboard.writeText('{Hello|Hi}'); showToast('Copied {Hello|Hi}')" style="background:#fce7f3; color:#be185d; border:1px solid #fbcfe8; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:600; cursor:pointer; outline:none;">{Hello|Hi}</button>
+                            </div>
+                        </div>
                     <div class="builder-top-right" style="display:flex;gap:12px;">
-                        <button class="btn" style="background:#fff;"><i class="fa-solid fa-paper-plane"></i> Send Test</button>
+                        <button class="btn" style="background:#fff;" onclick="window.undo()"><i class="fa-solid fa-rotate-left"></i> Undo</button>
+                        <button class="btn" style="background:#fff;" onclick="window.redo()"><i class="fa-solid fa-rotate-right"></i> Redo</button>
+                        <button class="btn" style="background:#fff;" onclick="window.saveAsTemplate()"><i class="fa-solid fa-download"></i> Save Template</button>
+                        <button class="btn" style="background:#fff;" onclick="document.getElementById('save-newsletter-draft-btn').click()"><i class="fa-solid fa-save"></i> Save Draft</button>
+                        <button class="btn primary" onclick="window.switchVbTab('send')">Next: Review <i class="fa-solid fa-arrow-right"></i></button>
                     </div>
                 </div>
 
@@ -824,6 +888,31 @@
                                     </div>
                                     <div class="draggable-block mc-block" data-type="divider" draggable="true" ondragstart="window.drag(event)" style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:24px 12px;text-align:center;cursor:grab;transition:all 0.2s;">
                                         <i class="fa-solid fa-minus" style="font-size:24px;color:#64748b;margin-bottom:8px;display:block;"></i> <span style="font-size:13px;font-weight:600;color:var(--text-muted);">Divider</span>
+                                    </div>
+
+                                    <div class="draggable-block mc-block" data-type="socials" draggable="true" ondragstart="window.drag(event)" style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:24px 12px;text-align:center;cursor:grab;transition:all 0.2s;">
+                                        <i class="fa-solid fa-share-nodes" style="font-size:24px;color:#64748b;margin-bottom:8px;display:block;"></i> <span style="font-size:13px;font-weight:600;color:var(--text-muted);">Socials</span>
+                                    </div>
+                                    <div class="draggable-block mc-block" data-type="columns2" draggable="true" ondragstart="window.drag(event)" style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:24px 12px;text-align:center;cursor:grab;transition:all 0.2s;">
+                                        <i class="fa-solid fa-table-columns" style="font-size:24px;color:#64748b;margin-bottom:8px;display:block;"></i> <span style="font-size:13px;font-weight:600;color:var(--text-muted);">2 Columns</span>
+                                    </div>
+                                    <div class="draggable-block mc-block" data-type="video" draggable="true" ondragstart="window.drag(event)" style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:24px 12px;text-align:center;cursor:grab;transition:all 0.2s;">
+                                        <i class="fa-solid fa-circle-play" style="font-size:24px;color:#64748b;margin-bottom:8px;display:block;"></i> <span style="font-size:13px;font-weight:600;color:var(--text-muted);">Video</span>
+                                    </div>
+                                    <div class="draggable-block mc-block" data-type="custom_html" draggable="true" ondragstart="window.drag(event)" style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:24px 12px;text-align:center;cursor:grab;transition:all 0.2s;">
+                                        <i class="fa-solid fa-code" style="font-size:24px;color:#64748b;margin-bottom:8px;display:block;"></i> <span style="font-size:13px;font-weight:600;color:var(--text-muted);">Custom HTML</span>
+                                    </div>
+                                    <div class="draggable-block mc-block" data-type="header" draggable="true" ondragstart="window.drag(event)" style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:24px 12px;text-align:center;cursor:grab;transition:all 0.2s;">
+                                        <i class="fa-solid fa-heading" style="font-size:24px;color:#64748b;margin-bottom:8px;display:block;"></i> <span style="font-size:13px;font-weight:600;color:var(--text-muted);">Logo / Header</span>
+                                    </div>
+                                    <div class="draggable-block mc-block" data-type="footer" draggable="true" ondragstart="window.drag(event)" style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:24px 12px;text-align:center;cursor:grab;transition:all 0.2s;">
+                                        <i class="fa-solid fa-shoe-prints" style="font-size:24px;color:#64748b;margin-bottom:8px;display:block;"></i> <span style="font-size:13px;font-weight:600;color:var(--text-muted);">Footer</span>
+                                    </div>
+                                    <div class="draggable-block mc-block" data-type="product" draggable="true" ondragstart="window.drag(event)" style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:24px 12px;text-align:center;cursor:grab;transition:all 0.2s;">
+                                        <i class="fa-solid fa-box-open" style="font-size:24px;color:#64748b;margin-bottom:8px;display:block;"></i> <span style="font-size:13px;font-weight:600;color:var(--text-muted);">Product</span>
+                                    </div>
+                                    <div class="draggable-block mc-block" data-type="image_group" draggable="true" ondragstart="window.drag(event)" style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:24px 12px;text-align:center;cursor:grab;transition:all 0.2s;">
+                                        <i class="fa-solid fa-images" style="font-size:24px;color:#64748b;margin-bottom:8px;display:block;"></i> <span style="font-size:13px;font-weight:600;color:var(--text-muted);">Image Group</span>
                                     </div>
                                 </div>
                             </div>
@@ -877,9 +966,51 @@
                     <div class="glass" style="max-width:800px;">
                         <h3 style="font-size:18px;font-weight:700;margin-bottom:24px;">Review & Launch</h3>
                         <p style="color:var(--text-muted);margin-bottom:32px;">Make sure your subject line is set and you have selected an audience.</p>
+                        
+                        <div style="background:var(--surface-1); border:1px solid var(--border); border-radius:12px; padding:24px; margin-bottom:24px;">
+                            <h4 style="margin-top:0; margin-bottom:16px; font-size:15px;"><i class="fa-solid fa-clock" style="margin-right:8px; color:var(--text-muted);"></i>Sending Schedule</h4>
+                            <div class="form-group">
+                                <label>Timezone</label>
+                                <select id="vb-sch-timezone"></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Sending Days</label>
+                                <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                                    <label style="display:flex;align-items:center;gap:6px;font-weight:600;"><input type="checkbox" id="vb-sch-day-mon" checked> Mon</label>
+                                    <label style="display:flex;align-items:center;gap:6px;font-weight:600;"><input type="checkbox" id="vb-sch-day-tue" checked> Tue</label>
+                                    <label style="display:flex;align-items:center;gap:6px;font-weight:600;"><input type="checkbox" id="vb-sch-day-wed" checked> Wed</label>
+                                    <label style="display:flex;align-items:center;gap:6px;font-weight:600;"><input type="checkbox" id="vb-sch-day-thu" checked> Thu</label>
+                                    <label style="display:flex;align-items:center;gap:6px;font-weight:600;"><input type="checkbox" id="vb-sch-day-fri" checked> Fri</label>
+                                    <label style="display:flex;align-items:center;gap:6px;font-weight:600;"><input type="checkbox" id="vb-sch-day-sat"> Sat</label>
+                                    <label style="display:flex;align-items:center;gap:6px;font-weight:600;"><input type="checkbox" id="vb-sch-day-sun"> Sun</label>
+                                </div>
+                            </div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label>Start Time</label>
+                                    <input type="time" id="vb-sch-start-time" value="00:00">
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label>End Time</label>
+                                    <input type="time" id="vb-sch-end-time" value="00:00">
+                                </div>
+                            </div>
+                            
+                            <p style="font-size:13px;color:var(--text-muted);margin-top:16px;">
+                                <i class="fa-solid fa-bolt" style="color:var(--primary);margin-right:4px;"></i> Campaign will only send emails on selected days and within the specified time window.
+                                <br>If no time is set (Start = 00:00, End = 00:00), emails will send 24/7.
+                            </p>
+                            <div style="display:flex;justify-content:flex-end;margin-top:16px;">
+                                <button class="btn primary" id="vb-sch-save-btn" style="padding:10px 24px;" onclick="saveNewsletterSchedule()">
+                                    <i class="fa-solid fa-floppy-disk" style="margin-right:6px;"></i>Save Schedule
+                                </button>
+                            </div>
+                        </div>
+
                         <div style="display:flex;gap:24px;">
-                            <button id="send-btn" class="btn primary" style="padding:16px 32px;font-size:15px;flex:1;"><i class="fa-solid fa-rocket"></i> Send Now</button>
-                            <button class="btn" style="padding:16px 32px;font-size:15px;flex:1;background:var(--surface-1);border:1px solid var(--border);"><i class="fa-solid fa-calendar-days"></i> Schedule for Later</button>
+                            <button id="save-newsletter-draft-btn" class="btn" style="padding:16px 32px;font-size:15px;flex:1;background:var(--surface-1);border:1px solid var(--border);"><i class="fa-solid fa-save"></i> Save Draft</button>
+                            <button id="send-btn" class="btn primary" style="padding:16px 32px;font-size:15px;flex:1;"><i class="fa-solid fa-rocket"></i> Launch Newsletter</button>
+                            <div id="vb-status-actions" style="display:none; flex:1; gap:12px;"></div>
                         </div>
                     </div>
                 </div>
@@ -945,6 +1076,7 @@
                     <div style="flex:1;"></div>
                     
                     <div style="display:flex;gap:12px;">
+                        <div id="cold-analytics-actions" style="display:flex;gap:12px;"></div>
                         <button class="btn" style="padding:8px 16px;font-size:13px;background:#fff;"><i class="fa-solid fa-share-nodes"></i> Share Report</button>
                     </div>
                 </div>
@@ -1036,6 +1168,7 @@
                     
                     <button id="inst-save-draft-btn" class="btn" style="padding:12px 24px;background:#e2e8f0;color:#1e293b;border:1px solid #cbd5e1;font-size:15px;border-radius:8px;font-weight:600;margin-right:8px;"><i class="fa-solid fa-save" style="margin-right:6px;"></i>Save Draft</button>
                     <button id="inst-send-seq-btn" class="btn" style="padding:12px 24px;background:#4f46e5;color:#ffffff;border:none;font-size:15px;border-radius:8px;font-weight:600;box-shadow:0 4px 12px rgba(99,102,241,0.3);"><i class="fa-solid fa-rocket" style="margin-right:6px;"></i>Launch Campaign</button>
+                    <div id="cold-status-actions" style="display:none; gap:8px;"></div>
                 </div>
                 <div id="inst-status" class="alert" style="margin-bottom:20px;display:none;"></div>
                 <div id="tab-instantly">
@@ -1100,6 +1233,17 @@
                                     <button onclick="window.generateEmail('inst-body')" style="padding:6px 16px; background:linear-gradient(to right, #3b82f6, #8b5cf6); color:white; border:none; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; display:flex; align-items:center; gap:6px; box-shadow:0 2px 5px rgba(59,130,246,0.3);">🪄 Write with AI</button>
                                 </div>
                                 <textarea id="inst-body" style="flex:1;min-height:200px;font-family:sans-serif;font-size:14px;resize:none;padding:16px;border:1px solid var(--border);border-radius:12px;outline:none;" placeholder="Hey {{firstName}}, ..."></textarea>
+                                <div style="margin-top:12px; padding:12px; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px;">
+                                    <div style="font-size:11px; font-weight:700; color:var(--text-muted); margin-bottom:8px; text-transform:uppercase;"><i class="fa-solid fa-copy"></i> Click to copy Tags & Spintax</div>
+                                    <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                                        <button type="button" onclick="navigator.clipboard.writeText('{{firstName}}'); showToast('Copied {{firstName}}')" style="background:#dbeafe; color:#1d4ed8; border:1px solid #bfdbfe; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer; outline:none;" title="Inserts recipient's first name">{{firstName}}</button>
+                                        <button type="button" onclick="navigator.clipboard.writeText('{{lastName}}'); showToast('Copied {{lastName}}')" style="background:#dbeafe; color:#1d4ed8; border:1px solid #bfdbfe; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer; outline:none;" title="Inserts recipient's last name">{{lastName}}</button>
+                                        <button type="button" onclick="navigator.clipboard.writeText('{{company}}'); showToast('Copied {{company}}')" style="background:#dbeafe; color:#1d4ed8; border:1px solid #bfdbfe; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer; outline:none;" title="Inserts recipient's company">{{company}}</button>
+                                        <button type="button" onclick="navigator.clipboard.writeText('{Hello|Hi|Hey}'); showToast('Copied {Hello|Hi|Hey}')" style="background:#fce7f3; color:#be185d; border:1px solid #fbcfe8; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer; outline:none;" title="Randomizes greetings">{Hello|Hi|Hey}</button>
+                                        <button type="button" onclick="navigator.clipboard.writeText('{Thanks|Best|Cheers}'); showToast('Copied {Thanks|Best|Cheers}')" style="background:#fce7f3; color:#be185d; border:1px solid #fbcfe8; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer; outline:none;" title="Randomizes sign-offs">{Thanks|Best|Cheers}</button>
+                                        <button type="button" onclick="navigator.clipboard.writeText('{chat|talk|speak}'); showToast('Copied {chat|talk|speak}')" style="background:#fce7f3; color:#be185d; border:1px solid #fbcfe8; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer; outline:none;" title="Randomizes CTA verbs">{chat|talk|speak}</button>
+                                    </div>
+                                </div>
                             </div>
 
                             <div id="inst-ab-section" style="display:none;margin-top:32px;padding-top:32px;border-top:1px dashed var(--border);">
@@ -1116,7 +1260,17 @@
                                         <button onclick="window.generateEmail('inst-body-b')" style="padding:6px 16px; background:linear-gradient(to right, #3b82f6, #8b5cf6); color:white; border:none; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; display:flex; align-items:center; gap:6px; box-shadow:0 2px 5px rgba(59,130,246,0.3);">🪄 Generate Follow-up</button>
                                     </div>
                                     <textarea id="inst-body-b" style="min-height:200px;font-family:sans-serif;font-size:14px;resize:none;padding:16px;border:1px solid var(--border);border-radius:12px;outline:none;background:#f8fafc;" placeholder="Variant B Body..."></textarea>
-                                    
+                                    <div style="margin-top:12px; padding:12px; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px;">
+                                        <div style="font-size:11px; font-weight:700; color:var(--text-muted); margin-bottom:8px; text-transform:uppercase;"><i class="fa-solid fa-copy"></i> Click to copy Tags & Spintax</div>
+                                        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                                            <button type="button" onclick="navigator.clipboard.writeText('{{firstName}}'); showToast('Copied {{firstName}}')" style="background:#dbeafe; color:#1d4ed8; border:1px solid #bfdbfe; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer; outline:none;">{{firstName}}</button>
+                                            <button type="button" onclick="navigator.clipboard.writeText('{{lastName}}'); showToast('Copied {{lastName}}')" style="background:#dbeafe; color:#1d4ed8; border:1px solid #bfdbfe; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer; outline:none;">{{lastName}}</button>
+                                            <button type="button" onclick="navigator.clipboard.writeText('{{company}}'); showToast('Copied {{company}}')" style="background:#dbeafe; color:#1d4ed8; border:1px solid #bfdbfe; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer; outline:none;">{{company}}</button>
+                                            <button type="button" onclick="navigator.clipboard.writeText('{Hello|Hi|Hey}'); showToast('Copied {Hello|Hi|Hey}')" style="background:#fce7f3; color:#be185d; border:1px solid #fbcfe8; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer; outline:none;">{Hello|Hi|Hey}</button>
+                                            <button type="button" onclick="navigator.clipboard.writeText('{Thanks|Best|Cheers}'); showToast('Copied {Thanks|Best|Cheers}')" style="background:#fce7f3; color:#be185d; border:1px solid #fbcfe8; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer; outline:none;">{Thanks|Best|Cheers}</button>
+                                            <button type="button" onclick="navigator.clipboard.writeText('{chat|talk|speak}'); showToast('Copied {chat|talk|speak}')" style="background:#fce7f3; color:#be185d; border:1px solid #fbcfe8; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer; outline:none;">{chat|talk|speak}</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1140,27 +1294,33 @@
                     <div class="form-group">
                         <label>Sending Days</label>
                         <div style="display:flex;gap:16px;flex-wrap:wrap;background:var(--surface-1);padding:16px;border-radius:8px;border:1px solid var(--border);">
-                            <label style="display:flex;align-items:center;gap:8px;font-weight:600;"><input type="checkbox" checked> Mon</label>
-                            <label style="display:flex;align-items:center;gap:8px;font-weight:600;"><input type="checkbox" checked> Tue</label>
-                            <label style="display:flex;align-items:center;gap:8px;font-weight:600;"><input type="checkbox" checked> Wed</label>
-                            <label style="display:flex;align-items:center;gap:8px;font-weight:600;"><input type="checkbox" checked> Thu</label>
-                            <label style="display:flex;align-items:center;gap:8px;font-weight:600;"><input type="checkbox" checked> Fri</label>
-                            <label style="display:flex;align-items:center;gap:8px;font-weight:600;"><input type="checkbox"> Sat</label>
-                            <label style="display:flex;align-items:center;gap:8px;font-weight:600;"><input type="checkbox"> Sun</label>
+                            <label style="display:flex;align-items:center;gap:8px;font-weight:600;"><input type="checkbox" id="sch-day-mon" checked> Mon</label>
+                            <label style="display:flex;align-items:center;gap:8px;font-weight:600;"><input type="checkbox" id="sch-day-tue" checked> Tue</label>
+                            <label style="display:flex;align-items:center;gap:8px;font-weight:600;"><input type="checkbox" id="sch-day-wed" checked> Wed</label>
+                            <label style="display:flex;align-items:center;gap:8px;font-weight:600;"><input type="checkbox" id="sch-day-thu" checked> Thu</label>
+                            <label style="display:flex;align-items:center;gap:8px;font-weight:600;"><input type="checkbox" id="sch-day-fri" checked> Fri</label>
+                            <label style="display:flex;align-items:center;gap:8px;font-weight:600;"><input type="checkbox" id="sch-day-sat"> Sat</label>
+                            <label style="display:flex;align-items:center;gap:8px;font-weight:600;"><input type="checkbox" id="sch-day-sun"> Sun</label>
                         </div>
                     </div>
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
                         <div class="form-group">
                             <label>Start Time</label>
-                            <input type="time" value="09:00">
+                            <input type="time" id="sch-start-time" value="00:00">
                         </div>
                         <div class="form-group">
                             <label>End Time</label>
-                            <input type="time" value="17:00">
+                            <input type="time" id="sch-end-time" value="00:00">
                         </div>
                     </div>
+                    <p style="font-size:13px;color:var(--text-muted);margin-top:8px;margin-bottom:16px;">
+                        ⚡ Campaign will only send emails on selected days and within the specified time window.
+                        <br>If no time is set (Start = 00:00, End = 00:00), emails will send 24/7.
+                    </p>
                     <div style="display:flex;justify-content:flex-end;margin-top:16px;">
-                        <button class="btn primary" style="padding:10px 24px;">Save Schedule</button>
+                        <button class="btn primary" id="sch-save-btn" style="padding:10px 24px;" onclick="saveSchedule()">
+                            <i class="fa-solid fa-floppy-disk" style="margin-right:6px;"></i>Save Schedule
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1524,11 +1684,6 @@
                     
                     <hr style="border:none; border-top:1px solid rgba(255,255,255,0.1); margin:24px 0;">
                     
-                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px;">
-                        <input type="checkbox" id="acc-warmup-enabled" style="width:16px; height:16px;">
-                        <label for="acc-warmup-enabled" style="margin:0; cursor:pointer;">Enable Automatic Warmup</label>
-                    </div>
-                    
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:32px;">
                         <div class="form-group">
                             <label>Warmup Starting Limit</label>
@@ -1566,25 +1721,50 @@
         <div id="guide-view" class="view">
             <div class="page-header">
                 <h1 class="page-title">How to Use (কীভাবে ব্যবহার করবেন)</h1>
-                <p class="page-subtitle">Simple step-by-step guide for MailClone / মেইলক্লোন ব্যবহারের সহজ গাইড</p>
+                <p class="page-subtitle">Complete Guide to all features / মেইলক্লোনের সকল ফিচারের পূর্ণাঙ্গ গাইড</p>
             </div>
             <div class="glass" style="display:flex; flex-direction:column; gap:24px; padding:32px; border-radius:16px;">
+                
                 <div style="background:var(--surface); padding:24px; border-radius:12px; border:1px solid var(--border); box-shadow:0 2px 10px rgba(0,0,0,0.02);">
-                    <h3 style="margin-bottom:8px; display:flex; align-items:center; gap:8px; font-size:18px;"><i class="fa-solid fa-1" style="color:var(--p);"></i> Add Sending Account (অ্যাকাউন্ট অ্যাড করুন)</h3>
-                    <p style="color:var(--text-muted); font-size:15px; margin-bottom:12px; line-height:1.6;"><strong>English:</strong> First, go to "Sending Accounts" from the left menu and add your Gmail/SMTP email. This email will be used to send all your messages.</p>
-                    <p style="color:var(--text-muted); font-size:15px; margin-bottom:0; line-height:1.6;"><strong>Bangla:</strong> প্রথমে বামপাশের মেনু থেকে "Sending Accounts" এ যান এবং আপনার ইমেইল (Gmail/SMTP) যুক্ত করুন। এই ইমেইলটি ব্যবহার করেই ক্লায়েন্টদের কাছে মেইল পাঠানো হবে।</p>
+                    <h3 style="margin-bottom:8px; display:flex; align-items:center; gap:8px; font-size:18px;"><i class="fa-solid fa-server" style="color:var(--p);"></i> 1. Sending Accounts (অ্যাকাউন্ট যুক্ত করা)</h3>
+                    <p style="color:var(--text-muted); font-size:15px; margin-bottom:12px; line-height:1.6;"><strong>English:</strong> Click on "Add Account" to connect your SMTP or App Password enabled Gmail. The system automatically tracks the "Health Score" of your accounts and checks SPF/DKIM/DMARC to prevent spam.</p>
+                    <p style="color:var(--text-muted); font-size:15px; margin-bottom:0; line-height:1.6;"><strong>Bangla:</strong> "Add Account" এ ক্লিক করে আপনার SMTP বা Gmail (App Password সহ) যুক্ত করুন। সিস্টেম স্বয়ংক্রিয়ভাবে আপনার অ্যাকাউন্টের "Health Score" ট্র্যাক করবে এবং ইমেইল স্প্যামে যাওয়া ঠেকাতে SPF/DKIM/DMARC চেক করবে।</p>
                 </div>
 
                 <div style="background:var(--surface); padding:24px; border-radius:12px; border:1px solid var(--border); box-shadow:0 2px 10px rgba(0,0,0,0.02);">
-                    <h3 style="margin-bottom:8px; display:flex; align-items:center; gap:8px; font-size:18px;"><i class="fa-solid fa-2" style="color:var(--p);"></i> Create Email Content (ইমেইল লিখুন)</h3>
-                    <p style="color:var(--text-muted); font-size:15px; margin-bottom:12px; line-height:1.6;"><strong>English:</strong> Go to "Cold Mail" to write text-based emails, or "Visual Builder" to design beautiful HTML newsletters. You can use the AI button (✨) to write emails automatically!</p>
-                    <p style="color:var(--text-muted); font-size:15px; margin-bottom:0; line-height:1.6;"><strong>Bangla:</strong> টেক্সট মেইল লেখার জন্য "Cold Mail" অপশনে যান, অথবা সুন্দর ডিজাইনের নিউজলেটার বানাতে "Visual Builder" ব্যবহার করুন। আপনি চাইলে জাদুর মতো এআই (AI ✨) বাটন ব্যবহার করে অটোমেটিকভাবে ইমেইল লিখিয়ে নিতে পারেন!</p>
+                    <h3 style="margin-bottom:8px; display:flex; align-items:center; gap:8px; font-size:18px;"><i class="fa-solid fa-users" style="color:var(--p);"></i> 2. Audience & Leads (লিড ম্যানেজমেন্ট)</h3>
+                    <p style="color:var(--text-muted); font-size:15px; margin-bottom:12px; line-height:1.6;"><strong>English:</strong> Go to the Audience tab and paste your leads (email,name,company). Use the <strong>"Scan & Clean Inactive Leads"</strong> button to automatically remove bad emails to keep your bounce rate low.</p>
+                    <p style="color:var(--text-muted); font-size:15px; margin-bottom:0; line-height:1.6;"><strong>Bangla:</strong> Audience ট্যাবে গিয়ে আপনার লিডগুলো (email,name,company) পেস্ট করুন। বাউন্স রেট কমানোর জন্য <strong>"Scan & Clean Inactive Leads"</strong> বাটনটি ব্যবহার করুন, যা ইনঅ্যাক্টিভ ইমেইলগুলো রিমুভ করে দিবে।</p>
                 </div>
 
                 <div style="background:var(--surface); padding:24px; border-radius:12px; border:1px solid var(--border); box-shadow:0 2px 10px rgba(0,0,0,0.02);">
-                    <h3 style="margin-bottom:8px; display:flex; align-items:center; gap:8px; font-size:18px;"><i class="fa-solid fa-3" style="color:var(--p);"></i> Upload Leads & Send (লিড আপলোড করে সেন্ড করুন)</h3>
-                    <p style="color:var(--text-muted); font-size:15px; margin-bottom:12px; line-height:1.6;"><strong>English:</strong> Upload your CSV file containing the list of client emails. Click "Send Campaign" and the system will send emails to everyone automatically!</p>
-                    <p style="color:var(--text-muted); font-size:15px; margin-bottom:0; line-height:1.6;"><strong>Bangla:</strong> আপনার ক্লায়েন্টদের ইমেইল লিস্টের CSV ফাইল আপলোড করুন। এরপর "Send Campaign" বাটনে ক্লিক করলেই সিস্টেম অটোমেটিকভাবে সবার কাছে ইমেইল পাঠানো শুরু করবে!</p>
+                    <h3 style="margin-bottom:8px; display:flex; align-items:center; gap:8px; font-size:18px;"><i class="fa-solid fa-envelope-open-text" style="color:var(--p);"></i> 3. Cold Mail & Spintax (কোল্ড মেইল এবং স্পিনট্যাক্স)</h3>
+                    <p style="color:var(--text-muted); font-size:15px; margin-bottom:12px; line-height:1.6;"><strong>English:</strong> Write personalized text emails. Use the <strong>Helpers</strong> below the box to insert Merge Tags (like {{firstName}}) and Spintax (like {Hello|Hi}) for 100% unique emails. Click <strong><i class="fa-solid fa-flask"></i> Variant B</strong> to A/B test different subjects!</p>
+                    <p style="color:var(--text-muted); font-size:15px; margin-bottom:0; line-height:1.6;"><strong>Bangla:</strong> পার্সোনালাইজড টেক্সট ইমেইল লিখুন। বক্সের নিচের <strong>Helpers</strong> থেকে ট্যাগ (যেমন: {{firstName}}) এবং স্পিনট্যাক্স (যেমন: {Hello|Hi}) কপি করে ব্যবহার করুন, এতে প্রতিটি ইমেইল ইউনিক হবে। সাবজেক্ট লাইন টেস্ট করার জন্য <strong><i class="fa-solid fa-flask"></i> Variant B</strong> বাটনটি ব্যবহার করুন!</p>
+                </div>
+
+                <div style="background:var(--surface); padding:24px; border-radius:12px; border:1px solid var(--border); box-shadow:0 2px 10px rgba(0,0,0,0.02);">
+                    <h3 style="margin-bottom:8px; display:flex; align-items:center; gap:8px; font-size:18px;"><i class="fa-solid fa-paintbrush" style="color:var(--p);"></i> 4. Visual Builder (ডিজাইন বিল্ডার)</h3>
+                    <p style="color:var(--text-muted); font-size:15px; margin-bottom:12px; line-height:1.6;"><strong>English:</strong> Drag and drop blocks (Text, Image, Button) from the left panel to build beautiful HTML newsletters. Click on any block to edit its properties. Use <strong>"Save Template"</strong> to reuse your design later.</p>
+                    <p style="color:var(--text-muted); font-size:15px; margin-bottom:0; line-height:1.6;"><strong>Bangla:</strong> বামদিকের প্যানেল থেকে ব্লক (Text, Image, Button) টেনে এনে দারুণ সব নিউজলেটার বানান। যেকোনো ব্লকে ক্লিক করে তার ডিজাইন পরিবর্তন করতে পারবেন। ডিজাইন সেভ করে রাখার জন্য <strong>"Save Template"</strong> বাটনটি ব্যবহার করুন।</p>
+                </div>
+
+                <div style="background:var(--surface); padding:24px; border-radius:12px; border:1px solid var(--border); box-shadow:0 2px 10px rgba(0,0,0,0.02);">
+                    <h3 style="margin-bottom:8px; display:flex; align-items:center; gap:8px; font-size:18px;"><i class="fa-solid fa-wand-magic-sparkles" style="color:var(--p);"></i> 5. AI Features (এআই ফিচারসমূহ)</h3>
+                    <p style="color:var(--text-muted); font-size:15px; margin-bottom:12px; line-height:1.6;"><strong>English:</strong> Use <strong>"Write with AI"</strong> to automatically generate email copy. Use <strong>"Auto-Build Campaign"</strong> to let AI create an entire email sequence based on your website link or product description.</p>
+                    <p style="color:var(--text-muted); font-size:15px; margin-bottom:0; line-height:1.6;"><strong>Bangla:</strong> অটোমেটিকভাবে ইমেইল লেখার জন্য <strong>"Write with AI"</strong> ব্যবহার করুন। আপনার ওয়েবসাইট লিংক বা প্রোডাক্টের বিবরণ দিয়ে পুরো সিকোয়েন্স বানাতে <strong>"Auto-Build Campaign"</strong> এ ক্লিক করুন।</p>
+                </div>
+
+                <div style="background:var(--surface); padding:24px; border-radius:12px; border:1px solid var(--border); box-shadow:0 2px 10px rgba(0,0,0,0.02);">
+                    <h3 style="margin-bottom:8px; display:flex; align-items:center; gap:8px; font-size:18px;"><i class="fa-solid fa-shield-halved" style="color:var(--p);"></i> 6. Deliverability Optimizer (ইনবক্স গ্যারান্টি)</h3>
+                    <p style="color:var(--text-muted); font-size:15px; margin-bottom:12px; line-height:1.6;"><strong>English:</strong> Before sending any campaign, the system runs a Preflight Check. It scans for spam words, verifies MX records, and automatically injects an Unsubscribe link to guarantee a 99% Inbox Rate.</p>
+                    <p style="color:var(--text-muted); font-size:15px; margin-bottom:0; line-height:1.6;"><strong>Bangla:</strong> যেকোনো ক্যাম্পেইন সেন্ড করার আগে সিস্টেম একটি Preflight Check করে। এটি স্প্যাম ওয়ার্ড স্ক্যান করে, MX রেকর্ড ভেরিফাই করে এবং নিজে থেকেই Unsubscribe লিংক অ্যাড করে দেয়, যাতে আপনার ইমেইল ১০০% ইনবক্সে যায়।</p>
+                </div>
+                
+                <div style="background:var(--surface); padding:24px; border-radius:12px; border:1px solid var(--border); box-shadow:0 2px 10px rgba(0,0,0,0.02);">
+                    <h3 style="margin-bottom:8px; display:flex; align-items:center; gap:8px; font-size:18px;"><i class="fa-solid fa-chart-line" style="color:var(--p);"></i> 7. Analytics (অ্যানালিটিক্স)</h3>
+                    <p style="color:var(--text-muted); font-size:15px; margin-bottom:12px; line-height:1.6;"><strong>English:</strong> Go to the Dashboard to see real-time stats of your campaigns (Sent, Opened, Bounced). The system uses IMAP to automatically detect replies and bounces.</p>
+                    <p style="color:var(--text-muted); font-size:15px; margin-bottom:0; line-height:1.6;"><strong>Bangla:</strong> ড্যাশবোর্ডে গিয়ে আপনার ক্যাম্পেইনের লাইভ স্ট্যাটাস (কয়টা সেন্ড হলো, কয়জন ওপেন করলো) দেখতে পাবেন। সিস্টেম IMAP এর মাধ্যমে অটোমেটিকভাবে বাউন্স এবং রিপ্লাই ট্র্যাক করে।</p>
                 </div>
             </div>
         </div>
@@ -1856,7 +2036,7 @@
     });
 </script>
 
-    <script src="assets/app.js?v=1783200000"></script>
+    <script src="assets/app.js?v=3006"></script>
     <script src="assets/templates.js?v=2000"></script>
     <script src="assets/sending_accounts.js?v=1783200000"></script>
     <script src="assets/ai_features.js?v=1783084988"></script>
@@ -1871,20 +2051,23 @@
     <!-- Sidebar Overlay -->
     <div class="sidebar-overlay" id="sidebar-overlay" onclick="window.toggleMobileMenu()"></div>
     <!-- Preflight Modal -->
-    <div id="preflight-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:99999; flex-direction:column; align-items:center; justify-content:center; padding:24px;">
-        <div class="card" style="width:100%; max-width:500px; padding:32px;">
-            <h2 style="font-size:20px; font-weight:700; margin-bottom:16px;">Preflight Deliverability Check <i class="fa-solid fa-plane-departure" style="color:var(--p); margin-left:8px;"></i></h2>
-            <p style="color:var(--text-muted); margin-bottom:24px; font-size:14px;">We are checking your campaign to ensure 100% Inbox Rates.</p>
+    <div id="preflight-modal" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.7); z-index:99999; flex-direction:column; align-items:center; justify-content:center; padding:24px; backdrop-filter: blur(8px);">
+        <div class="card" style="width:100%; max-width:550px; padding:32px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px;">
+                <h2 style="font-size:22px; font-weight:800; background: linear-gradient(135deg, #4f46e5 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Deliverability Optimizer <i class="fa-solid fa-plane-departure" style="color:var(--p); margin-left:8px;"></i></h2>
+                <span style="background:rgba(16,185,129,0.1); color:#10b981; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:700;"><i class="fa-solid fa-bullseye"></i> 99% Inbox Target</span>
+            </div>
+            <p style="color:var(--text-muted); margin-bottom:24px; font-size:14px; line-height:1.6;">We are performing a deep scan of your email content (Spam words, HTML ratio, broken links) and checking MX records to ensure maximum inbox placement.</p>
             
-            <div id="preflight-loading" style="display:flex; flex-direction:column; align-items:center; gap:16px; margin-bottom:24px;">
-                <div class="spin" style="width:32px; height:32px; border:3px solid #e2e8f0; border-top-color:var(--p); border-radius:50%; animation:spin 0.8s linear infinite;"></div>
-                <span style="font-size:14px; font-weight:600;">Analyzing content...</span>
+            <div id="preflight-loading" style="display:flex; flex-direction:column; align-items:center; gap:16px; margin-bottom:24px; padding: 32px; background:var(--surface); border-radius:12px; border: 1px dashed var(--border);">
+                <div class="spin" style="width:40px; height:40px; border:4px solid #e2e8f0; border-top-color:#4f46e5; border-radius:50%; animation:spin 0.8s linear infinite;"></div>
+                <span style="font-size:15px; font-weight:600; color:var(--text);">Analyzing content & verifying leads...</span>
             </div>
             
-            <div id="preflight-results" style="display:none;">
+            <div id="preflight-results" style="display:none; background:var(--surface); border-radius:12px; padding:20px; border:1px solid var(--border); margin-bottom:24px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid var(--border);">
-                    <span style="font-weight:600;">Spam Score</span>
-                    <span id="preflight-score" style="font-weight:700; font-size:18px; color:var(--p);">10/10</span>
+                    <span style="font-weight:700; color:var(--text);">Spam Score</span>
+                    <span id="preflight-score" style="font-weight:800; font-size:22px; color:var(--p);">10/10</span>
                 </div>
                 
                 <div id="preflight-warnings" style="margin-bottom:24px; font-size:14px; color:#ef4444;">
@@ -1898,5 +2081,24 @@
             </div>
         </div>
     </div>
+
+    <!-- Image Gallery Modal -->
+    <div id="gallery-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.6);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(4px);">
+        <div style="background:#fff;width:800px;max-width:90%;height:600px;max-height:90vh;border-radius:12px;display:flex;flex-direction:column;box-shadow:0 10px 25px rgba(0,0,0,0.15);">
+            <div style="padding:20px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;">
+                <h3 style="margin:0;font-size:18px;color:#1e293b;"><i class="fa-solid fa-images"></i> Image Gallery</h3>
+                <button onclick="closeGalleryModal()" style="background:none;border:none;font-size:20px;color:#64748b;cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div style="padding:20px;border-bottom:1px solid #e2e8f0;display:flex;gap:10px;">
+                <input type="file" id="gallery-upload-input" accept="image/*" style="display:none;" onchange="handleGalleryUpload(event)">
+                <button onclick="document.getElementById('gallery-upload-input').click()" class="primary-btn" style="padding:8px 16px;"><i class="fa-solid fa-upload"></i> Upload Image</button>
+                <span id="gallery-upload-status" style="align-self:center;font-size:14px;color:#64748b;display:none;"><i class="fa-solid fa-spinner fa-spin"></i> Uploading...</span>
+            </div>
+            <div id="gallery-grid" style="flex:1;overflow-y:auto;padding:20px;display:grid;grid-template-columns:repeat(auto-fill, minmax(150px, 1fr));gap:15px;align-content:start;">
+                <!-- Images will be loaded here -->
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>

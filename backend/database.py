@@ -63,11 +63,16 @@ class Campaign(Base):
     opens_a = Column(Integer, default=0)
     opens_b = Column(Integer, default=0)
     
-    status = Column(String, default="sent")
+    status = Column(String, default="draft")
+    paused_reason = Column(String, nullable=True)
     scheduled_at = Column(DateTime, nullable=True)
     timezone = Column(String, nullable=True)
     delay_min = Column(Integer, default=30)
     delay_max = Column(Integer, default=90)
+    # Sending schedule (per-campaign)
+    sending_days = Column(String, nullable=True)  # JSON list e.g. ["Mon","Tue","Wed"]
+    start_hour = Column(Integer, nullable=True)   # e.g. 9 (9 AM)
+    end_hour = Column(Integer, nullable=True)      # e.g. 17 (5 PM)
     created_at = Column(DateTime, default=datetime.utcnow)
 
 class CampaignLead(Base):
@@ -80,6 +85,24 @@ class CampaignLead(Base):
     company = Column(String, nullable=True)
     status = Column(String, default="pending")
     variant = Column(String, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+class BounceRecord(Base):
+    __tablename__ = "bounce_records"
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    campaign_id = Column(String(36), index=True)
+    email = Column(String(150), index=True)
+    bounce_type = Column(String(50)) # 'hard' or 'soft'
+    bounce_reason = Column(String(255))
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+class Media(Base):
+    __tablename__ = "media_gallery"
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(String(36), ForeignKey("users.id"))
+    filename = Column(String(255))
+    original_name = Column(String(255))
+    url = Column(String(500))
     created_at = Column(DateTime, default=datetime.utcnow)
 
 class TrackingLog(Base):
@@ -114,6 +137,7 @@ class SendingAccount(Base):
     warmup_increment_per_day = Column(Integer, default=2)
     warmup_sent_today = Column(Integer, default=0)
     is_active = Column(Boolean, default=True)
+    smart_limit_enabled = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     # --- Health Tracking (Smart Deliverability) ---
@@ -126,9 +150,9 @@ class SendingAccount(Base):
     auto_paused = Column(Boolean, default=False)
     auto_paused_reason = Column(String, nullable=True)
 
-    # --- Sending Window ---
-    send_window_start = Column(Integer, default=9)    # 9 AM
-    send_window_end = Column(Integer, default=17)      # 5 PM
+    # --- Sending Window (disabled by default - 0 to 24 = send 24/7) ---
+    send_window_start = Column(Integer, default=0)    # 12 AM (no restriction)
+    send_window_end = Column(Integer, default=24)      # 12 AM next day (no restriction)
     send_window_timezone = Column(String, default="UTC")
 
     # --- Custom Tracking ---
@@ -247,8 +271,8 @@ def run_migrations():
         _safe_add_column("sending_accounts", "last_health_check", "DATETIME", None)
         _safe_add_column("sending_accounts", "auto_paused", "BOOLEAN", False)
         _safe_add_column("sending_accounts", "auto_paused_reason", "VARCHAR", None)
-        _safe_add_column("sending_accounts", "send_window_start", "INTEGER", 9)
-        _safe_add_column("sending_accounts", "send_window_end", "INTEGER", 17)
+        _safe_add_column("sending_accounts", "send_window_start", "INTEGER", 0)
+        _safe_add_column("sending_accounts", "send_window_end", "INTEGER", 24)
         _safe_add_column("sending_accounts", "send_window_timezone", "VARCHAR", "UTC")
         _safe_add_column("sending_accounts", "custom_tracking_domain", "VARCHAR", None)
         print("[Migration] All migrations completed successfully.")

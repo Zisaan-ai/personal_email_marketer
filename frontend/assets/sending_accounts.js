@@ -74,10 +74,10 @@ const ACCOUNTS = {
                 </div>
             `;
 
-            // Suggested daily limit badge
+            // Suggested limit badge - only show when smart limit is ON
             const suggestedLimit = acc.suggested_daily_limit || acc.daily_limit;
-            const limitBadge = suggestedLimit < acc.daily_limit 
-                ? `<span style="font-size:11px;color:#f59e0b;display:block;margin-top:2px;" title="System recommends this limit based on account health">📊 Suggested: ${suggestedLimit}/day</span>`
+            const limitBadge = acc.smart_limit_enabled && suggestedLimit < acc.daily_limit
+                ? `<span style="font-size:11px;color:#f59e0b;display:block;margin-top:2px;">📊 Suggested: ${suggestedLimit}/day</span>`
                 : '';
 
             // Domain health badges
@@ -96,12 +96,6 @@ const ACCOUNTS = {
             const pauseReason = acc.auto_paused_reason 
                 ? `<div style="font-size:11px;color:#dc2626;margin-top:4px;">${acc.auto_paused_reason}</div>` 
                 : '';
-
-            // Sending window info
-            const windowStart = acc.send_window_start ?? 9;
-            const windowEnd = acc.send_window_end ?? 17;
-            const windowTz = acc.send_window_timezone || 'UTC';
-            const windowInfo = `<div style="font-size:11px;color:var(--text-muted);margin-top:2px;">🕐 ${windowStart}:00-${windowEnd}:00 ${windowTz}</div>`;
 
             // Stats summary
             const totalSent = acc.total_sent || 0;
@@ -125,7 +119,20 @@ const ACCOUNTS = {
                 <td style="padding:16px 24px;">
                     <div>${acc.daily_limit}</div>
                     ${limitBadge}
-                    ${windowInfo}
+                    <div style="margin-top:6px;display:flex;flex-direction:column;gap:4px;">
+                        <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:11px;color:var(--text-muted);" title="Smart Limit: System automatically reduces daily limit based on account age & health to protect deliverability">
+                            <div onclick="ACCOUNTS.toggleSmartLimit('${acc.id}', ${!acc.smart_limit_enabled})" style="width:32px;height:18px;border-radius:9px;background:${acc.smart_limit_enabled ? '#6366f1' : 'var(--border)'};position:relative;cursor:pointer;transition:background 0.2s;">
+                                <div style="width:14px;height:14px;background:#fff;border-radius:50%;position:absolute;top:2px;left:${acc.smart_limit_enabled ? '16px' : '2px'};transition:left 0.2s;"></div>
+                            </div>
+                            Smart Limit
+                        </label>
+                        <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:11px;color:var(--text-muted);" title="Warmup: Automatically exchange emails with the warmup network to build sender reputation">
+                            <div onclick="ACCOUNTS.toggleWarmup('${acc.id}', ${!acc.warmup_enabled})" style="width:32px;height:18px;border-radius:9px;background:${acc.warmup_enabled ? '#f59e0b' : 'var(--border)'};position:relative;cursor:pointer;transition:background 0.2s;">
+                                <div style="width:14px;height:14px;background:#fff;border-radius:50%;position:absolute;top:2px;left:${acc.warmup_enabled ? '16px' : '2px'};transition:left 0.2s;"></div>
+                            </div>
+                            Warmup ${acc.warmup_enabled ? `(${acc.warmup_sent_today || 0}/${acc.warmup_daily_limit || 5})` : ''}
+                        </label>
+                    </div>
                 </td>
                 <td style="padding:16px 24px;">${acc.sent_today}</td>
                 <td style="padding:16px 24px;">${healthBar}</td>
@@ -155,7 +162,6 @@ const ACCOUNTS = {
             if (el) el.value = '';
         });
         document.getElementById('acc-daily-limit').value = '500';
-        document.getElementById('acc-warmup-enabled').checked = false;
         document.getElementById('acc-warmup-limit').value = '5';
         document.getElementById('acc-warmup-increment').value = '2';
         document.getElementById('add-account-modal').style.display = 'flex';
@@ -170,9 +176,9 @@ const ACCOUNTS = {
         
         document.getElementById('acc-name').value = acc.name || '';
         document.getElementById('acc-email').value = acc.email || '';
-        document.getElementById('acc-password').value = acc.smtp_password || '';
+        document.getElementById('acc-password').value = ''; // Don't prefill password for security
+        document.getElementById('acc-password').placeholder = '(Leave blank to keep existing password)';
         document.getElementById('acc-daily-limit').value = acc.daily_limit || 500;
-        document.getElementById('acc-warmup-enabled').checked = acc.warmup_enabled || false;
         document.getElementById('acc-warmup-limit').value = acc.warmup_daily_limit || 5;
         document.getElementById('acc-warmup-increment').value = acc.warmup_increment_per_day || 2;
         
@@ -194,13 +200,12 @@ const ACCOUNTS = {
             imap_server: 'imap.gmail.com',
             imap_port: 993,
             imap_password: password,
-            warmup_enabled: document.getElementById('acc-warmup-enabled')?.checked || false,
             warmup_daily_limit: parseInt(document.getElementById('acc-warmup-limit')?.value) || 5,
             warmup_increment_per_day: parseInt(document.getElementById('acc-warmup-increment')?.value) || 2
         };
         
-        if(!payload.email || !payload.smtp_password) {
-            alert("Email and App Password are required!");
+        if(!payload.email || (!payload.smtp_password && !document.getElementById('acc-id').value)) {
+            alert("Email and App Password are required for new accounts!");
             return;
         }
 
@@ -257,6 +262,52 @@ const ACCOUNTS = {
             }
         } catch(e) {
             console.error("Toggle status error", e);
+        }
+    },
+
+    toggleSmartLimit: async function(id, enable) {
+        try {
+            const res = await fetch(API_URL + '/sending-accounts/' + id, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                },
+                body: JSON.stringify({ smart_limit_enabled: enable })
+            });
+            if (res.ok) {
+                this.fetchAccounts();
+                if (window.showToast) showToast(enable ? 'Smart Limit enabled ✅' : 'Smart Limit disabled ✅', 'success');
+            } else {
+                const err = await res.json();
+                alert('Error updating Smart Limit: ' + (err.detail || 'Unknown error'));
+            }
+        } catch(e) {
+            console.error('toggleSmartLimit error', e);
+            alert('Failed to update smart limit');
+        }
+    },
+
+    toggleWarmup: async function(id, enable) {
+        try {
+            const res = await fetch(API_URL + '/sending-accounts/' + id, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                },
+                body: JSON.stringify({ warmup_enabled: enable })
+            });
+            if (res.ok) {
+                this.fetchAccounts();
+                if (window.showToast) showToast(enable ? 'Warmup enabled ✅' : 'Warmup disabled ✅', 'success');
+            } else {
+                const err = await res.json();
+                alert('Error updating Warmup: ' + (err.detail || 'Unknown error'));
+            }
+        } catch(e) {
+            console.error('toggleWarmup error', e);
+            alert('Failed to update warmup status');
         }
     },
     

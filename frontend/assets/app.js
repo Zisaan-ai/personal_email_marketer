@@ -4187,6 +4187,8 @@ function setupCampaignBuilder() {
 
     const tmplSelect = document.getElementById('premade-templates');
     if (tmplSelect && window.EmailTemplates) {
+        // Clear old options just in case it's called multiple times
+        tmplSelect.innerHTML = '<option value="">-- Choose a Template --</option>';
         const categories = {};
         window.EmailTemplates.forEach(t => {
             const cat = t.category || 'Other';
@@ -4206,7 +4208,11 @@ function setupCampaignBuilder() {
             tmplSelect.appendChild(optgroup);
         }
         
-        tmplSelect.addEventListener('change', e => {
+        // Remove existing listeners by replacing the element
+        const newSelect = tmplSelect.cloneNode(true);
+        tmplSelect.parentNode.replaceChild(newSelect, tmplSelect);
+        
+        newSelect.addEventListener('change', e => {
             if (e.target.value) {
                 loadTemplate(e.target.value);
                 e.target.value = '';

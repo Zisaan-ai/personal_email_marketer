@@ -5571,7 +5571,7 @@ window.checkSpamScore = async function() {
 
     try {
 
-        const data = await apiCall('/spam-check', 'POST', {content: text, subject: subject});
+        const data = await apiCall('/preflight', 'POST', {body: text, subject: subject});
 
         if (data && data.score !== undefined) {
 

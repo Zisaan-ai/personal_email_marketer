@@ -2105,13 +2105,42 @@ window.saveSchedule = async function() {
 
 
     if (!window.currentCampaignId) {
-
-        showToast('Schedule settings will be saved automatically when you Launch or Save Draft!', 'success');
-
+        // Auto-save as draft so schedule persists
+        try {
+            const subEl = document.getElementById('inst-subject');
+            const bodyEl = document.getElementById('inst-body');
+            const draftPayload = {
+                subject: (subEl ? subEl.value : '') || 'Untitled Campaign',
+                body: bodyEl ? bodyEl.value : '',
+                type: 'cold_mail',
+                leads: [],
+                is_draft: true,
+                sending_days: payload.sending_days,
+                start_hour: payload.start_hour,
+                end_hour: payload.end_hour,
+                timezone: payload.timezone
+            };
+            const draftRes = await apiCall('/campaigns/send', 'POST', draftPayload);
+            if (draftRes && draftRes.ok) {
+                const draftData = await draftRes.json();
+                window.currentCampaignId = draftData.campaign_id;
+                if (!window.lastFetchedCampaigns) window.lastFetchedCampaigns = [];
+                window.lastFetchedCampaigns.push({
+                    id: draftData.campaign_id, subject: draftPayload.subject, body: draftPayload.body,
+                    type: 'cold_mail', status: 'draft',
+                    sending_days: payload.sending_days, start_hour: payload.start_hour,
+                    end_hour: payload.end_hour, timezone: payload.timezone
+                });
+                showToast('Schedule saved! Draft created.', 'success');
+            } else {
+                const d = await draftRes.json().catch(() => ({}));
+                showToast(d.detail || 'Failed to save schedule', 'error');
+            }
+        } catch(e) {
+            showToast('Error saving schedule', 'error');
+        }
         if (btn) { btn.innerHTML = '<i class="fa-solid fa-floppy-disk" style="margin-right:6px;"></i>Save Schedule'; btn.disabled = false; }
-
         return;
-
     }
 
 
@@ -4022,29 +4051,9 @@ function setupCampaignBuilder() {
 
 </html>`;
 
-        sendBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Checking...';
-
-        sendBtn.disabled = true;
-
-        
-
-        // DELIVERABILITY: Pre-send spam check via Modal
-
-        const proceed = await runPreflightAsync(subject, finalHTML);
-
-        if (!proceed) {
-
-            sendBtn.innerHTML = '<i class="fa-solid fa-rocket"></i> Send Now';
-
-            sendBtn.disabled = false;
-
-            return;
-
-        }
-
-        
-
+        // Launch directly - backend handles account validation
         sendBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+        sendBtn.disabled = true;
 
         try {
 
@@ -4644,62 +4653,20 @@ function setupSequenceBuilder() {
 
 
 
-        // Check sending accounts first
-
-        try {
-
-            const accsRes = await apiCall('/sending-accounts');
-
-            if (accsRes.ok) {
-
-                const accs = await accsRes.json();
-
-                const activeAccs = accs.filter(function(a) { return a.is_active; });
-
-                if (activeAccs.length === 0) {
-
-                    showToast('No active sending account! Add one in Sending Accounts first.', 'error');
-
-                    return;
-
-                }
-
-            }
-
-        } catch(e) {}
-
-
-
-        sendSeqBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Checking...';
-
+        // Launch directly - backend handles account validation
+        sendSeqBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Launching...';
         sendSeqBtn.disabled = true;
 
-        // DELIVERABILITY: Pre-send spam check via Modal
-
-        const proceed = await runPreflightAsync(s1.subject, s1.body);
-
-        if (!proceed) {
-
-            sendSeqBtn.innerHTML = '<i class="fa-solid fa-rocket"></i> Launch Campaign';
-
-            sendSeqBtn.disabled = false;
-
-            return;
-
-        }
-
-        
-
-        sendSeqBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Launching...';
-
         try {
-
             const res = await apiCall('/campaigns/send', 'POST', payload);
-
-            if (res.ok) showToast('Campaign launched successfully! 🚀', 'success');
-
-            else { const d = await res.json(); showToast(d.detail || 'Failed', 'error'); }
-
+            if (res.ok) {
+                showToast('Campaign launched successfully! 🚀', 'success');
+                // Refresh campaigns list in background
+                apiCall('/campaigns').then(r => r.json()).then(c => { window.lastFetchedCampaigns = c; }).catch(() => {});
+            } else {
+                const d = await res.json();
+                showToast(d.detail || 'Failed to launch', 'error');
+            }
         } catch(e) { showToast('Error launching campaign', 'error'); }
 
         sendSeqBtn.innerHTML = '<i class="fa-solid fa-rocket"></i> Launch Campaign';
@@ -6324,7 +6291,39 @@ window.saveNewsletterSchedule = async function() {
     };
 
     if (!window.currentCampaignId) {
-        showToast('Schedule settings will be saved automatically when you Launch or Save Draft!', 'success');
+        // Auto-save as draft so schedule persists
+        try {
+            const subEl = document.getElementById('campaign-subject');
+            const draftPayload = {
+                subject: (subEl ? subEl.value : '') || 'Untitled Newsletter',
+                body: '',
+                type: 'newsletter',
+                leads: [],
+                is_draft: true,
+                sending_days: payload.sending_days,
+                start_hour: payload.start_hour,
+                end_hour: payload.end_hour,
+                timezone: payload.timezone
+            };
+            const draftRes = await apiCall('/campaigns/send', 'POST', draftPayload);
+            if (draftRes && draftRes.ok) {
+                const draftData = await draftRes.json();
+                window.currentCampaignId = draftData.campaign_id;
+                if (!window.lastFetchedCampaigns) window.lastFetchedCampaigns = [];
+                window.lastFetchedCampaigns.push({
+                    id: draftData.campaign_id, subject: draftPayload.subject, body: '',
+                    type: 'newsletter', status: 'draft',
+                    sending_days: payload.sending_days, start_hour: payload.start_hour,
+                    end_hour: payload.end_hour, timezone: payload.timezone
+                });
+                showToast('Schedule saved! Draft created.', 'success');
+            } else {
+                const d = await draftRes.json().catch(() => ({}));
+                showToast(d.detail || 'Failed to save schedule', 'error');
+            }
+        } catch(e) {
+            showToast('Error saving schedule', 'error');
+        }
         if (btn) { btn.innerHTML = '<i class="fa-solid fa-floppy-disk" style="margin-right:6px;"></i>Save Schedule'; btn.disabled = false; }
         return;
     }

@@ -5031,17 +5031,89 @@ async function loadReplies() {
 
                 <td style="padding:16px 24px; font-weight:600; color:var(--text);">${item.sender_email}</td>
 
-                <td style="padding:16px 24px; color:var(--text-muted);">${item.subject}</td>
+                <td style="padding:16px 24px; color:var(--text-muted);">${item.subject || '(No Subject)'}</td>
 
                 <td style="padding:16px 24px;"><span style="background:${color}20; color:${color}; padding:4px 12px; border-radius:12px; font-size:12px; font-weight:600;">${item.sentiment}</span></td>
 
                 <td style="padding:16px 24px; color:var(--text-muted); font-size:13px;">${new Date(item.received_at).toLocaleString()}</td>
+                
+                <td style="padding:16px 24px;">
+                    <button class="btn secondary" style="padding:6px 12px; font-size:12px;" onclick='openReplyModal(${JSON.stringify(item).replace(/'/g, "&#39;")})'><i class="fa-solid fa-eye"></i> View & Reply</button>
+                </td>
 
             `;
 
             tbody.appendChild(tr);
 
         });
+
+    } catch(e) { console.error(e); }
+
+}
+
+function openReplyModal(item) {
+    document.getElementById('active-reply-id').value = item.id;
+    document.getElementById('client-original-message').innerText = item.body || '(No message body)';
+    document.getElementById('ai-reply-draft').value = '';
+    document.getElementById('reply-modal').style.display = 'flex';
+}
+
+async function generateAiReplyDraft() {
+    const replyId = document.getElementById('active-reply-id').value;
+    const btn = event.currentTarget;
+    const oldHtml = btn.innerHTML;
+    
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generating...';
+    btn.disabled = true;
+    
+    try {
+        const res = await apiCall(`/replies/${replyId}/draft`, 'POST');
+        const data = await res.json();
+        
+        if (res.ok && data.draft) {
+            document.getElementById('ai-reply-draft').value = data.draft;
+        } else {
+            showToast('Failed to generate draft: ' + (data.detail || ''), 'error');
+        }
+    } catch(e) {
+        showToast('Network error generating draft.', 'error');
+    } finally {
+        btn.innerHTML = oldHtml;
+        btn.disabled = false;
+    }
+}
+
+async function sendAiReply() {
+    const replyId = document.getElementById('active-reply-id').value;
+    const content = document.getElementById('ai-reply-draft').value.trim();
+    
+    if (!content) {
+        showToast('Reply draft cannot be empty.', 'error');
+        return;
+    }
+    
+    const btn = event.currentTarget;
+    const oldHtml = btn.innerHTML;
+    
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+    btn.disabled = true;
+    
+    try {
+        const res = await apiCall(`/replies/${replyId}/send`, 'POST', { content });
+        if (res.ok) {
+            showToast('Reply sent successfully!', 'success');
+            document.getElementById('reply-modal').style.display = 'none';
+        } else {
+            const data = await res.json();
+            showToast('Failed to send reply: ' + (data.detail || ''), 'error');
+        }
+    } catch(e) {
+        showToast('Network error sending reply.', 'error');
+    } finally {
+        btn.innerHTML = oldHtml;
+        btn.disabled = false;
+    }
+
 
     } catch(e) { console.error(e); }
 

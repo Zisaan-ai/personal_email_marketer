@@ -1577,10 +1577,54 @@ def get_bounces(current_user: database.User = Depends(auth.get_current_user), db
 
 
 # --- REPLIES ENDPOINT ---
+class ReplySendRequest(BaseModel):
+    content: str
+
+@app.post("/api/replies/{reply_id}/draft")
+def draft_reply(reply_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    reply = db.query(database.Reply).join(database.SendingAccount).filter(
+        database.Reply.id == reply_id, 
+        database.SendingAccount.user_id == current_user.id
+    ).first()
+    
+    if not reply:
+        raise HTTPException(status_code=404, detail="Reply not found or unauthorized")
+        
+    import ai_core
+    draft = ai_core.draft_reply_to_email(reply.body or "")
+    return {"draft": draft}
+
+@app.post("/api/replies/{reply_id}/send")
+def send_ai_reply(reply_id: str, req: ReplySendRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    reply = db.query(database.Reply).join(database.SendingAccount).filter(
+        database.Reply.id == reply_id, 
+        database.SendingAccount.user_id == current_user.id
+    ).first()
+    
+    if not reply:
+        raise HTTPException(status_code=404, detail="Reply not found or unauthorized")
+        
+    account = db.query(database.SendingAccount).filter(database.SendingAccount.id == reply.account_id).first()
+    
+    import email_service
+    success = email_service.send_single_email(
+        subject="Re: " + (reply.subject or "Your Message"),
+        body_html=f"<p>{req.content.replace(chr(10), '<br>')}</p>",
+        recipient=reply.sender_email,
+        account=account
+    )
+    
+    if success:
+        return {"status": "ok"}
+    else:
+        raise HTTPException(status_code=500, detail="Failed to send email. Check account settings.")
+
 @app.get('/api/replies')
 def get_replies(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    # BUG FIX: return serializable dicts
-    replies = db.query(database.Reply).order_by(database.Reply.received_at.desc()).all()
+    replies = db.query(database.Reply).join(database.SendingAccount).filter(
+        database.SendingAccount.user_id == current_user.id
+    ).order_by(database.Reply.received_at.desc()).all()
+    
     return [{
         "id": str(r.id),
         "account_id": r.account_id,

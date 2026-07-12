@@ -234,4 +234,30 @@ def chat_with_assistant(message: str, history: list = None) -> str:
             
         return res.json()['choices'][0]['message']['content']
     except Exception as e:
-        return f'AI Error: {str(e)}'
+        return f'AI Error: {str(e)}'
+
+def draft_reply_to_email(client_message: str) -> str:
+    try:
+        prompt = f"""
+        You are an expert sales assistant. Read the following reply from a client and draft a polite, professional response.
+        If they are interested, try to book a meeting or offer more details. 
+        If they have a question, answer it logically (make reasonable assumptions or say you'll get back to them).
+        If they are not interested, politely thank them for their time and leave the door open.
+        
+        Output ONLY the email body (no subject line). Do NOT wrap in markdown like ```html. Do not include signature, just the main message.
+        
+        Client's Reply:
+        {client_message}
+        """
+        text = _call_ai_api(prompt).strip()
+        if text.startswith("```html"):
+            text = text[7:]
+        if text.startswith("```"):
+            text = text[3:]
+        if text.endswith("```"):
+            text = text[:-3]
+        return text.strip()
+    except Exception as e:
+        print(f"AI Reply Draft Error: {e}")
+        return "I apologize, but I could not automatically generate a reply due to an error."
+

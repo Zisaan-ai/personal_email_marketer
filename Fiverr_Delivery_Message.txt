@@ -12,14 +12,12 @@ I have implemented all the features we discussed:
 ### How to use it:
 Please extract the ZIP file and read the `README.md` file for instructions on how to run it locally on your computer.
 
-### 24/7 Free Hosting (Render.com)
-I have also configured this project so you can easily host it online for free 24/7!
-1. Upload this folder to your GitHub account.
-2. Create a free account on Render.com.
-3. Click "New +" -> "Blueprint".
-4. Connect your GitHub repository.
-5. Render will automatically deploy everything for free!
-
+### Hosting & Deployment
+You can easily host this project on your cPanel or VPS server (like Cloud Hosting BD).
+1. Upload the files to your server.
+2. Install Python and set up the virtual environment.
+3. Configure the domain and SSL.
+4. Run the backend script to keep it online 24/7!
 Let me know if you need any help setting it up. If you are satisfied with the delivery, please don't forget to leave a review.
 
 Thank you!

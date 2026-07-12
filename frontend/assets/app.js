@@ -5061,9 +5061,8 @@ function openReplyModal(item) {
     document.getElementById('reply-modal').style.display = 'flex';
 }
 
-async function generateAiReplyDraft() {
+async function generateAiReplyDraft(btn) {
     const replyId = document.getElementById('active-reply-id').value;
-    const btn = event.currentTarget;
     const oldHtml = btn.innerHTML;
     
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generating...';
@@ -5086,7 +5085,7 @@ async function generateAiReplyDraft() {
     }
 }
 
-async function sendAiReply() {
+async function sendAiReply(btn) {
     const replyId = document.getElementById('active-reply-id').value;
     const content = document.getElementById('ai-reply-draft').value.trim();
     
@@ -5095,7 +5094,6 @@ async function sendAiReply() {
         return;
     }
     
-    const btn = event.currentTarget;
     const oldHtml = btn.innerHTML;
     
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';

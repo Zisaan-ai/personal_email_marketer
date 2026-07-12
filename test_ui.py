@@ -25,8 +25,9 @@ async def main():
         
         await page.screenshot(path="builder.png")
         print("Filling out cold mail form...")
-        await print(await page.content())
         await page.fill("#inst-body", "Test Body UI Playwright")
+        await page.fill("#campaign-delay-min", "0")
+        await page.fill("#campaign-delay-max", "0")
         await page.fill("#seq-leads", "test@test.com, Test Name, Test Co")
         
         print("Clicking Launch Campaign...")

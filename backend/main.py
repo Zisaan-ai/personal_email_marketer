@@ -1001,15 +1001,11 @@ def _run_campaign(db, campaign_id):
             result = send_to_lead(lead, subj_b, body_b, 'B')
             if result is False: break
             time.sleep(random.randint(delay_min, delay_max))
-        campaign.sent_count_a += success_count_a
-        campaign.sent_count_b += success_count_b
-        campaign.sent_count = campaign.sent_count_a + campaign.sent_count_b
     else:
         for lead in leads:
             result = send_to_lead(lead, campaign.subject, campaign.body)
             if result is False: break
             time.sleep(random.randint(delay_min, delay_max))
-        campaign.sent_count += success_count_a
 
     # Final check of lead status to update campaign status
     c = db.query(database.Campaign).filter(database.Campaign.id == campaign_id).first()

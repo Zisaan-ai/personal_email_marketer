@@ -1721,10 +1721,12 @@ window.pauseCampaign = async function(id) {
             showToast('Campaign paused successfully');
 
             await fetchDashboard(true);
-
             renderColdMailList();
-
             renderNewsletterList();
+            const c = (window.lastFetchedCampaigns || []).find(x => x.id === id);
+            if (c) {
+                window.navTo(c.type === 'cold_mail' ? 'cold-mail-list' : 'campaigns-list');
+            }
 
         } else {
 
@@ -1757,10 +1759,12 @@ window.resumeCampaign = async function(id) {
             showToast('Campaign resumed successfully');
 
             await fetchDashboard(true);
-
             renderColdMailList();
-
             renderNewsletterList();
+            const c = (window.lastFetchedCampaigns || []).find(x => x.id === id);
+            if (c) {
+                window.navTo(c.type === 'cold_mail' ? 'cold-mail-list' : 'campaigns-list');
+            }
 
         } else {
 

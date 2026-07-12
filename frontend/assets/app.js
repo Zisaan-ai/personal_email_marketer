@@ -4187,12 +4187,25 @@ function setupCampaignBuilder() {
 
     const tmplSelect = document.getElementById('premade-templates');
     if (tmplSelect && window.EmailTemplates) {
+        const categories = {};
         window.EmailTemplates.forEach(t => {
-            const opt = document.createElement('option');
-            opt.value = t.id;
-            opt.innerText = t.name;
-            tmplSelect.appendChild(opt);
+            const cat = t.category || 'Other';
+            if (!categories[cat]) categories[cat] = [];
+            categories[cat].push(t);
         });
+        
+        for (const cat in categories) {
+            const optgroup = document.createElement('optgroup');
+            optgroup.label = cat;
+            categories[cat].forEach(t => {
+                const opt = document.createElement('option');
+                opt.value = t.id;
+                opt.innerText = t.name;
+                optgroup.appendChild(opt);
+            });
+            tmplSelect.appendChild(optgroup);
+        }
+        
         tmplSelect.addEventListener('change', e => {
             if (e.target.value) {
                 loadTemplate(e.target.value);

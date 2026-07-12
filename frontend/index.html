@@ -875,8 +875,16 @@
                             </div>
                             
                             <!-- BLOCKS TAB -->
-                            <div id="mc-tab-blocks" class="mc-tab-content active" style="padding:24px;flex:1;display:block;">
-                                <div id="block-palette" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                            <div id="mc-tab-blocks" class="mc-tab-content active" style="padding:0;flex:1;display:block;overflow-y:auto;">
+                                <!-- Template Selection -->
+                                <div style="padding:16px 20px;">
+                                    <label style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:10px;">Select a Template</label>
+                                    <div id="template-accordion-container" style="display:flex;flex-direction:column;gap:8px;">
+                                    </div>
+                                </div>
+                                <div style="padding:0 20px 24px;">
+                                    <label style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:10px;">Blocks</label>
+                                    <div id="block-palette" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
                                     <div class="draggable-block mc-block" data-type="text" draggable="true" ondragstart="window.drag(event)" style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:24px 12px;text-align:center;cursor:grab;transition:all 0.2s;">
                                         <i class="fa-solid fa-font" style="font-size:24px;color:#64748b;margin-bottom:8px;display:block;"></i> <span style="font-size:13px;font-weight:600;color:var(--text-muted);">Text</span>
                                     </div>
@@ -914,20 +922,14 @@
                                     <div class="draggable-block mc-block" data-type="image_group" draggable="true" ondragstart="window.drag(event)" style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:24px 12px;text-align:center;cursor:grab;transition:all 0.2s;">
                                         <i class="fa-solid fa-images" style="font-size:24px;color:#64748b;margin-bottom:8px;display:block;"></i> <span style="font-size:13px;font-weight:600;color:var(--text-muted);">Image Group</span>
                                     </div>
+                                    </div>
                                 </div>
                             </div>
 
                             <!-- STYLES TAB -->
                             <div id="mc-tab-styles" class="mc-tab-content" style="padding:0;flex:1;display:none;overflow-y:auto;">
-                                <!-- Template Selection -->
-                                <div style="padding:16px 20px;">
-                                    <label style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:10px;">Select a Template</label>
-                                    <div id="template-accordion-container" style="display:flex;flex-direction:column;gap:8px;">
-                                    </div>
-                                </div>
-
                                 <!-- Background Color -->
-                                <div style="padding:16px 20px;border-bottom:1px solid var(--border);border-top:1px solid var(--border);">
+                                <div style="padding:16px 20px;border-bottom:1px solid var(--border);">
                                     <label style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:10px;">Page Background</label>
                                     <input type="color" id="global-bg-color" value="#ffffff" style="height:40px;padding:4px;cursor:pointer;width:100%;border-radius:6px;border:1px solid var(--border);">
                                 </div>
@@ -2182,8 +2184,8 @@
     });
 </script>
 
-    <script src="assets/templates.js?v=2004"></script>
-    <script src="assets/app.js?v=3012"></script>
+    <script src="assets/templates.js?v=2005"></script>
+    <script src="assets/app.js?v=3013"></script>
     <script src="assets/sending_accounts.js?v=1783200000"></script>
     <script src="assets/ai_features.js?v=1783084988"></script>
     <script src="assets/deliverability_v2.js?v=1783096001"></script>

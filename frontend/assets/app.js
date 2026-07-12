@@ -4185,10 +4185,9 @@ function setupCampaignBuilder() {
 
 
 
-    const tmplSelect = document.getElementById('premade-templates');
-    if (tmplSelect && window.EmailTemplates) {
-        // Clear old options just in case it's called multiple times
-        tmplSelect.innerHTML = '<option value="">-- Choose a Template --</option>';
+    const container = document.getElementById('template-accordion-container');
+    if (container && window.EmailTemplates) {
+        container.innerHTML = '';
         const categories = {};
         window.EmailTemplates.forEach(t => {
             const cat = t.category || 'Other';
@@ -4197,27 +4196,77 @@ function setupCampaignBuilder() {
         });
         
         for (const cat in categories) {
-            const optgroup = document.createElement('optgroup');
-            optgroup.label = cat;
-            categories[cat].forEach(t => {
-                const opt = document.createElement('option');
-                opt.value = t.id;
-                opt.innerText = t.name;
-                optgroup.appendChild(opt);
+            const box = document.createElement('div');
+            box.style.border = '1px solid var(--border)';
+            box.style.borderRadius = '8px';
+            box.style.overflow = 'hidden';
+            box.style.background = '#fff';
+            box.style.boxShadow = '0 1px 2px rgba(0,0,0,0.05)';
+            
+            const header = document.createElement('div');
+            header.style.padding = '12px 16px';
+            header.style.background = '#f8fafc';
+            header.style.cursor = 'pointer';
+            header.style.fontWeight = '600';
+            header.style.fontSize = '13px';
+            header.style.color = '#334155';
+            header.style.display = 'flex';
+            header.style.justifyContent = 'space-between';
+            header.style.alignItems = 'center';
+            header.innerHTML = `<span>${cat} <span style="font-size:11px;color:#94a3b8;font-weight:400;margin-left:4px;">(${categories[cat].length})</span></span><i class="fa-solid fa-chevron-down" style="font-size:10px;transition:transform 0.2s;"></i>`;
+            
+            const content = document.createElement('div');
+            content.style.display = 'none';
+            content.style.flexDirection = 'column';
+            content.style.maxHeight = '280px';
+            content.style.overflowY = 'auto';
+            content.style.borderTop = '1px solid var(--border)';
+            
+            header.addEventListener('click', () => {
+                const isOpen = content.style.display === 'flex';
+                // Close all others
+                Array.from(container.children).forEach(c => {
+                    c.children[1].style.display = 'none';
+                    c.children[0].querySelector('i').style.transform = 'rotate(0deg)';
+                    c.children[0].style.background = '#f8fafc';
+                });
+                
+                if (!isOpen) {
+                    content.style.display = 'flex';
+                    header.querySelector('i').style.transform = 'rotate(180deg)';
+                    header.style.background = '#e2e8f0';
+                }
             });
-            tmplSelect.appendChild(optgroup);
+            
+            categories[cat].forEach(t => {
+                const item = document.createElement('div');
+                item.style.padding = '10px 16px';
+                item.style.fontSize = '13px';
+                item.style.color = '#475569';
+                item.style.cursor = 'pointer';
+                item.style.borderBottom = '1px solid #f1f5f9';
+                item.style.transition = 'background 0.2s, color 0.2s';
+                item.innerHTML = `<i class="fa-regular fa-file-lines" style="margin-right:8px;color:#94a3b8;"></i> ${t.name}`;
+                
+                item.addEventListener('mouseenter', () => {
+                    item.style.background = '#f1f5f9';
+                    item.style.color = 'var(--p)';
+                });
+                item.addEventListener('mouseleave', () => {
+                    item.style.background = 'transparent';
+                    item.style.color = '#475569';
+                });
+                
+                item.addEventListener('click', () => {
+                    loadTemplate(t.id);
+                });
+                content.appendChild(item);
+            });
+            
+            box.appendChild(header);
+            box.appendChild(content);
+            container.appendChild(box);
         }
-        
-        // Remove existing listeners by replacing the element
-        const newSelect = tmplSelect.cloneNode(true);
-        tmplSelect.parentNode.replaceChild(newSelect, tmplSelect);
-        
-        newSelect.addEventListener('change', e => {
-            if (e.target.value) {
-                loadTemplate(e.target.value);
-                e.target.value = '';
-            }
-        });
     }
 }
 

@@ -1503,8 +1503,8 @@ window.editCampaign = function(id) {
         
         const cDelayMinEl = document.getElementById('sch-delay-min');
         const cDelayMaxEl = document.getElementById('sch-delay-max');
-        if (cDelayMinEl) cDelayMinEl.value = c.delay_min !== null ? c.delay_min : 30;
-        if (cDelayMaxEl) cDelayMaxEl.value = c.delay_max !== null ? c.delay_max : 90;
+        if (cDelayMinEl) cDelayMinEl.value = (c.delay_min !== null && c.delay_min !== undefined) ? c.delay_min : 30;
+        if (cDelayMaxEl) cDelayMaxEl.value = (c.delay_max !== null && c.delay_max !== undefined) ? c.delay_max : 90;
 
         window.switchColdTab('sequences');
         showToast('Cold Mail sequence loaded for editing');
@@ -1636,8 +1636,8 @@ window.editCampaign = function(id) {
 
         const vbDelayMinEl = document.getElementById('vb-sch-delay-min');
         const vbDelayMaxEl = document.getElementById('vb-sch-delay-max');
-        if (vbDelayMinEl) vbDelayMinEl.value = c.delay_min !== null ? c.delay_min : 30;
-        if (vbDelayMaxEl) vbDelayMaxEl.value = c.delay_max !== null ? c.delay_max : 90;
+        if (vbDelayMinEl) vbDelayMinEl.value = (c.delay_min !== null && c.delay_min !== undefined) ? c.delay_min : 30;
+        if (vbDelayMaxEl) vbDelayMaxEl.value = (c.delay_max !== null && c.delay_max !== undefined) ? c.delay_max : 90;
 
 
 
@@ -2066,8 +2066,8 @@ function loadScheduleTab(campaignId) {
 
     const cDelayMinEl = document.getElementById('campaign-delay-min');
     const cDelayMaxEl = document.getElementById('campaign-delay-max');
-    if (cDelayMinEl) cDelayMinEl.value = c.delay_min !== null ? c.delay_min : 30;
-    if (cDelayMaxEl) cDelayMaxEl.value = c.delay_max !== null ? c.delay_max : 90;
+    if (cDelayMinEl) cDelayMinEl.value = (c.delay_min !== null && c.delay_min !== undefined) ? c.delay_min : 30;
+    if (cDelayMaxEl) cDelayMaxEl.value = (c.delay_max !== null && c.delay_max !== undefined) ? c.delay_max : 90;
 }
 
 

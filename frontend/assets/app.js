@@ -6612,15 +6612,15 @@ window.renderSendingAccountsSelector = async function(containerId, selectedIdsSt
         let html = '';
         accounts.forEach(acc => {
             const isChecked = selectedIds.includes(acc.id) ? 'checked' : '';
-            html += 
+            html += `
                 <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px; padding:4px 0;">
-                    <input type="checkbox" class="sender-acc-checkbox" value=" + acc.id + "  + isChecked + >
+                    <input type="checkbox" class="sender-acc-checkbox" value="${acc.id}" ${isChecked}>
                     <div>
-                        <div style="font-weight:600; color:var(--p);"> + (acc.name || 'No Name') + </div>
-                        <div style="color:var(--text-muted); font-size:11px;"> + acc.email + </div>
+                        <div style="font-weight:600; color:var(--p);">${acc.name || 'No Name'}</div>
+                        <div style="color:var(--text-muted); font-size:11px;">${acc.email}</div>
                     </div>
                 </label>
-            ;
+            `;
         });
         container.innerHTML = html;
     } catch (e) {

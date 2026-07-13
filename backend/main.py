@@ -25,7 +25,8 @@ import warmup_service
 import health_monitor
 import domain_checker
 scheduler = BackgroundScheduler()
-scheduler.add_job(warmup_service.run_warmup_cycle, 'interval', minutes=30, id='warmup_job')
+from datetime import datetime
+scheduler.add_job(warmup_service.run_warmup_cycle, 'interval', minutes=30, id='warmup_job', next_run_time=datetime.now())
 scheduler.add_job(warmup_service.reset_daily_warmup_counts, 'cron', hour=0, minute=0, id='warmup_reset')
 scheduler.add_job(health_monitor.run_health_audit, 'interval', hours=2, id='health_audit_job')
 
@@ -143,9 +144,14 @@ def _scheduler_start_scheduled_campaigns():
 scheduler.add_job(domain_checker.run_domain_health_check, 'cron', hour=6, minute=0, id='domain_check_job')
 scheduler.add_job(_auto_resume_stuck_campaigns, 'interval', minutes=30, id='auto_resume_job')
 scheduler.add_job(_scheduler_start_scheduled_campaigns, 'interval', minutes=1, id='scheduled_campaigns_job')
-
-scheduler.start()
-
+import socket
+try:
+    _scheduler_lock_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    _scheduler_lock_socket.bind(("127.0.0.1", 47200))
+    scheduler.start()
+    print("Scheduler started in this process.")
+except socket.error:
+    print("Scheduler already running in another process.")
 
 app = FastAPI(title="MailChimp Clone API")
 
@@ -166,6 +172,8 @@ def trigger_cron():
     _scheduler_start_scheduled_campaigns()
     return {"status": "success", "message": "Cron executed"}
 
+
+
 @app.on_event("startup")
 async def startup_event():
     db = database.SessionLocal()
@@ -176,6 +184,7 @@ async def startup_event():
             # Trigger immediately on startup
             import threading
             threading.Thread(target=check_bounces).start()
+            threading.Thread(target=warmup_service.run_warmup_cycle).start()
         processing_campaigns = db.query(database.Campaign).filter(database.Campaign.status == "processing").all()
 
         
@@ -259,6 +268,12 @@ class CampaignCreate(BaseModel):
     sending_days: Optional[str] = None
     start_hour: Optional[int] = None
     end_hour: Optional[int] = None
+    track_opens: Optional[bool] = True
+    track_clicks: Optional[bool] = True
+    use_unsubscribe: Optional[bool] = True
+    steps_json: Optional[str] = None
+    max_emails_per_day: Optional[int] = 50
+    daily_ramp_up: Optional[int] = 0
 
 class CampaignResponse(BaseModel):
     id: str  # BUG-24 fix: MongoDB IDs are strings not ints
@@ -281,7 +296,16 @@ class CampaignResponse(BaseModel):
     timezone: Optional[str] = None
     delay_min: Optional[int] = 30
     delay_max: Optional[int] = 90
-
+    track_opens: Optional[bool] = True
+    track_clicks: Optional[bool] = True
+    use_unsubscribe: Optional[bool] = True
+    steps_json: Optional[str] = None
+    max_emails_per_day: Optional[int] = 50
+    daily_ramp_up: Optional[int] = 0
+    current_daily_limit: Optional[int] = 50
+    sent_today_campaign: Optional[int] = 0
+    sent_today_date: Optional[str] = None
+    
     class Config:
         from_attributes = True
 
@@ -733,9 +757,18 @@ def send_campaign(campaign: CampaignCreate, background_tasks: BackgroundTasks, c
         target_campaign.timezone = campaign.timezone
         target_campaign.delay_min = campaign.delay_min
         target_campaign.delay_max = campaign.delay_max
-        if campaign.sending_days is not None: target_campaign.sending_days = campaign.sending_days
-        if campaign.start_hour is not None: target_campaign.start_hour = campaign.start_hour
-        if campaign.end_hour is not None: target_campaign.end_hour = campaign.end_hour
+        target_campaign.sending_days = campaign.sending_days
+        target_campaign.start_hour = campaign.start_hour
+        target_campaign.end_hour = campaign.end_hour
+        target_campaign.track_opens = campaign.track_opens
+        target_campaign.track_clicks = campaign.track_clicks
+        target_campaign.use_unsubscribe = campaign.use_unsubscribe
+        target_campaign.steps_json = campaign.steps_json
+        
+        target_campaign.max_emails_per_day = campaign.max_emails_per_day
+        target_campaign.daily_ramp_up = campaign.daily_ramp_up
+        target_campaign.current_daily_limit = campaign.daily_ramp_up if (campaign.daily_ramp_up and campaign.daily_ramp_up > 0) else campaign.max_emails_per_day
+        
         db.commit()
         db.query(database.CampaignLead).filter(database.CampaignLead.campaign_id == str(target_campaign.id)).delete()
         db.commit()
@@ -756,7 +789,14 @@ def send_campaign(campaign: CampaignCreate, background_tasks: BackgroundTasks, c
             delay_max=campaign.delay_max,
             sending_days=campaign.sending_days,
             start_hour=campaign.start_hour,
-            end_hour=campaign.end_hour
+            end_hour=campaign.end_hour,
+            track_opens=campaign.track_opens,
+            track_clicks=campaign.track_clicks,
+            use_unsubscribe=campaign.use_unsubscribe,
+            steps_json=campaign.steps_json,
+            max_emails_per_day=campaign.max_emails_per_day,
+            daily_ramp_up=campaign.daily_ramp_up,
+            current_daily_limit=campaign.daily_ramp_up if (campaign.daily_ramp_up and campaign.daily_ramp_up > 0) else campaign.max_emails_per_day
         )
         db.add(new_campaign)
         db.commit()
@@ -872,20 +912,61 @@ def _run_campaign(db, campaign_id):
     import os
     import email_service
     
+    from sqlalchemy import or_, and_
+    
     campaign_id = str(campaign_id)
     campaign = db.query(database.Campaign).filter(database.Campaign.id == campaign_id).first()
     if not campaign:
         return
 
-    leads = list(db.query(database.CampaignLead).filter(database.CampaignLead.campaign_id == campaign_id, database.CampaignLead.status == 'pending').all())
+    now = datetime.utcnow()
+    today_str = datetime.now(_BD_TZ).strftime("%Y-%m-%d")
+    
+    # Check Campaign-level Date & Ramp Up
+    if campaign.sent_today_date != today_str:
+        campaign.sent_today_campaign = 0
+        
+        # If it's a new day, apply ramp up (but only if it's not the first time we ever send, i.e. sent_today_date is not None)
+        if campaign.sent_today_date is not None:
+            if getattr(campaign, 'daily_ramp_up', 0) > 0 and getattr(campaign, 'max_emails_per_day', 0) > 0:
+                current_limit = getattr(campaign, 'current_daily_limit', 0)
+                new_limit = current_limit + campaign.daily_ramp_up
+                if new_limit > campaign.max_emails_per_day:
+                    new_limit = campaign.max_emails_per_day
+                campaign.current_daily_limit = new_limit
+                
+        campaign.sent_today_date = today_str
+        db.commit()
+
+    # Select leads that are pending, or sent and due for next step
+    leads = list(db.query(database.CampaignLead).filter(
+        database.CampaignLead.campaign_id == campaign_id,
+        database.CampaignLead.replied == False,
+        database.CampaignLead.status != 'unsubscribed',
+        or_(
+            database.CampaignLead.status == 'pending',
+            and_(
+                database.CampaignLead.status == 'sent', 
+                database.CampaignLead.next_send_at != None, 
+                database.CampaignLead.next_send_at <= now
+            )
+        )
+    ).all())
+    
     if not leads:
-        # Check if all leads are done
+        # Check if all leads are done (no longer pending, and no future send date or already replied/unsubbed)
         all_leads = list(db.query(database.CampaignLead).filter(database.CampaignLead.campaign_id == campaign_id).all())
-        if all_leads and all(l.status != "pending" for l in all_leads):
+        is_finished = True
+        for l in all_leads:
+            if l.status == "pending" or (l.status == "sent" and l.next_send_at is not None and not l.replied):
+                is_finished = False
+                break
+                
+        if all_leads and is_finished:
             if campaign.status != "completed":
                 campaign.status = "completed"
                 db.commit()
-        else:
+        elif not all_leads:
             campaign.status = "failed"
             db.commit()
         return
@@ -931,9 +1012,9 @@ def _run_campaign(db, campaign_id):
         except Exception:
             return True  # If timezone is invalid, allow sending
 
-    def get_available_account():
+    def get_available_account(db_session):
         # SMART SELECTION: Health-based ordering, skip auto-paused, check sending window
-        all_accounts = db.query(database.SendingAccount).filter(
+        all_accounts = db_session.query(database.SendingAccount).filter(
             database.SendingAccount.is_active == True,
             database.SendingAccount.auto_paused == False,
             database.SendingAccount.user_id == campaign.user_id
@@ -976,23 +1057,62 @@ def _run_campaign(db, campaign_id):
     except Exception:
         pass
 
-    def send_to_lead(lead, subject, body, variant_label=None):
+    def send_to_lead(db_session, lead, variant_label=None):
         nonlocal success_count_a, success_count_b
         
-        c = db.query(database.Campaign).filter(database.Campaign.id == campaign_id).first()
+        c = db_session.query(database.Campaign).filter(database.Campaign.id == campaign_id).first()
         if c and c.status == "paused":
             return False  # Signal to abort loop
+            
+        import json
+        from datetime import timedelta
+        steps = None
+        if c.steps_json:
+            try:
+                steps = json.loads(c.steps_json)
+            except Exception:
+                pass
+                
+        current_step_idx = lead.current_step if lead.current_step is not None else 0
+        
+        # Default to campaign fields
+        send_subject = c.subject
+        send_body = c.body
+        delay_days = -1
+        
+        if steps and len(steps) > current_step_idx:
+            step_data = steps[current_step_idx]
+            send_subject = step_data.get('subject', c.subject)
+            if variant_label == 'B' and step_data.get('is_ab'):
+                send_body = step_data.get('body_b') or step_data.get('body')
+                send_subject = step_data.get('subject_b') or send_subject
+            else:
+                send_body = step_data.get('body', c.body)
+                
+            if len(steps) > current_step_idx + 1:
+                next_step = steps[current_step_idx + 1]
+                delay_days = int(next_step.get('wait', 0))
+        elif steps and len(steps) <= current_step_idx:
+            # Reached end of sequence
+            lead.status = "completed"
+            db_session.commit()
+            return True
+        else:
+            # Fallback for old campaigns without steps
+            if variant_label == 'B':
+                send_subject = c.subject_b or c.subject
+                send_body = c.body_b or c.body
             
         # Skip unsubscribed
         if lead.email.lower() in unsub_emails:
             lead.status = "unsubscribed"
-            db.commit()
+            db_session.commit()
             return True
 
         # REPLY AUTO-STOP: Skip leads who already replied
         if lead.email.lower() in replied_emails:
             lead.status = "replied"
-            db.commit()
+            db_session.commit()
             print(f"Skipping replied lead: {lead.email}")
             return True
             
@@ -1000,28 +1120,44 @@ def _run_campaign(db, campaign_id):
         validation = email_service.validate_email_address(lead.email)
         if not validation['valid']:
             lead.status = "invalid"
-            db.commit()
+            db_session.commit()
             print(f"Skipping invalid email {lead.email}: {validation['reason']}")
             return True
             
-        acc = get_available_account()
+        acc = get_available_account(db)
         if not acc:
             print(f"All accounts reached daily limit or outside sending window for campaign {campaign_id}.")
             return False  # signal to stop
         pixel_url = f"{base_url}/api/track/lead_open/{campaign_id}/{lead.id}"
-        body_with_pixel = email_service.inject_tracking_pixel(body, pixel_url)
-        click_track_url = f"{base_url}/api/track/click/{campaign_id}/{lead.id}"
-        body_with_tracking = email_service.inject_click_tracking(body_with_pixel, click_track_url)
+        
+        body_with_tracking = send_body
+        if getattr(c, 'track_opens', True):
+            body_with_tracking = email_service.inject_tracking_pixel(body_with_tracking, pixel_url)
+            
+        if getattr(c, 'track_clicks', True):
+            click_track_url = f"{base_url}/api/track/click/{campaign_id}/{lead.id}"
+            body_with_tracking = email_service.inject_click_tracking(body_with_tracking, click_track_url)
+            
         if variant_label:
             lead.variant = variant_label
         try:
-            sent = email_service.send_single_email(subject, body_with_tracking, lead.email, account=acc, lead_name=lead.name or '', lead_company=lead.company or '')
+            use_unsub = getattr(c, 'use_unsubscribe', True)
+            sent = email_service.send_single_email(send_subject, body_with_tracking, lead.email, account=acc, lead_name=lead.name or '', lead_company=lead.company or '', use_unsubscribe=use_unsub)
             if sent:
                 lead.status = "sent"
+                if delay_days > -1:
+                    lead.next_send_at = datetime.utcnow() + timedelta(days=delay_days)
+                else:
+                    lead.next_send_at = None
+                    lead.status = "completed"
+                lead.current_step = current_step_idx + 1
                 lead.sending_account_id = str(acc.id)
                 acc.sent_today += 1
                 acc.sent_today_date = datetime.now(_BD_TZ).strftime("%Y-%m-%d")
-                db.commit()
+                
+                c.sent_today_campaign = (c.sent_today_campaign or 0) + 1
+                
+                db_session.commit()
                 # DO NOT increment warmup counter for campaign sends
                 # Warmup and Campaign are independent modules
                 if variant_label == 'B':
@@ -1029,22 +1165,26 @@ def _run_campaign(db, campaign_id):
                 else:
                     success_count_a += 1
                 # HEALTH TRACKING: Update on success
-                health_monitor.update_health_after_send(db, str(acc.id), True)
+                health_monitor.update_health_after_send(db_session, str(acc.id), True)
             else:
                 lead.status = "bounced"
-                db.commit()
+                db_session.commit()
                 # HEALTH TRACKING: Update on failure + auto-pause check
-                health_monitor.update_health_after_send(db, str(acc.id), False)
+                health_monitor.update_health_after_send(db_session, str(acc.id), False)
         except Exception as e:
             print(f"Send error for {lead.email}: {e}")
-            lead.status = f"bounced: {str(e)[:30]}"
-            db.commit()
+            db_session.rollback()
+            try:
+                lead.status = f"bounced: {str(e)[:30]}"
+                db_session.commit()
+            except Exception:
+                db_session.rollback()
             # HEALTH TRACKING: Update on exception
             try:
-                health_monitor.update_health_after_send(db, str(acc.id), False)
+                health_monitor.update_health_after_send(db_session, str(acc.id), False)
             except Exception:
                 pass
-        db.commit()
+        db_session.commit()
         return True
 
     import time
@@ -1059,9 +1199,12 @@ def _run_campaign(db, campaign_id):
         random.shuffle(all_ab_leads)
         
         for lead, var_label in all_ab_leads:
-            subj = campaign.subject if var_label == 'A' else (campaign.subject_b or campaign.subject)
-            body = campaign.body if var_label == 'A' else (campaign.body_b or campaign.body)
-            result = send_to_lead(lead, subj, body, var_label)
+            c_refresh = db.query(database.Campaign).filter(database.Campaign.id == campaign_id).first()
+            if c_refresh and c_refresh.current_daily_limit and c_refresh.sent_today_campaign >= c_refresh.current_daily_limit:
+                print(f"Campaign {campaign_id} reached its daily limit of {c_refresh.current_daily_limit}.")
+                break
+                
+            result = send_to_lead(db, lead, var_label)
             if result is False: break
             
             delay = random.randint(delay_min, delay_max)
@@ -1075,7 +1218,12 @@ def _run_campaign(db, campaign_id):
             time.sleep(delay)
     else:
         for lead in leads:
-            result = send_to_lead(lead, campaign.subject, campaign.body)
+            c_refresh = db.query(database.Campaign).filter(database.Campaign.id == campaign_id).first()
+            if c_refresh and c_refresh.current_daily_limit and c_refresh.sent_today_campaign >= c_refresh.current_daily_limit:
+                print(f"Campaign {campaign_id} reached its daily limit of {c_refresh.current_daily_limit}.")
+                break
+                
+            result = send_to_lead(db, lead)
             if result is False: break
             
             delay = random.randint(delay_min, delay_max)

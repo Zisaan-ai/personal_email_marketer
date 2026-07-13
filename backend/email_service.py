@@ -300,7 +300,7 @@ def check_spam_score(subject: str, body: str) -> dict:
 # ============================================================
 # MAIN SEND FUNCTION - with full deliverability headers
 # ============================================================
-def send_single_email(subject: str, body_html: str, recipient: str, account=None, lead_name: str = "", lead_company: str = "") -> bool:
+def send_single_email(subject: str, body_html: str, recipient: str, account=None, lead_name: str = "", lead_company: str = "", use_unsubscribe: bool = True) -> bool:
     if not account:
         print("No sending account provided.")
         return False
@@ -318,8 +318,9 @@ def send_single_email(subject: str, body_html: str, recipient: str, account=None
     body_html = personalize_content(body_html, lead_name, lead_company)
     subject = personalize_content(subject, lead_name, lead_company)
     
-    # Inject unsubscribe link in body
-    body_html = inject_unsubscribe(body_html, recipient)
+    # Inject unsubscribe link in body if enabled
+    if use_unsubscribe:
+        body_html = inject_unsubscribe(body_html, recipient)
     
     # Generate clean plain-text (CRITICAL for spam filters)
     body_text = generate_clean_plaintext(body_html)

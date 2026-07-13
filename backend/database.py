@@ -14,6 +14,8 @@ _DB_DIR = os.path.dirname(os.path.abspath(__file__))
 _DEFAULT_DB = f"sqlite:///{os.path.join(_DB_DIR, 'sql_app.db')}"
 DATABASE_URL = os.getenv("DATABASE_URL", _DEFAULT_DB)
 
+from sqlalchemy.pool import NullPool
+
 # For sqlite we need connect_args={"check_same_thread": False}
 if DATABASE_URL.startswith("sqlite"):
     engine = create_engine(
@@ -22,7 +24,7 @@ if DATABASE_URL.startswith("sqlite"):
             "check_same_thread": False,
             "timeout": 15
         }, 
-        poolclass=StaticPool
+        poolclass=NullPool
     )
     from sqlalchemy import text
     try:
@@ -62,6 +64,13 @@ class Campaign(Base):
     body = Column(Text, nullable=True)
     type = Column(String, default="newsletter")
     user_id = Column(String, ForeignKey("users.id"), nullable=True)
+    steps_json = Column(Text, nullable=True)
+    
+    max_emails_per_day = Column(Integer, default=50)
+    daily_ramp_up = Column(Integer, default=0)
+    current_daily_limit = Column(Integer, default=50)
+    sent_today_campaign = Column(Integer, default=0)
+    sent_today_date = Column(String, nullable=True)
     
     sent_count = Column(Integer, default=0)
     opens = Column(Integer, default=0)
@@ -85,6 +94,12 @@ class Campaign(Base):
     sending_days = Column(String, nullable=True)  # JSON list e.g. ["Mon","Tue","Wed"]
     start_hour = Column(Integer, nullable=True)   # e.g. 9 (9 AM)
     end_hour = Column(Integer, nullable=True)      # e.g. 17 (5 PM)
+    
+    # --- Deliverability Options ---
+    track_opens = Column(Boolean, default=True)
+    track_clicks = Column(Boolean, default=True)
+    use_unsubscribe = Column(Boolean, default=True)
+
     created_at = Column(DateTime, default=datetime.utcnow)
 
 class CampaignLead(Base):
@@ -99,6 +114,9 @@ class CampaignLead(Base):
     variant = Column(String, nullable=True)
     sending_account_id = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+    current_step = Column(Integer, default=0)
+    next_send_at = Column(DateTime, nullable=True)
+    replied = Column(Boolean, default=False)
 
 class BounceRecord(Base):
     __tablename__ = "bounce_records"
@@ -293,6 +311,24 @@ def run_migrations():
         _safe_add_column("replies", "message_id", "VARCHAR", None)
         _safe_add_column("sending_accounts", "sent_today_date", "VARCHAR", None)
         _safe_add_column("campaign_leads", "sending_account_id", "VARCHAR", None)
+        
+        # --- Campaign Deliverability Options ---
+        _safe_add_column("campaigns", "track_opens", "BOOLEAN", True)
+        _safe_add_column("campaigns", "track_clicks", "BOOLEAN", True)
+        _safe_add_column("campaigns", "use_unsubscribe", "BOOLEAN", True)
+        
+        # --- Smart Follow-up ---
+        _safe_add_column("campaigns", "steps_json", "TEXT", None)
+        _safe_add_column("campaigns", "max_emails_per_day", "INTEGER", 50)
+        _safe_add_column("campaigns", "daily_ramp_up", "INTEGER", 0)
+        _safe_add_column("campaigns", "current_daily_limit", "INTEGER", 50)
+        _safe_add_column("campaigns", "sent_today_campaign", "INTEGER", 0)
+        _safe_add_column("campaigns", "sent_today_date", "VARCHAR(50)", None)
+        
+        _safe_add_column("campaign_leads", "current_step", "INTEGER", 0)
+        _safe_add_column("campaign_leads", "next_send_at", "DATETIME", None)
+        _safe_add_column("campaign_leads", "replied", "BOOLEAN", False)
+
         print("[Migration] All migrations completed successfully.")
     except Exception as e:
         print(f"[Migration] Error: {e}")

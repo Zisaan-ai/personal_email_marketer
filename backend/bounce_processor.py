@@ -135,7 +135,7 @@ def check_bounces():
                                             # Update lead status to replied
                                             db.query(database.CampaignLead).filter(
                                                 database.CampaignLead.email == sender_email
-                                            ).update({"status": "replied"})
+                                            ).update({"status": "replied", "replied": True})
                                             
                                             replies_found += 1
                     except Exception as e:

@@ -4109,6 +4109,9 @@ function setupCampaignBuilder() {
             payload.end_hour = endHourVal === 0 ? 24 : endHourVal;
 
             payload.timezone = document.getElementById('vb-sch-timezone')?.value || 'UTC';
+            payload.track_opens = document.getElementById('vb-track-opens') ? document.getElementById('vb-track-opens').value === '1' : true;
+            payload.track_clicks = document.getElementById('vb-track-clicks') ? document.getElementById('vb-track-clicks').value === '1' : true;
+            payload.use_unsubscribe = document.getElementById('vb-use-unsubscribe') ? document.getElementById('vb-use-unsubscribe').value === '1' : true;
 
             
 
@@ -4563,6 +4566,8 @@ function setupSequenceBuilder() {
 
             body_b: steps.map(s => '<div>' + (s.is_ab ? (s.body_b || s.body) : s.body) + '</div>').join('<hr>'),
 
+            steps_json: JSON.stringify(steps),
+
             delay_min: delayMin,
 
             delay_max: delayMax,
@@ -4592,6 +4597,11 @@ function setupSequenceBuilder() {
         payload.end_hour = endHourVal === 0 ? 24 : endHourVal;
 
         payload.timezone = document.getElementById('sch-timezone')?.value || 'UTC';
+        payload.track_opens = document.getElementById('cold-track-opens') ? document.getElementById('cold-track-opens').value === '1' : true;
+        payload.track_clicks = document.getElementById('cold-track-clicks') ? document.getElementById('cold-track-clicks').value === '1' : true;
+        payload.use_unsubscribe = document.getElementById('cold-use-unsubscribe') ? document.getElementById('cold-use-unsubscribe').value === '1' : true;
+          payload.max_emails_per_day = document.getElementById('cold-max-emails') ? parseInt(document.getElementById('cold-max-emails').value) : 50;
+          payload.daily_ramp_up = document.getElementById('cold-ramp-up') ? parseInt(document.getElementById('cold-ramp-up').value) : 0;
 
         
 
@@ -4680,6 +4690,8 @@ function setupSequenceBuilder() {
 
             body_b: steps.map(s => '<div>' + (s.is_ab ? (s.body_b || s.body) : s.body) + '</div>').join('<hr>'),
 
+            steps_json: JSON.stringify(steps),
+
             delay_min: delayMin,
 
             delay_max: delayMax,
@@ -4709,6 +4721,11 @@ function setupSequenceBuilder() {
         payload.end_hour = endHourVal === 0 ? 24 : endHourVal;
 
         payload.timezone = document.getElementById('sch-timezone')?.value || 'UTC';
+        payload.track_opens = document.getElementById('cold-track-opens') ? document.getElementById('cold-track-opens').value === '1' : true;
+        payload.track_clicks = document.getElementById('cold-track-clicks') ? document.getElementById('cold-track-clicks').value === '1' : true;
+        payload.use_unsubscribe = document.getElementById('cold-use-unsubscribe') ? document.getElementById('cold-use-unsubscribe').value === '1' : true;
+          payload.max_emails_per_day = document.getElementById('cold-max-emails') ? parseInt(document.getElementById('cold-max-emails').value) : 50;
+          payload.daily_ramp_up = document.getElementById('cold-ramp-up') ? parseInt(document.getElementById('cold-ramp-up').value) : 0;
 
         
 
@@ -6270,7 +6287,10 @@ window.saveNewsletterSchedule = async function() {
         end_hour: endHour === 0 ? 24 : endHour,
         timezone: tz,
         delay_min: delayMin,
-        delay_max: delayMax
+        delay_max: delayMax,
+        track_opens: document.getElementById('vb-track-opens') ? document.getElementById('vb-track-opens').value === '1' : true,
+        track_clicks: document.getElementById('vb-track-clicks') ? document.getElementById('vb-track-clicks').value === '1' : true,
+        use_unsubscribe: document.getElementById('vb-use-unsubscribe') ? document.getElementById('vb-use-unsubscribe').value === '1' : true
     };
 
     if (!window.currentCampaignId) {

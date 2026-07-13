@@ -2136,3 +2136,14 @@ def serve_frontend(full_path: str, db: Session = Depends(database.get_db)):
     )
 
 
+@app.get("/api/run-migration-now")
+def run_mig():
+    import sqlite3
+    try:
+        conn = sqlite3.connect("sql_app.db")
+        conn.execute("ALTER TABLE campaigns ADD COLUMN selected_sender_ids TEXT")
+        conn.commit()
+        conn.close()
+        return "Migration applied successfully!"
+    except Exception as e:
+        return f"Migration error: {str(e)}"

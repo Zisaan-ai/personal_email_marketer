@@ -39,7 +39,7 @@ def check_bounces():
                 
             try:
                 print(f"Connecting to IMAP for {account.smtp_username}...")
-                mail = imaplib.IMAP4_SSL(imap_server, imap_port)
+                mail = imaplib.IMAP4_SSL(imap_server, imap_port, timeout=15)
                 mail.login(account.smtp_username, account.imap_password or account.smtp_password)
                 mail.select("inbox")
                 

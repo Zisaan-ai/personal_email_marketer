@@ -1,7 +1,9 @@
 import requests
+import time
 
+# Login
 url = 'https://xcomic.xyz/api/auth/token'
-data = {'username': 'zonemrahman@gmail.com', 'password': '76008972'}
+data = {'username': 'zonemrahman@gmail.com', 'password': 'password76008972'}
 res = requests.post(url, data=data)
 if res.status_code == 200:
     token = res.json().get('access_token')
@@ -25,6 +27,8 @@ if res.status_code == 200:
     create_res = requests.post(create_url, json=payload, headers=headers)
     print('Create Campaign:', create_res.status_code, create_res.text)
     
+    time.sleep(2)
+    
     # Fetch campaigns
     fetch_url = 'https://xcomic.xyz/api/campaigns'
     fetch_res = requests.get(fetch_url, headers=headers)
@@ -34,6 +38,7 @@ if res.status_code == 200:
         if len(campaigns) > 0:
             c = campaigns[0]
             print('Latest Campaign Settings:')
+            print('Subject:', c.get('subject'))
             print('Max Emails:', c.get('max_emails_per_day'))
             print('Ramp Up:', c.get('daily_ramp_up'))
             print('Track Opens:', c.get('track_opens'))

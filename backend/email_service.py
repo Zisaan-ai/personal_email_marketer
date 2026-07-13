@@ -84,7 +84,7 @@ def inject_tracking_pixel(body_html: str, pixel_url: str) -> str:
     pixel_img = f'<img src="{pixel_url}" width="1" height="1" style="display:none;" />'
     if "</body>" in body_html.lower():
         # Inject right before closing body tag
-        return re.sub(r'(</body>)', f'{pixel_img}\\1', body_html, flags=re.IGNORECASE)
+        return re.sub(r'(</body>)', lambda m: f'{pixel_img}{m.group(1)}', body_html, flags=re.IGNORECASE)
     else:
         # Just append at the end
         return body_html + pixel_img
@@ -195,7 +195,9 @@ def generate_clean_plaintext(html: str) -> str:
 # ============================================================
 # EMAIL VALIDATION (MX CHECK)
 # ============================================================
+import threading
 MX_CACHE = {}
+MX_CACHE_LOCK = threading.Lock()
 
 def validate_email_address(email: str) -> dict:
     """Validate email format and MX record before sending."""
@@ -205,20 +207,24 @@ def validate_email_address(email: str) -> dict:
     
     domain = email.split('@')[1].lower()
     
-    if domain in MX_CACHE:
-        if not MX_CACHE[domain]:
-            return {'valid': False, 'reason': 'No MX record - domain cannot receive email'}
-        return {'valid': True, 'reason': 'OK'}
+    with MX_CACHE_LOCK:
+        if domain in MX_CACHE:
+            if not MX_CACHE[domain]:
+                return {'valid': False, 'reason': 'No MX record - domain cannot receive email'}
+            return {'valid': True, 'reason': 'OK'}
         
     try:
         # Check MX record to ensure domain can receive email
         records = dns.resolver.resolve(domain, 'MX')
         if not records:
-            MX_CACHE[domain] = False
+            with MX_CACHE_LOCK:
+                MX_CACHE[domain] = False
             return {'valid': False, 'reason': 'No MX record found'}
-        MX_CACHE[domain] = True
+        with MX_CACHE_LOCK:
+            MX_CACHE[domain] = True
     except Exception:
-        MX_CACHE[domain] = False
+        with MX_CACHE_LOCK:
+            MX_CACHE[domain] = False
         return {'valid': False, 'reason': 'No MX record - domain cannot receive email'}
     
     return {'valid': True, 'reason': 'OK'}
@@ -406,12 +412,16 @@ def send_single_email(subject: str, body_html: str, recipient: str, account=None
         msg.attach(part2)
         
         server.send_message(msg)
-        server.quit()
         return True
     except Exception as e:
         print(f"Failed to send to {recipient}: {e}")
         return False
-
+    finally:
+        if 'server' in locals() and server is not None:
+            try:
+                server.quit()
+            except:
+                pass
 
 def _send_system_email(subject: str, body_html: str, recipient: str) -> bool:
     """Sends a system email (like auth/verification) using .env credentials."""
@@ -439,11 +449,16 @@ def _send_system_email(subject: str, body_html: str, recipient: str) -> bool:
         msg.attach(MIMEText(body_html, "html", "utf-8"))
         
         server.sendmail(SMTP_USERNAME, [recipient], msg.as_string())
-        server.quit()
         return True
     except Exception as e:
         print(f"System Email failed: {e}")
         return False
+    finally:
+        if 'server' in locals() and server is not None:
+            try:
+                server.quit()
+            except:
+                pass
 
 def send_verification_email(email: str, code: str):
     """
@@ -472,7 +487,7 @@ def send_password_reset_email(email: str, code: str):
     """
     Sends a 6-digit password reset code to the user.
     """
-    if not SMTP_PASSWORD:
+    if not SMTP_PASSWORD or not SMTP_USERNAME:
         print(f"*** MOCK EMAIL: Password reset code for {email} is {code} ***")
         return True
 

@@ -3,12 +3,10 @@
 An advanced AI-powered cold email outreach and marketing automation platform. This application allows you to manage lead lists, configure multiple SMTP sending accounts, track email opens/clicks, and automatically generate personalized email sequences using AI (Google Gemini or Groq).
 
 ## Features
-- **Campaign Management & Pacing**: Create campaigns with precise "Max Emails Per Day" limits and "Daily Ramp Up" for organic deliverability growth.
-- **AI Integration**: Use Groq or Google Gemini to craft personalized emails, subject lines, and auto-reply sequences.
-- **Smart Inbox & Health Monitor**: Multi-sender rotation with an automated health monitor that dynamically lowers daily limits based on account bounce rates.
-- **Visual Sequence Builder**: Create drag-and-drop cold mail sequences with automated delays and multi-step follow-ups.
-- **Analytics & Tracking**: Real-time open, click, bounce, and unsubscribe tracking.
-- **Automated Replied Detection**: Auto-cancels follow-up steps if a lead replies.
+- **Campaign Management**: Create and schedule email campaigns.
+- **AI Integration**: Use Groq or Google Gemini to craft personalized emails and subject lines.
+- **Multi-Sender Rotation**: Add multiple SMTP accounts to distribute sending load.
+- **Analytics & Tracking**: Real-time open, click, and bounce tracking.
 - **Webhook Support**: Integrate with Make.com, Zapier, or custom endpoints for event triggers.
 
 ## Deployment Instructions

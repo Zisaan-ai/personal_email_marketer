@@ -1,25 +1,24 @@
-import requests, urllib.parse, base64
-creds = 'dGVyYXBrY286KDMjSkNrMlZ5bjk0aFk='
-headers = {'Authorization': f'Basic {creds}'}
+import ftplib
+import io
+import sqlite3
 
-php_code = '''<?php
-$db = new SQLite3('/home/terapkco/xcomic_backend/sql_app.db');
-$res = $db->query("SELECT id, status FROM campaigns ORDER BY created_at DESC LIMIT 3");
-while ($row = $res->fetchArray()) {
-    echo "Campaign: " . $row['id'] . " - " . $row['status'] . "\\n";
-    $res2 = $db->query("SELECT status, COUNT(id) as c FROM campaign_leads WHERE campaign_id = '" . $row['id'] . "' GROUP BY status");
-    while ($row2 = $res2->fetchArray()) {
-        echo "  Lead status: " . $row2['status'] . " = " . $row2['c'] . "\\n";
-    }
-}
-?>'''
+ftp = ftplib.FTP('terapk.com')
+ftp.login('terapkco', '(3#JCk2Vyn94hY')
 
-url = 'https://167.235.11.154:2083/execute/Fileman/save_file_content'
-data = {
-    'dir': '/home/terapkco/xcomic.xyz',
-    'file': 'check_db.php',
-    'content': php_code
-}
-r = requests.post(url, headers=headers, data=data, verify=False)
-r2 = requests.get('https://xcomic.xyz/check_db.php', verify=False)
-print('Output:\\n', r2.text)
+with open('sql_app.db', 'wb') as f:
+    ftp.retrbinary('RETR xcomic_backend/sql_app.db', f.write)
+
+ftp.quit()
+
+conn = sqlite3.connect('sql_app.db')
+conn.row_factory = sqlite3.Row
+cursor = conn.cursor()
+cursor.execute("SELECT * FROM campaigns ORDER BY created_at DESC LIMIT 1")
+row = cursor.fetchone()
+if row:
+    print('Campaign DB values:')
+    for key in row.keys():
+        print(f'{key}: {row[key]}')
+else:
+    print('No campaigns found.')
+conn.close()

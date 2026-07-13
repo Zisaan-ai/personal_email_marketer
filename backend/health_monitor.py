@@ -79,7 +79,7 @@ def update_health_after_send(db, account_id: str, success: bool):
     # Recalculate health score
     account.health_score = calculate_health_score(account)
     account.last_health_check = datetime.utcnow()
-    db.commit()
+    db.flush()
 
     # Record daily stats
     _record_daily_stat(db, account_id, "sent" if success else "bounced")
@@ -99,7 +99,7 @@ def update_health_after_open(db, account_id: str):
 
     account.total_opened = (account.total_opened or 0) + 1
     account.health_score = calculate_health_score(account)
-    db.commit()
+    db.flush()
 
     _record_daily_stat(db, account_id, "opened")
 
@@ -114,7 +114,7 @@ def update_health_after_reply(db, account_id: str):
 
     account.total_replied = (account.total_replied or 0) + 1
     account.health_score = calculate_health_score(account)
-    db.commit()
+    db.flush()
 
     _record_daily_stat(db, account_id, "replied")
 
@@ -262,7 +262,7 @@ def _record_daily_stat(db, account_id: str, event_type: str):
             date=today
         )
         db.add(stat)
-        db.commit()
+        db.flush()
 
     if event_type == "sent":
         stat.sent = (stat.sent or 0) + 1

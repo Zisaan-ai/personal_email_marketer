@@ -280,7 +280,6 @@ class CampaignCreate(BaseModel):
     steps_json: Optional[str] = None
     max_emails_per_day: Optional[int] = 50
     daily_ramp_up: Optional[int] = 0
-    selected_sender_ids: Optional[str] = None
 
 class CampaignResponse(BaseModel):
     id: str  # BUG-24 fix: MongoDB IDs are strings not ints
@@ -299,7 +298,6 @@ class CampaignResponse(BaseModel):
     opens_b: Optional[int] = 0
     sending_days: Optional[str] = None
     start_hour: Optional[int] = None
-    selected_sender_ids: Optional[str] = None
     end_hour: Optional[int] = None
     timezone: Optional[str] = None
     delay_min: Optional[int] = 30
@@ -669,7 +667,6 @@ class CampaignOptionsUpdate(BaseModel):
     use_unsubscribe: Optional[bool] = None
     max_emails_per_day: Optional[int] = None
     daily_ramp_up: Optional[int] = None
-    selected_sender_ids: Optional[str] = None
 
 @app.post("/api/campaigns/{campaign_id}/save-options")
 def save_campaign_options(campaign_id: str, options: CampaignOptionsUpdate, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
@@ -687,8 +684,6 @@ def save_campaign_options(campaign_id: str, options: CampaignOptionsUpdate, curr
         camp.max_emails_per_day = options.max_emails_per_day
     if options.daily_ramp_up is not None:
         camp.daily_ramp_up = options.daily_ramp_up
-    if options.selected_sender_ids is not None:
-        camp.selected_sender_ids = options.selected_sender_ids
     
     db.commit()
     return {"status": "success"}
@@ -725,7 +720,6 @@ def get_campaigns(current_user: database.User = Depends(auth.get_current_user), 
         "max_emails_per_day": c.max_emails_per_day,
         "daily_ramp_up": c.daily_ramp_up,
         "steps_json": c.steps_json,
-        "selected_sender_ids": c.selected_sender_ids,
     } for c in campaigns]
 
 class PreflightRequest(BaseModel):
@@ -805,7 +799,6 @@ def send_campaign(campaign: CampaignCreate, background_tasks: BackgroundTasks, c
         target_campaign.max_emails_per_day = campaign.max_emails_per_day
         target_campaign.daily_ramp_up = campaign.daily_ramp_up
         target_campaign.current_daily_limit = min(campaign.daily_ramp_up, campaign.max_emails_per_day) if (campaign.daily_ramp_up and campaign.daily_ramp_up > 0) else campaign.max_emails_per_day
-        target_campaign.selected_sender_ids = campaign.selected_sender_ids
         
         db.commit()
         db.query(database.CampaignLead).filter(database.CampaignLead.campaign_id == str(target_campaign.id)).delete()
@@ -834,8 +827,7 @@ def send_campaign(campaign: CampaignCreate, background_tasks: BackgroundTasks, c
             steps_json=campaign.steps_json,
             max_emails_per_day=campaign.max_emails_per_day,
             daily_ramp_up=campaign.daily_ramp_up,
-            current_daily_limit=min(campaign.daily_ramp_up, campaign.max_emails_per_day) if (campaign.daily_ramp_up and campaign.daily_ramp_up > 0) else campaign.max_emails_per_day,
-            selected_sender_ids=campaign.selected_sender_ids
+            current_daily_limit=min(campaign.daily_ramp_up, campaign.max_emails_per_day) if (campaign.daily_ramp_up and campaign.daily_ramp_up > 0) else campaign.max_emails_per_day
         )
         db.add(new_campaign)
         db.commit()
@@ -1069,15 +1061,6 @@ def _run_campaign(db, campaign_id):
             database.SendingAccount.auto_paused == False,
             database.SendingAccount.user_id == campaign.user_id
         ).order_by(database.SendingAccount.health_score.desc()).all()
-
-        import json
-        if campaign.selected_sender_ids:
-            try:
-                selected_ids = json.loads(campaign.selected_sender_ids)
-                if selected_ids and isinstance(selected_ids, list) and len(selected_ids) > 0:
-                    all_accounts = [acc for acc in all_accounts if acc.id in selected_ids]
-            except Exception:
-                pass
 
         # Multi-domain rotation: prefer accounts from a different domain
         last_domain = _last_domain_used[0]

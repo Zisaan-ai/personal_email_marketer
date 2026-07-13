@@ -100,6 +100,9 @@ class Campaign(Base):
     track_clicks = Column(Boolean, default=True)
     use_unsubscribe = Column(Boolean, default=True)
 
+    # --- Manual Sending Account Selection ---
+    selected_sender_ids = Column(Text, nullable=True) # JSON list of account IDs, or null for all active
+
     created_at = Column(DateTime, default=datetime.utcnow)
 
 class CampaignLead(Base):
@@ -262,6 +265,9 @@ def get_db():
     db = SessionLocal()
     try:
         yield db
+    except Exception:
+        db.rollback()
+        raise
     finally:
         db.close()
 
@@ -300,6 +306,8 @@ def run_migrations():
         _safe_add_column("sending_accounts", "total_bounced", "INTEGER", 0)
         _safe_add_column("sending_accounts", "total_opened", "INTEGER", 0)
         _safe_add_column("sending_accounts", "total_replied", "INTEGER", 0)
+        _safe_add_column("sending_accounts", "warmup_daily_limit", "INTEGER", 20)
+        _safe_add_column("sending_accounts", "smart_limit_enabled", "BOOLEAN", False)
         _safe_add_column("sending_accounts", "bounce_streak", "INTEGER", 0)
         _safe_add_column("sending_accounts", "last_health_check", "DATETIME", None)
         _safe_add_column("sending_accounts", "auto_paused", "BOOLEAN", False)
@@ -316,14 +324,19 @@ def run_migrations():
         _safe_add_column("campaigns", "track_opens", "BOOLEAN", True)
         _safe_add_column("campaigns", "track_clicks", "BOOLEAN", True)
         _safe_add_column("campaigns", "use_unsubscribe", "BOOLEAN", True)
-        
-        # --- Smart Follow-up ---
         _safe_add_column("campaigns", "steps_json", "TEXT", None)
         _safe_add_column("campaigns", "max_emails_per_day", "INTEGER", 50)
         _safe_add_column("campaigns", "daily_ramp_up", "INTEGER", 0)
         _safe_add_column("campaigns", "current_daily_limit", "INTEGER", 50)
         _safe_add_column("campaigns", "sent_today_campaign", "INTEGER", 0)
         _safe_add_column("campaigns", "sent_today_date", "VARCHAR(50)", None)
+        _safe_add_column("campaigns", "paused_reason", "VARCHAR(255)", None)
+        _safe_add_column("campaigns", "sending_days", "VARCHAR", "Mon,Tue,Wed,Thu,Fri,Sat,Sun")
+        _safe_add_column("campaigns", "start_hour", "INTEGER", 0)
+        _safe_add_column("campaigns", "end_hour", "INTEGER", 24)
+        _safe_add_column("campaigns", "timezone", "VARCHAR", "UTC")
+        _safe_add_column("campaigns", "delay_min", "INTEGER", 2)
+        _safe_add_column("campaigns", "delay_max", "INTEGER", 5)
         
         _safe_add_column("campaign_leads", "current_step", "INTEGER", 0)
         _safe_add_column("campaign_leads", "next_send_at", "DATETIME", None)

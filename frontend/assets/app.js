@@ -10,6 +10,11 @@
 
 const API_URL = '/api';
 
+function escapeHtml(unsafe) {
+    if (!unsafe) return '';
+    return unsafe.toString().replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
 
 
 // ============================================================
@@ -528,8 +533,8 @@ window.populateVbAnalytics = function(id) {
                     const tr = document.createElement('tr');
                     const statusColor = (l.status === 'sent' || l.status === 'opened' || l.status === 'clicked') ? '#059669' : (l.status === 'bounced' ? '#dc2626' : (l.status === 'unsubscribed' ? '#ea580c' : '#64748b'));
                     tr.innerHTML = `
-                        <td style="font-weight:600;color:var(--text);">${l.email || ''}</td>
-                        <td>${l.name || '-'}</td>
+                        <td style="font-weight:600;color:var(--text);">${escapeHtml(l.email) || ''}</td>
+                        <td>${escapeHtml(l.name) || '-'}</td>
                         <td><span style="font-size:12px; font-weight:600; color:${statusColor}; text-transform:capitalize;">${l.status || 'pending'}</span></td>
                     `;
                     tbody.appendChild(tr);
@@ -628,9 +633,9 @@ window.populateColdAnalytics = function(id) {
 
                     tr.innerHTML = `
 
-                        <td style="font-weight:600;color:var(--text);">${l.email || ''}</td>
+                        <td style="font-weight:600;color:var(--text);">${escapeHtml(l.email) || ''}</td>
 
-                        <td>${l.name || '-'}</td>
+                        <td>${escapeHtml(l.name) || '-'}</td>
 
                         <td><span style="font-size:12px; font-weight:600; color:${statusColor}; text-transform:capitalize;">${l.status || 'pending'}</span></td>
 
@@ -1392,7 +1397,7 @@ window.editCampaign = function(id) {
 
         // Parse body back into steps
 
-        const bodyParts = (c.body || '').split('<hr>');
+        const bodyParts = (c.body || '').split(/<hr[^>]*>/i);
 
         const parsedSteps = bodyParts.map((part, i) => {
 
@@ -1506,6 +1511,21 @@ window.editCampaign = function(id) {
         if (cDelayMinEl) cDelayMinEl.value = (c.delay_min !== null && c.delay_min !== undefined) ? c.delay_min : 30;
         if (cDelayMaxEl) cDelayMaxEl.value = (c.delay_max !== null && c.delay_max !== undefined) ? c.delay_max : 90;
 
+        const trackOpensEl = document.getElementById('cold-track-opens');
+        const trackClicksEl = document.getElementById('cold-track-clicks');
+        const unsubscribeEl = document.getElementById('cold-use-unsubscribe');
+        const maxEmailsEl = document.getElementById('cold-max-emails');
+        const rampUpEl = document.getElementById('cold-ramp-up');
+        if (trackOpensEl) trackOpensEl.value = (c.track_opens === false) ? '0' : '1';
+        if (trackClicksEl) trackClicksEl.value = (c.track_clicks === false) ? '0' : '1';
+        if (unsubscribeEl) unsubscribeEl.value = (c.use_unsubscribe === false) ? '0' : '1';
+        if (maxEmailsEl) maxEmailsEl.value = (c.max_emails_per_day !== null && c.max_emails_per_day !== undefined) ? c.max_emails_per_day : 50;
+        if (rampUpEl) rampUpEl.value = (c.daily_ramp_up !== null && c.daily_ramp_up !== undefined) ? c.daily_ramp_up : 5;
+        
+        if (window.renderSendingAccountsSelector) {
+            window.renderSendingAccountsSelector('cold-sender-accounts-list', c.selected_sender_ids);
+        }
+
         window.switchColdTab('sequences');
         showToast('Cold Mail sequence loaded for editing');
 
@@ -1525,6 +1545,21 @@ window.editCampaign = function(id) {
         const subjectEl = document.getElementById('campaign-subject');
 
         if (subjectEl) subjectEl.value = c.subject;
+
+        const vbTrackOpensEl = document.getElementById('vb-track-opens');
+        const vbTrackClicksEl = document.getElementById('vb-track-clicks');
+        const vbUnsubscribeEl = document.getElementById('vb-use-unsubscribe');
+        const vbMaxEmailsEl = document.getElementById('vb-max-emails');
+        const vbRampUpEl = document.getElementById('vb-ramp-up');
+        if (vbTrackOpensEl) vbTrackOpensEl.value = (c.track_opens === false) ? '0' : '1';
+        if (vbTrackClicksEl) vbTrackClicksEl.value = (c.track_clicks === false) ? '0' : '1';
+        if (vbUnsubscribeEl) vbUnsubscribeEl.value = (c.use_unsubscribe === false) ? '0' : '1';
+        if (vbMaxEmailsEl) vbMaxEmailsEl.value = (c.max_emails_per_day !== null && c.max_emails_per_day !== undefined) ? c.max_emails_per_day : 50;
+        if (vbRampUpEl) vbRampUpEl.value = (c.daily_ramp_up !== null && c.daily_ramp_up !== undefined) ? c.daily_ramp_up : 5;
+        
+        if (window.renderSendingAccountsSelector) {
+            window.renderSendingAccountsSelector('vb-sender-accounts-list', c.selected_sender_ids);
+        }
 
         const canvas = document.getElementById('builder-canvas');
 
@@ -1730,7 +1765,7 @@ window.pauseCampaign = async function(id) {
 
             showToast('Campaign paused successfully');
 
-            await fetchDashboard(true);
+            await fetchDashboard();
             renderColdMailList();
             renderNewsletterList();
             const c = (window.lastFetchedCampaigns || []).find(x => x.id === id);
@@ -1768,7 +1803,7 @@ window.resumeCampaign = async function(id) {
 
             showToast('Campaign resumed successfully');
 
-            await fetchDashboard(true);
+            await fetchDashboard();
             renderColdMailList();
             renderNewsletterList();
             const c = (window.lastFetchedCampaigns || []).find(x => x.id === id);
@@ -1808,7 +1843,7 @@ window.deleteCampaign = async function(id) {
 
             showToast('Campaign deleted successfully', 'success');
 
-            fetchDashboard(true);
+            fetchDashboard();
 
             if (document.getElementById('cold-mail-list') && document.getElementById('cold-mail-list').classList.contains('active')) {
 
@@ -2072,6 +2107,54 @@ function loadScheduleTab(campaignId) {
 
 
 
+// Save Campaign Options (track_opens, track_clicks, use_unsubscribe, max_emails, ramp_up)
+window.saveCampaignOptions = async function(prefix = 'cold') {
+    if (!window.currentCampaignId) { showToast('No campaign selected', 'error'); return; }
+    const btn = document.getElementById(`${prefix}-save-options-btn`);
+    if (btn) { btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...'; btn.disabled = true; }
+
+    const trackOpensEl = document.getElementById(`${prefix}-track-opens`);
+    const trackClicksEl = document.getElementById(`${prefix}-track-clicks`);
+    const unsubscribeEl = document.getElementById(`${prefix}-use-unsubscribe`);
+    const maxEmailsEl = document.getElementById(`${prefix}-max-emails`);
+    const rampUpEl = document.getElementById(`${prefix}-ramp-up`);
+
+    const payload = {};
+    if (trackOpensEl) payload.track_opens = trackOpensEl.value === '1';
+    if (trackClicksEl) payload.track_clicks = trackClicksEl.value === '1';
+    if (unsubscribeEl) payload.use_unsubscribe = unsubscribeEl.value === '1';
+    if (maxEmailsEl) payload.max_emails_per_day = parseInt(maxEmailsEl.value) || 50;
+    if (rampUpEl) payload.daily_ramp_up = parseInt(rampUpEl.value) || 0;
+    
+    if (window.getSelectedSenderIds) {
+        payload.selected_sender_ids = window.getSelectedSenderIds(`${prefix}-sender-accounts-list`);
+    }
+
+    try {
+        const res = await apiCall(`/campaigns/${window.currentCampaignId}/save-options`, 'POST', payload);
+        if (res && res.ok) {
+            showToast('✅ Options saved!', 'success');
+            // Update local cache
+            if (window.lastFetchedCampaigns) {
+                const idx = window.lastFetchedCampaigns.findIndex(x => x.id === window.currentCampaignId);
+                if (idx !== -1) {
+                    if (payload.track_opens !== undefined) window.lastFetchedCampaigns[idx].track_opens = payload.track_opens;
+                    if (payload.track_clicks !== undefined) window.lastFetchedCampaigns[idx].track_clicks = payload.track_clicks;
+                    if (payload.use_unsubscribe !== undefined) window.lastFetchedCampaigns[idx].use_unsubscribe = payload.use_unsubscribe;
+                    if (payload.max_emails_per_day !== undefined) window.lastFetchedCampaigns[idx].max_emails_per_day = payload.max_emails_per_day;
+                    if (payload.daily_ramp_up !== undefined) window.lastFetchedCampaigns[idx].daily_ramp_up = payload.daily_ramp_up;
+                }
+            }
+        } else {
+            const d = res ? await res.json().catch(() => ({})) : {};
+            showToast(d.detail || 'Failed to save options', 'error');
+        }
+    } catch(e) {
+        showToast('Error saving options', 'error');
+    }
+    if (btn) { btn.innerHTML = 'Save Options'; btn.disabled = false; }
+};
+
 // Save the Schedule tab settings
 
 window.saveSchedule = async function() {
@@ -2136,6 +2219,9 @@ window.saveSchedule = async function() {
                 delay_min: payload.delay_min,
                 delay_max: payload.delay_max
             };
+            if (window.getSelectedSenderIds) {
+                draftPayload.selected_sender_ids = window.getSelectedSenderIds('cold-sender-accounts-list');
+            }
             const draftRes = await apiCall('/campaigns/send', 'POST', draftPayload);
             if (draftRes && draftRes.ok) {
                 const draftData = await draftRes.json();
@@ -2186,6 +2272,10 @@ window.saveSchedule = async function() {
 
                     window.lastFetchedCampaigns[idx].timezone = payload.timezone;
 
+                    window.lastFetchedCampaigns[idx].delay_min = payload.delay_min;
+
+                    window.lastFetchedCampaigns[idx].delay_max = payload.delay_max;
+
                 }
 
             }
@@ -2228,7 +2318,12 @@ function populateTimezones() {
 
     try {
 
-        const timezones = Intl.supportedValuesOf('timeZone');
+        let timezones = [];
+        try {
+            timezones = Intl.supportedValuesOf('timeZone');
+        } catch (e) {
+            timezones = ['UTC', 'America/New_York', 'America/Los_Angeles', 'Europe/London', 'Asia/Kolkata', 'Asia/Dhaka', 'Australia/Sydney'];
+        }
 
         const userTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -3850,7 +3945,7 @@ function setupCampaignBuilder() {
 
         window.closeMcEdit();
 
-        if (canvas.children.length === 0) canvas.innerHTML = '<div class="canvas-placeholder" style="text-align:center;padding:60px 20px;color:var(--text-muted);border:2px dashed var(--border);border-radius:8px;"><i class="fa-solid fa-layer-group" style="font-size:32px;color:#cbd5e1;margin-bottom:16px;display:block;"></i>Drag blocks here to build your email</div>';
+        if (canvas.querySelectorAll('.email-block').length === 0) canvas.innerHTML = '<div class="canvas-placeholder" style="text-align:center;padding:60px 20px;color:var(--text-muted);border:2px dashed var(--border);border-radius:8px;"><i class="fa-solid fa-layer-group" style="font-size:32px;color:#cbd5e1;margin-bottom:16px;display:block;"></i>Drag blocks here to build your email</div>';
 
         window.saveState();
 
@@ -3979,6 +4074,9 @@ function setupCampaignBuilder() {
         saveNewsletterDraftBtn.disabled = true;
 
         try {
+            if (window.getSelectedSenderIds) {
+                payload.selected_sender_ids = window.getSelectedSenderIds('vb-sender-accounts-list');
+            }
 
             const res = await apiCall('/campaigns/send', 'POST', payload);
 
@@ -4112,6 +4210,8 @@ function setupCampaignBuilder() {
             payload.track_opens = document.getElementById('vb-track-opens') ? document.getElementById('vb-track-opens').value === '1' : true;
             payload.track_clicks = document.getElementById('vb-track-clicks') ? document.getElementById('vb-track-clicks').value === '1' : true;
             payload.use_unsubscribe = document.getElementById('vb-use-unsubscribe') ? document.getElementById('vb-use-unsubscribe').value === '1' : true;
+            payload.max_emails_per_day = document.getElementById('vb-max-emails') ? parseInt(document.getElementById('vb-max-emails').value) || 50 : 50;
+            payload.daily_ramp_up = document.getElementById('vb-ramp-up') ? parseInt(document.getElementById('vb-ramp-up').value) || 5 : 5;
 
             
 
@@ -4128,6 +4228,9 @@ function setupCampaignBuilder() {
             }
 
             payload.leads = leads;
+            if (window.getSelectedSenderIds) {
+                payload.selected_sender_ids = window.getSelectedSenderIds('vb-sender-accounts-list');
+            }
 
             const res = await apiCall('/campaigns/send', 'POST', payload);
 
@@ -4600,8 +4703,8 @@ function setupSequenceBuilder() {
         payload.track_opens = document.getElementById('cold-track-opens') ? document.getElementById('cold-track-opens').value === '1' : true;
         payload.track_clicks = document.getElementById('cold-track-clicks') ? document.getElementById('cold-track-clicks').value === '1' : true;
         payload.use_unsubscribe = document.getElementById('cold-use-unsubscribe') ? document.getElementById('cold-use-unsubscribe').value === '1' : true;
-          payload.max_emails_per_day = document.getElementById('cold-max-emails') ? parseInt(document.getElementById('cold-max-emails').value) : 50;
-          payload.daily_ramp_up = document.getElementById('cold-ramp-up') ? parseInt(document.getElementById('cold-ramp-up').value) : 0;
+          payload.max_emails_per_day = document.getElementById('cold-max-emails') ? parseInt(document.getElementById('cold-max-emails').value) || 50 : 50;
+          payload.daily_ramp_up = document.getElementById('cold-ramp-up') ? parseInt(document.getElementById('cold-ramp-up').value) || 0 : 0;
 
         
 
@@ -4616,6 +4719,9 @@ function setupSequenceBuilder() {
         sendSeqBtn.disabled = true;
 
         try {
+            if (window.getSelectedSenderIds) {
+                payload.selected_sender_ids = window.getSelectedSenderIds('cold-sender-accounts-list');
+            }
             const res = await apiCall('/campaigns/send', 'POST', payload);
             if (res.ok) {
                 showToast('Campaign launched successfully!', 'success');
@@ -4724,8 +4830,8 @@ function setupSequenceBuilder() {
         payload.track_opens = document.getElementById('cold-track-opens') ? document.getElementById('cold-track-opens').value === '1' : true;
         payload.track_clicks = document.getElementById('cold-track-clicks') ? document.getElementById('cold-track-clicks').value === '1' : true;
         payload.use_unsubscribe = document.getElementById('cold-use-unsubscribe') ? document.getElementById('cold-use-unsubscribe').value === '1' : true;
-          payload.max_emails_per_day = document.getElementById('cold-max-emails') ? parseInt(document.getElementById('cold-max-emails').value) : 50;
-          payload.daily_ramp_up = document.getElementById('cold-ramp-up') ? parseInt(document.getElementById('cold-ramp-up').value) : 0;
+          payload.max_emails_per_day = document.getElementById('cold-max-emails') ? parseInt(document.getElementById('cold-max-emails').value) || 50 : 50;
+          payload.daily_ramp_up = document.getElementById('cold-ramp-up') ? parseInt(document.getElementById('cold-ramp-up').value) || 0 : 0;
 
         
 
@@ -4734,6 +4840,9 @@ function setupSequenceBuilder() {
         saveDraftBtn.disabled = true;
 
         try {
+            if (window.getSelectedSenderIds) {
+                payload.selected_sender_ids = window.getSelectedSenderIds('cold-sender-accounts-list');
+            }
 
             const res = await apiCall('/campaigns/send', 'POST', payload);
 
@@ -4943,7 +5052,7 @@ async function loadUnsubscribes() {
 
             tr.innerHTML = `
 
-                <td style="padding:16px 24px; font-weight:600; color:var(--text);">${item.email}</td>
+                <td style="padding:16px 24px; font-weight:600; color:var(--text);">${escapeHtml(item.email)}</td>
 
                 <td style="padding:16px 24px; color:var(--text-muted); font-size:13px;">${new Date(item.unsubscribed_at).toLocaleString()}</td>
 
@@ -5169,7 +5278,7 @@ async function loadAdminUsers() {
 
                 <td>${u.id}</td>
 
-                <td>${u.email}</td>
+                <td>${escapeHtml(u.email)}</td>
 
                 <td>${u.is_admin ? '<span style="color:#6366f1;font-weight:600;">Admin</span>' : `User ${statusBadge}`}</td>
 
@@ -5261,7 +5370,7 @@ function setupAIChat() {
 
 async function renderColdMailList() {
 
-    await fetchDashboard(true);
+    await fetchDashboard();
 
     const tbody = document.getElementById('cold-mail-list-tbody');
 
@@ -5342,7 +5451,7 @@ async function renderColdMailList() {
 
 async function renderNewsletterList() {
 
-    await fetchDashboard(true);
+    await fetchDashboard();
 
     const tbody = document.getElementById('newsletters-list-tbody');
 
@@ -5435,25 +5544,20 @@ window.openColdMailBuilder = async function(id) {
     window.currentCampaignId = null;
 
 
+        window.currentCampaignId = null;
 
         document.getElementById('inst-subject').value = '';
-
         document.getElementById('inst-body').value = '';
-
         document.getElementById('seq-leads').value = '';
-
         if (typeof window.renderLeadsList === 'function') window.renderLeadsList('seq-leads');
-
         localStorage.removeItem('saved_leads_seq-leads');
-
         
-
+        if (window.renderSendingAccountsSelector) {
+            window.renderSendingAccountsSelector('cold-sender-accounts-list', null);
+        }
+        
         // Reset schedule UI manually for a fresh start
-
         ['sch-day-mon','sch-day-tue','sch-day-wed','sch-day-thu','sch-day-fri'].forEach(id => {
-
-            const el = document.getElementById(id); if (el) el.checked = true;
-
         });
 
         ['sch-day-sat','sch-day-sun'].forEach(id => {
@@ -6021,7 +6125,7 @@ window.loadAdminUsers = async function() {
 
                 + '<td style="padding:12px 16px;font-size:12px;color:#94a3b8;">' + shortId + '</td>'
 
-                + '<td style="padding:12px 16px;font-weight:500;">' + u.email + '</td>'
+                + '<td style="padding:12px 16px;font-weight:500;">' + escapeHtml(u.email) + '</td>'
 
                 + '<td style="padding:12px 16px;">' + roleBadge + '</td>'
 
@@ -6290,7 +6394,9 @@ window.saveNewsletterSchedule = async function() {
         delay_max: delayMax,
         track_opens: document.getElementById('vb-track-opens') ? document.getElementById('vb-track-opens').value === '1' : true,
         track_clicks: document.getElementById('vb-track-clicks') ? document.getElementById('vb-track-clicks').value === '1' : true,
-        use_unsubscribe: document.getElementById('vb-use-unsubscribe') ? document.getElementById('vb-use-unsubscribe').value === '1' : true
+        use_unsubscribe: document.getElementById('vb-use-unsubscribe') ? document.getElementById('vb-use-unsubscribe').value === '1' : true,
+        max_emails_per_day: document.getElementById('vb-max-emails') ? parseInt(document.getElementById('vb-max-emails').value) || 50 : 50,
+        daily_ramp_up: document.getElementById('vb-ramp-up') ? parseInt(document.getElementById('vb-ramp-up').value) || 5 : 5
     };
 
     if (!window.currentCampaignId) {
@@ -6310,6 +6416,9 @@ window.saveNewsletterSchedule = async function() {
                 delay_min: payload.delay_min,
                 delay_max: payload.delay_max
             };
+            if (window.getSelectedSenderIds) {
+                draftPayload.selected_sender_ids = window.getSelectedSenderIds('vb-sender-accounts-list');
+            }
             const draftRes = await apiCall('/campaigns/send', 'POST', draftPayload);
             if (draftRes && draftRes.ok) {
                 const draftData = await draftRes.json();
@@ -6345,6 +6454,8 @@ window.saveNewsletterSchedule = async function() {
                     window.lastFetchedCampaigns[idx].start_hour = payload.start_hour;
                     window.lastFetchedCampaigns[idx].end_hour = payload.end_hour;
                     window.lastFetchedCampaigns[idx].timezone = payload.timezone;
+                    window.lastFetchedCampaigns[idx].delay_min = payload.delay_min;
+                    window.lastFetchedCampaigns[idx].delay_max = payload.delay_max;
                 }
             }
         } else {
@@ -6457,3 +6568,69 @@ window.selectGalleryImage = function(url) {
     closeGalleryModal();
 };
 setInterval(async function() { try { await apiCall('/ping', 'GET'); } catch(e) {} }, 30000); 
+function toggle3DHowToUse(btn) {
+    const content = btn.nextElementSibling;
+    const icon = btn.querySelector('.fa-chevron-down');
+    
+    if (content.style.maxHeight === '0px' || content.style.maxHeight === '') {
+        content.style.maxHeight = content.scrollHeight + 'px';
+        content.style.opacity = '1';
+        content.style.transform = 'rotateX(0)';
+        icon.style.transform = 'rotate(180deg)';
+        btn.style.background = 'rgba(0,0,0,0.06)';
+    } else {
+        content.style.maxHeight = '0px';
+        content.style.opacity = '0';
+        content.style.transform = 'rotateX(-90deg)';
+        icon.style.transform = 'rotate(0)';
+        btn.style.background = 'rgba(0,0,0,0.02)';
+    }
+}
+window.renderSendingAccountsSelector = async function(containerId, selectedIdsStr) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    container.innerHTML = '<div style="padding:10px;text-align:center;"><i class="fa-solid fa-spinner fa-spin"></i> Loading accounts...</div>';
+    
+    try {
+        const res = await apiCall('/sending-accounts');
+        if (!res.ok) {
+            container.innerHTML = '<div style="color:var(--danger); font-size:13px;">Failed to load accounts.</div>';
+            return;
+        }
+        const accounts = await res.json();
+        
+        let selectedIds = [];
+        try {
+            if (selectedIdsStr) selectedIds = JSON.parse(selectedIdsStr);
+        } catch(e) {}
+        
+        if (!accounts || accounts.length === 0) {
+            container.innerHTML = '<div style="font-size:13px; color:var(--text-muted);">No active sending accounts found. Auto-rotation will fail.</div>';
+            return;
+        }
+        
+        let html = '';
+        accounts.forEach(acc => {
+            const isChecked = selectedIds.includes(acc.id) ? 'checked' : '';
+            html += 
+                <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px; padding:4px 0;">
+                    <input type="checkbox" class="sender-acc-checkbox" value=" + acc.id + "  + isChecked + >
+                    <div>
+                        <div style="font-weight:600; color:var(--p);"> + (acc.name || 'No Name') + </div>
+                        <div style="color:var(--text-muted); font-size:11px;"> + acc.email + </div>
+                    </div>
+                </label>
+            ;
+        });
+        container.innerHTML = html;
+    } catch (e) {
+        container.innerHTML = '<div style="color:var(--danger); font-size:13px;">Error loading accounts.</div>';
+    }
+};
+
+window.getSelectedSenderIds = function(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return null;
+    const checked = Array.from(container.querySelectorAll('.sender-acc-checkbox:checked')).map(cb => cb.value);
+    return checked.length > 0 ? JSON.stringify(checked) : null;
+};

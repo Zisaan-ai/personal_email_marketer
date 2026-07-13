@@ -14,7 +14,7 @@ def upload(local_file, remote_file):
 
 upload('backend/main.py', 'xcomic_backend/main.py')
 upload('backend/database.py', 'xcomic_backend/database.py')
-upload('frontend/assets/app.js', 'xcomic.xyz/assets/app.js')
+upload('frontend/assets/app_v2.js', 'xcomic.xyz/assets/app_v2.js')
 upload('frontend/index.html', 'xcomic.xyz/index.html')
 
 try:

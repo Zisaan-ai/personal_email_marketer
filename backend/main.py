@@ -46,7 +46,7 @@ def is_campaign_within_schedule(campaign):
             try:
                 allowed_days = json.loads(campaign.sending_days)
             except:
-                allowed_days = []
+                allowed_days = [d.strip() for d in campaign.sending_days.split(',') if d.strip()]
             
             day_map = {0: "Mon", 1: "Tue", 2: "Wed", 3: "Thu", 4: "Fri", 5: "Sat", 6: "Sun"}
             current_day = day_map[now_local.weekday()]
@@ -232,6 +232,8 @@ class CampaignResponse(BaseModel):
     start_hour: Optional[int] = None
     end_hour: Optional[int] = None
     timezone: Optional[str] = None
+    delay_min: Optional[int] = 30
+    delay_max: Optional[int] = 90
 
     class Config:
         from_attributes = True
@@ -572,6 +574,8 @@ class ScheduleUpdate(BaseModel):
     start_hour: Optional[int] = None
     end_hour: Optional[int] = None
     timezone: Optional[str] = None
+    delay_min: Optional[int] = None
+    delay_max: Optional[int] = None
 
 @app.post("/api/campaigns/{campaign_id}/save-schedule")
 def save_campaign_schedule(campaign_id: str, schedule: ScheduleUpdate, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
@@ -583,6 +587,10 @@ def save_campaign_schedule(campaign_id: str, schedule: ScheduleUpdate, current_u
     camp.start_hour = schedule.start_hour
     camp.end_hour = schedule.end_hour
     camp.timezone = schedule.timezone
+    if schedule.delay_min is not None:
+        camp.delay_min = schedule.delay_min
+    if schedule.delay_max is not None:
+        camp.delay_max = schedule.delay_max
     db.commit()
     return {"status": "success"}
 
@@ -610,6 +618,8 @@ def get_campaigns(current_user: database.User = Depends(auth.get_current_user), 
         "start_hour": c.start_hour,
         "end_hour": c.end_hour,
         "timezone": c.timezone,
+        "delay_min": c.delay_min,
+        "delay_max": c.delay_max,
     } for c in campaigns]
 
 class PreflightRequest(BaseModel):

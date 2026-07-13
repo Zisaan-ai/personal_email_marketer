@@ -2132,7 +2132,9 @@ window.saveSchedule = async function() {
                 sending_days: payload.sending_days,
                 start_hour: payload.start_hour,
                 end_hour: payload.end_hour,
-                timezone: payload.timezone
+                timezone: payload.timezone,
+                delay_min: payload.delay_min,
+                delay_max: payload.delay_max
             };
             const draftRes = await apiCall('/campaigns/send', 'POST', draftPayload);
             if (draftRes && draftRes.ok) {
@@ -2143,7 +2145,8 @@ window.saveSchedule = async function() {
                     id: draftData.campaign_id, subject: draftPayload.subject, body: draftPayload.body,
                     type: 'cold_mail', status: 'draft',
                     sending_days: payload.sending_days, start_hour: payload.start_hour,
-                    end_hour: payload.end_hour, timezone: payload.timezone
+                    end_hour: payload.end_hour, timezone: payload.timezone,
+                    delay_min: payload.delay_min, delay_max: payload.delay_max
                 });
                 showToast('Schedule saved! Draft created.', 'success');
             } else {
@@ -6267,7 +6270,8 @@ window.saveNewsletterSchedule = async function() {
                     id: draftData.campaign_id, subject: draftPayload.subject, body: '',
                     type: 'newsletter', status: 'draft',
                     sending_days: payload.sending_days, start_hour: payload.start_hour,
-                    end_hour: payload.end_hour, timezone: payload.timezone
+                    end_hour: payload.end_hour, timezone: payload.timezone,
+                    delay_min: payload.delay_min, delay_max: payload.delay_max
                 });
                 showToast('Schedule saved! Draft created.', 'success');
             } else {

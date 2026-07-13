@@ -86,7 +86,7 @@ def _scheduler_start_scheduled_campaigns():
     try:
         from datetime import datetime
         now = datetime.utcnow()
-        campaigns = db.query(database.Campaign).filter(database.Campaign.status.in_(["scheduled", "processing"])).all()
+        campaigns = db.query(database.Campaign).filter(database.Campaign.status == "scheduled").all()
         for c in campaigns:
             if c.scheduled_at and now < c.scheduled_at:
                 continue
@@ -124,7 +124,6 @@ from bounce_processor import check_bounces
 
 @app.get("/api/cron/run")
 def trigger_cron():
-    _auto_resume_stuck_campaigns()
     _scheduler_start_scheduled_campaigns()
     return {"status": "success", "message": "Cron executed"}
 

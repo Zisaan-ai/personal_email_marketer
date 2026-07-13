@@ -2340,13 +2340,14 @@ window.switchVbTab = function(tabName) {
 
 
     // Show content
-
     if (targetContent) {
-
         targetContent.style.display = 'block';
-
     }
 
+    // Load analytics if needed
+    if (tabName === 'analytics' && window.currentCampaignId) {
+        window.populateVbAnalytics(window.currentCampaignId);
+    }
 };
 
 

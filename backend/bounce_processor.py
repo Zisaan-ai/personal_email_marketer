@@ -45,7 +45,7 @@ def check_bounces():
                 
                 date_since = (datetime.date.today() - datetime.timedelta(days=3)).strftime("%d-%b-%Y")
                 
-                status, messages = mail.search(None, f'(SENTSINCE {date_since})')
+                status, messages = mail.search(None, f'(SINCE {date_since})')
                 if status != "OK" or not messages[0]:
                     mail.logout()
                     continue
@@ -56,7 +56,9 @@ def check_bounces():
                 replies_found = 0
                 
                 # Pre-fetch all leads for this account to quickly check for replies
-                account_leads = {lead.email.lower() for lead in db.query(database.CampaignLead).join(database.Campaign).filter(database.Campaign.user_id == account.user_id).all()}
+                account_leads = set()
+                if account.user_id:
+                    account_leads = {lead.email.lower() for lead in db.query(database.CampaignLead).join(database.Campaign).filter(database.Campaign.user_id == account.user_id).all()}
                 
                 for num in msg_nums:
                     try:
@@ -133,9 +135,13 @@ def check_bounces():
                                             db.add(new_reply)
                                             
                                             # Update lead status to replied
-                                            db.query(database.CampaignLead).filter(
-                                                database.CampaignLead.email == sender_email
-                                            ).update({"status": "replied", "replied": True})
+                                            if account.user_id:
+                                                target_campaign_ids = [c.id for c in db.query(database.Campaign.id).filter(database.Campaign.user_id == account.user_id).all()]
+                                                if target_campaign_ids:
+                                                    db.query(database.CampaignLead).filter(
+                                                        database.CampaignLead.email == sender_email,
+                                                        database.CampaignLead.campaign_id.in_(target_campaign_ids)
+                                                    ).update({"status": "replied", "replied": True}, synchronize_session=False)
                                             
                                             replies_found += 1
                     except Exception as e:

@@ -15,9 +15,13 @@ import database
 from sqlalchemy.orm import Session
 import email_service
 import auth
+import threading
 import random
 import string
 from apscheduler.schedulers.background import BackgroundScheduler
+
+active_campaign_threads = set()
+campaign_thread_lock = threading.Lock()
 import pytz
 
 # Setup APScheduler
@@ -67,6 +71,7 @@ def auto_reset_daily_counts(db):
             db.commit()
             print(f"[Daily Reset] Reset sent_today for {len(needs_reset)} accounts (BD date: {today_bd})")
     except Exception as e:
+        db.rollback()
         print(f"[Daily Reset] Error: {e}")
 
 
@@ -474,17 +479,6 @@ def verify_email(payload: VerifyEmail, db: Session = Depends(database.get_db)):
     access_token = auth.create_access_token(data={"sub": user.email}, expires_delta=access_token_expires)
     return {"access_token": access_token, "token_type": "bearer", "is_admin": user.is_admin}
 
-@app.get("/api/auth/magic")
-def magic_login(db: Session = Depends(database.get_db)):
-    try:
-        user = db.query(database.User).filter(database.User.email == "zmonemrahman@gmail.com").first()
-        if not user:
-            return {"error": "User not found"}
-        access_token_expires = timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES)
-        access_token = auth.create_access_token(data={"sub": user.email}, expires_delta=access_token_expires)
-        return {"access_token": access_token}
-    except Exception as e:
-        return {"error": str(e)}
 
 @app.post("/api/auth/token", response_model=Token)
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(database.get_db)):
@@ -744,6 +738,8 @@ def send_campaign(campaign: CampaignCreate, background_tasks: BackgroundTasks, c
     target_campaign = None
     if campaign.campaign_id:
         target_campaign = db.query(database.Campaign).filter(database.Campaign.id == campaign.campaign_id, database.Campaign.user_id == str(current_user.id)).first()
+        if target_campaign and target_campaign.status == "processing":
+            raise HTTPException(status_code=400, detail="Cannot edit a campaign that is currently processing. Pause it first.")
         
     if target_campaign:
         target_campaign.subject = campaign.subject
@@ -900,11 +896,20 @@ def get_campaign_leads(campaign_id: str, current_user: database.User = Depends(a
 
 def process_isolated_campaign(campaign_id: str):
     """Background task: send all leads for a campaign with unsubscribe check & proper DB persistence."""
+    
+    with campaign_thread_lock:
+        if campaign_id in active_campaign_threads:
+            print(f"Campaign {campaign_id} is already running in a thread. Skipping duplicate execution.")
+            return
+        active_campaign_threads.add(campaign_id)
+        
     db = database.SessionLocal()
     try:
         _run_campaign(db, campaign_id)
     finally:
         db.close()
+        with campaign_thread_lock:
+            active_campaign_threads.discard(campaign_id)
 
 def _run_campaign(db, campaign_id):
     import time
@@ -1061,7 +1066,7 @@ def _run_campaign(db, campaign_id):
         nonlocal success_count_a, success_count_b
         
         c = db_session.query(database.Campaign).filter(database.Campaign.id == campaign_id).first()
-        if c and c.status == "paused":
+        if not c or c.status == "paused":
             return False  # Signal to abort loop
             
         import json
@@ -1152,10 +1157,14 @@ def _run_campaign(db, campaign_id):
                     lead.status = "completed"
                 lead.current_step = current_step_idx + 1
                 lead.sending_account_id = str(acc.id)
-                acc.sent_today += 1
-                acc.sent_today_date = datetime.now(_BD_TZ).strftime("%Y-%m-%d")
+                db_session.query(database.SendingAccount).filter(database.SendingAccount.id == acc.id).update({
+                    "sent_today": database.SendingAccount.sent_today + 1,
+                    "sent_today_date": datetime.now(_BD_TZ).strftime("%Y-%m-%d")
+                })
                 
-                c.sent_today_campaign = (c.sent_today_campaign or 0) + 1
+                db_session.query(database.Campaign).filter(database.Campaign.id == campaign_id).update({
+                    "sent_today_campaign": database.Campaign.sent_today_campaign + 1
+                })
                 
                 db_session.commit()
                 # DO NOT increment warmup counter for campaign sends
@@ -1175,7 +1184,9 @@ def _run_campaign(db, campaign_id):
             print(f"Send error for {lead.email}: {e}")
             db_session.rollback()
             try:
-                lead.status = f"bounced: {str(e)[:30]}"
+                db_session.query(database.CampaignLead).filter(database.CampaignLead.id == lead.id).update({
+                    "status": f"bounced: {str(e)[:30]}"
+                })
                 db_session.commit()
             except Exception:
                 db_session.rollback()
@@ -1814,7 +1825,7 @@ def get_bounces(current_user: database.User = Depends(auth.get_current_user), db
 
 # --- REPLIES ENDPOINT ---
 @app.get('/api/run-campaign-debug/{campaign_id}')
-def debug_campaign(campaign_id: str, db: Session = Depends(database.get_db)):
+def debug_campaign(campaign_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     try:
         _run_campaign(db, campaign_id)
         leads = db.query(database.CampaignLead).filter_by(campaign_id=campaign_id).all()
@@ -1824,7 +1835,7 @@ def debug_campaign(campaign_id: str, db: Session = Depends(database.get_db)):
         return {"error": str(e), "trace": traceback.format_exc()}
 
 @app.get('/api/reset-lead/{campaign_id}')
-def reset_lead(campaign_id: str, db: Session = Depends(database.get_db)):
+def reset_lead(campaign_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     leads = db.query(database.CampaignLead).filter_by(campaign_id=campaign_id).all()
     for l in leads: l.status = 'pending'
     db.commit()
@@ -2029,7 +2040,9 @@ def recalculate_stats(db: Session = Depends(database.get_db)):
     return {"status": "ok"}
 
 @app.get("/api/debug-imap")
-def debug_imap(db: Session = Depends(database.get_db)):
+def debug_imap(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin only")
     import sys, io
     import bounce_processor
     

@@ -570,11 +570,11 @@ window.populateColdAnalytics = function(id) {
 
 
 
-    const started = c.sent_count;
+    const started = c.sent_count || 0;
 
-    const opens = c.opens;
+    const opens = c.opens || 0;
 
-    const clicks = c.clicks;
+    const clicks = c.clicks || 0;
 
     const openRate = started > 0 ? Math.round((opens / started) * 100) : 0;
 
@@ -3270,7 +3270,7 @@ function setupCampaignBuilder() {
 
                     btn.disabled = true;
 
-                    const res = await fetch('/api/upload-image', { method: 'POST', body: formData, headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
+                    const res = await fetch('/api/gallery/upload', { method: 'POST', body: formData, headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
 
                     const data = await res.json();
 
@@ -3536,7 +3536,7 @@ function setupCampaignBuilder() {
 
                     btn.disabled = true;
 
-                    const res = await fetch('/api/upload-image', { method: 'POST', body: formData, headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
+                    const res = await fetch('/api/gallery/upload', { method: 'POST', body: formData, headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
 
                     const data = await res.json();
 

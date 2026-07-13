@@ -17,8 +17,20 @@ DATABASE_URL = os.getenv("DATABASE_URL", _DEFAULT_DB)
 # For sqlite we need connect_args={"check_same_thread": False}
 if DATABASE_URL.startswith("sqlite"):
     engine = create_engine(
-        DATABASE_URL, connect_args={"check_same_thread": False}, poolclass=StaticPool
+        DATABASE_URL, 
+        connect_args={
+            "check_same_thread": False,
+            "timeout": 15
+        }, 
+        poolclass=StaticPool
     )
+    from sqlalchemy import text
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("PRAGMA journal_mode=WAL;"))
+            conn.execute(text("PRAGMA synchronous=NORMAL;"))
+    except Exception as e:
+        print(f"Failed to enable WAL: {e}")
 else:
     engine = create_engine(DATABASE_URL)
 
@@ -85,6 +97,7 @@ class CampaignLead(Base):
     company = Column(String, nullable=True)
     status = Column(String, default="pending")
     variant = Column(String, nullable=True)
+    sending_account_id = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
 class BounceRecord(Base):
@@ -128,6 +141,7 @@ class SendingAccount(Base):
     smtp_password = Column(String, nullable=False)
     daily_limit = Column(Integer, default=500)
     sent_today = Column(Integer, default=0)
+    sent_today_date = Column(String, nullable=True)  # "2026-07-13" (Bangladesh date)
     imap_server = Column(String, nullable=True)
     imap_port = Column(Integer, default=993)
     imap_password = Column(String, nullable=True)
@@ -277,6 +291,8 @@ def run_migrations():
         _safe_add_column("sending_accounts", "send_window_timezone", "VARCHAR", "UTC")
         _safe_add_column("sending_accounts", "custom_tracking_domain", "VARCHAR", None)
         _safe_add_column("replies", "message_id", "VARCHAR", None)
+        _safe_add_column("sending_accounts", "sent_today_date", "VARCHAR", None)
+        _safe_add_column("campaign_leads", "sending_account_id", "VARCHAR", None)
         print("[Migration] All migrations completed successfully.")
     except Exception as e:
         print(f"[Migration] Error: {e}")

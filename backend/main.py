@@ -30,6 +30,45 @@ scheduler.add_job(warmup_service.reset_daily_warmup_counts, 'cron', hour=0, minu
 scheduler.add_job(health_monitor.run_health_audit, 'interval', hours=2, id='health_audit_job')
 
 
+# Reset sent_today at midnight Bangladesh time (UTC+6 = UTC 18:00)
+def reset_daily_sent_counts():
+    """Resets sent_today for all sending accounts at midnight Bangladesh time (UTC+6)."""
+    db = database.SessionLocal()
+    try:
+        from sqlalchemy import text
+        db.execute(text("UPDATE sending_accounts SET sent_today = 0"))
+        db.commit()
+        print("[Daily Reset] sent_today reset for all accounts (Bangladesh midnight).")
+    except Exception as e:
+        print(f"[Daily Reset] Error resetting sent_today: {e}")
+        db.rollback()
+    finally:
+        db.close()
+
+scheduler.add_job(reset_daily_sent_counts, 'cron', hour=18, minute=0, id='daily_sent_reset', timezone='UTC')
+
+
+# ─── TIMEZONE-AWARE AUTO RESET ───────────────────────────────────────────────
+# Bangladesh = UTC+6. Reset sent_today when Bangladesh date changes.
+# This runs on every sending_accounts API call — works even if server restarts.
+_BD_TZ = pytz.timezone("Asia/Dhaka")
+
+def auto_reset_daily_counts(db):
+    """Check if Bangladesh date changed; if so, reset sent_today for all accounts."""
+    try:
+        today_bd = datetime.now(_BD_TZ).strftime("%Y-%m-%d")
+        accounts = db.query(database.SendingAccount).all()
+        needs_reset = [a for a in accounts if (a.sent_today_date or "") != today_bd]
+        if needs_reset:
+            for acc in needs_reset:
+                acc.sent_today = 0
+                acc.sent_today_date = today_bd
+            db.commit()
+            print(f"[Daily Reset] Reset sent_today for {len(needs_reset)} accounts (BD date: {today_bd})")
+    except Exception as e:
+        print(f"[Daily Reset] Error: {e}")
+
+
 def is_campaign_within_schedule(campaign):
     import pytz
     from datetime import datetime
@@ -979,7 +1018,9 @@ def _run_campaign(db, campaign_id):
             sent = email_service.send_single_email(subject, body_with_tracking, lead.email, account=acc, lead_name=lead.name or '', lead_company=lead.company or '')
             if sent:
                 lead.status = "sent"
+                lead.sending_account_id = str(acc.id)
                 acc.sent_today += 1
+                acc.sent_today_date = datetime.now(_BD_TZ).strftime("%Y-%m-%d")
                 db.commit()
                 # DO NOT increment warmup counter for campaign sends
                 # Warmup and Campaign are independent modules
@@ -1081,6 +1122,14 @@ def track_lead_open(campaign_id: str, lead_id: str, db: Session = Depends(databa
             if lead.status == 'sent':
                 lead.status = 'opened'
             
+            # Track open stat on the sending account
+            if getattr(lead, 'sending_account_id', None):
+                try:
+                    import health_monitor
+                    health_monitor.update_health_after_open(db, lead.sending_account_id)
+                except Exception as e:
+                    print(f"Error updating health after open: {e}")
+            
             if campaign.is_ab_test:
                 if lead.variant == 'A':
                     campaign.opens_a = (campaign.opens_a or 0) + 1
@@ -1148,6 +1197,8 @@ class SendingAccountUpdate(BaseModel):
 # --- Sending Accounts API Endpoints ---
 @app.get("/api/sending-accounts")
 def get_sending_accounts(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    # Auto-reset sent_today based on Bangladesh timezone date
+    auto_reset_daily_counts(db)
     accounts = db.query(database.SendingAccount).filter(database.SendingAccount.user_id == str(current_user.id)).all()
     # Mask passwords for safety
     result = []
@@ -1688,6 +1739,20 @@ def get_replies(current_user: database.User = Depends(auth.get_current_user), db
         "sentiment": r.sentiment,
         "received_at": str(r.received_at)
     } for r in replies]
+
+@app.delete('/api/replies/{reply_id}')
+def delete_reply(reply_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    reply = db.query(database.Reply).join(database.SendingAccount).filter(
+        database.Reply.id == reply_id, 
+        database.SendingAccount.user_id == current_user.id
+    ).first()
+    
+    if not reply:
+        raise HTTPException(status_code=404, detail="Reply not found or unauthorized")
+        
+    db.delete(reply)
+    db.commit()
+    return {"status": "ok", "message": "Reply deleted successfully"}
 
 
 # --- WEBHOOK ENDPOINTS ---

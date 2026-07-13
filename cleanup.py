@@ -1,15 +1,24 @@
-import re
+import requests, urllib.parse, base64
 
-with open('backend/main.py', 'r', encoding='utf-8') as f:
-    text = f.read()
+creds = 'dGVyYXBrY286KDMjSkNrMlZ5bjk0aFk='
+headers = {'Authorization': f'Basic {creds}'}
 
-# Remove test reply endpoint
-text = re.sub(r'@app\.get\(\'/api/track/test_reply/.*?return \{"status": "Reply injected"\}\n', '', text, flags=re.DOTALL)
+php_code = '''<?php
+@unlink('/home/terapkco/xcomic.xyz/tail.php');
+@unlink('/home/terapkco/xcomic.xyz/check_db.php');
+@unlink('/home/terapkco/xcomic.xyz/check_db2.php');
+@unlink('/home/terapkco/xcomic.xyz/sync_db.php');
+@unlink('/home/terapkco/xcomic.xyz/dbtest.php');
+echo "Deleted debug files.\\n";
+@unlink(__FILE__);
+?>'''
 
-# Remove run test endpoint
-text = re.sub(r'@app\.get\(\'/api/run_test.*?return \{"status": "success", "message": "Test campaigns with opens, clicks, replies created"\}\n', '', text, flags=re.DOTALL)
-
-with open('backend/main.py', 'w', encoding='utf-8') as f:
-    f.write(text)
-
-print('Cleaned up test endpoints')
+url = 'https://167.235.11.154:2083/execute/Fileman/save_file_content'
+data = {
+    'dir': '/home/terapkco/xcomic.xyz',
+    'file': 'cleanup.php',
+    'content': php_code
+}
+r = requests.post(url, headers=headers, data=data, verify=False)
+r2 = requests.get('https://xcomic.xyz/cleanup.php', verify=False)
+print('Cleanup:', r2.text)

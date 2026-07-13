@@ -4990,8 +4990,9 @@ async function loadReplies() {
 
                 <td style="padding:16px 24px; color:var(--text-muted); font-size:13px;">${new Date(item.received_at).toLocaleString()}</td>
                 
-                <td style="padding:16px 24px;">
+                <td style="padding:16px 24px; display: flex; gap: 8px; align-items: center;">
                     <button class="btn secondary" style="padding:6px 12px; font-size:12px;" onclick="openReplyModal(window._replyData['${item.id}'])"><i class="fa-solid fa-eye"></i> View & Reply</button>
+                    <button onclick="deleteReply('${item.id}', this)" class="btn" style="padding:6px 12px; font-size:12px; color:#ef4444; border-color:#fecaca; background: transparent;"><i class="fa-solid fa-trash"></i></button>
                 </td>
 
             `;
@@ -5005,6 +5006,30 @@ async function loadReplies() {
 
     } catch(e) { console.error(e); }
 
+}
+
+async function deleteReply(replyId, btn) {
+    if (!confirm("Are you sure you want to delete this reply?")) return;
+    const oldHtml = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+    btn.disabled = true;
+    try {
+        const res = await apiCall(`/replies/${replyId}`, 'DELETE');
+        if (res.ok) {
+            showToast("Reply deleted successfully", "success");
+            loadReplies();
+        } else {
+            const data = await res.json();
+            showToast(data.detail || "Failed to delete reply", "error");
+            btn.innerHTML = oldHtml;
+            btn.disabled = false;
+        }
+    } catch (e) {
+        console.error(e);
+        showToast("Error deleting reply", "error");
+        btn.innerHTML = oldHtml;
+        btn.disabled = false;
+    }
 }
 
 function openReplyModal(item) {

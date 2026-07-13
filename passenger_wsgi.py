@@ -12,12 +12,12 @@ BACKEND_DIR = os.path.join(BASE_DIR, 'backend')
 sys.path.insert(0, BACKEND_DIR)
 sys.path.insert(0, BASE_DIR)
 
-# Load .env from backend folder
+# Load .env from root folder
 from dotenv import load_dotenv
-load_dotenv(os.path.join(BACKEND_DIR, '.env'))
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 # Set database to absolute path (SQLite)
-db_path = os.path.join(BACKEND_DIR, 'sql_app.db')
+db_path = os.path.join(BASE_DIR, 'mailclone.db')
 os.environ.setdefault('DATABASE_URL', f'sqlite:///{db_path}')
 
 # Import FastAPI app

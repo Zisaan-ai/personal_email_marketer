@@ -5607,8 +5607,10 @@ window.openNewsletterBuilder = async function(id) {
         if (typeof window.renderLeadsList === 'function') window.renderLeadsList('newsletter-leads');
 
         localStorage.removeItem('saved_leads_newsletter-leads');
-
         
+        if (window.renderSendingAccountsSelector) {
+            window.renderSendingAccountsSelector('vb-sender-accounts-list', null);
+        }
 
         // Reset schedule UI manually for a fresh start
 

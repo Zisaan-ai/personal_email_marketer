@@ -973,11 +973,13 @@ def _run_campaign(db, campaign_id):
                 health_monitor.update_health_after_send(db, str(acc.id), True)
             else:
                 lead.status = "bounced"
+                db.commit()
                 # HEALTH TRACKING: Update on failure + auto-pause check
                 health_monitor.update_health_after_send(db, str(acc.id), False)
         except Exception as e:
             print(f"Send error for {lead.email}: {e}")
             lead.status = f"bounced: {str(e)[:30]}"
+            db.commit()
             # HEALTH TRACKING: Update on exception
             try:
                 health_monitor.update_health_after_send(db, str(acc.id), False)

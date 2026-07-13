@@ -1501,8 +1501,8 @@ window.editCampaign = function(id) {
             coldEndEl.value = String(eh).padStart(2,'0') + ':00';
         }
         
-        const cDelayMinEl = document.getElementById('campaign-delay-min');
-        const cDelayMaxEl = document.getElementById('campaign-delay-max');
+        const cDelayMinEl = document.getElementById('sch-delay-min');
+        const cDelayMaxEl = document.getElementById('sch-delay-max');
         if (cDelayMinEl) cDelayMinEl.value = c.delay_min !== null ? c.delay_min : 30;
         if (cDelayMaxEl) cDelayMaxEl.value = c.delay_max !== null ? c.delay_max : 90;
 
@@ -1634,8 +1634,8 @@ window.editCampaign = function(id) {
 
         }
 
-        const vbDelayMinEl = document.getElementById('vb-delay-min');
-        const vbDelayMaxEl = document.getElementById('vb-delay-max');
+        const vbDelayMinEl = document.getElementById('vb-sch-delay-min');
+        const vbDelayMaxEl = document.getElementById('vb-sch-delay-max');
         if (vbDelayMinEl) vbDelayMinEl.value = c.delay_min !== null ? c.delay_min : 30;
         if (vbDelayMaxEl) vbDelayMaxEl.value = c.delay_max !== null ? c.delay_max : 90;
 
@@ -2104,16 +2104,16 @@ window.saveSchedule = async function() {
 
 
 
+    const delayMin = parseInt(document.getElementById('sch-delay-min')?.value) || 30;
+    const delayMax = parseInt(document.getElementById('sch-delay-max')?.value) || 90;
+
     const payload = {
-
         sending_days: JSON.stringify(selectedDays),
-
         start_hour: startHour,
-
         end_hour: endHour === 0 ? 24 : endHour,  // 00:00 end = midnight = 24 (all day)
-
-        timezone: tz
-
+        timezone: tz,
+        delay_min: delayMin,
+        delay_max: delayMax
     };
 
 
@@ -3949,8 +3949,8 @@ function setupCampaignBuilder() {
 
 
 
-        const delayMin = parseInt(document.getElementById('vb-delay-min')?.value) || 30;
-        const delayMax = parseInt(document.getElementById('vb-delay-max')?.value) || 90;
+        const delayMin = parseInt(document.getElementById('vb-sch-delay-min')?.value) || 30;
+        const delayMax = parseInt(document.getElementById('vb-sch-delay-max')?.value) || 90;
 
         const payload = {
             subject: subject || 'Draft Campaign',
@@ -4536,9 +4536,9 @@ function setupSequenceBuilder() {
 
         const s1 = steps[0];
 
-        let delayMin = parseInt((document.getElementById('campaign-delay-min') || {}).value); if(isNaN(delayMin)) delayMin = 30;
+        let delayMin = parseInt((document.getElementById('sch-delay-min') || {}).value); if(isNaN(delayMin)) delayMin = 30;
 
-        let delayMax = parseInt((document.getElementById('campaign-delay-max') || {}).value); if(isNaN(delayMax)) delayMax = 90;
+        let delayMax = parseInt((document.getElementById('sch-delay-max') || {}).value); if(isNaN(delayMax)) delayMax = 90;
 
         const payload = {
 
@@ -4653,9 +4653,9 @@ function setupSequenceBuilder() {
 
         const s1 = steps[0];
 
-        let delayMin = parseInt((document.getElementById('campaign-delay-min') || {}).value); if(isNaN(delayMin)) delayMin = 30;
+        let delayMin = parseInt((document.getElementById('sch-delay-min') || {}).value); if(isNaN(delayMin)) delayMin = 30;
 
-        let delayMax = parseInt((document.getElementById('campaign-delay-max') || {}).value); if(isNaN(delayMax)) delayMax = 90;
+        let delayMax = parseInt((document.getElementById('sch-delay-max') || {}).value); if(isNaN(delayMax)) delayMax = 90;
 
         const payload = {
 
@@ -4773,9 +4773,9 @@ function setupABTest() {
 
         try {
 
-        const delayMin = parseInt(document.getElementById('vb-delay-min')?.value) || 30;
+        const delayMin = parseInt(document.getElementById('vb-sch-delay-min')?.value) || 30;
 
-        const delayMax = parseInt(document.getElementById('vb-delay-max')?.value) || 90;
+        const delayMax = parseInt(document.getElementById('vb-sch-delay-max')?.value) || 90;
 
         const payload = { 
 
@@ -6229,11 +6229,16 @@ window.saveNewsletterSchedule = async function() {
     const endHour = parseInt(endVal.split(':')[0], 10) || 0;
     const tz = document.getElementById('vb-sch-timezone')?.value || 'UTC';
 
+    const delayMin = parseInt(document.getElementById('vb-sch-delay-min')?.value) || 30;
+    const delayMax = parseInt(document.getElementById('vb-sch-delay-max')?.value) || 90;
+
     const payload = {
         sending_days: JSON.stringify(selectedDays),
         start_hour: startHour,
         end_hour: endHour === 0 ? 24 : endHour,
-        timezone: tz
+        timezone: tz,
+        delay_min: delayMin,
+        delay_max: delayMax
     };
 
     if (!window.currentCampaignId) {
@@ -6249,7 +6254,9 @@ window.saveNewsletterSchedule = async function() {
                 sending_days: payload.sending_days,
                 start_hour: payload.start_hour,
                 end_hour: payload.end_hour,
-                timezone: payload.timezone
+                timezone: payload.timezone,
+                delay_min: payload.delay_min,
+                delay_max: payload.delay_max
             };
             const draftRes = await apiCall('/campaigns/send', 'POST', draftPayload);
             if (draftRes && draftRes.ok) {

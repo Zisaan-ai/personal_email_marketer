@@ -2253,17 +2253,20 @@ function populateTimezones() {
         
 
         if (typeof Choices !== 'undefined') {
-
-            new Choices(schTimezone, {
-
-                searchEnabled: true,
-
-                itemSelectText: '',
-
-                shouldSort: false
-
-            });
-
+            if (schTimezone) {
+                new Choices(schTimezone, {
+                    searchEnabled: true,
+                    itemSelectText: '',
+                    shouldSort: false
+                });
+            }
+            if (vbSchTimezone) {
+                new Choices(vbSchTimezone, {
+                    searchEnabled: true,
+                    itemSelectText: '',
+                    shouldSort: false
+                });
+            }
         }
 
     } catch (e) {

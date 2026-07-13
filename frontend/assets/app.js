@@ -6634,3 +6634,17 @@ window.getSelectedSenderIds = function(containerId) {
     const checked = Array.from(container.querySelectorAll('.sender-acc-checkbox:checked')).map(cb => cb.value);
     return checked.length > 0 ? JSON.stringify(checked) : null;
 };
+
+window.filterAccounts = function(input, containerId) {
+    const term = input.value.toLowerCase();
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    const labels = container.querySelectorAll('.account-item-lbl');
+    labels.forEach(lbl => {
+        if (lbl.getAttribute('data-search').includes(term)) {
+            lbl.style.display = 'flex';
+        } else {
+            lbl.style.display = 'none';
+        }
+    });
+};

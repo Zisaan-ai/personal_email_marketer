@@ -31,7 +31,7 @@ import domain_checker
 scheduler = BackgroundScheduler()
 from datetime import datetime
 scheduler.add_job(warmup_service.run_warmup_cycle, 'interval', minutes=30, id='warmup_job', next_run_time=datetime.now())
-scheduler.add_job(warmup_service.reset_daily_warmup_counts, 'cron', hour=0, minute=0, id='warmup_reset')
+scheduler.add_job(warmup_service.reset_daily_warmup_counts, 'cron', hour=18, minute=0, id='warmup_reset', timezone='UTC')
 scheduler.add_job(health_monitor.run_health_audit, 'interval', hours=2, id='health_audit_job')
 
 
@@ -177,6 +177,11 @@ from bounce_processor import check_bounces
 def trigger_cron():
     _scheduler_start_scheduled_campaigns()
     return {"status": "success", "message": "Cron executed"}
+
+@app.get("/api/cron/warmup_reset")
+def trigger_warmup_reset():
+    warmup_service.reset_daily_warmup_counts()
+    return {"status": "success", "message": "Warmup counts reset"}
 
 
 

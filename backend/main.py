@@ -84,8 +84,12 @@ def _auto_resume_stuck_campaigns():
 def _scheduler_start_scheduled_campaigns():
     db = database.SessionLocal()
     try:
+        from datetime import datetime
+        now = datetime.utcnow()
         campaigns = db.query(database.Campaign).filter(database.Campaign.status.in_(["scheduled", "processing"])).all()
         for c in campaigns:
+            if c.scheduled_at and now < c.scheduled_at:
+                continue
             if is_campaign_within_schedule(c):
                 if c.status == "scheduled":
                     c.status = "processing"
@@ -99,7 +103,7 @@ def _scheduler_start_scheduled_campaigns():
 
 scheduler.add_job(domain_checker.run_domain_health_check, 'cron', hour=6, minute=0, id='domain_check_job')
 scheduler.add_job(_auto_resume_stuck_campaigns, 'interval', minutes=30, id='auto_resume_job')
-scheduler.add_job(_scheduler_start_scheduled_campaigns, 'interval', minutes=5, id='scheduled_campaigns_job')
+scheduler.add_job(_scheduler_start_scheduled_campaigns, 'interval', minutes=1, id='scheduled_campaigns_job')
 
 scheduler.start()
 
@@ -118,6 +122,11 @@ app.add_middleware(
 
 from bounce_processor import check_bounces
 
+@app.get("/api/cron/run")
+def trigger_cron():
+    _auto_resume_stuck_campaigns()
+    _scheduler_start_scheduled_campaigns()
+    return {"status": "success", "message": "Cron executed"}
 
 @app.on_event("startup")
 async def startup_event():
@@ -998,26 +1007,46 @@ def _run_campaign(db, campaign_id):
         db.commit()
         return True
 
+    import time
+    start_time = time.time()
+    
     if campaign.is_ab_test:
         random.shuffle(leads)
         midpoint = len(leads) // 2
         leads_a = leads[:midpoint]
         leads_b = leads[midpoint:]
-        for lead in leads_a:
-            result = send_to_lead(lead, campaign.subject, campaign.body, 'A')
+        all_ab_leads = [(l, 'A') for l in leads_a] + [(l, 'B') for l in leads_b]
+        random.shuffle(all_ab_leads)
+        
+        for lead, var_label in all_ab_leads:
+            subj = campaign.subject if var_label == 'A' else (campaign.subject_b or campaign.subject)
+            body = campaign.body if var_label == 'A' else (campaign.body_b or campaign.body)
+            result = send_to_lead(lead, subj, body, var_label)
             if result is False: break
-            time.sleep(random.randint(delay_min, delay_max))
-        for lead in leads_b:
-            subj_b = campaign.subject_b or campaign.subject
-            body_b = campaign.body_b or campaign.body
-            result = send_to_lead(lead, subj_b, body_b, 'B')
-            if result is False: break
-            time.sleep(random.randint(delay_min, delay_max))
+            
+            delay = random.randint(delay_min, delay_max)
+            if (time.time() - start_time + delay > 50) or (delay > 45):
+                c = db.query(database.Campaign).filter(database.Campaign.id == campaign_id).first()
+                if c:
+                    from datetime import datetime, timedelta
+                    c.scheduled_at = datetime.utcnow() + timedelta(seconds=delay)
+                    db.commit()
+                break
+            time.sleep(delay)
     else:
         for lead in leads:
             result = send_to_lead(lead, campaign.subject, campaign.body)
             if result is False: break
-            time.sleep(random.randint(delay_min, delay_max))
+            
+            delay = random.randint(delay_min, delay_max)
+            if (time.time() - start_time + delay > 50) or (delay > 45):
+                c = db.query(database.Campaign).filter(database.Campaign.id == campaign_id).first()
+                if c:
+                    from datetime import datetime, timedelta
+                    c.scheduled_at = datetime.utcnow() + timedelta(seconds=delay)
+                    db.commit()
+                break
+            time.sleep(delay)
 
     # Final check of lead status to update campaign status
     c = db.query(database.Campaign).filter(database.Campaign.id == campaign_id).first()

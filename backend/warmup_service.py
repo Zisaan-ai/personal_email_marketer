@@ -82,17 +82,51 @@ def send_warmup_email(db, sender_acc, all_warmup_accounts):
     target_acc = random.choice(targets)
     
     # Generate content using AI
-    prompt = "Write a very short (2-3 sentences), casual, generic email to a colleague or friend. It should look like normal human conversation. Just return a JSON with 'subject' and 'body'. No markdown."
-    content_str = ai_core._call_ai_api(prompt)
+    topics = [
+        "asking for a quick meeting next week",
+        "following up on yesterday's discussion",
+        "sharing a quick update on the current project",
+        "asking for feedback on a recent document",
+        "checking availability for a coffee chat",
+        "saying hello and hoping they have a good weekend",
+        "discussing a new industry trend",
+        "asking for a recommendation for a software tool",
+        "mentioning a minor issue with a recent task",
+        "wishing them well after being out sick",
+        "planning a team lunch",
+        "asking about their vacation plans"
+    ]
+    topic = random.choice(topics)
+    prompt = f"Write a very short (2-3 sentences), casual, generic email to a colleague or friend. The topic should be: {topic}. It should look like normal human conversation. Return ONLY a valid JSON object with 'subject' and 'body' keys. Do not use markdown formatting or code blocks."
+    
+    try:
+        content_str = ai_core._call_ai_api(prompt)
+    except Exception as e:
+        print(f"Warmup AI Call Error: {e}")
+        content_str = ""
     
     try:
         import json
-        content = json.loads(content_str)
+        import re
+        # Clean up any potential markdown formatting
+        clean_json = re.sub(r'```(?:json)?|```', '', content_str).strip()
+        content = json.loads(clean_json)
         subject = content.get("subject", "Quick question")
         body = content.get("body", "Hey, how are you doing today? Let me know when you're free to chat.")
-    except Exception:
-        subject = "Checking in"
-        body = "Hi! Just wanted to check in and see how things are going. Let's catch up soon."
+    except Exception as e:
+        print(f"Warmup AI Parsing Error: {e} - Raw: {content_str}")
+        # Fallback to random hardcoded messages to avoid the exact same message every time
+        fallbacks = [
+            {"subject": "Checking in", "body": "Hi! Just wanted to check in and see how things are going. Let's catch up soon."},
+            {"subject": "Quick question", "body": "Hey there, do you have a few minutes tomorrow? I had a quick question."},
+            {"subject": "Update", "body": "Hello! Just a quick update that I finished that task we talked about. Have a great day!"},
+            {"subject": "Coffee chat?", "body": "Hey, it's been a while. Let me know if you want to grab coffee sometime this week."},
+            {"subject": "Meeting follow up", "body": "Hi, just following up on our last meeting. Let me know if you need anything else from me."},
+            {"subject": "Happy Friday", "body": "Hey! Hope you have a great weekend ahead. Let's sync up next week."}
+        ]
+        fb = random.choice(fallbacks)
+        subject = fb["subject"]
+        body = fb["body"]
 
     try:
         if sender_acc.smtp_port == 465:

@@ -123,6 +123,9 @@ def send_warmup_email(db, sender_acc, all_warmup_accounts):
 
 def run_warmup_cycle():
     """Main scheduler entrypoint."""
+    import datetime
+    import pytz
+    import traceback
     print("Running Warmup Cycle...")
     db = database.SessionLocal()
     try:
@@ -133,16 +136,31 @@ def run_warmup_cycle():
         if not accounts:
             return
             
+        # Pacing calculation:
+        # Reset happens at 18:00 UTC (12:00 AM BD Time).
+        # We calculate the fraction of the day passed since the last reset.
+        now_utc = datetime.datetime.now(pytz.utc)
+        last_reset = now_utc.replace(hour=18, minute=0, second=0, microsecond=0)
+        if now_utc < last_reset:
+            last_reset -= datetime.timedelta(days=1)
+            
+        minutes_passed = (now_utc - last_reset).total_seconds() / 60.0
+        fraction_of_day = min(1.0, max(0.0, minutes_passed / 1440.0))
+            
         for acc in accounts:
             if acc.imap_server and acc.imap_password:
                 move_spam_to_inbox(acc)
                 
-            daily_target = acc.warmup_daily_limit
-            if acc.warmup_sent_today < daily_target:
-                if random.random() < 0.5:
-                    send_warmup_email(db, acc, accounts)
+            daily_target = acc.warmup_daily_limit or 0
+            sent_today = acc.warmup_sent_today or 0
+            
+            expected_sent_by_now = int(daily_target * fraction_of_day)
+            
+            # If we haven't reached the daily target and are behind the expected schedule
+            if sent_today < daily_target and sent_today <= expected_sent_by_now:
+                send_warmup_email(db, acc, accounts)
     except Exception as e:
-        print(f"Warmup cycle error: {e}")
+        print(f"Warmup cycle error: {e}\n{traceback.format_exc()}")
     finally:
         db.close()
 
@@ -155,10 +173,23 @@ def reset_daily_warmup_counts():
         ).all()
         for acc in accounts:
             acc.warmup_sent_today = 0
-            acc.warmup_daily_limit += acc.warmup_increment_per_day
+            
+            current_limit = acc.warmup_daily_limit or 0
+            increment = acc.warmup_increment_per_day or 0
+            
+            # Absolute max limit cap (e.g. 50 or user-defined if we add it in future)
+            # Currently just incrementing safely
+            new_limit = current_limit + increment
+            # Adding a safe maximum cap just in case to prevent spamming limits, usually 40-50 is standard
+            if new_limit > 50:
+                new_limit = 50
+                
+            acc.warmup_daily_limit = new_limit
+            
         db.commit()
     except Exception as e:
-        print(f"Warmup reset error: {e}")
+        import traceback
+        print(f"Warmup reset error: {e}\n{traceback.format_exc()}")
         db.rollback()
     finally:
         db.close()

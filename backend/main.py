@@ -30,7 +30,7 @@ import health_monitor
 import domain_checker
 scheduler = BackgroundScheduler()
 from datetime import datetime
-scheduler.add_job(warmup_service.run_warmup_cycle, 'interval', minutes=30, id='warmup_job', next_run_time=datetime.now())
+scheduler.add_job(warmup_service.run_warmup_cycle, 'interval', minutes=5, id='warmup_job', next_run_time=datetime.now())
 scheduler.add_job(warmup_service.reset_daily_warmup_counts, 'cron', hour=18, minute=0, id='warmup_reset', timezone='UTC')
 scheduler.add_job(health_monitor.run_health_audit, 'interval', hours=2, id='health_audit_job')
 

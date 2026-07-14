@@ -480,10 +480,62 @@ function populateAnalytics(campaignId) {
 
 
 
+window.renderAnalyticsInfo = async function(c, prefix) {
+    // Schedule info
+    const schedEl = document.getElementById(`${prefix}-analytics-schedule-info`);
+    if (schedEl) {
+        let schedText = '';
+        if (c.sending_days) {
+            schedText += `<strong>Days:</strong> ${c.sending_days}<br>`;
+        } else {
+            schedText += `<strong>Days:</strong> Mon-Sun<br>`;
+        }
+        
+        let startTime = c.start_hour !== undefined ? c.start_hour + ':00' : '00:00';
+        let endTime = c.end_hour !== undefined ? c.end_hour + ':00' : '23:59';
+        schedText += `<strong>Time:</strong> ${startTime} - ${endTime} (${c.timezone || 'UTC'})<br>`;
+        
+        if (c.delay_min !== undefined) {
+            schedText += `<strong>Delay:</strong> ${c.delay_min} to ${c.delay_max || c.delay_min} minutes`;
+        }
+        
+        schedEl.innerHTML = schedText;
+    }
+    
+    // Accounts info
+    const accEl = document.getElementById(`${prefix}-analytics-accounts-info`);
+    if (accEl) {
+        accEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading accounts...';
+        try {
+            const res = await apiCall('/sending-accounts');
+            if (res.ok) {
+                const accounts = await res.json();
+                const selectedIds = c.selected_sender_ids ? c.selected_sender_ids.split(',').map(s => s.trim()) : [];
+                if (selectedIds.length === 0) {
+                    accEl.innerHTML = '<span style="color:var(--text-muted);">All active accounts</span>';
+                } else {
+                    const matched = accounts.filter(a => selectedIds.includes(a.id.toString()) || selectedIds.includes(a.id));
+                    if (matched.length > 0) {
+                        accEl.innerHTML = matched.map(a => `<div style="padding:4px 0;border-bottom:1px solid var(--border);">${escapeHtml(a.email || a.name || a.id)}</div>`).join('');
+                    } else {
+                        accEl.innerHTML = '<span style="color:var(--text-muted);">No specific accounts found</span>';
+                    }
+                }
+            } else {
+                accEl.innerHTML = '<span style="color:var(--danger);">Failed to load accounts</span>';
+            }
+        } catch(e) {
+            accEl.innerHTML = '<span style="color:var(--danger);">Failed to load accounts</span>';
+        }
+    }
+};
+
 window.populateVbAnalytics = function(id) {
     if (!window.lastFetchedCampaigns) return;
     const c = window.lastFetchedCampaigns.find(x => x.id === id);
     if (!c) return;
+    
+    window.renderAnalyticsInfo(c, 'vb');
 
     const statusEl = document.getElementById('vb-analytics-status');
     const actionsEl = document.getElementById('vb-analytics-actions');
@@ -554,6 +606,8 @@ window.populateColdAnalytics = function(id) {
     const c = window.lastFetchedCampaigns.find(x => x.id === id);
 
     if (!c) return;
+    
+    window.renderAnalyticsInfo(c, 'cold');
 
     if (c.type !== 'cold_mail') return;
 

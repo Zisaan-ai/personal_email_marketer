@@ -250,8 +250,12 @@ def run_warmup_cycle():
             last_reset_utc -= datetime.timedelta(days=1)
 
         minutes_passed = (now_utc - last_reset_utc).total_seconds() / 60.0
-        # fraction_of_day: 0 at midnight BD, 1.0 at next midnight
-        fraction_of_day = min(1.0, minutes_passed / 1440.0)
+        # Spread emails evenly over 24 hours.
+        # Add half a cycle (5 min) offset so the first cycle at ~10min already triggers email #1.
+        # Formula: expected = floor(daily_target * (minutes_passed + 5) / 1440)
+        # This ensures if limit=100: first email at ~9min, last at ~1435min (23:55)
+        adjusted_minutes = min(1440.0, minutes_passed + 5.0)
+        fraction_of_day = adjusted_minutes / 1440.0
 
         for acc in accounts:
             try:
@@ -271,11 +275,10 @@ def run_warmup_cycle():
                     continue
 
                 sent_today = acc.warmup_sent_today or 0
-                # How many emails SHOULD have been sent by now, given equal spacing.
-                # e.g. limit=12, fraction=0.5 (noon) → expected=6
-                # STRICT less-than prevents sending all at once at midnight (when both are 0)
+                # How many emails should have gone out by now (evenly spaced over 24 hrs)
                 expected_sent_by_now = int(daily_target * fraction_of_day)
 
+                # Send only if we're behind the expected pace (strict < avoids midnight burst)
                 if sent_today < daily_target and sent_today < expected_sent_by_now:
                     send_warmup_email(db, acc, accounts)
             except Exception as e:
@@ -304,8 +307,10 @@ def reset_daily_warmup_counts():
                 print(f"  Smart Warmup: {acc.email} -> limit={new_limit}")
             else:
                 current_limit = acc.warmup_daily_limit or 0
-                increment = acc.warmup_increment_per_day or 0
-                new_limit = min(50, current_limit + increment)
+                # increment can be 0 (no daily growth) — use int() to handle None safely
+                increment = int(acc.warmup_increment_per_day or 0)
+                # No arbitrary cap — user controls their own limit (max 500 as a safety guard)
+                new_limit = min(500, current_limit + increment)
                 acc.warmup_daily_limit = new_limit
                 print(f"  Manual Warmup: {acc.email} -> {current_limit} + {increment} = {new_limit}")
 

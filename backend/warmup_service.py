@@ -201,10 +201,38 @@ def send_warmup_email(db, sender_acc, all_warmup_accounts):
 
 
 def run_warmup_cycle():
-    """Main scheduler entrypoint. Runs every 10 minutes, paced over 24 hours."""
+    """Main scheduler entrypoint. Runs every 10 minutes, paced over 24 hours.
+    Also handles midnight BD reset internally using a file-based tracker.
+    This ensures reset works even after process restarts on shared hosting.
+    """
     import datetime
     import pytz
     import traceback
+    import os
+
+    BD_TZ = pytz.timezone("Asia/Dhaka")
+    now_bd = datetime.datetime.now(BD_TZ)
+    today_bd_str = now_bd.strftime("%Y-%m-%d")
+
+    # --- Self-resetting: check if a BD-midnight increment is needed ---
+    # We track the last reset date in a file to survive process restarts
+    reset_flag_path = os.path.join(os.path.dirname(__file__), "tmp", "warmup_last_reset.txt")
+    try:
+        os.makedirs(os.path.dirname(reset_flag_path), exist_ok=True)
+        last_reset_date = ""
+        if os.path.exists(reset_flag_path):
+            with open(reset_flag_path, "r") as f:
+                last_reset_date = f.read().strip()
+
+        if last_reset_date != today_bd_str:
+            print(f"[Warmup Auto-Reset] New BD day detected ({today_bd_str}). Running increment...")
+            reset_daily_warmup_counts()
+            with open(reset_flag_path, "w") as f:
+                f.write(today_bd_str)
+            print(f"[Warmup Auto-Reset] Reset flag updated to {today_bd_str}.")
+    except Exception as e:
+        print(f"[Warmup Auto-Reset] Error checking/writing reset flag: {e}")
+
     print("Running Warmup Cycle...")
     db = database.SessionLocal()
     try:
@@ -214,23 +242,22 @@ def run_warmup_cycle():
         ).all()
         if not accounts:
             return
-            
-        # Pacing: Reset at 18:00 UTC (12:00 AM BD Time).
-        # Calculate fraction of day elapsed since last reset.
+
+        # Pacing: Reset at midnight BD Time.
         now_utc = datetime.datetime.now(pytz.utc)
-        last_reset = now_utc.replace(hour=18, minute=0, second=0, microsecond=0)
-        if now_utc < last_reset:
-            last_reset -= datetime.timedelta(days=1)
-            
-        minutes_passed = (now_utc - last_reset).total_seconds() / 60.0
+        last_reset_utc = now_utc.replace(hour=18, minute=0, second=0, microsecond=0)
+        if now_utc < last_reset_utc:
+            last_reset_utc -= datetime.timedelta(days=1)
+
+        minutes_passed = (now_utc - last_reset_utc).total_seconds() / 60.0
         fraction_of_day = min(1.0, max(0.01, minutes_passed / 1440.0))
-            
+
         for acc in accounts:
             try:
                 # Try IMAP cleanup (non-blocking, skip on error)
                 if acc.imap_server and acc.imap_password:
                     move_spam_to_inbox(acc)
-                    
+
                 if getattr(acc, "smart_warmup_enabled", False):
                     daily_target = health_monitor.suggest_warmup_limit(acc)
                     if acc.warmup_daily_limit != daily_target:
@@ -238,11 +265,10 @@ def run_warmup_cycle():
                         db.commit()
                 else:
                     daily_target = acc.warmup_daily_limit or 0
-                    
+
                 sent_today = acc.warmup_sent_today or 0
-                
                 expected_sent_by_now = int(daily_target * fraction_of_day)
-                
+
                 if sent_today < daily_target and sent_today <= expected_sent_by_now:
                     send_warmup_email(db, acc, accounts)
             except Exception as e:
@@ -255,7 +281,7 @@ def run_warmup_cycle():
 
 
 def reset_daily_warmup_counts():
-    """Runs at midnight BD time to reset counts and apply daily increments."""
+    """Resets sent counts and applies daily increments for all warmup-enabled accounts."""
     print("Resetting daily warmup counts...")
     db = database.SessionLocal()
     try:
@@ -264,19 +290,18 @@ def reset_daily_warmup_counts():
         ).all()
         for acc in accounts:
             acc.warmup_sent_today = 0
-            
+
             if getattr(acc, "smart_warmup_enabled", False):
-                # Smart Warmup: dynamically set limit based on age + health
                 new_limit = health_monitor.suggest_warmup_limit(acc)
                 acc.warmup_daily_limit = new_limit
-                print(f"Smart Warmup reset: {acc.email} -> limit={new_limit}")
+                print(f"  Smart Warmup: {acc.email} -> limit={new_limit}")
             else:
                 current_limit = acc.warmup_daily_limit or 0
                 increment = acc.warmup_increment_per_day or 0
                 new_limit = min(50, current_limit + increment)
                 acc.warmup_daily_limit = new_limit
-                print(f"Manual Warmup reset: {acc.email} -> {current_limit} + {increment} = {new_limit}")
-            
+                print(f"  Manual Warmup: {acc.email} -> {current_limit} + {increment} = {new_limit}")
+
         db.commit()
         print("Warmup reset complete.")
     except Exception as e:
@@ -285,3 +310,4 @@ def reset_daily_warmup_counts():
         db.rollback()
     finally:
         db.close()
+

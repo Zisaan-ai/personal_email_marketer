@@ -250,7 +250,8 @@ def run_warmup_cycle():
             last_reset_utc -= datetime.timedelta(days=1)
 
         minutes_passed = (now_utc - last_reset_utc).total_seconds() / 60.0
-        fraction_of_day = min(1.0, max(0.01, minutes_passed / 1440.0))
+        # fraction_of_day: 0 at midnight BD, 1.0 at next midnight
+        fraction_of_day = min(1.0, minutes_passed / 1440.0)
 
         for acc in accounts:
             try:
@@ -266,10 +267,16 @@ def run_warmup_cycle():
                 else:
                     daily_target = acc.warmup_daily_limit or 0
 
+                if daily_target <= 0:
+                    continue
+
                 sent_today = acc.warmup_sent_today or 0
+                # How many emails SHOULD have been sent by now, given equal spacing.
+                # e.g. limit=12, fraction=0.5 (noon) → expected=6
+                # STRICT less-than prevents sending all at once at midnight (when both are 0)
                 expected_sent_by_now = int(daily_target * fraction_of_day)
 
-                if sent_today < daily_target and sent_today <= expected_sent_by_now:
+                if sent_today < daily_target and sent_today < expected_sent_by_now:
                     send_warmup_email(db, acc, accounts)
             except Exception as e:
                 print(f"Warmup cycle error for {acc.email}: {e}")

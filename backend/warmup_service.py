@@ -8,6 +8,7 @@ from email.mime.multipart import MIMEMultipart
 from email.utils import formatdate
 import database
 import ai_core
+import health_monitor
 
 WARMUP_HEADER = "X-Warmup-Identifier"
 WARMUP_ID = "email-marketer-v1"
@@ -185,7 +186,15 @@ def run_warmup_cycle():
             if acc.imap_server and acc.imap_password:
                 move_spam_to_inbox(acc)
                 
-            daily_target = acc.warmup_daily_limit or 0
+            if getattr(acc, "smart_warmup_enabled", False):
+                daily_target = health_monitor.suggest_warmup_limit(acc)
+                # Ensure the DB limit is also updated to reflect the smart target so the UI shows it correctly
+                if acc.warmup_daily_limit != daily_target:
+                    acc.warmup_daily_limit = daily_target
+                    db.commit()
+            else:
+                daily_target = acc.warmup_daily_limit or 0
+                
             sent_today = acc.warmup_sent_today or 0
             
             expected_sent_by_now = int(daily_target * fraction_of_day)
@@ -208,17 +217,20 @@ def reset_daily_warmup_counts():
         for acc in accounts:
             acc.warmup_sent_today = 0
             
-            current_limit = acc.warmup_daily_limit or 0
-            increment = acc.warmup_increment_per_day or 0
-            
-            # Absolute max limit cap (e.g. 50 or user-defined if we add it in future)
-            # Currently just incrementing safely
-            new_limit = current_limit + increment
-            # Adding a safe maximum cap just in case to prevent spamming limits, usually 40-50 is standard
-            if new_limit > 50:
-                new_limit = 50
+            if getattr(acc, "smart_warmup_enabled", False):
+                # Smart Warmup sets its own limits dynamically, no need to manually increment
+                new_limit = health_monitor.suggest_warmup_limit(acc)
+                acc.warmup_daily_limit = new_limit
+            else:
+                current_limit = acc.warmup_daily_limit or 0
+                increment = acc.warmup_increment_per_day or 0
                 
-            acc.warmup_daily_limit = new_limit
+                # Absolute max limit cap
+                new_limit = current_limit + increment
+                if new_limit > 50:
+                    new_limit = 50
+                    
+                acc.warmup_daily_limit = new_limit
             
         db.commit()
     except Exception as e:

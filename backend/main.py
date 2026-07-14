@@ -1406,10 +1406,12 @@ class SendingAccountCreate(BaseModel):
     warmup_enabled: bool = False
     warmup_daily_limit: int = 5
     warmup_increment_per_day: int = 2
+    smart_warmup_enabled: bool = False
 
 class SendingAccountUpdate(BaseModel):
     is_active: Optional[bool] = None
     smart_limit_enabled: Optional[bool] = None
+    smart_warmup_enabled: Optional[bool] = None
     warmup_enabled: Optional[bool] = None
 
 # --- Sending Accounts API Endpoints ---
@@ -1442,6 +1444,7 @@ def get_sending_accounts(current_user: database.User = Depends(auth.get_current_
             "warmup_increment_per_day": acc.warmup_increment_per_day,
             "warmup_sent_today": acc.warmup_sent_today,
             "smart_limit_enabled": getattr(acc, "smart_limit_enabled", False),
+            "smart_warmup_enabled": getattr(acc, "smart_warmup_enabled", False),
             "health_score": acc.health_score or 100,
             "created_at": acc.created_at,
             # --- New health fields ---
@@ -1508,7 +1511,8 @@ def create_sending_account(acc: SendingAccountCreate, current_user: database.Use
             imap_password=acc.imap_password,
             warmup_enabled=acc.warmup_enabled,
             warmup_daily_limit=acc.warmup_daily_limit,
-            warmup_increment_per_day=acc.warmup_increment_per_day
+            warmup_increment_per_day=acc.warmup_increment_per_day,
+            smart_warmup_enabled=acc.smart_warmup_enabled
         )
         db.add(new_acc)
         db.commit()
@@ -1582,6 +1586,8 @@ def update_sending_account_status(acc_id: str, update_data: SendingAccountUpdate
         acc.is_active = update_data.is_active
     if update_data.smart_limit_enabled is not None:
         acc.smart_limit_enabled = update_data.smart_limit_enabled
+    if update_data.smart_warmup_enabled is not None:
+        acc.smart_warmup_enabled = update_data.smart_warmup_enabled
     if update_data.warmup_enabled is not None:
         acc.warmup_enabled = update_data.warmup_enabled
     db.commit()

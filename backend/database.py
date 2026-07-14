@@ -173,6 +173,7 @@ class SendingAccount(Base):
     warmup_sent_today = Column(Integer, default=0)
     is_active = Column(Boolean, default=True)
     smart_limit_enabled = Column(Boolean, default=False)
+    smart_warmup_enabled = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     # --- Health Tracking (Smart Deliverability) ---
@@ -308,6 +309,7 @@ def run_migrations():
         _safe_add_column("sending_accounts", "total_replied", "INTEGER", 0)
         _safe_add_column("sending_accounts", "warmup_daily_limit", "INTEGER", 20)
         _safe_add_column("sending_accounts", "smart_limit_enabled", "BOOLEAN", False)
+        _safe_add_column("sending_accounts", "smart_warmup_enabled", "BOOLEAN", False)
         _safe_add_column("sending_accounts", "bounce_streak", "INTEGER", 0)
         _safe_add_column("sending_accounts", "last_health_check", "DATETIME", None)
         _safe_add_column("sending_accounts", "auto_paused", "BOOLEAN", False)

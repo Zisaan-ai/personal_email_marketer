@@ -183,6 +183,49 @@ def reactivate_account(db, account_id: str) -> dict:
 
 
 # ============================================================
+# SMART WARMUP LIMIT SUGGESTION
+# ============================================================
+def suggest_warmup_limit(account) -> int:
+    """
+    Suggest a safe daily warmup limit based on account health and age.
+    
+    Rules:
+    - New account (< 3 days): 5/day
+    - Account age < 7 days: 10/day
+    - Account age < 14 days: 20/day
+    - Account age < 30 days: 30/day
+    - Account age >= 30 days: 40/day
+    
+    If health is poor, reduce warmup limits appropriately.
+    """
+    # Check account age
+    if account.created_at:
+        age_days = (datetime.utcnow() - account.created_at).days
+    else:
+        age_days = 999
+        
+    limit = 5
+    if age_days >= 30:
+        limit = 40
+    elif age_days >= 14:
+        limit = 30
+    elif age_days >= 7:
+        limit = 20
+    elif age_days >= 3:
+        limit = 10
+        
+    # Adjust for health
+    health = account.health_score or 100
+    if health < 70:
+        # If health is low, keep warmup very safe
+        limit = min(limit, 15)
+    elif health < 85:
+        # Medium health
+        limit = min(limit, 25)
+        
+    return limit
+
+# ============================================================
 # SMART DAILY LIMIT SUGGESTION
 # ============================================================
 def suggest_daily_limit(account) -> int:

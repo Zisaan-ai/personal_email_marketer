@@ -1780,10 +1780,19 @@
                         <label>Daily Sending Limit</label>
                         <input type="number" id="acc-daily-limit" value="500">
                     </div>
+
+                    <div class="form-group" style="display:flex; justify-content:space-between; align-items:center; margin-top:24px; padding:16px; background:var(--surface-1); border-radius:8px; border:1px solid var(--border);">
+                        <div>
+                            <strong style="display:block; margin-bottom:4px; font-size:15px;">Smart Warmup (Auto-pilot)</strong>
+                            <span style="font-size:13px; color:var(--text-muted);">Automatically adjust warmup limits based on account age and health score.</span>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="acc-smart-warmup-enabled" onchange="document.getElementById('manual-warmup-settings').style.display = this.checked ? 'none' : 'grid';">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
                     
-                    <hr style="border:none; border-top:1px solid rgba(255,255,255,0.1); margin:24px 0;">
-                    
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:32px;">
+                    <div id="manual-warmup-settings" style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:32px; margin-top: 16px;">
                         <div class="form-group">
                             <label>Warmup Starting Limit</label>
                             <input type="number" id="acc-warmup-limit" value="5">

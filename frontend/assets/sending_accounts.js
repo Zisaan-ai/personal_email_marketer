@@ -164,6 +164,8 @@ const ACCOUNTS = {
         document.getElementById('acc-daily-limit').value = '500';
         document.getElementById('acc-warmup-limit').value = '5';
         document.getElementById('acc-warmup-increment').value = '2';
+        document.getElementById('acc-smart-warmup-enabled').checked = false;
+        document.getElementById('manual-warmup-settings').style.display = 'grid';
         document.getElementById('add-account-modal').style.display = 'flex';
     },
 
@@ -181,6 +183,8 @@ const ACCOUNTS = {
         document.getElementById('acc-daily-limit').value = acc.daily_limit || 500;
         document.getElementById('acc-warmup-limit').value = acc.warmup_daily_limit || 5;
         document.getElementById('acc-warmup-increment').value = acc.warmup_increment_per_day || 2;
+        document.getElementById('acc-smart-warmup-enabled').checked = acc.smart_warmup_enabled || false;
+        document.getElementById('manual-warmup-settings').style.display = (acc.smart_warmup_enabled || false) ? 'none' : 'grid';
         
         document.getElementById('add-account-modal').style.display = 'flex';
     },
@@ -201,7 +205,8 @@ const ACCOUNTS = {
             imap_port: 993,
             imap_password: password,
             warmup_daily_limit: parseInt(document.getElementById('acc-warmup-limit')?.value) || 5,
-            warmup_increment_per_day: parseInt(document.getElementById('acc-warmup-increment')?.value) || 2
+            warmup_increment_per_day: parseInt(document.getElementById('acc-warmup-increment')?.value) || 2,
+            smart_warmup_enabled: document.getElementById('acc-smart-warmup-enabled')?.checked || false
         };
         
         if(!payload.email || (!payload.smtp_password && !document.getElementById('acc-id').value)) {

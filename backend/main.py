@@ -2236,6 +2236,15 @@ def reset_my_stats(db: Session = Depends(database.get_db)):
     db.commit()
     return {"status": "success", "msg": "Stats reset to 0 for all accounts"}
 
+@app.get('/api/fix-invalid-leads')
+def fix_invalid_leads(db: Session = Depends(database.get_db)):
+    try:
+        updated = db.query(database.Lead).filter(database.Lead.status == 'invalid').update({'status': 'pending'})
+        db.commit()
+        return {'message': f'Fixed {updated} leads'}
+    except Exception as e:
+        return {'error': str(e)}
+
 @app.get("/{full_path:path}")
 def serve_frontend(full_path: str, db: Session = Depends(database.get_db)):
     if full_path.startswith("api/"):
@@ -2288,13 +2297,3 @@ def run_mig_2():
         return "Migration applied successfully to sql_app.db!"
     except Exception as e:
         return f"Migration error: {str(e)}"
-
-
-@app.get('/api/fix-invalid-leads')
-def fix_invalid_leads(db: Session = Depends(database.get_db)):
-    try:
-        updated = db.query(database.Lead).filter(database.Lead.status == 'invalid').update({'status': 'pending'})
-        db.commit()
-        return {'message': f'Fixed {updated} leads'}
-    except Exception as e:
-        return {'error': str(e)}

@@ -611,36 +611,6 @@ def clean_inactive_leads(current_user: database.User = Depends(auth.get_current_
         print(f"Error cleaning inactive leads: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error during scan")
 
-class LeadsValidateRequest(BaseModel):
-    emails: List[str]
-
-@app.post("/api/validate-leads")
-def validate_leads(req: LeadsValidateRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    results = []
-    # To prevent huge payloads from timing out the request, we limit to 500 max
-    emails_to_check = req.emails[:500]
-    
-    # Pre-fetch inactive leads to check them
-    inactive = db.query(database.InactiveLeadList.email).filter(database.InactiveLeadList.email.in_(emails_to_check)).all()
-    inactive_emails = set(e[0] for e in inactive)
-    
-    import concurrent.futures
-    
-    def check_single(email):
-        if email in inactive_emails:
-            return {"email": email, "valid": False, "reason": "Inactive Lead (No open > 90 days)"}
-        val = email_service.validate_email_address(email)
-        return {
-            "email": email,
-            "valid": val["valid"],
-            "reason": val.get("reason", "")
-        }
-
-    with concurrent.futures.ThreadPoolExecutor(max_workers=50) as executor:
-        results = list(executor.map(check_single, emails_to_check))
-        
-    return {"results": results}
-
 
 class ScheduleUpdate(BaseModel):
     sending_days: Optional[str] = None

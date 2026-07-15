@@ -6056,59 +6056,25 @@ function setupDragDrop(id) {
 
                     const emailsToCheck = lines.map(l => l.split(',')[0].trim()).filter(e => e);
 
-                    
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    const validLines = lines.filter(l => {
+                        const e = l.split(',')[0].trim().toLowerCase();
+                        return emailRegex.test(e);
+                    });
 
-                    try {
+                    el.value = validLines.join('\n');
 
-                        const res = await apiCall('/validate-leads', 'POST', { emails: emailsToCheck });
+                    const removed = lines.length - validLines.length;
 
-                        if (res.ok) {
-
-                            const data = await res.json();
-
-                            const invalidEmails = new Set(data.results.filter(r => !r.valid).map(r => r.email.toLowerCase()));
-
-                            
-
-                            if (invalidEmails.size > 0) {
-                                const invalidDetails = data.results.filter(r => !r.valid).map(r => `${r.email} - ${r.reason}`).join('\n');
-                                alert(`Removed ${invalidEmails.size} invalid emails.\n\nReasons:\n${invalidDetails.substring(0, 1000)}${invalidDetails.length > 1000 ? '...' : ''}`);
-                            }
-
-                            const validLines = lines.filter(l => {
-
-                                const e = l.split(',')[0].trim().toLowerCase();
-
-                                return !invalidEmails.has(e);
-
-                            });
-
-                            
-
-                            el.value = validLines.join('\n');
-
-                            
-
-                            const removed = lines.length - validLines.length;
-
-                            if (removed > 0) {
-
-                                showToast(`⚠️ Removed ${removed} invalid/inactive leads. Loaded ${validLines.length} valid leads.`, 'error');
-
-                            } else {
-
-                                showToast(`✅ Successfully loaded ${validLines.length} healthy leads!`, 'success');
-
-                            }
-
-                        }
-
-                    } catch (err) {
-
-                        showToast(`✅ Loaded ${lines.length} leads (validation skipped)`, 'success');
-
+                    if (removed > 0) {
+                        showToast(`⚠️ Removed ${removed} invalid/inactive leads. Loaded ${validLines.length} valid leads.`, 'warning');
+                    } else {
+                        showToast(`✅ Successfully loaded ${validLines.length} healthy leads!`, 'success');
                     }
 
+                    if (typeof window.renderLeadsList === 'function') {
+                        window.renderLeadsList('bulk-leads-input');
+                    }
                 };
 
                 reader.readAsText(file);
@@ -7086,42 +7052,26 @@ window.handleCSVUpload = function(e, textareaId) {
         if (el) el.value = text;
         
         const emailsToCheck = lines.map(l => l.split(',')[0].trim()).filter(e => e);
-        try {
-            const res = await apiCall('/validate-leads', 'POST', { emails: emailsToCheck });
-            if (res.ok) {
-                const data = await res.json();
-                const invalidEmails = new Set(data.results.filter(r => !r.valid).map(r => r.email.toLowerCase()));
-                
-                const validLines = lines.filter(l => {
-                    const e = l.split(',')[0].trim().toLowerCase();
-                    return !invalidEmails.has(e);
-                });
-                
-                if (el) el.value = validLines.join('\n');
-                
-                if (invalidEmails.size > 0) {
-                    const invalidDetails = data.results.filter(r => !r.valid).map(r => `${r.email} - ${r.reason}`).join('\n');
-                    alert(`Removed ${invalidEmails.size} invalid emails.\n\nReasons:\n${invalidDetails.substring(0, 1000)}${invalidDetails.length > 1000 ? '...' : ''}`);
-                    showToast(`Removed ${invalidEmails.size} invalid emails. ${validLines.length} valid leads kept.`, 'warning');
-                } else {
-                    showToast(`All ${validLines.length} leads are valid!`, 'success');
-                }
-                
-                if (typeof window.renderLeadsList === 'function') {
-                    window.renderLeadsList(textareaId);
-                }
-                window.saveLeads(textareaId, true); // silent save
-            } else {
-                if (typeof window.renderLeadsList === 'function') {
-                    window.renderLeadsList(textareaId);
-                }
-            }
-        } catch(e) {
-            console.error('Lead validation failed', e);
-            if (typeof window.renderLeadsList === 'function') {
-                window.renderLeadsList(textareaId);
-            }
+        
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const validLines = lines.filter(l => {
+            const e = l.split(',')[0].trim().toLowerCase();
+            return emailRegex.test(e);
+        });
+        
+        if (el) el.value = validLines.join('\n');
+        
+        const removedCount = lines.length - validLines.length;
+        if (removedCount > 0) {
+            showToast(`Removed ${removedCount} invalid emails. ${validLines.length} valid leads kept.`, 'warning');
+        } else {
+            showToast(`All ${validLines.length} leads are valid!`, 'success');
         }
+        
+        if (typeof window.renderLeadsList === 'function') {
+            window.renderLeadsList(textareaId);
+        }
+        window.saveLeads(textareaId, true); // silent save
     };
     reader.readAsText(file);
     

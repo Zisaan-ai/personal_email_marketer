@@ -2239,7 +2239,7 @@ def reset_my_stats(db: Session = Depends(database.get_db)):
 @app.get('/api/fix-invalid-leads')
 def fix_invalid_leads(db: Session = Depends(database.get_db)):
     try:
-        updated = db.query(database.Lead).filter(database.Lead.status == 'invalid').update({'status': 'pending'})
+        updated = db.query(database.CampaignLead).filter(database.CampaignLead.status == 'invalid').update({'status': 'pending'})
         db.commit()
         return {'message': f'Fixed {updated} leads'}
     except Exception as e:

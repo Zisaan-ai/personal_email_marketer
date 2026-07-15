@@ -55,6 +55,9 @@ class User(Base):
     is_email_verified = Column(Boolean, default=False)
     gemini_api_key = Column(String, nullable=True)
     groq_api_key = Column(String, nullable=True)
+    openai_api_key = Column(String, nullable=True)
+    anthropic_api_key = Column(String, nullable=True)
+    deepseek_api_key = Column(String, nullable=True)
 
 class Campaign(Base):
     __tablename__ = "campaigns"
@@ -303,6 +306,10 @@ def _safe_add_column(table_name: str, column_name: str, column_type: str, defaul
 def run_migrations():
     """Run safe migrations for new columns on existing tables."""
     try:
+        _safe_add_column("users", "openai_api_key", "VARCHAR", None)
+        _safe_add_column("users", "anthropic_api_key", "VARCHAR", None)
+        _safe_add_column("users", "deepseek_api_key", "VARCHAR", None)
+        
         _safe_add_column("sending_accounts", "total_sent", "INTEGER", 0)
         _safe_add_column("sending_accounts", "total_bounced", "INTEGER", 0)
         _safe_add_column("sending_accounts", "total_opened", "INTEGER", 0)

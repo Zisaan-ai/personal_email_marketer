@@ -30,7 +30,7 @@ import health_monitor
 import domain_checker
 scheduler = BackgroundScheduler()
 from datetime import datetime
-scheduler.add_job(warmup_service.run_warmup_cycle, 'interval', minutes=10, id='warmup_job', coalesce=True, max_instances=1, misfire_grace_time=600)
+scheduler.add_job(warmup_service.run_warmup_cycle, 'interval', minutes=1, id='warmup_job', coalesce=True, max_instances=1, misfire_grace_time=60)
 scheduler.add_job(warmup_service.reset_daily_warmup_counts, 'cron', hour=18, minute=0, id='warmup_reset', timezone='UTC', coalesce=True, max_instances=1)
 scheduler.add_job(health_monitor.run_health_audit, 'interval', hours=2, id='health_audit_job', coalesce=True, max_instances=1)
 
@@ -347,13 +347,13 @@ class AutopilotRequest(BaseModel):
 def ai_chat(req: ChatRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     import ai_core
     history_dict = [msg.dict() for msg in req.history] if req.history else []
-    response = ai_core.chat_with_assistant(req.message, history_dict, current_user.groq_api_key)
+    response = ai_core.chat_with_assistant(req.message, history_dict, current_user)
     return {"reply": response}
 
 @app.post("/api/ai/generate")
 def ai_generate_email(req: EmailGenerateRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     import ai_core
-    result = ai_core.generate_email_content(req.prompt, current_user.groq_api_key)
+    result = ai_core.generate_email_content(req.prompt, current_user)
     if isinstance(result, dict) and "error" in result:
         raise HTTPException(status_code=500, detail=result["error"])
     return result  # returns {"html": "..."}
@@ -361,7 +361,7 @@ def ai_generate_email(req: EmailGenerateRequest, current_user: database.User = D
 @app.post("/api/ai/optimize-subject")
 def ai_optimize_subject(req: SubjectOptimizeRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     import ai_core
-    result = ai_core.optimize_subject(req.subject, current_user.groq_api_key)
+    result = ai_core.optimize_subject(req.subject, current_user)
     if isinstance(result, dict) and "error" in result:
         raise HTTPException(status_code=500, detail=result["error"])
     return result  # returns {"subject": "..."}
@@ -369,7 +369,7 @@ def ai_optimize_subject(req: SubjectOptimizeRequest, current_user: database.User
 @app.post("/api/ai/generate-icebreakers")
 def ai_generate_icebreakers(req: IcebreakerRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     import ai_core
-    result = ai_core.generate_icebreakers(req.leads_csv, current_user.groq_api_key)
+    result = ai_core.generate_icebreakers(req.leads_csv, current_user)
     if isinstance(result, dict) and "error" in result:
         raise HTTPException(status_code=500, detail=result["error"])
     return result  # returns {"csv": "..."}
@@ -377,7 +377,7 @@ def ai_generate_icebreakers(req: IcebreakerRequest, current_user: database.User 
 @app.post("/api/ai/autopilot")
 def ai_autopilot(req: AutopilotRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     import ai_core
-    result = ai_core.generate_autopilot_campaign(req.prompt, current_user.groq_api_key)
+    result = ai_core.generate_autopilot_campaign(req.prompt, current_user)
     if isinstance(result, dict) and "error" in result:
         raise HTTPException(status_code=500, detail=result["error"])
     return result  # returns {"subject_a", "body_a", "subject_b", "body_b"}
@@ -1392,6 +1392,21 @@ if os.path.exists(frontend_path):
     
 
 # --- Sending Accounts Schema ---
+@app.get("/api/debug-accounts")
+def debug_accounts(db: Session = Depends(database.get_db)):
+    accounts = db.query(database.SendingAccount).all()
+    res = []
+    for acc in accounts:
+        res.append({
+            "id": acc.id,
+            "email": acc.email,
+            "warmup_enabled": acc.warmup_enabled,
+            "smart_warmup_enabled": acc.smart_warmup_enabled,
+            "smart_limit_enabled": acc.smart_limit_enabled,
+            "daily_limit": acc.daily_limit
+        })
+    return res
+
 class SendingAccountCreate(BaseModel):
     name: Optional[str] = None
     email: str
@@ -1445,7 +1460,7 @@ def get_sending_accounts(current_user: database.User = Depends(auth.get_current_
             "warmup_sent_today": acc.warmup_sent_today,
             "smart_limit_enabled": getattr(acc, "smart_limit_enabled", False),
             "smart_warmup_enabled": getattr(acc, "smart_warmup_enabled", False),
-            "health_score": acc.health_score or 100,
+            "health_score": health_monitor.calculate_health_score(acc),
             "created_at": acc.created_at,
             # --- New health fields ---
             "total_sent": acc.total_sent or 0,
@@ -1456,6 +1471,7 @@ def get_sending_accounts(current_user: database.User = Depends(auth.get_current_
             "auto_paused": acc.auto_paused or False,
             "auto_paused_reason": acc.auto_paused_reason,
             "suggested_daily_limit": health_monitor.suggest_daily_limit(acc),
+            "suggested_warmup_limit": health_monitor.suggest_warmup_limit(acc),
             # --- Sending window ---
             "send_window_start": acc.send_window_start if acc.send_window_start is not None else 9,
             "send_window_end": acc.send_window_end if acc.send_window_end is not None else 17,
@@ -1563,6 +1579,7 @@ def edit_sending_account(acc_id: str, acc: SendingAccountCreate, current_user: d
         existing_acc.warmup_enabled = acc.warmup_enabled
         existing_acc.warmup_daily_limit = acc.warmup_daily_limit
         existing_acc.warmup_increment_per_day = acc.warmup_increment_per_day
+        existing_acc.smart_warmup_enabled = acc.smart_warmup_enabled
         db.commit()
         return {"status": "success"}
     except Exception as e:
@@ -1832,11 +1849,23 @@ class GeminiKeyRequest(BaseModel):
 class GroqKeyRequest(BaseModel):
     groq_api_key: str
 
+class OpenAIKeyRequest(BaseModel):
+    openai_api_key: str
+
+class AnthropicKeyRequest(BaseModel):
+    anthropic_api_key: str
+
+class DeepSeekKeyRequest(BaseModel):
+    deepseek_api_key: str
+
 @app.get("/api/settings")
 def get_settings(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     return {
         "gemini_api_key": current_user.gemini_api_key or "",
         "groq_api_key": current_user.groq_api_key or "",
+        "openai_api_key": current_user.openai_api_key or "",
+        "anthropic_api_key": current_user.anthropic_api_key or "",
+        "deepseek_api_key": current_user.deepseek_api_key or "",
     }
 
 @app.post("/api/settings/gemini")
@@ -1852,6 +1881,28 @@ def save_groq_key(req: GroqKeyRequest, current_user: database.User = Depends(aut
     db.commit()
     os.environ["GROQ_API_KEY"] = req.groq_api_key
     return {"ok": True, "message": "Groq API key saved"}
+
+@app.post("/api/settings/openai")
+def save_openai_key(req: OpenAIKeyRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    current_user.openai_api_key = req.openai_api_key
+    db.commit()
+    os.environ["OPENAI_API_KEY"] = req.openai_api_key
+    return {"ok": True, "message": "OpenAI API key saved"}
+
+@app.post("/api/settings/anthropic")
+def save_anthropic_key(req: AnthropicKeyRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    current_user.anthropic_api_key = req.anthropic_api_key
+    db.commit()
+    os.environ["ANTHROPIC_API_KEY"] = req.anthropic_api_key
+    return {"ok": True, "message": "Anthropic API key saved"}
+
+@app.post("/api/settings/deepseek")
+def save_deepseek_key(req: DeepSeekKeyRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    current_user.deepseek_api_key = req.deepseek_api_key
+    db.commit()
+    os.environ["DEEPSEEK_API_KEY"] = req.deepseek_api_key
+    return {"ok": True, "message": "DeepSeek API key saved"}
+
 
 
 # --- UNSUBSCRIBE ENDPOINTS ---
@@ -1920,7 +1971,7 @@ def draft_reply(reply_id: str, current_user: database.User = Depends(auth.get_cu
         raise HTTPException(status_code=404, detail="Reply not found or unauthorized")
         
     import ai_core
-    draft = ai_core.draft_reply_to_email(reply.body or "", current_user.groq_api_key)
+    draft = ai_core.draft_reply_to_email(reply.body or "", current_user)
     return {"draft": draft}
 
 @app.post("/api/replies/{reply_id}/send")
@@ -2146,6 +2197,43 @@ def run_mig_3():
         return "Migration applied successfully to sql_app.db!"
     except Exception as e:
         return f"Migration error: {str(e)}"
+
+@app.get("/api/debug-health")
+def debug_health(db: Session = Depends(database.get_db)):
+    accounts = db.query(database.SendingAccount).all()
+    out = []
+    for acc in accounts:
+        # Trigger health calculation
+        health = health_monitor.calculate_health_score(acc)
+        out.append({
+            "email": acc.email,
+            "total_sent": acc.total_sent,
+            "total_opened": acc.total_opened,
+            "total_replied": acc.total_replied,
+            "health_score": health
+        })
+    return out
+
+@app.get("/api/trigger-warmup")
+def trigger_warmup():
+    warmup_service.run_warmup_cycle()
+    return {"status": "success", "msg": "Warmup cycle triggered manually"}
+
+@app.get("/api/reset-my-stats")
+def reset_my_stats(db: Session = Depends(database.get_db)):
+    accounts = db.query(database.SendingAccount).all()
+    for acc in accounts:
+        acc.sent_today = 0
+        acc.warmup_sent_today = 0
+        acc.total_sent = 0
+        acc.total_bounced = 0
+        acc.total_opened = 0
+        acc.total_replied = 0
+        acc.bounce_streak = 0
+        acc.health_score = 0
+    db.commit()
+    return {"status": "success", "msg": "Stats reset to 0 for all accounts"}
+
 @app.get("/{full_path:path}")
 def serve_frontend(full_path: str, db: Session = Depends(database.get_db)):
     if full_path.startswith("api/"):
@@ -2173,6 +2261,7 @@ def serve_frontend(full_path: str, db: Session = Depends(database.get_db)):
             "Surrogate-Control": "no-store",
         }
     )
+
 
 
 @app.get("/api/run-migration-now")

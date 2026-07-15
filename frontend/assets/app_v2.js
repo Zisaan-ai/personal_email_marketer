@@ -2638,8 +2638,16 @@ function setupSettings() {
             const geminiKey = document.getElementById('gemini-api-key').value;
 
             const groqKeyEl = document.getElementById('groq-api-key');
-
             const groqKey = groqKeyEl ? groqKeyEl.value : '';
+            
+            const openaiKeyEl = document.getElementById('openai-api-key');
+            const openaiKey = openaiKeyEl ? openaiKeyEl.value : '';
+            
+            const anthropicKeyEl = document.getElementById('anthropic-api-key');
+            const anthropicKey = anthropicKeyEl ? anthropicKeyEl.value : '';
+            
+            const deepseekKeyEl = document.getElementById('deepseek-api-key');
+            const deepseekKey = deepseekKeyEl ? deepseekKeyEl.value : '';
 
             try {
 
@@ -2651,12 +2659,17 @@ function setupSettings() {
 
                 }
 
-                // Save Groq key
-
                 if (groqKey) {
-
                     await apiCall('/settings/groq', 'POST', { groq_api_key: groqKey });
-
+                }
+                if (openaiKey) {
+                    await apiCall('/settings/openai', 'POST', { openai_api_key: openaiKey });
+                }
+                if (anthropicKey) {
+                    await apiCall('/settings/anthropic', 'POST', { anthropic_api_key: anthropicKey });
+                }
+                if (deepseekKey) {
+                    await apiCall('/settings/deepseek', 'POST', { deepseek_api_key: deepseekKey });
                 }
 
                 const geminiStatus = document.getElementById('gemini-status');
@@ -2692,8 +2705,10 @@ function setupSettings() {
         const setVal = (id, v) => { const el = document.getElementById(id); if (el && v) el.value = v; };
 
         setVal('gemini-api-key', s.gemini_api_key);
-
         setVal('groq-api-key', s.groq_api_key);
+        setVal('openai-api-key', s.openai_api_key);
+        setVal('anthropic-api-key', s.anthropic_api_key);
+        setVal('deepseek-api-key', s.deepseek_api_key);
 
     }).catch(() => {});
 

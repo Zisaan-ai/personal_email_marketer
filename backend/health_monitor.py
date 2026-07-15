@@ -36,7 +36,10 @@ def calculate_health_score(account) -> int:
     bounce_streak = account.bounce_streak or 0
 
     if total_sent == 0:
-        return 100  # New account, no data yet
+        return 0  # New account, no data yet
+
+    # Base score grows with total_sent up to 100 (reaches 100 after 100 emails)
+    base_score = min(100, total_sent)
 
     # Bounce rate penalty (heaviest weight - up to 80 points)
     bounce_rate = total_bounced / total_sent
@@ -51,10 +54,11 @@ def calculate_health_score(account) -> int:
 
     # Reply rate bonus (up to 10 points)
     reply_rate = total_replied / total_sent
-    reply_bonus = min(reply_rate * 30, 10)
+    reply_bonus = min(reply_rate * 40, 10)
 
-    score = 100 - bounce_penalty - streak_penalty + open_bonus + reply_bonus
-    return max(0, min(100, int(round(score))))
+    # Calculate final score
+    score = base_score - bounce_penalty - streak_penalty + open_bonus + reply_bonus
+    return max(0, min(100, int(score)))
 
 
 # ============================================================
@@ -141,8 +145,11 @@ def check_auto_pause(db, account) -> bool:
 
     reason = None
 
-    if (account.health_score or 100) < 50:
-        reason = f"Health score critically low ({account.health_score}/100)"
+    # Only auto-pause for low health if the account has sent at least 50 emails
+    # Since health grows from 0, early health is naturally low
+    current_health = account.health_score if account.health_score is not None else 0
+    if (account.total_sent or 0) >= 50 and current_health < 50:
+        reason = f"Health score critically low ({current_health}/100)"
 
     elif (account.bounce_streak or 0) >= 5:
         reason = f"5+ consecutive bounces (streak: {account.bounce_streak})"
@@ -215,7 +222,7 @@ def suggest_warmup_limit(account) -> int:
         limit = 10
         
     # Adjust for health
-    health = account.health_score or 100
+    health = account.health_score if account.health_score is not None else 0
     if health < 70:
         # If health is low, keep warmup very safe
         limit = min(limit, 15)
@@ -258,7 +265,7 @@ def suggest_daily_limit(account) -> int:
     
     # If user explicitly turned off smart limit, just use their limit (with a minor check for critical health)
     if not getattr(account, 'smart_limit_enabled', False):
-        if account.health_score and account.health_score < 50:
+        if account.health_score is not None and account.health_score < 50:
             return min(user_limit, 20)
         return user_limit
     
@@ -273,7 +280,7 @@ def suggest_daily_limit(account) -> int:
         return min(user_limit, 100)
 
     # Health-based limits (for established accounts) when Smart Limit is ON
-    health = account.health_score or 100
+    health = account.health_score if account.health_score is not None else 0
 
     if health < 50:
         return min(user_limit, 20)  # Critical - minimal sending
@@ -391,7 +398,7 @@ def get_health_report(db, account_id: str) -> dict:
     reply_rate = (total_replied / total_sent * 100) if total_sent > 0 else 0
 
     # Determine health status
-    health = account.health_score or 100
+    health = account.health_score if account.health_score is not None else 0
     if health >= 95:
         status = "excellent"
         status_label = "Excellent 🟢"

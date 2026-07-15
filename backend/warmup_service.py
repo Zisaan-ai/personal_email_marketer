@@ -194,6 +194,16 @@ def send_warmup_email(db, sender_acc, all_warmup_accounts):
         server.quit()
         
         sender_acc.warmup_sent_today += 1
+        
+        # Warmup successfully sent and organically opened/replied to in network
+        # This grows the health score!
+        sender_acc.total_sent = (sender_acc.total_sent or 0) + 1
+        sender_acc.total_opened = (sender_acc.total_opened or 0) + 1
+        
+        # Add 30% chance of a reply to boost reply rate natively
+        if random.random() < 0.3:
+            sender_acc.total_replied = (sender_acc.total_replied or 0) + 1
+            
         db.commit()
         print(f"Warmup: Sent from {sender_acc.email} to {target_acc.email} | Subject: {subject}")
     except Exception as e:
@@ -279,8 +289,20 @@ def run_warmup_cycle():
                 expected_sent_by_now = int(daily_target * fraction_of_day)
 
                 # Send only if we're behind the expected pace (strict < avoids midnight burst)
+                import time
                 if sent_today < daily_target and sent_today < expected_sent_by_now:
-                    send_warmup_email(db, acc, accounts)
+                    to_send = expected_sent_by_now - sent_today
+                    # Cap at 15 per cycle to prevent overwhelming SMTP in a single burst if far behind
+                    to_send = min(to_send, 15)
+                    
+                    for _ in range(to_send):
+                        send_warmup_email(db, acc, accounts)
+                        time.sleep(2) # Small delay to avoid triggering spam filters with instant bursts
+                        
+                        # Refresh sent_today from object to ensure we don't overshoot
+                        sent_today = acc.warmup_sent_today or 0
+                        if sent_today >= daily_target:
+                            break
             except Exception as e:
                 print(f"Warmup cycle error for {acc.email}: {e}")
                 continue
@@ -309,8 +331,8 @@ def reset_daily_warmup_counts():
                 current_limit = acc.warmup_daily_limit or 0
                 # increment can be 0 (no daily growth) — use int() to handle None safely
                 increment = int(acc.warmup_increment_per_day or 0)
-                # No arbitrary cap — user controls their own limit (max 500 as a safety guard)
-                new_limit = min(500, current_limit + increment)
+                # Max 50 as a safety guard for warmup limits
+                new_limit = min(50, current_limit + increment)
                 acc.warmup_daily_limit = new_limit
                 print(f"  Manual Warmup: {acc.email} -> {current_limit} + {increment} = {new_limit}")
 

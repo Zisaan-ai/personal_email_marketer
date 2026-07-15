@@ -1682,6 +1682,79 @@
                         </div>
                     </div>
 
+                    
+                    <!-- OpenAI -->
+                    <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:20px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <div style="width:32px;height:32px;border-radius:8px;background:#10a37f;display:flex;align-items:center;justify-content:center;">
+                                    <i class="fa-solid fa-bolt" style="color:#fff;font-size:14px;"></i>
+                                </div>
+                                <div>
+                                    <div style="display:flex; align-items:center; gap:8px;">
+                                        <span style="font-size:14px;font-weight:700;">OpenAI (ChatGPT)</span>
+                                    </div>
+                                    <div style="font-size:12px;color:var(--text-muted);">Industry standard AI models</div>
+                                </div>
+                            </div>
+                            <a href="https://platform.openai.com/api-keys" target="_blank" style="font-size:12px;color:var(--p);font-weight:600;text-decoration:none;"><i class="fa-solid fa-arrow-up-right-from-square" style="margin-right:4px;"></i>Get Key</a>
+                        </div>
+                        <div style="position:relative;">
+                            <input type="password" id="openai-api-key" placeholder="sk-..." style="padding-right:44px;">
+                            <button type="button" onclick="var el=document.getElementById('openai-api-key'); el.type=el.type==='password'?'text':'password'; this.innerHTML=el.type==='password'?'<i class=&quot;fa-regular fa-eye&quot;></i>':'<i class=&quot;fa-regular fa-eye-slash&quot;></i>'" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Anthropic -->
+                    <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:20px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <div style="width:32px;height:32px;border-radius:8px;background:#d97757;display:flex;align-items:center;justify-content:center;">
+                                    <i class="fa-solid fa-cube" style="color:#fff;font-size:14px;"></i>
+                                </div>
+                                <div>
+                                    <div style="display:flex; align-items:center; gap:8px;">
+                                        <span style="font-size:14px;font-weight:700;">Anthropic (Claude)</span>
+                                    </div>
+                                    <div style="font-size:12px;color:var(--text-muted);">Excellent for writing & coding</div>
+                                </div>
+                            </div>
+                            <a href="https://console.anthropic.com/settings/keys" target="_blank" style="font-size:12px;color:var(--p);font-weight:600;text-decoration:none;"><i class="fa-solid fa-arrow-up-right-from-square" style="margin-right:4px;"></i>Get Key</a>
+                        </div>
+                        <div style="position:relative;">
+                            <input type="password" id="anthropic-api-key" placeholder="sk-ant-..." style="padding-right:44px;">
+                            <button type="button" onclick="var el=document.getElementById('anthropic-api-key'); el.type=el.type==='password'?'text':'password'; this.innerHTML=el.type==='password'?'<i class=&quot;fa-regular fa-eye&quot;></i>':'<i class=&quot;fa-regular fa-eye-slash&quot;></i>'" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- DeepSeek -->
+                    <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:20px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <div style="width:32px;height:32px;border-radius:8px;background:#4d6bfe;display:flex;align-items:center;justify-content:center;">
+                                    <i class="fa-solid fa-water" style="color:#fff;font-size:14px;"></i>
+                                </div>
+                                <div>
+                                    <div style="display:flex; align-items:center; gap:8px;">
+                                        <span style="font-size:14px;font-weight:700;">DeepSeek</span>
+                                    </div>
+                                    <div style="font-size:12px;color:var(--text-muted);">Cost-effective & powerful</div>
+                                </div>
+                            </div>
+                            <a href="https://platform.deepseek.com/api_keys" target="_blank" style="font-size:12px;color:var(--p);font-weight:600;text-decoration:none;"><i class="fa-solid fa-arrow-up-right-from-square" style="margin-right:4px;"></i>Get Key</a>
+                        </div>
+                        <div style="position:relative;">
+                            <input type="password" id="deepseek-api-key" placeholder="sk-..." style="padding-right:44px;">
+                            <button type="button" onclick="var el=document.getElementById('deepseek-api-key'); el.type=el.type==='password'?'text':'password'; this.innerHTML=el.type==='password'?'<i class=&quot;fa-regular fa-eye&quot;></i>':'<i class=&quot;fa-regular fa-eye-slash&quot;></i>'" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
                     <button id="save-gemini-btn" class="btn primary" style="width:100%; justify-content:center; padding:14px;">
                         <i class="fa-solid fa-floppy-disk" style="margin-right:8px;"></i>Save AI Keys
                     </button>
@@ -1951,418 +2024,298 @@
             
               
               <div class="about-grid">
-                  <div class="about-card" style="--icon-color-1:#10b981; --icon-color-2:#059669; --icon-color-rgb:16,185,129;">
-                      <div class="about-icon-wrapper"><i class="fa-solid fa-users-gear"></i></div>
-                      <h3 class="about-title">1. Multi-Sender & Account Rotation</h3>
-                      <p class="about-text"><strong>English:</strong> Seamlessly integrate multiple SMTP accounts. The system intelligently rotates through active senders, distributing the workload and protecting individual account reputation.</p>
-                      <p class="about-text bn"><strong>Bangla:</strong> একাধিক SMTP অ্যাকাউন্ট একসাথে ব্যবহার করুন। সিস্টেম নিজে থেকেই অ্যাকাউন্টগুলো ঘুরিয়ে ঘুরিয়ে ইমেইল পাঠায়, যার ফলে স্প্যামে যাওয়ার ঝুঁকি কমে এবং অ্যাকাউন্টের রেপুটেশন ঠিক থাকে।</p>
-                  
-                      <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-                          <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-                              <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-                              <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-                          </button>
-                          <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-                              <div style="padding: 16px;">
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Go to "Accounts" > "Add Account" to add multiple SMTPs. The system automatically rotates them during campaigns.</p>
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> "Accounts" মেনু থেকে "Add Account" এ গিয়ে আপনার একাধিক SMTP যুক্ত করুন। ক্যাম্পেইন চলাকালীন সিস্টেম নিজে থেকেই এগুলো ঘুরিয়ে ঘুরিয়ে ব্যবহার করবে।</p>
-                              </div>
-                          </div>
-                      </div>
+
+<div class="about-card" style="--icon-color-1:#10b981; --icon-color-2:#059669; --icon-color-rgb:16,185,129;">
+    <div class="about-icon-wrapper"><i class="fa-solid fa-users-gear"></i></div>
+    <h3 class="about-title">1. Multi-Sender & Account Rotation</h3>
+    <p class="about-text"><strong>English:</strong> Seamlessly integrate multiple SMTP accounts. Choose Automatic Load Balancing (Round-Robin) to let the system dynamically rotate senders, or manually select specific sending accounts for targeted campaigns to protect domain reputation.</p>
+    <p class="about-text bn"><strong>Bangla:</strong> একসাথে অনেকগুলো SMTP অ্যাকাউন্ট যুক্ত করার সুবিধা। আপনি চাইলে অটোমেটিক রোটেশন অন করে রাখতে পারেন (সিস্টেম নিজে থেকে অ্যাকাউন্ট পরিবর্তন করে মেইল পাঠাবে), অথবা ম্যানুয়ালি নির্দিষ্ট কোনো অ্যাকাউন্ট সিলেক্ট করে ক্যাম্পেইন রান করতে পারবেন।</p>
+
+    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
+        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
+            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
+            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+        </button>
+        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
+            <div style="padding: 16px;">
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Go to 'Accounts' > 'Add Account' to add SMTPs. In campaigns, select 'Auto-Rotate' or manually pick specific accounts.</p>
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> Accounts থেকে SMTP অ্যাড করুন। ক্যাম্পেইন চালানোর সময় Auto-Rotate সিলেক্ট করুন অথবা ম্যানুয়ালি নির্দিষ্ট অ্যাকাউন্ট বেছে নিন।</p>
+            </div>
+        </div>
+    </div>
 </div>
 
-                  <div class="about-card" style="--icon-color-1:#3b82f6; --icon-color-2:#2563eb; --icon-color-rgb:59,130,246;">
-                      <div class="about-icon-wrapper"><i class="fa-solid fa-arrow-trend-up"></i></div>
-                      <h3 class="about-title">2. Auto-Warmup & Smart Limits</h3>
-                      <p class="about-text"><strong>English:</strong> Establish domain trust automatically. The engine algorithmically increases daily sending limits for new accounts, creating organic sending patterns that ISPs trust.</p>
-                      <p class="about-text bn"><strong>Bangla:</strong> ডোমেইনের ট্রাস্ট স্বয়ংক্রিয়ভাবে বাড়ান। সিস্টেম নতুন অ্যাকাউন্টের জন্য প্রতিদিন একটু একটু করে ইমেইল পাঠানোর পরিমাণ বাড়ায়, যা আইএসপি (ISP) এর কাছে একদম স্বাভাবিক মনে হয়।</p>
-                  
-                      <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-                          <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-                              <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-                              <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-                          </button>
-                          <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-                              <div style="padding: 16px;">
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Set your initial "Daily Limit" when adding an account. Enable "Auto Warmup" so the system gradually increases it daily.</p>
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> অ্যাকাউন্ট যুক্ত করার সময় "Daily Limit" সেট করুন এবং "Auto Warmup" অন করে দিন। সিস্টেম প্রতিদিন একটু একটু করে ইমেইল পাঠানোর পরিমাণ বাড়াবে।</p>
-                              </div>
-                          </div>
-                      </div>
+<div class="about-card" style="--icon-color-1:#3b82f6; --icon-color-2:#2563eb; --icon-color-rgb:59,130,246;">
+    <div class="about-icon-wrapper"><i class="fa-solid fa-arrow-trend-up"></i></div>
+    <h3 class="about-title">2. Auto-Warmup vs Manual Warmup</h3>
+    <p class="about-text"><strong>English:</strong> Build domain trust effectively. Enable Smart Auto-Warmup to algorithmically scale your daily sending volume, or set Manual Warmup parameters to strictly control the exact number of emails sent per day.</p>
+    <p class="about-text bn"><strong>Bangla:</strong> ডোমেইন ট্রাস্ট বিল্ড করার জন্য স্মার্ট ওয়ার্মআপ। আপনি 'Auto-Warmup' অন করে দিলে সিস্টেম নিজে থেকেই প্রতিদিন লিমিট বাড়াবে, আর চাইলে ম্যানুয়াল লিমিট সেট করে প্রতিদিন ঠিক কয়টা মেইল যাবে তা নিজে কন্ট্রোল করতে পারবেন।</p>
+
+    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
+        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
+            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
+            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+        </button>
+        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
+            <div style="padding: 16px;">
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> In Sending Accounts, toggle 'Warmup' for automatic scaling, or manually type your preferred daily limit.</p>
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> Sending Accounts পেজ থেকে 'Warmup' টগল অন করুন (অটোমেটিকের জন্য) অথবা ইনপুট বক্সে ম্যানুয়ালি আপনার পছন্দমতো লিমিট বসিয়ে দিন।</p>
+            </div>
+        </div>
+    </div>
 </div>
 
-                  <div class="about-card" style="--icon-color-1:#8b5cf6; --icon-color-2:#7c3aed; --icon-color-rgb:139,92,246;">
-                      <div class="about-icon-wrapper"><i class="fa-solid fa-shield-halved"></i></div>
-                      <h3 class="about-title">3. Advanced Deliverability Check</h3>
-                      <p class="about-text"><strong>English:</strong> Prevent campaigns from landing in spam. The pre-flight scanner identifies risky words and validates DNS records (SPF, DKIM, DMARC) prior to launch.</p>
-                      <p class="about-text bn"><strong>Bangla:</strong> ইমেইল স্প্যামে যাওয়া রোধ করুন। ইমেইল পাঠানোর আগেই সিস্টেম স্প্যামি ওয়ার্ড এবং ডিএনএস রেকর্ড (SPF, DKIM, DMARC) স্ক্যান করে আপনাকে সতর্ক করবে।</p>
-                  
-                      <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-                          <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-                              <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-                              <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-                          </button>
-                          <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-                              <div style="padding: 16px;">
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Before sending, use the "Spam Checker" tool in the dashboard to scan your email copy for spam trigger words.</p>
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> ইমেইল পাঠানোর আগে ড্যাশবোর্ডের "Spam Checker" টুল দিয়ে আপনার ইমেইল কপিটি স্ক্যান করে নিন, যাতে কোনো স্প্যামি শব্দ না থাকে।</p>
-                              </div>
-                          </div>
-                      </div>
+<div class="about-card" style="--icon-color-1:#f59e0b; --icon-color-2:#d97706; --icon-color-rgb:245,158,11;">
+    <div class="about-icon-wrapper"><i class="fa-solid fa-heart-pulse"></i></div>
+    <h3 class="about-title">3. Delivery-Based System Health Monitor</h3>
+    <p class="about-text"><strong>English:</strong> Dynamic health assessment based on true deliverability metrics. The system auto-calculates health percentage from open/reply rates vs bounces. You can manually pause unhealthy accounts before reputation drops.</p>
+    <p class="about-text bn"><strong>Bangla:</strong> রিয়েল ডেলিভারি ডাটা দিয়ে হেলথ ক্যালকুলেট হয়। বেশি মেইল ওপেন হলে অটোমেটিক্যালি হেলথ বাড়বে, আর বাউন্স হলে হেলথ কমে যাবে। হেলথ কম দেখলে আপনি ম্যানুয়ালি অ্যাকাউন্ট পজ করে দিতে পারবেন।</p>
+
+    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
+        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
+            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
+            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+        </button>
+        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
+            <div style="padding: 16px;">
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Monitor the real-time health progress bars. If health drops below 50%, the system flags it—manually pause the account to recover.</p>
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> রিয়েল টাইমে অ্যাকাউন্টের হেলথ বার খেয়াল রাখুন। হেলথ খুব কমে গেলে ম্যানুয়ালি পজ বাটনে ক্লিক করে অ্যাকাউন্ট সাময়িকভাবে বন্ধ রাখুন।</p>
+            </div>
+        </div>
+    </div>
 </div>
 
-                  <div class="about-card" style="--icon-color-1:#f59e0b; --icon-color-2:#d97706; --icon-color-rgb:245,158,11;">
-                      <div class="about-icon-wrapper"><i class="fa-solid fa-address-book"></i></div>
-                      <h3 class="about-title">4. Audience & Auto-Cleaning</h3>
-                      <p class="about-text"><strong>English:</strong> Upload mass contact lists effortlessly. The system sanitizes your data, removing syntax errors, hard bounces, and strict duplicates to maintain a pristine audience database.</p>
-                      <p class="about-text bn"><strong>Bangla:</strong> হাজার হাজার কন্টাক্ট আপলোড করুন সহজেই। সিস্টেম নিজে থেকেই ডুপ্লিকেট, ভুল ফরমেট এবং হার্ড বাউন্স ইমেইলগুলো রিমুভ করে আপনার লিস্টকে একদম ফ্রেশ রাখবে।</p>
-                  
-                      <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-                          <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-                              <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-                              <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-                          </button>
-                          <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-                              <div style="padding: 16px;">
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Navigate to "Audience" > "Import". Upload your CSV file and the system will automatically remove duplicates and bad formats.</p>
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> "Audience" মেনু থেকে "Import" এ গিয়ে আপনার কন্টাক্ট লিস্ট (CSV) আপলোড করুন। সিস্টেম নিজে থেকেই ডুপ্লিকেট এবং ভুল ইমেইলগুলো ডিলিট করে দেবে।</p>
-                              </div>
-                          </div>
-                      </div>
+<div class="about-card" style="--icon-color-1:#a855f7; --icon-color-2:#9333ea; --icon-color-rgb:168,85,247;">
+    <div class="about-icon-wrapper"><i class="fa-solid fa-shield-check"></i></div>
+    <h3 class="about-title">4. Pre-Flight Deliverability Optimizer</h3>
+    <p class="about-text"><strong>English:</strong> Ensure maximum inbox placement. The system automatically performs DNS (SPF/DKIM/DMARC) validation and algorithmic spam-word analysis before launching, while you can manually tweak the content based on its feedback.</p>
+    <p class="about-text bn"><strong>Bangla:</strong> মেইল স্প্যামে যাওয়ার হাত থেকে বাঁচাতে প্রি-ফ্লাইট অপ্টিমাইজার। ক্যাম্পেইন লঞ্চ করার আগে সিস্টেম অটোমেটিক্যালি ডোমেইন রেকর্ড (SPF/DKIM/DMARC) এবং স্প্যাম ওয়ার্ড স্ক্যান করে, এরপর আপনি ম্যানুয়ালি মেইলের টেক্সট পরিবর্তন করে ঠিক করতে পারবেন।</p>
+
+    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
+        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
+            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
+            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+        </button>
+        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
+            <div style="padding: 16px;">
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Click 'Launch Campaign'. Review the auto-generated deliverability report, manually fix highlighted spam triggers, and confirm.</p>
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> Launch Campaign-এ ক্লিক করলে অটোমেটিক্যালি স্প্যাম রিপোর্ট আসবে। কোনো রেড ফ্ল্যাগ থাকলে তা ম্যানুয়ালি ফিক্স করে তারপর কনফার্ম করুন।</p>
+            </div>
+        </div>
+    </div>
 </div>
 
-                  <div class="about-card" style="--icon-color-1:#ec4899; --icon-color-2:#db2777; --icon-color-rgb:236,72,153;">
-                      <div class="about-icon-wrapper"><i class="fa-solid fa-envelope-open-text"></i></div>
-                      <h3 class="about-title">5. Cold Email & Spintax</h3>
-                      <p class="about-text"><strong>English:</strong> Execute highly personalized cold outreach. Advanced Spintax support {Hello|Hi} combined with precise merge tags {{name}} ensures every recipient gets a unique message.</p>
-                      <p class="about-text bn"><strong>Bangla:</strong> কোল্ড ইমেইলের জন্য সেরা ফিচার! স্পিনট্যাক্স {Hello|Hi} এবং ডাইনামিক ট্যাগ {{name}} ব্যবহার করে প্রতিটি মানুষের কাছে একদম আলাদা ইমেইল পৌঁছানো নিশ্চিত করুন।</p>
-                  
-                      <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-                          <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-                              <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-                              <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-                          </button>
-                          <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-                              <div style="padding: 16px;">
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> In your email editor, type <code>{Hi|Hello|Hey}</code> to rotate greetings, and use <code>{{name}}</code> to dynamically insert the recipient's name.</p>
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> ইমেইল লেখার সময় <code>{Hi|Hello|Hey}</code> ব্যবহার করলে একেকজনের কাছে একেকটি শব্দ যাবে। আর <code>{{name}}</code> লিখলে সেখানে প্রাপকের নাম বসে যাবে।</p>
-                              </div>
-                          </div>
-                      </div>
+<div class="about-card" style="--icon-color-1:#ef4444; --icon-color-2:#dc2626; --icon-color-rgb:239,68,68;">
+    <div class="about-icon-wrapper"><i class="fa-solid fa-inbox"></i></div>
+    <h3 class="about-title">5. Live Inbox & Spam Placement Testing</h3>
+    <p class="about-text"><strong>English:</strong> Never guess your deliverability. Use the manual Inbox Test feature to send a live probe email to any address and instantly verify if it lands in the Inbox, Promotions, or Spam folder.</p>
+    <p class="about-text bn"><strong>Bangla:</strong> আপনার মেইল ইনবক্সে যাচ্ছে নাকি স্প্যামে, তা লাইভ টেস্ট করে দেখুন। মূল ক্যাম্পেইন শুরুর আগে যেকোনো ইমেইল অ্যাড্রেস বসিয়ে ম্যানুয়ালি টেস্ট সেন্ড করে ডেলিভারি স্ট্যাটাস যাচাই করতে পারবেন।</p>
+
+    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
+        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
+            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
+            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+        </button>
+        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
+            <div style="padding: 16px;">
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Click the 'Test Inbox' icon next to any sending account, type your test email, and check the inbox placement manually.</p>
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> যেকোনো অ্যাকাউন্টের পাশে থাকা 'Test Inbox' আইকনে ক্লিক করে ইমেইল অ্যাড্রেস দিন এবং ম্যানুয়ালি টেস্ট করে দেখুন।</p>
+            </div>
+        </div>
+    </div>
 </div>
 
-                  <div class="about-card" style="--icon-color-1:#14b8a6; --icon-color-2:#0d9488; --icon-color-rgb:20,184,166;">
-                      <div class="about-icon-wrapper"><i class="fa-solid fa-pen-nib"></i></div>
-                      <h3 class="about-title">6. Visual Newsletter Builder</h3>
-                      <p class="about-text"><strong>English:</strong> Craft stunning emails without writing a single line of code. The powerful Drag & Drop Visual Builder lets you create, style, and save reusable HTML templates.</p>
-                      <p class="about-text bn"><strong>Bangla:</strong> কোনো কোডিং ছাড়াই চমৎকার ইমেইল ডিজাইন করুন। ড্র্যাগ অ্যান্ড ড্রপ (Drag & Drop) ভিজ্যুয়াল বিল্ডার দিয়ে যেকোনো ডিজাইন তৈরি করে সেভ করে রাখতে পারবেন।</p>
-                  
-                      <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-                          <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-                              <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-                              <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-                          </button>
-                          <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-                              <div style="padding: 16px;">
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Create a Campaign and select the "Visual Builder". Simply drag and drop text, images, and buttons to design your layout.</p>
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> নতুন ক্যাম্পেইন খোলার সময় "Visual Builder" সিলেক্ট করুন। এরপর বামপাশ থেকে টেক্সট, ছবি বা বাটন টেনে এনে সহজেই ডিজাইন তৈরি করুন।</p>
-                              </div>
-                          </div>
-                      </div>
+<div class="about-card" style="--icon-color-1:#14b8a6; --icon-color-2:#0d9488; --icon-color-rgb:20,184,166;">
+    <div class="about-icon-wrapper"><i class="fa-solid fa-link"></i></div>
+    <h3 class="about-title">6. Custom Tracking Domains</h3>
+    <p class="about-text"><strong>English:</strong> Bypass rigid spam filters by masking click/open tracking links. Set a Custom Tracking Domain manually for each sender to maintain a pristine sender reputation and avoid blacklisted shared domains.</p>
+    <p class="about-text bn"><strong>Bangla:</strong> শেয়ার্ড ট্র্যাকিং ডোমেইন ব্যবহার করলে স্প্যামে যাওয়ার চান্স থাকে। তাই প্রতিটি অ্যাকাউন্টের জন্য ম্যানুয়ালি নিজস্ব 'Custom Tracking Domain' সেট করে ট্র্যাকিং লিংক হাইড করুন এবং ইনবক্স রেট ১০০% নিশ্চিত করুন।</p>
+
+    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
+        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
+            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
+            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+        </button>
+        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
+            <div style="padding: 16px;">
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Edit an account, toggle 'Custom Tracking Domain', and manually enter your verified CNAME domain URL.</p>
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> অ্যাকাউন্ট এডিট করে Custom Tracking Domain টগল অন করুন এবং ম্যানুয়ালি আপনার ডোমেইন URL টি বসিয়ে সেভ করুন।</p>
+            </div>
+        </div>
+    </div>
 </div>
 
-                  <div class="about-card" style="--icon-color-1:#6366f1; --icon-color-2:#4f46e5; --icon-color-rgb:99,102,241;">
-                      <div class="about-icon-wrapper"><i class="fa-solid fa-microchip"></i></div>
-                      <h3 class="about-title">7. Next-Gen Gemini AI Features</h3>
-                      <p class="about-text"><strong>English:</strong> Powered by Google's Gemini API, the integrated AI assistant generates compelling subject lines, high-converting email bodies, and optimizes your drafts instantly.</p>
-                      <p class="about-text bn"><strong>Bangla:</strong> গুগল জেমিনাই (Gemini) এপিআই যুক্ত করা হয়েছে! এআই অ্যাসিস্ট্যান্ট আপনার জন্য বেস্ট সাবজেক্ট লাইন এবং কনভার্টিং ইমেইল বডি এক ক্লিকেই লিখে দেবে।</p>
-                  
-                      <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-                          <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-                              <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-                              <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-                          </button>
-                          <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-                              <div style="padding: 16px;">
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Click the "AI Assistant" button in the email editor. Enter a short prompt and let Gemini generate or improve your email copy.</p>
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> ইমেইল এডিটরে থাকা "AI Assistant" বাটনে ক্লিক করুন। আপনি কী নিয়ে ইমেইল লিখতে চান তা লিখে দিলেই এআই আপনার জন্য ইমেইল লিখে দেবে।</p>
-                              </div>
-                          </div>
-                      </div>
+<div class="about-card" style="--icon-color-1:#f43f5e; --icon-color-2:#e11d48; --icon-color-rgb:244,63,94;">
+    <div class="about-icon-wrapper"><i class="fa-solid fa-filter-circle-xmark"></i></div>
+    <h3 class="about-title">7. Audience & Intelligent Auto-Cleaning</h3>
+    <p class="about-text"><strong>English:</strong> Maintain a pristine lead list. The system auto-detects hard bounces and invalidates them immediately. You can also manually upload CSVs, delete inactive leads, and segment audiences for precision targeting.</p>
+    <p class="about-text bn"><strong>Bangla:</strong> অটোমেটিক অডিয়েন্স ক্লিনিং ফিচার। কোনো মেইল বাউন্স হলে সিস্টেম সাথে সাথেই সেটিকে ইনভ্যালিড করে দেয়। এছাড়া আপনি ম্যানুয়ালি CSV আপলোড করতে পারবেন এবং অব্যবহৃত পুরোনো লিডগুলো ডিলিট করতে পারবেন।</p>
+
+    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
+        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
+            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
+            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+        </button>
+        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
+            <div style="padding: 16px;">
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Manually import leads via CSV. The platform's automated chron-jobs handle hard bounce invalidation behind the scenes.</p>
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> Audience প্যানেলে ম্যানুয়ালি CSV ফাইল আপলোড করুন। মেইল বাউন্স হলে সিস্টেম ব্যাকগ্রাউন্ডে অটোমেটিক্যালি তা ব্লক করে দেবে।</p>
+            </div>
+        </div>
+    </div>
 </div>
 
-                  <div class="about-card" style="--icon-color-1:#f43f5e; --icon-color-2:#e11d48; --icon-color-rgb:244,63,94;">
-                      <div class="about-icon-wrapper"><i class="fa-solid fa-calendar-check"></i></div>
-                      <h3 class="about-title">8. Campaign Scheduling</h3>
-                      <p class="about-text"><strong>English:</strong> Launch campaigns on your terms. Set customized daily operating hours and bypass specific days of the week to maximize user engagement.</p>
-                      <p class="about-text bn"><strong>Bangla:</strong> আপনার সুবিধামতো ক্যাম্পেইন শিডিউল করুন। দিনে কখন মেইল যাবে এবং সপ্তাহের কোন দিনগুলোতে মেইল পাঠানো বন্ধ থাকবে, তা আপনিই ঠিক করে দিতে পারবেন।</p>
-                  
-                      <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-                          <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-                              <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-                              <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-                          </button>
-                          <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-                              <div style="padding: 16px;">
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Go to Campaign Settings to set your timezone, select working days, and specify the daily start and end times for sending.</p>
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> ক্যাম্পেইন সেটিংসে গিয়ে আপনার টাইমজোন, সপ্তাহের কোন দিনগুলোতে মেইল যাবে এবং প্রতিদিন কখন শুরু ও শেষ হবে তা সেট করে দিন।</p>
-                              </div>
-                          </div>
-                      </div>
+<div class="about-card" style="--icon-color-1:#6366f1; --icon-color-2:#4f46e5; --icon-color-rgb:99,102,241;">
+    <div class="about-icon-wrapper"><i class="fa-solid fa-brain"></i></div>
+    <h3 class="about-title">8. AI Autopilot: Cold Email & Icebreakers</h3>
+    <p class="about-text"><strong>English:</strong> Harness the power of Gemini & Groq AI. Let the AI automatically generate highly-converting cold email drafts and personalized icebreakers, or manually edit and refine the AI's suggestions in the rich text editor.</p>
+    <p class="about-text bn"><strong>Bangla:</strong> Gemini এবং Groq AI-এর মাধ্যমে অটোমেটিক কোল্ড ইমেইল ও আইসব্রেকার জেনারেট করুন। সিস্টেম নিজে থেকেই প্রফেশনাল মেইল লিখে দেবে, যা আপনি এডিটরে ম্যানুয়ালি নিজের মতো করে কাস্টমাইজ করে নিতে পারবেন।</p>
+
+    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
+        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
+            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
+            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+        </button>
+        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
+            <div style="padding: 16px;">
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> In the Composer, click 'AI Assistant', input your product details, auto-generate the content, and manually refine the text.</p>
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> মেইল লেখার সময় 'AI Assistant' এ ক্লিক করে কমান্ড দিন। AI অটোমেটিক্যালি মেইল লিখে দেবে, এরপর ম্যানুয়ালি এডিট করে নিন।</p>
+            </div>
+        </div>
+    </div>
 </div>
 
-                  <div class="about-card" style="--icon-color-1:#eab308; --icon-color-2:#ca8a04; --icon-color-rgb:234,179,8;">
-                      <div class="about-icon-wrapper"><i class="fa-solid fa-reply-all"></i></div>
-                      <h3 class="about-title">9. IMAP Bounces & Replies Processing</h3>
-                      <p class="about-text"><strong>English:</strong> The background engine automatically connects to IMAP, detects hard bounces, reads incoming replies, and instantly removes them from active sequences to protect your score.</p>
-                      <p class="about-text bn"><strong>Bangla:</strong> ব্যাকগ্রাউন্ড ইঞ্জিন স্বয়ংক্রিয়ভাবে IMAP এর মাধ্যমে হার্ড বাউন্স এবং রিপ্লাই শনাক্ত করে। এরপর তাদের কাছে পরবর্তী মেইল পাঠানো বন্ধ করে দেয়, যা স্প্যাম রেট কমায়।</p>
-                  
-                      <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-                          <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-                              <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-                              <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-                          </button>
-                          <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-                              <div style="padding: 16px;">
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Provide your IMAP credentials in Account Settings. The background engine will automatically track replies and hard bounces.</p>
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> অ্যাকাউন্ট সেটিংসে আপনার IMAP ডিটেইলস দিয়ে দিন। এরপর থেকে সিস্টেম নিজে থেকেই হার্ড বাউন্স এবং রিপ্লাই ট্র্যাক করে প্রয়োজনীয় ব্যবস্থা নেবে।</p>
-                              </div>
-                          </div>
-                      </div>
+<div class="about-card" style="--icon-color-1:#0ea5e9; --icon-color-2:#0284c7; --icon-color-rgb:14,165,233;">
+    <div class="about-icon-wrapper"><i class="fa-solid fa-reply-all"></i></div>
+    <h3 class="about-title">9. AI Auto-Reply & Manual Inbox Management</h3>
+    <p class="about-text"><strong>English:</strong> Manage client responses seamlessly. Let the AI automatically read incoming replies and draft contextual responses, or take manual control to write and send highly personalized follow-ups directly from the dashboard.</p>
+    <p class="about-text bn"><strong>Bangla:</strong> ক্লায়েন্টের রিপ্লাই ম্যানেজ করুন খুব সহজেই। ইনবক্সে আসা মেইলের রিপ্লাই AI দিয়ে অটোমেটিকভাবে ড্রাফট করাতে পারবেন, অথবা ম্যানুয়ালি টাইপ করে নিজের মতো করে প্রফেশনাল রিপ্লাই পাঠাতে পারবেন।</p>
+
+    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
+        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
+            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
+            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+        </button>
+        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
+            <div style="padding: 16px;">
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Open any replied email. Click 'Generate AI Reply' for an automated draft, or manually type your response and hit Send.</p>
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> যেকোনো রিপ্লাই ওপেন করে 'Generate AI Reply' বাটনে ক্লিক করলে অটোমেটিক রিপ্লাই রেডি হবে, অথবা ম্যানুয়ালি লিখে Send করুন।</p>
+            </div>
+        </div>
+    </div>
 </div>
 
-                  <div class="about-card" style="--icon-color-1:#8b5cf6; --icon-color-2:#7c3aed; --icon-color-rgb:139,92,246;">
-                      <div class="about-icon-wrapper"><i class="fa-solid fa-chart-line"></i></div>
-                      <h3 class="about-title">10. Real-time Analytics</h3>
-                      <p class="about-text"><strong>English:</strong> Track accurate delivery, bounces, and replies in real-time. Link-redirection headers provide complete campaign performance visibility directly inside your dashboard.</p>
-                      <p class="about-text bn"><strong>Bangla:</strong> ড্যাশবোর্ডে লাইভ অ্যানালিটিক্স দেখুন। কয়টা সেন্ড হলো, কয়টা ওপেন বা বাউন্স হলো, সব ডেটা একদম রিয়েল-টাইমে দেখতে পাবেন।</p>
-                  
-                      <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-                          <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-                              <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-                              <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-                          </button>
-                          <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-                              <div style="padding: 16px;">
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Click on any active or completed campaign from the dashboard to view live charts of sent, opened, and clicked emails.</p>
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> ড্যাশবোর্ড থেকে যেকোনো ক্যাম্পেইনের ওপর ক্লিক করলেই আপনি রিয়েল-টাইমে দেখতে পারবেন কতগুলো মেইল সেন্ট, ওপেন এবং ক্লিক হয়েছে।</p>
-                              </div>
-                          </div>
-                      </div>
+<div class="about-card" style="--icon-color-1:#eab308; --icon-color-2:#ca8a04; --icon-color-rgb:234,179,8;">
+    <div class="about-icon-wrapper"><i class="fa-solid fa-clock"></i></div>
+    <h3 class="about-title">10. Anti-Spam Humanized Delays</h3>
+    <p class="about-text"><strong>English:</strong> Evade rigorous anti-spam algorithms. The system automatically randomizes sending intervals between your configured boundaries, while you manually define the Min and Max delay ranges to dictate the pacing.</p>
+    <p class="about-text bn"><strong>Bangla:</strong> অ্যান্টি-স্প্যাম বাইপাস করার জন্য হিউম্যানাইজড ডিলে। আপনি ম্যানুয়ালি Min এবং Max গ্যাপ সেট করে দেবেন, আর সিস্টেম অটোমেটিক্যালি সেই গ্যাপের ভেতর র‍্যান্ডম সেকেন্ড পর পর মেইল পাঠাবে, যাতে কোনো রোবটিক প্যাটার্ন ধরা না পড়ে।</p>
+
+    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
+        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
+            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
+            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+        </button>
+        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
+            <div style="padding: 16px;">
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Before Campaign launch, manually set Min (e.g. 60s) and Max Delay (e.g. 120s). The engine auto-randomizes delays in between.</p>
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> ক্যাম্পেইন চালুর আগে ম্যানুয়ালি Min এবং Max Delay সেকেন্ড সেট করুন। সিস্টেম এর মাঝে অটোমেটিক র‍্যান্ডম টাইম গ্যাপ তৈরি করে মেইল সেন্ড করবে।</p>
+            </div>
+        </div>
+    </div>
 </div>
 
-                  <div class="about-card" style="--icon-color-1:#0ea5e9; --icon-color-2:#0284c7; --icon-color-rgb:14,165,233;">
-                      <div class="about-icon-wrapper"><i class="fa-solid fa-robot"></i></div>
-                      <h3 class="about-title">11. AI Reply Management</h3>
-                      <p class="about-text"><strong>English:</strong> Gemini AI reads prospect replies and automatically categorizes them as Positive, Negative, or Out-of-Office, allowing you to prioritize high-intent leads.</p>
-                      <p class="about-text bn"><strong>Bangla:</strong> জেমিনাই এআই ইনকামিং রিপ্লাইগুলো পড়ে বুঝতে পারে কোনটি পজিটিভ, কোনটি নেগেটিভ বা Out-of-Office, যার ফলে আপনার লিড ম্যানেজমেন্ট অনেক সহজ হয়।</p>
-                  
-                      <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-                          <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-                              <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-                              <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-                          </button>
-                          <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-                              <div style="padding: 16px;">
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Visit the "Inbox" tab. Gemini AI will automatically read your incoming replies and tag them as Positive, Negative, or OOO.</p>
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> "Inbox" ট্যাবে গেলে দেখতে পাবেন এআই নিজে থেকেই ইনকামিং রিপ্লাইগুলো পড়ে সেগুলোকে পজিটিভ, নেগেটিভ বা OOO (Out of office) হিসেবে ট্যাগ করে দিয়েছে।</p>
-                              </div>
-                          </div>
-                      </div>
+<div class="about-card" style="--icon-color-1:#22c55e; --icon-color-2:#16a34a; --icon-color-rgb:34,197,94;">
+    <div class="about-icon-wrapper"><i class="fa-solid fa-chart-line"></i></div>
+    <h3 class="about-title">11. Background IMAP Sync & Analytics</h3>
+    <p class="about-text"><strong>English:</strong> True 360-degree analytics. The system automatically syncs via IMAP in the background to securely detect replies without pixel tracking. Meanwhile, you can manually analyze campaign metrics from the visual dashboard.</p>
+    <p class="about-text bn"><strong>Bangla:</strong> থার্ড-পার্টি পিক্সেল ছাড়াই IMAP সিঙ্ক করে ডাইরেক্ট ইনবক্স থেকে ট্র্যাকিং। সিস্টেম ব্যাকগ্রাউন্ডে অটোমেটিক্যালি রিপ্লাই ট্র্যাক করবে, আর আপনি ড্যাশবোর্ড থেকে ম্যানুয়ালি আপনার ক্যাম্পেইনের সম্পূর্ণ পারফরম্যান্স অ্যানালাইজ করতে পারবেন।</p>
+
+    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
+        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
+            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
+            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+        </button>
+        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
+            <div style="padding: 16px;">
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Input IMAP details manually when adding an account. The system will automatically fetch open/reply data in the background.</p>
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> অ্যাকাউন্ট যোগ করার সময় ম্যানুয়ালি IMAP পোর্ট ও সার্ভার দিয়ে দিন। এরপর সিস্টেম অটোমেটিক্যালি ব্যাকগ্রাউন্ডে ডাটা সিঙ্ক করবে।</p>
+            </div>
+        </div>
+    </div>
 </div>
 
-                  <div class="about-card" style="--icon-color-1:#64748b; --icon-color-2:#475569; --icon-color-rgb:100,116,139;">
-                      <div class="about-icon-wrapper"><i class="fa-solid fa-hourglass-half"></i></div>
-                      <h3 class="about-title">12. Dynamic Human-like Delays</h3>
-                      <p class="about-text"><strong>English:</strong> Implement randomized delay intervals between messages to mirror human operational tempos, successfully bypassing pattern-detection firewalls on major mail service providers.</p>
-                      <p class="about-text bn"><strong>Bangla:</strong> অ্যান্টি-স্প্যাম ফায়ারওয়াল বাইপাস করতে ইমেইল পাঠানোর মাঝে রেন্ডম ডিলে (Random Delay) ব্যবহার করুন। সিস্টেম মানুষের মতোই স্বাভাবিক বিরতি দিয়ে ইমেইল পাঠায়।</p>
-                  
-                      <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-                          <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-                              <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-                              <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-                          </button>
-                          <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-                              <div style="padding: 16px;">
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> In Campaign Settings, configure the minimum and maximum delay (e.g., 60-120 seconds). Emails will be sent with random intervals.</p>
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> ক্যাম্পেইন সেটিংসে গিয়ে মিনিমাম এবং ম্যাক্সিমাম ডিলে (যেমন: ৬০ থেকে ১২০ সেকেন্ড) সেট করুন। সিস্টেম এর মাঝে রেন্ডম সময় পর পর মেইল পাঠাবে।</p>
-                              </div>
-                          </div>
-                      </div>
+<div class="about-card" style="--icon-color-1:#8b5cf6; --icon-color-2:#7c3aed; --icon-color-rgb:139,92,246;">
+    <div class="about-icon-wrapper"><i class="fa-solid fa-calendar-days"></i></div>
+    <h3 class="about-title">12. Campaign Scheduling & Timezone Mastery</h3>
+    <p class="about-text"><strong>English:</strong> Precision timing for maximum conversion. The automated chron-job resets all daily limits precisely at midnight Bangladesh Time (BST). You can also manually schedule campaigns to trigger on specific days and times.</p>
+    <p class="about-text bn"><strong>Bangla:</strong> অটোমেটিক ডাটা রিসেট এবং ম্যানুয়াল শিডিউলিং। প্রতিদিন রাত ১২টায় বাংলাদেশ সময় অনুযায়ী সিস্টেম অটোমেটিক সব লিমিট রিসেট করে দেবে। এছাড়া আপনি চাইলে ম্যানুয়ালি নির্দিষ্ট দিন ও সময়ে ক্যাম্পেইন শিডিউল করে রাখতে পারেন।</p>
+
+    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
+        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
+            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
+            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+        </button>
+        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
+            <div style="padding: 16px;">
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Limits auto-reset at 12:00 AM BST. Manually select active sending days (Mon-Fri) in the Campaign creation settings.</p>
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> রাত ১২টায় লিমিট অটো-রিসেট হবে। ক্যাম্পেইন বানানোর সময় কোন কোন দিন মেইল যাবে, তা ম্যানুয়ালি টিক দিয়ে সিলেক্ট করুন।</p>
+            </div>
+        </div>
+    </div>
 </div>
 
-                  <div class="about-card" style="--icon-color-1:#22c55e; --icon-color-2:#16a34a; --icon-color-rgb:34,197,94;">
-                      <div class="about-icon-wrapper"><i class="fa-solid fa-layer-group"></i></div>
-                      <h3 class="about-title">13. 100+ Responsive Layouts</h3>
-                      <p class="about-text"><strong>English:</strong> Instantly utilize a comprehensive suite of pre-configured responsive layouts tailored for newsletters, SaaS platforms, corporate communications, and direct marketing events.</p>
-                      <p class="about-text bn"><strong>Bangla:</strong> বিভিন্ন ক্যাটাগরির শতাধিক রেডিমেড রেসপনসিভ টেমপ্লেট ডিজাইন থেকে আপনার পছন্দমতো ডিজাইনটি বেছে নিয়ে সরাসরি ব্যবহার করতে পারবেন।</p>
-                  
-                      <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-                          <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-                              <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-                              <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-                          </button>
-                          <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-                              <div style="padding: 16px;">
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> When creating a campaign, click "Templates" to browse and select from hundreds of pre-designed responsive email layouts.</p>
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> নতুন ক্যাম্পেইন বানানোর সময় "Templates" এ ক্লিক করে শতাধিক রেডিমেড রেসপনসিভ ডিজাইন থেকে আপনার পছন্দের টেমপ্লেটটি বেছে নিন।</p>
-                              </div>
-                          </div>
-                      </div>
+<div class="about-card" style="--icon-color-1:#f59e0b; --icon-color-2:#d97706; --icon-color-rgb:245,158,11;">
+    <div class="about-icon-wrapper"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+    <h3 class="about-title">13. Spintax & Hyper-Personalization</h3>
+    <p class="about-text"><strong>English:</strong> Avoid duplicate content penalties. Manually insert Spintax {Hi|Hello|Hey} into your emails, and the engine automatically generates unique variations for every single lead on the fly.</p>
+    <p class="about-text bn"><strong>Bangla:</strong> স্পিনট্যাক্স সাপোর্ট এবং পার্সোনালাইজেশন। আপনি ম্যানুয়ালি {Hi|Hello|Hey} ফরম্যাটে টেক্সট দিয়ে রাখলে, সিস্টেম অটোমেটিক্যালি প্রত্যেকটি লিডের জন্য আলাদা আলাদা ইউনিক ভেরিয়েশন তৈরি করে মেইল পাঠাবে।</p>
+
+    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
+        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
+            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
+            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+        </button>
+        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
+            <div style="padding: 16px;">
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Manually write {{FirstName}} or Spintax {A|B} in the editor. The system auto-replaces these variables during sending.</p>
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> এডিটরে ম্যানুয়ালি স্পিনট্যাক্স বা ভেরিয়েবল লিখুন। মেইল যাওয়ার সময় সিস্টেম অটোমেটিক্যালি সেগুলো চেঞ্জ করে সেন্ড করবে।</p>
+            </div>
+        </div>
+    </div>
 </div>
 
-                  <div class="about-card" style="--icon-color-1:#ef4444; --icon-color-2:#dc2626; --icon-color-rgb:239,68,68;">
-                      <div class="about-icon-wrapper"><i class="fa-solid fa-clock-rotate-left"></i></div>
-                      <h3 class="about-title">14. Timezone-Aware Auto Reset</h3>
-                      <p class="about-text"><strong>English:</strong> Ensure systematic count resets exactly at Bangladesh Midnight (UTC+6) without manual intervention, maintaining your daily quotas seamlessly.</p>
-                      <p class="about-text bn"><strong>Bangla:</strong> আপনার ডেইলি ইমেইল লিমিট বাংলাদেশ সময় রাত ১২টা বাজলেই (Midnight) নিজে থেকেই রিসেট হয়ে জিরো হয়ে যায়, কোনো ম্যানুয়াল কাজের প্রয়োজন নেই।</p>
-                  
-                      <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-                          <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-                              <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-                              <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-                          </button>
-                          <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-                              <div style="padding: 16px;">
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Simply set your local timezone in Settings. The system takes care of resetting your daily quotas automatically at midnight.</p>
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> সেটিংসে গিয়ে শুধু আপনার লোকাল টাইমজোন সেট করে দিন। এরপর প্রতিদিন রাত ১২টা বাজলেই সিস্টেম আপনার ডেইলি লিমিট রিসেট করে দেবে।</p>
-                              </div>
-                          </div>
-                      </div>
+<div class="about-card" style="--icon-color-1:#ec4899; --icon-color-2:#db2777; --icon-color-rgb:236,72,153;">
+    <div class="about-icon-wrapper"><i class="fa-solid fa-laptop-code"></i></div>
+    <h3 class="about-title">14. State-of-the-Art Visual Template Engine</h3>
+    <p class="about-text"><strong>English:</strong> Build stunning newsletters instantly. Use 100+ auto-responsive pre-built layouts, or switch to the Advanced Source Code view to manually inject your own highly-customized HTML & CSS.</p>
+    <p class="about-text bn"><strong>Bangla:</strong> ভিজ্যুয়াল নিউজলেটার বিল্ডার। সিস্টেমের ১০০+ অটো-রেস্পন্সিভ টেমপ্লেট দিয়ে নিমিষেই ডিজাইন করতে পারবেন, অথবা Source কোড অন করে ম্যানুয়ালি নিজের মতো HTML ও CSS দিয়ে সম্পূর্ণ কাস্টম ডিজাইন তৈরি করতে পারবেন।</p>
+
+    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
+        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
+            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
+            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+        </button>
+        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
+            <div style="padding: 16px;">
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Choose auto-layouts from the Gallery, or click '< >' to manually write HTML/CSS code.</p>
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> গ্যালারি থেকে অটো টেমপ্লেট সিলেক্ট করুন অথবা '< >' আইকনে ক্লিক করে ম্যানুয়ালি HTML কোড লিখুন।</p>
+            </div>
+        </div>
+    </div>
 </div>
 
-                  <div class="about-card" style="--icon-color-1:#10b981; --icon-color-2:#059669; --icon-color-rgb:16,185,129;">
-                      <div class="about-icon-wrapper"><i class="fa-solid fa-arrow-up-right-dots"></i></div>
-                      <h3 class="about-title">15. Campaign Limits & Rolling Ramp Up</h3>
-                      <p class="about-text"><strong>English:</strong> Calculate Ramp Up dynamically over a 7-day rolling window. Set precise daily limits per campaign, allowing the system to scale your sending safely behind the scenes.</p>
-                      <p class="about-text bn"><strong>Bangla:</strong> সিস্টেম আপনার গত ৭ দিনের ক্যাম্পেইন হিস্ট্রি চেক করে অটোমেটিক্যালি র্যাম্প-আপ ক্যালকুলেট করে, যার ফলে ডোমেইনের ট্রাস্ট বৃদ্ধি পায় এবং ইনবক্স রেট ১০০% থাকে।</p>
-                  
-                      <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-                          <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-                              <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-                              <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-                          </button>
-                          <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-                              <div style="padding: 16px;">
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Enable "Ramp Up" in your campaign and set a daily increment amount. The system will safely scale up based on the last 7 days.</p>
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> ক্যাম্পেইনে "Ramp Up" অপশনটি চালু করে দিন। সিস্টেম আপনার গত ৭ দিনের পারফরম্যান্স অনুযায়ী প্রতিদিন একটু একটু করে ইমেইল সেন্ডিং বাড়াবে।</p>
-                              </div>
-                          </div>
-                      </div>
+<div class="about-card" style="grid-column: 1 / -1; --icon-color-1:#4f46e5; --icon-color-2:#ec4899; --icon-color-rgb:79,70,229; background: linear-gradient(135deg, rgba(79, 70, 229, 0.05), rgba(236, 72, 153, 0.05)); border: 1px solid rgba(79, 70, 229, 0.2);">
+    <div class="about-icon-wrapper" style="margin-left:auto; margin-right:auto; margin-bottom: 16px;"><i class="fa-solid fa-user-shield"></i></div>
+    <h3 class="about-title" style="text-align:center;">Engineered & Administered by Monem Rahman Zisan</h3>
+    <p class="about-text" style="text-align:center; max-width: 900px; margin: 0 auto 16px; line-height: 1.8;"><strong>English:</strong> Architected, designed, and meticulously engineered by <strong>Monem Rahman Zisan</strong>. This advanced email marketing infrastructure is built on a highly scalable, robust framework tailored for enterprise-grade performance. It features a state-of-the-art Secure Admin Dashboard fortified with strict Role-Based Access Control (RBAC), end-to-end JWT token-based authentication, and deep algorithmic encryption. Accessible exclusively by the creator, the backend control center actively monitors automated background chron-jobs, dynamically mitigates server overloads, manages database integrity, and ensures granular manual overriding capabilities. This multi-layered security approach guarantees maximum data protection, zero vulnerability tolerance, and an uncompromising standard of platform stability.</p>
+    <p class="about-text bn" style="text-align:center; max-width: 900px; margin: 0 auto; line-height: 1.8;"><strong>Bangla:</strong> এই সম্পূর্ণ অ্যাডভান্সড ইমেইল মার্কেটিং সিস্টেমটি আর্কিটেক্ট, ডিজাইন এবং ডেভেলপ করেছেন <strong>মোনেম রহমান জিসান</strong>। এন্টারপ্রাইজ-গ্রেড পারফরম্যান্স এবং ম্যাক্সিমাম সিকিউরিটি নিশ্চিত করার জন্য এতে রয়েছে অত্যন্ত শক্তিশালী ও নিরাপদ একটি অ্যাডমিন ড্যাশবোর্ড, যা শুধুমাত্র ক্রিয়েটরের জন্য সংরক্ষিত। এখানে JWT টোকেন-বেসড অথেনটিকেশন, স্ট্রিক্ট RBAC (Role-Based Access Control), এবং ডিপ এনক্রিপশন অ্যালগরিদম ব্যবহার করা হয়েছে। সিস্টেমের ব্যাকগ্রাউন্ড অটোমেশন, ক্রন-জবস, সার্ভার লোড ব্যালেন্সিং, এবং ডাটাবেস ইন্টিগ্রিটি সরাসরি এই কোর ড্যাশবোর্ড থেকে মনিটর ও নিয়ন্ত্রণ করা হয়। যেকোনো ইমার্জেন্সিতে ম্যানুয়াল ওভাররাইড করার সুবিধাসহ, এই মাল্টি-লেয়ারড সিকিউরিটি ইনফ্রাস্ট্রাকচার ইউজারদের ডাটা প্রটেকশন এবং ১০০% প্ল্যাটফর্ম স্ট্যাবিলিটি নিশ্চিত করে।</p>
 </div>
 
-                  <div class="about-card" style="--icon-color-1:#3b82f6; --icon-color-2:#2563eb; --icon-color-rgb:59,130,246;">
-                      <div class="about-icon-wrapper"><i class="fa-solid fa-heart-pulse"></i></div>
-                      <h3 class="about-title">16. Real-Time System Health Monitor</h3>
-                      <p class="about-text"><strong>English:</strong> Built-in Health Monitor tracks CPU, Memory, Disk usage, and Database connection stability every few seconds, ensuring zero downtime for your server.</p>
-                      <p class="about-text bn"><strong>Bangla:</strong> লাইভ সিস্টেম হেলথ মনিটর, যা সার্ভারের CPU, Memory এবং ডাটাবেজ স্ট্যাটাস রিয়েল-টাইমে চেক করে, যাতে সার্ভার কখনো ডাউন না হয়।</p>
-                  
-                      <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-                          <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-                              <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-                              <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-                          </button>
-                          <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-                              <div style="padding: 16px;">
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> As an admin, go to the "Health" tab to view live graphs of CPU, RAM, and Database status to ensure smooth operation.</p>
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> অ্যাডমিন হিসেবে "Health" ট্যাবে গেলে আপনি রিয়েল-টাইমে সার্ভারের CPU, RAM এবং ডাটাবেজ কানেকশন স্ট্যাটাস দেখতে পারবেন।</p>
-                              </div>
-                          </div>
-                      </div>
 </div>
+          </div>
 
-                  <div class="about-card" style="--icon-color-1:#a855f7; --icon-color-2:#9333ea; --icon-color-rgb:168,85,247;">
-                      <div class="about-icon-wrapper"><i class="fa-solid fa-microchip"></i></div>
-                      <h3 class="about-title">17. Smart State Management Engine</h3>
-                      <p class="about-text"><strong>English:</strong> Background APScheduler Engine automatically manages campaign states (Draft -> Pending -> Running -> Completed), handling errors and restarts gracefully.</p>
-                      <p class="about-text bn"><strong>Bangla:</strong> ব্যাকগ্রাউন্ড এপিএসডিউলার (APScheduler) ইঞ্জিন নিজে থেকেই ক্যাম্পেইন ম্যানেজ করে। ড্রাফট থেকে রানিং বা ফেইল হলে তা অটোমেটিক্যালি আপডেট হয়ে যায়।</p>
-                  
-                      <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-                          <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-                              <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-                              <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-                          </button>
-                          <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-                              <div style="padding: 16px;">
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> The background APScheduler engine runs automatically. Just change a campaign state to "Running" and it handles the rest safely.</p>
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> ব্যাকগ্রাউন্ড ইঞ্জিনটি অটোমেটিক চলে। আপনি শুধু ক্যাম্পেইনটিকে "Running" করে দিন, বাকি কাজ (যেমন: এরর হ্যান্ডেলিং) সিস্টেম নিজেই করে নেবে।</p>
-                              </div>
-                          </div>
-                      </div>
-</div>
-
-                  <div class="about-card" style="--icon-color-1:#10b981; --icon-color-2:#059669; --icon-color-rgb:16,185,129;">
-                      <div class="about-icon-wrapper"><i class="fa-solid fa-users-viewfinder"></i></div>
-                      <h3 class="about-title">18. Advanced Sending Accounts Control</h3>
-                      <p class="about-text"><strong>English:</strong> Choose specific sending accounts for each campaign or let the system Auto-Rotate emails across all your active accounts to balance the load.</p>
-                      <p class="about-text bn"><strong>Bangla:</strong> প্রতিটি ক্যাম্পেইনের জন্য নির্দিষ্ট সেন্ডিং অ্যাকাউন্ট বেছে নিতে পারবেন। কোনো অ্যাকাউন্ট সিলেক্ট না করলে সিস্টেম অটোমেটিকভাবে সব অ্যাক্টিভ অ্যাকাউন্টের মাঝে রাউন্ড-রবিন পদ্ধতিতে ইমেইল সেন্ডিং ভাগ করে দিবে।</p>
-                  
-                      <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-                          <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-                              <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-                              <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-                          </button>
-                          <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-                              <div style="padding: 16px;">
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Create a Cold Mail or Newsletter, scroll to the "Sending Accounts" section, and check the boxes for your preferred accounts. Leave all boxes unchecked for auto-rotation.</p>
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> Cold Mail বা Newsletter তৈরির সময় "Sending Accounts" সেকশন থেকে নির্দিষ্ট অ্যাকাউন্টে টিক দিন, অথবা অটো-রোটেশনের জন্য ফাঁকা রাখুন।</p>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-
-                  <div class="about-card" style="--icon-color-1:#f59e0b; --icon-color-2:#d97706; --icon-color-rgb:245,158,11;">
-                      <div class="about-icon-wrapper"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
-                      <h3 class="about-title">19. Live Sending Accounts Search</h3>
-                      <p class="about-text"><strong>English:</strong> Instantly search through hundreds of sending accounts by name or email to quickly find and select the ones you need.</p>
-                      <p class="about-text bn"><strong>Bangla:</strong> শত শত সেন্ডিং অ্যাকাউন্টের মাঝে নাম বা ইমেইল দিয়ে ইনস্ট্যান্ট সার্চ করে সহজেই আপনার কাঙ্ক্ষিত অ্যাকাউন্টটি খুঁজে বের করতে পারবেন।</p>
-                  
-                      <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-                          <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-                              <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-                              <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-                          </button>
-                          <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-                              <div style="padding: 16px;">
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Use the search bar inside the "Sending Accounts" section to type an email or name. The list filters instantly as you type.</p>
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> "Sending Accounts" বক্সের ভেতরের সার্চ বারে নাম বা ইমেইল টাইপ করুন, সাথে সাথে রেজাল্ট ফিল্টার হয়ে যাবে।</p>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-
-                  <div class="about-card" style="--icon-color-1:#3b82f6; --icon-color-2:#2563eb; --icon-color-rgb:59,130,246;">
-                      <div class="about-icon-wrapper"><i class="fa-solid fa-clock-rotate-left"></i></div>
-                      <h3 class="about-title">20. Anti-Spam Humanized Delay Settings</h3>
-                      <p class="about-text"><strong>English:</strong> Add random wait times (Min & Max Delay) between sending each email in a campaign to mimic human behavior and protect your sender reputation.</p>
-                      <p class="about-text bn"><strong>Bangla:</strong> প্রতিটি ইমেইল পাঠানোর মাঝে একটি র‍্যান্ডম ডিলি (Min & Max Delay) সেট করে দিন, যেন এটি একদম মানুষের মতো আচরণ করে এবং আপনার অ্যাকাউন্টের সেন্ডার রেপুটেশন স্প্যামিং থেকে সুরক্ষিত থাকে।</p>
-                  
-                      <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-                          <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-                              <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-                              <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-                          </button>
-                          <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-                              <div style="padding: 16px;">
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Set the "Min Delay" and "Max Delay" in seconds inside the Sending Schedule section when creating a campaign.</p>
-                                  <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> ক্যাম্পেইনের "Sending Schedule" বক্সের ভেতরে আপনার পছন্দমতো "Min Delay" এবং "Max Delay" (সেকেন্ডে) বসিয়ে দিন।</p>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-
-                  <div class="about-card" style="grid-column: 1 / -1; --icon-color-1:#4f46e5; --icon-color-2:#ec4899; --icon-color-rgb:79,70,229; background: linear-gradient(135deg, rgba(79, 70, 229, 0.05), rgba(236, 72, 153, 0.05)); border: 1px solid rgba(79, 70, 229, 0.2);">
-                      <div class="about-icon-wrapper" style="margin-left:auto; margin-right:auto; margin-bottom: 16px;"><i class="fa-solid fa-user-shield"></i></div>
-                      <h3 class="about-title" style="text-align:center;">Engineered & Administered by Monem Rahman Zisan</h3>
-                      <p class="about-text" style="text-align:center; max-width: 800px; margin: 0 auto 12px;"><strong>English:</strong> Designed and engineered by Monem Rahman Zisan. Includes a Secure Admin Dashboard with JWT token-based authentication and strict RBAC, accessible exclusively by the creator to manage users and ensure maximum security.</p>
-                      <p class="about-text bn" style="text-align:center; max-width: 800px; margin: 0 auto;"><strong>Bangla:</strong> ডেভেলপার মোনেম রহমান জিসান কর্তৃক তৈরিকৃত। সিস্টেমের সম্পূর্ণ কন্ট্রোল এবং সিকিউরিটির জন্য একটি স্পেশাল অ্যাডমিন ড্যাশবোর্ড রয়েছে, যা শুধুমাত্র ডেভেলপার নিজেই ব্যবহার ও নিয়ন্ত্রণ করতে পারেন।</p>
-                  </div>
-</div>
-
-              
-
-        
-        <!-- INBOX PREVIEW MODAL -->
+<!-- INBOX PREVIEW MODAL -->
 
         <div id="inbox-preview-modal" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.8); z-index:10000; backdrop-filter:blur(4px); align-items:center; justify-content:center;">
             <div style="background:var(--surface); width:100%; max-width:700px; border-radius:12px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.5); border:1px solid var(--border); overflow:hidden; display:flex; flex-direction:column;">
@@ -2411,13 +2364,13 @@
 
 <!-- AI Chat -->
 <button id="ai-chat-btn" onclick="const p = document.getElementById('ai-chat-panel'); p.style.display = p.style.display === 'flex' ? 'none' : 'flex'; p.style.flexDirection='column';" style="display:none;position:fixed;bottom:32px;right:32px;width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg, #6366f1 0%, #a855f7 100%);border:none;color:#fff;font-size:24px;cursor:pointer;box-shadow:0 10px 25px -5px rgba(99,102,241,0.5);z-index:1000;align-items:center;justify-content:center;transition:transform 0.2s ease, box-shadow 0.2s ease;">
-    <i class="fa-solid fa-wand-magic-sparkles"></i>
+    <i class="fa-solid fa-robot"></i>
 </button>
 <div id="ai-chat-panel" style="display:none;position:fixed;bottom:110px;right:32px;width:400px;height:600px;background:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:24px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);z-index:1001;flex-direction:column;overflow:hidden;">
     <div style="background:linear-gradient(135deg, #6366f1 0%, #a855f7 100%);padding:24px;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;align-items:center;">
         <div>
-            <div style="font-weight:700;font-size:18px;color:#fff;display:flex;align-items:center;gap:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Copilot</div>
-            <div style="font-size:12px;color:rgba(255,255,255,0.8);font-weight:500;margin-top:4px;">Powered by Groq</div>
+            <div style="font-weight:700;font-size:18px;color:#fff;display:flex;align-items:center;gap:8px;"><i class="fa-solid fa-robot"></i> AI Copilot</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.8);font-weight:500;margin-top:4px;">Smart Email Assistant</div>
         </div>
         <button id="ai-chat-close" onclick="document.getElementById('ai-chat-panel').style.display = 'none';" style="background:rgba(255,255,255,0.2);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:14px;cursor:pointer;transition:background 0.2s;display:flex;align-items:center;justify-content:center;"><i class="fa-solid fa-times"></i></button>
     </div>
@@ -2746,13 +2699,13 @@
 
 <!-- AI Chat -->
 <button id="ai-chat-btn" onclick="const p = document.getElementById('ai-chat-panel'); p.style.display = p.style.display === 'flex' ? 'none' : 'flex'; p.style.flexDirection='column';" style="display:none;position:fixed;bottom:32px;right:32px;width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg, #6366f1 0%, #a855f7 100%);border:none;color:#fff;font-size:24px;cursor:pointer;box-shadow:0 10px 25px -5px rgba(99,102,241,0.5);z-index:1000;align-items:center;justify-content:center;transition:transform 0.2s ease, box-shadow 0.2s ease;">
-    <i class="fa-solid fa-wand-magic-sparkles"></i>
+    <i class="fa-solid fa-robot"></i>
 </button>
 <div id="ai-chat-panel" style="display:none;position:fixed;bottom:110px;right:32px;width:400px;height:600px;background:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:24px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);z-index:1001;flex-direction:column;overflow:hidden;">
     <div style="background:linear-gradient(135deg, #6366f1 0%, #a855f7 100%);padding:24px;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;align-items:center;">
         <div>
-            <div style="font-weight:700;font-size:18px;color:#fff;display:flex;align-items:center;gap:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Copilot</div>
-            <div style="font-size:12px;color:rgba(255,255,255,0.8);font-weight:500;margin-top:4px;">Powered by Groq</div>
+            <div style="font-weight:700;font-size:18px;color:#fff;display:flex;align-items:center;gap:8px;"><i class="fa-solid fa-robot"></i> AI Copilot</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.8);font-weight:500;margin-top:4px;">Smart Email Assistant</div>
         </div>
         <button id="ai-chat-close" onclick="document.getElementById('ai-chat-panel').style.display = 'none';" style="background:rgba(255,255,255,0.2);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:14px;cursor:pointer;transition:background 0.2s;display:flex;align-items:center;justify-content:center;"><i class="fa-solid fa-times"></i></button>
     </div>

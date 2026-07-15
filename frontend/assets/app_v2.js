@@ -6048,34 +6048,42 @@ function setupDragDrop(id) {
 
                     
 
-                    showToast(`Validating ${lines.length} leads... please wait.`, 'success');
-
-                    el.value = text;
+                    showToast(`Loading ${lines.length} leads...`, 'success');
 
                     
 
-                    const emailsToCheck = lines.map(l => l.split(',')[0].trim()).filter(e => e);
+                    const formattedLines = lines.map(l => {
 
-                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                    const validLines = lines.filter(l => {
-                        const e = l.split(',')[0].trim().toLowerCase();
-                        return emailRegex.test(e);
-                    });
+                        const parts = l.split(',');
 
-                    el.value = validLines.join('\n');
+                        const e = parts[0] ? parts[0].trim() : '';
 
-                    const removed = lines.length - validLines.length;
+                        const n = parts[1] ? parts[1].trim() : '';
 
-                    if (removed > 0) {
-                        showToast(`⚠️ Removed ${removed} invalid/inactive leads. Loaded ${validLines.length} valid leads.`, 'warning');
-                    } else {
-                        showToast(`✅ Successfully loaded ${validLines.length} healthy leads!`, 'success');
-                    }
+                        const c = parts[2] ? parts[2].trim() : '';
+
+                        
+
+                        return `${e},${n},${c}`;
+
+                    }).filter(l => l.length > 0);
+
+                    
+
+                    el.value = formattedLines.join('\n');
+
+                    
+
+                    showToast(`✅ Successfully loaded ${formattedLines.length} leads!`, 'success');
+
+                    
 
                     if (typeof window.renderLeadsList === 'function') {
                         window.renderLeadsList('bulk-leads-input');
                     }
                 };
+
+
 
                 reader.readAsText(file);
 
@@ -7046,27 +7054,24 @@ window.handleCSVUpload = function(e, textareaId) {
     reader.onload = async function(evt) {
         const text = evt.target.result;
         let lines = text.split('\n').filter(l => l.trim().length > 0);
-        showToast(`Validating ${lines.length} leads... please wait.`, 'success');
+        showToast(`Loading ${lines.length} leads...`, 'success');
         
         const el = document.getElementById(textareaId);
-        if (el) el.value = text;
         
-        const emailsToCheck = lines.map(l => l.split(',')[0].trim()).filter(e => e);
+        const formattedLines = lines.map(l => {
+            const parts = l.split(',');
+            const e = parts[0] ? parts[0].trim() : '';
+            const n = parts[1] ? parts[1].trim() : '';
+            const c = parts[2] ? parts[2].trim() : '';
+            
+            if (c) return `${e},${n},${c}`;
+            if (n) return `${e},${n}`;
+            return e;
+        }).filter(l => l.length > 0);
         
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const validLines = lines.filter(l => {
-            const e = l.split(',')[0].trim().toLowerCase();
-            return emailRegex.test(e);
-        });
+        if (el) el.value = formattedLines.join('\n');
         
-        if (el) el.value = validLines.join('\n');
-        
-        const removedCount = lines.length - validLines.length;
-        if (removedCount > 0) {
-            showToast(`Removed ${removedCount} invalid emails. ${validLines.length} valid leads kept.`, 'warning');
-        } else {
-            showToast(`All ${validLines.length} leads are valid!`, 'success');
-        }
+        showToast(`✅ Successfully loaded ${formattedLines.length} leads!`, 'success');
         
         if (typeof window.renderLeadsList === 'function') {
             window.renderLeadsList(textareaId);

@@ -322,6 +322,10 @@ function showToast(message, type) {
         icon = '<i class="fa-solid fa-triangle-exclamation"></i>';
         iconColor = '#d97706';
         progressColor = '#f59e0b';
+    } else if (type === 'info') {
+        icon = '<i class="fa-solid fa-circle-info"></i>';
+        iconColor = '#3b82f6';
+        progressColor = '#60a5fa';
     }
 
     // Set duration
@@ -1008,7 +1012,7 @@ async function fetchDashboard() {
 
         // Onboarding logic
 
-        if (!localStorage.getItem('onboarding_dismissed')) {
+        if (!localStorage.getItem('onboarding_dismissed_v2')) {
 
             try {
 
@@ -1022,7 +1026,7 @@ async function fetchDashboard() {
 
                         document.getElementById('onboarding-wizard-modal').style.display = 'flex';
 
-                        localStorage.setItem('onboarding_dismissed', 'true');
+                        localStorage.setItem('onboarding_dismissed_v2', 'true');
 
                     }
 
@@ -6066,6 +6070,11 @@ function setupDragDrop(id) {
 
                             
 
+                            if (invalidEmails.size > 0) {
+                                const invalidDetails = data.results.filter(r => !r.valid).map(r => `${r.email} - ${r.reason}`).join('\n');
+                                alert(`Removed ${invalidEmails.size} invalid emails.\n\nReasons:\n${invalidDetails.substring(0, 1000)}${invalidDetails.length > 1000 ? '...' : ''}`);
+                            }
+
                             const validLines = lines.filter(l => {
 
                                 const e = l.split(',')[0].trim().toLowerCase();
@@ -7091,6 +7100,8 @@ window.handleCSVUpload = function(e, textareaId) {
                 if (el) el.value = validLines.join('\n');
                 
                 if (invalidEmails.size > 0) {
+                    const invalidDetails = data.results.filter(r => !r.valid).map(r => `${r.email} - ${r.reason}`).join('\n');
+                    alert(`Removed ${invalidEmails.size} invalid emails.\n\nReasons:\n${invalidDetails.substring(0, 1000)}${invalidDetails.length > 1000 ? '...' : ''}`);
                     showToast(`Removed ${invalidEmails.size} invalid emails. ${validLines.length} valid leads kept.`, 'warning');
                 } else {
                     showToast(`All ${validLines.length} leads are valid!`, 'success');

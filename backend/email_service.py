@@ -232,6 +232,10 @@ def validate_email_address(email: str) -> dict:
                 result = {'valid': False, 'reason': 'Domain has no MX records'}
             else:
                 mx_host = str(mx_records[0].exchange).rstrip('.')
+        except dns.resolver.NXDOMAIN:
+            result = {'valid': False, 'reason': 'Domain does not exist'}
+        except dns.resolver.NoAnswer:
+            result = {'valid': False, 'reason': 'Domain has no MX records'}
         except Exception as dns_e:
             # DNS lookup failed. On some VPS (like Cloud Hosting BD), this might be blocked.
             # We return valid=True as a fallback so we don't break the app, but note the reason.
@@ -247,7 +251,7 @@ def validate_email_address(email: str) -> dict:
                 
                 # Check if it's a catch-all domain first to avoid false positives
                 catch_all_test = f"random_fake_email_xyz123@{domain}"
-                code_catch_all, _ = server.docmd("MAIL FROM:", "<test@example.com>")
+                code_catch_all, _ = server.docmd("MAIL FROM:", "<>")
                 code_catch_all, _ = server.docmd("RCPT TO:", f"<{catch_all_test}>")
                 
                 if code_catch_all == 250:
@@ -255,13 +259,25 @@ def validate_email_address(email: str) -> dict:
                     result = {'valid': True, 'reason': 'Domain accepts all emails (Catch-all)'}
                 else:
                     # Check actual email
-                    code, response = server.docmd("MAIL FROM:", "<test@example.com>")
+                    code, response = server.docmd("MAIL FROM:", "<>")
                     code, response = server.docmd("RCPT TO:", f"<{email}>")
                     
                     if code == 250:
                         result = {'valid': True, 'reason': 'Mailbox exists (SMTP Verified)'}
                     elif code >= 500:
-                        result = {'valid': False, 'reason': 'Mailbox does not exist (SMTP Rejected)'}
+                        resp_text = response.decode('utf-8', errors='ignore').lower() if isinstance(response, bytes) else str(response).lower()
+                        
+                        # Check if the rejection is specifically about the mailbox not existing
+                        not_found_keywords = ['does not exist', 'not found', 'invalid recipient', 'no such user', 'unknown user', 'mailbox unavailable', 'bad address']
+                        
+                        is_mailbox_error = any(kw in resp_text for kw in not_found_keywords)
+                        
+                        if is_mailbox_error:
+                            result = {'valid': False, 'reason': f'Mailbox does not exist (SMTP Rejected: {resp_text})'}
+                        else:
+                            # It might be a spam block, IP ban, or greylisting from the receiving server.
+                            # We must fallback to True to avoid deleting valid emails.
+                            result = {'valid': True, 'reason': f'Server rejected check, assuming valid (Code {code}: {resp_text})'}
                     else:
                         result = {'valid': True, 'reason': f'SMTP Unsure (Code {code})'}
                 

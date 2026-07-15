@@ -200,40 +200,84 @@ MX_CACHE = {}
 MX_CACHE_LOCK = threading.Lock()
 
 def validate_email_address(email: str) -> dict:
-    """Validate email format and MX record before sending."""
+    """Advanced validation: Syntax -> DNS MX -> SMTP Handshake (with fallback for blocked ports)."""
+    email = email.strip()
+    
+    # 1. Syntax Check
     pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     if not re.match(pattern, email):
-        return {'valid': False, 'reason': 'Invalid format'}
+        return {'valid': False, 'reason': 'Invalid syntax format'}
     
     domain = email.split('@')[1].lower()
     
+    # Check cache first
     with MX_CACHE_LOCK:
-        if domain in MX_CACHE:
-            if not MX_CACHE[domain]:
-                return {'valid': False, 'reason': 'No MX record - domain cannot receive email'}
-            return {'valid': True, 'reason': 'OK'}
-        
+        if email in MX_CACHE:
+            return MX_CACHE[email]
+    
+    result = {'valid': True, 'reason': 'OK'}
+    mx_host = None
+    
     try:
-        # Check MX record to ensure domain can receive email
+        # 2. DNS/MX Check
         resolver = dns.resolver.Resolver()
         resolver.nameservers = ['8.8.8.8', '1.1.1.1']
-        resolver.timeout = 3
-        resolver.lifetime = 3
+        resolver.timeout = 2
+        resolver.lifetime = 2
         
-        records = resolver.resolve(domain, 'MX')
-        if not records:
-            with MX_CACHE_LOCK:
-                MX_CACHE[domain] = False
-            return {'valid': False, 'reason': 'No MX record found'}
-        with MX_CACHE_LOCK:
-            MX_CACHE[domain] = True
+        try:
+            records = resolver.resolve(domain, 'MX')
+            mx_records = sorted(records, key=lambda r: r.preference)
+            if not mx_records:
+                result = {'valid': False, 'reason': 'Domain has no MX records'}
+            else:
+                mx_host = str(mx_records[0].exchange).rstrip('.')
+        except Exception as dns_e:
+            # DNS lookup failed. On some VPS (like Cloud Hosting BD), this might be blocked.
+            # We return valid=True as a fallback so we don't break the app, but note the reason.
+            result = {'valid': True, 'reason': f'DNS check bypassed (VPS restriction?)'}
+            
+        # 3. SMTP Handshake (RCPT TO check)
+        if result['valid'] and mx_host:
+            try:
+                # Set a very short timeout. We don't want to hang the app if port 25 is blocked.
+                server = smtplib.SMTP(timeout=3)
+                server.connect(mx_host, 25)
+                server.ehlo_or_helo_if_needed()
+                
+                # Check if it's a catch-all domain first to avoid false positives
+                catch_all_test = f"random_fake_email_xyz123@{domain}"
+                code_catch_all, _ = server.docmd("MAIL FROM:", "<test@example.com>")
+                code_catch_all, _ = server.docmd("RCPT TO:", f"<{catch_all_test}>")
+                
+                if code_catch_all == 250:
+                    # Domain is catch-all, we can't reliably verify mailbox existence
+                    result = {'valid': True, 'reason': 'Domain accepts all emails (Catch-all)'}
+                else:
+                    # Check actual email
+                    code, response = server.docmd("MAIL FROM:", "<test@example.com>")
+                    code, response = server.docmd("RCPT TO:", f"<{email}>")
+                    
+                    if code == 250:
+                        result = {'valid': True, 'reason': 'Mailbox exists (SMTP Verified)'}
+                    elif code >= 500:
+                        result = {'valid': False, 'reason': 'Mailbox does not exist (SMTP Rejected)'}
+                    else:
+                        result = {'valid': True, 'reason': f'SMTP Unsure (Code {code})'}
+                
+                server.quit()
+            except Exception as smtp_e:
+                # SMTP connection failed (likely port 25 blocked by VPS).
+                # Return valid=True as fallback.
+                result = {'valid': True, 'reason': 'SMTP check bypassed (Port 25 blocked?)'}
+                
     except Exception as e:
-        print(f"DNS lookup failed for {domain}: {e}. Bypassing check.")
-        with MX_CACHE_LOCK:
-            MX_CACHE[domain] = True
-        return {'valid': True, 'reason': 'OK (DNS check bypassed)'}
-    
-    return {'valid': True, 'reason': 'OK'}
+        result = {'valid': True, 'reason': f'Validation error bypassed: {e}'}
+
+    with MX_CACHE_LOCK:
+        MX_CACHE[email] = result
+        
+    return result
 
 # ============================================================
 # SPAM SCORE CHECKER (enhanced)

@@ -285,15 +285,20 @@ def run_warmup_cycle():
                     continue
 
                 sent_today = acc.warmup_sent_today or 0
-                # How many emails should have gone out by now (evenly spaced over 24 hrs)
-                expected_sent_by_now = int(daily_target * fraction_of_day)
+                # Slightly front-load the sending using a square root curve so emails start sending earlier in the day
+                import math
+                expected_sent_by_now = int(daily_target * math.sqrt(fraction_of_day))
+                
+                # Ensure we hit the exact target if we are very close to midnight
+                if fraction_of_day > 0.95:
+                    expected_sent_by_now = daily_target
 
                 # Send only if we're behind the expected pace (strict < avoids midnight burst)
                 import time
                 if sent_today < daily_target and sent_today < expected_sent_by_now:
                     to_send = expected_sent_by_now - sent_today
-                    # Cap at 15 per cycle to prevent overwhelming SMTP in a single burst if far behind
-                    to_send = min(to_send, 15)
+                    # Cap at 25 per cycle to prevent overwhelming SMTP in a single burst if far behind
+                    to_send = min(to_send, 25)
                     
                     for _ in range(to_send):
                         send_warmup_email(db, acc, accounts)

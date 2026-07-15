@@ -2288,3 +2288,13 @@ def run_mig_2():
         return "Migration applied successfully to sql_app.db!"
     except Exception as e:
         return f"Migration error: {str(e)}"
+
+
+@app.get('/api/fix-invalid-leads')
+def fix_invalid_leads(db: Session = Depends(database.get_db)):
+    try:
+        updated = db.query(database.Lead).filter(database.Lead.status == 'invalid').update({'status': 'pending'})
+        db.commit()
+        return {'message': f'Fixed {updated} leads'}
+    except Exception as e:
+        return {'error': str(e)}

@@ -23,7 +23,7 @@ const ACCOUNTS = {
         const tbody = document.getElementById('accounts-table-body');
         tbody.innerHTML = '';
         if(this.list.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" style="padding:32px;text-align:center;color:var(--text-muted);">No accounts connected yet. Setup your first sending account to start delivering campaigns.</td></tr>`;
+            tbody.innerHTML = getEmptyStateHtml('fa-solid fa-server', 'No accounts connected', 'Setup your first sending account to start delivering campaigns.', 7);
             return;
         }
         
@@ -338,7 +338,7 @@ const ACCOUNTS = {
     },
     
     deleteAccount: async function(id) {
-        if(!confirm("Are you sure you want to delete this account?")) return;
+        if(!(await customConfirm('Delete Account', 'Are you sure you want to delete this account?', 'DELETE'))) return;
         try {
             const res = await fetch(API_URL + '/sending-accounts/' + id, {
                 method: 'DELETE',
@@ -356,7 +356,7 @@ const ACCOUNTS = {
     // NEW: Reactivate auto-paused account
     // ============================================================
     reactivateAccount: async function(id) {
-        if(!confirm("Reactivate this account? It was auto-paused due to poor health. Make sure to fix the underlying issue first.")) return;
+        if(!(await customConfirm('Reactivate Account', 'Reactivate this account? It was auto-paused due to poor health. Make sure to fix the underlying issue first.'))) return;
         try {
             const res = await fetch(API_URL + '/sending-accounts/' + id + '/reactivate', {
                 method: 'POST',

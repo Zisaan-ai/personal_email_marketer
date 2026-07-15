@@ -617,6 +617,10 @@
                 <div style="padding:24px 32px 0 32px; border-bottom:1px solid var(--border); background:#fff;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
                         <h3 style="font-size:18px;font-weight:700;margin:0;">Recent Campaigns</h3>
+                        <div id="bulk-actions-container" style="display:none; gap:8px;">
+                            <span id="bulk-selected-count" style="font-size:13px; font-weight:600; color:var(--text-muted); align-self:center; margin-right:8px;"></span>
+                            <button onclick="window.bulkDeleteCampaigns()" class="btn" style="padding:4px 12px; font-size:12px; background:#fef2f2; color:#ef4444; border:1px solid #fca5a5;"><i class="fa-solid fa-trash"></i> Delete Selected</button>
+                        </div>
                     </div>
                     
                     <div class="clean-tabs-bar" style="margin-bottom:0; border-bottom:none; padding-bottom:0;">
@@ -625,10 +629,11 @@
                         <div class="clean-tab dash-tab" data-filter="newsletter">Newsletters</div>
                     </div>
                 </div>
-                <div style="background:#fff;">
+                <div style="background:#fff; overflow-x: auto;">
                     <table id="dashboard-unified-table">
                         <thead>
                             <tr>
+                                <th style="width:40px;text-align:center;"><input type="checkbox" id="bulk-select-all" onchange="window.toggleBulkSelect(event)"></th>
                                 <th>Campaign Name</th>
                                 <th>Type</th>
                                 <th>Progress</th>
@@ -727,7 +732,7 @@
                 </div>
             </div>
             
-            <div class="glass" style="padding: 0; overflow: hidden; border-radius: 12px;">
+            <div class="glass" style="padding: 0; overflow-x: auto; border-radius: 12px;">
                 <table class="table" style="margin:0;">
                     <thead>
                         <tr>
@@ -748,7 +753,13 @@
         <div id="campaigns-builder" class="view">
             <div class="page-header" style="padding-bottom: 24px;">
                 <button class="btn" style="margin-bottom:12px; font-size:13px; padding:6px 12px;" onclick="document.querySelector('.nav-item[data-target=\'campaigns-list\']').click()"><i class="fa-solid fa-arrow-left" style="margin-right:6px;"></i> Back to Newsletters</button>
-                <h1 class="page-title">Visual Builder</h1>
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <h1 class="page-title" id="newsletter-title-container" style="display:flex;align-items:center;gap:8px;margin:0;">
+                        <span id="newsletter-name-text" style="cursor:pointer;" onclick="startEditCampaignName('newsletter')">New Campaign</span>
+                        <button class="btn" style="padding:4px;border:none;background:transparent;box-shadow:none;color:var(--text-muted);" onclick="startEditCampaignName('newsletter')" title="Rename Campaign"><i class="fa-solid fa-pen"></i></button>
+                    </h1>
+                    <input type="text" id="newsletter-name-input" style="display:none;font-size:24px;font-weight:700;border:1px solid var(--p);border-radius:6px;padding:2px 8px;font-family:var(--font);color:var(--text);outline:none;background:var(--surface);width:300px;" onblur="saveCampaignName('newsletter')" onkeydown="if(event.key==='Enter')this.blur();if(event.key==='Escape')cancelEditCampaignName('newsletter');">
+                </div>
                 <p class="page-subtitle">Design, build, and launch your visually appealing newsletters</p>
             </div>
 
@@ -836,6 +847,9 @@
                             <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:8px;">
                                 <label style="margin-bottom:0;">Campaign Audience (Leads)</label>
                                 <div style="display:flex; gap:8px;">
+                                    <button onclick="document.getElementById('newsletter-csv-upload').click()" style="padding:4px 12px; background:var(--surface); color:var(--text); border:1px solid var(--border); border-radius:6px; cursor:pointer; font-size:11px; font-weight:600; display:flex; align-items:center; gap:6px;"><i class="fa-solid fa-file-csv"></i> Upload CSV</button>
+                                    <input type="file" id="newsletter-csv-upload" accept=".csv,.txt" style="display:none;" onchange="window.handleCSVUpload(event, 'newsletter-leads')">
+                                    <button onclick="window.exportCSV('newsletter-leads')" style="padding:4px 12px; background:var(--surface); color:var(--text); border:1px solid var(--border); border-radius:6px; cursor:pointer; font-size:11px; font-weight:600; display:flex; align-items:center; gap:6px;"><i class="fa-solid fa-download"></i> Export CSV</button>
                                     <button onclick="window.saveLeads('newsletter-leads')" style="padding:4px 12px; background:var(--surface); color:var(--text); border:1px solid var(--border); border-radius:6px; cursor:pointer; font-size:11px; font-weight:600; display:flex; align-items:center; gap:6px;"><i class="fa-solid fa-floppy-disk"></i> Save Leads</button>
                                     <button onclick="window.clearLeads('newsletter-leads')" style="padding:4px 12px; background:#fef2f2; color:#ef4444; border:1px solid #fca5a5; border-radius:6px; cursor:pointer; font-size:11px; font-weight:600; display:flex; align-items:center; gap:6px;"><i class="fa-solid fa-trash"></i> Delete</button>
                                 </div>
@@ -1072,11 +1086,11 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label>Max Emails Per Day</label>
+                                <label>Max Emails Per Day <i class="fa-solid fa-circle-info" style="color:var(--text-muted);margin-left:4px;" data-tooltip="Maximum number of emails to send per day for this campaign."></i></label>
                                 <input id="vb-max-emails" type="number" value="50" min="1">
                             </div>
                             <div class="form-group">
-                                <label>Daily Ramp Up</label>
+                                <label>Daily Ramp Up <i class="fa-solid fa-circle-info" style="color:var(--text-muted);margin-left:4px;" data-tooltip="Number of emails to increase your daily limit by each day automatically."></i></label>
                                 <input id="vb-ramp-up" type="number" value="5" min="0" title="Increase limit by this amount every day">
                             </div>
                         </div>
@@ -1106,7 +1120,7 @@
                 </div>
             </div>
             
-            <div class="glass" style="padding: 0; overflow: hidden; border-radius: 12px;">
+            <div class="glass" style="padding: 0; overflow-x: auto; border-radius: 12px;">
                 <table class="table" style="margin:0;">
                     <thead>
                         <tr>
@@ -1129,7 +1143,13 @@
             <div class="page-header" style="padding-bottom: 24px; display:flex; justify-content:space-between; align-items:center;">
                 <div>
                     <button class="btn" style="margin-bottom:12px; font-size:13px; padding:6px 12px;" onclick="document.querySelector('.nav-item[data-target=\'cold-mail-list\']').click()"><i class="fa-solid fa-arrow-left" style="margin-right:6px;"></i> Back to Campaigns</button>
-                    <h1 class="page-title" style="font-size:28px;">Cold Mail Builder</h1>
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <h1 class="page-title" id="cold-title-container" style="display:flex;align-items:center;gap:8px;margin:0;font-size:28px;">
+                            <span id="cold-name-text" style="cursor:pointer;" onclick="startEditCampaignName('cold')">New Sequence</span>
+                            <button class="btn" style="padding:4px;border:none;background:transparent;box-shadow:none;color:var(--text-muted);" onclick="startEditCampaignName('cold')" title="Rename Campaign"><i class="fa-solid fa-pen"></i></button>
+                        </h1>
+                        <input type="text" id="cold-name-input" style="display:none;font-size:28px;font-weight:700;border:1px solid var(--p);border-radius:6px;padding:2px 8px;font-family:var(--font);color:var(--text);outline:none;background:var(--surface);width:400px;" onblur="saveCampaignName('cold')" onkeydown="if(event.key==='Enter')this.blur();if(event.key==='Escape')cancelEditCampaignName('cold');">
+                    </div>
                     <p class="page-subtitle">Build and launch automated cold email sequences</p>
                 </div>
             </div>
@@ -1224,6 +1244,9 @@
                         <div class="form-group" style="margin-bottom:0;">
                             <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:8px;">
                                 <div style="display:flex; gap:8px;">
+                                    <button onclick="document.getElementById('seq-csv-upload').click()" style="padding:6px 12px; background:var(--surface); color:var(--text); border:1px solid var(--border); border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; display:flex; align-items:center; gap:6px;"><i class="fa-solid fa-file-csv"></i> Upload CSV</button>
+                                    <input type="file" id="seq-csv-upload" accept=".csv,.txt" style="display:none;" onchange="window.handleCSVUpload(event, 'seq-leads')">
+                                    <button onclick="window.exportCSV('seq-leads')" style="padding:6px 12px; background:var(--surface); color:var(--text); border:1px solid var(--border); border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; display:flex; align-items:center; gap:6px;"><i class="fa-solid fa-download"></i> Export CSV</button>
                                     <button onclick="window.saveLeads('seq-leads')" style="padding:6px 12px; background:var(--surface); color:var(--text); border:1px solid var(--border); border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; display:flex; align-items:center; gap:6px;"><i class="fa-solid fa-floppy-disk"></i> Save Leads</button>
                                     <button onclick="window.clearLeads('seq-leads')" style="padding:6px 12px; background:#fef2f2; color:#ef4444; border:1px solid #fca5a5; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; display:flex; align-items:center; gap:6px;"><i class="fa-solid fa-trash"></i> Delete</button>
                                 </div>
@@ -1437,11 +1460,11 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Max Emails Per Day</label>
+                            <label>Max Emails Per Day <i class="fa-solid fa-circle-info" style="color:var(--text-muted);margin-left:4px;" data-tooltip="Maximum number of emails to send per day for this campaign."></i></label>
                             <input id="cold-max-emails" type="number" value="50" min="1">
                         </div>
                         <div class="form-group">
-                            <label>Daily Ramp Up</label>
+                            <label>Daily Ramp Up <i class="fa-solid fa-circle-info" style="color:var(--text-muted);margin-left:4px;" data-tooltip="Number of emails to increase your daily limit by each day automatically."></i></label>
                             <input id="cold-ramp-up" type="number" value="5" min="0" title="Increase limit by this amount every day">
                         </div>
                     </div>
@@ -1491,7 +1514,7 @@
                 <p class="page-subtitle">People who have opted out of your emails.</p>
             </div>
             
-            <div class="glass" style="padding:0; overflow:hidden; border-radius:16px;">
+            <div class="glass" style="padding:0; overflow-x: auto; border-radius:16px;">
                 <table style="width:100%; border-collapse:collapse; text-align:left;">
                     <thead>
                         <tr style="background:#f8fafc; border-bottom:1px solid var(--border);">
@@ -1513,7 +1536,7 @@
                 <p class="page-subtitle">View incoming replies categorized by AI Sentiment.</p>
             </div>
             
-            <div class="glass" style="padding:0; overflow:hidden; border-radius:16px;">
+            <div class="glass" style="padding:0; overflow-x: auto; border-radius:16px;">
                 <table style="width:100%; border-collapse:collapse; text-align:left;">
                     <thead>
                         <tr style="background:#f8fafc; border-bottom:1px solid var(--border);">
@@ -1584,7 +1607,7 @@
                     <div id="smtp-fields">
                         <div style="display:grid;grid-template-columns:1fr 120px;gap:16px;">
                             <div class="form-group">
-                                <label>SMTP Host</label>
+                                <label>SMTP Host <i class="fa-solid fa-circle-info" style="color:var(--text-muted);margin-left:4px;" data-tooltip="The outgoing mail server address (e.g., smtp.gmail.com)."></i></label>
                                 <input type="text" id="smtp-host" placeholder="smtp.mailgun.org">
                             </div>
                             <div class="form-group">
@@ -1636,122 +1659,137 @@
                     </div>
 
                     <!-- Gemini -->
-                    <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:16px;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-                            <div style="display:flex; align-items:center; gap:10px;">
-                                <div style="width:32px;height:32px;border-radius:8px;background:#fff;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Google_Gemini_logo.svg" style="width:18px;height:18px;" onerror="this.style.display='none'">
+                    <div class="ai-key-card" style="border:1px solid var(--border); border-radius:14px; overflow:hidden; margin-bottom:10px; background:var(--bg); transition:box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 4px 20px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
+                        <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 18px;">
+                            <div style="display:flex; align-items:center; gap:11px;">
+                                <div style="width:36px;height:36px;border-radius:10px;background:#fff;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Google_Gemini_logo.svg" style="width:19px;height:19px;" onerror="this.style.display='none'">
                                 </div>
                                 <div>
-                                    <div style="font-size:14px;font-weight:700;">Google Gemini</div>
-                                    <div style="font-size:12px;color:var(--text-muted);">Best for creative email writing</div>
+                                    <div style="display:flex; align-items:center; gap:7px;">
+                                        <span style="font-size:13px;font-weight:700;">Google Gemini</span>
+                                        <span id="gemini-key-status" style="display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;background:#fee2e2;color:#dc2626;transition:all 0.3s;">● No Key</span>
+                                    </div>
+                                    <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Free &amp; powerful — great for AI emails</div>
                                 </div>
                             </div>
-                            <a href="https://aistudio.google.com/app/apikey" target="_blank" style="font-size:12px;color:var(--p);font-weight:600;text-decoration:none;"><i class="fa-solid fa-arrow-up-right-from-square" style="margin-right:4px;"></i>Get Free Key</a>
+                            <a href="https://aistudio.google.com/app/apikey" target="_blank" style="font-size:11px;color:var(--p);font-weight:600;text-decoration:none;white-space:nowrap;opacity:0.8;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'"><i class="fa-solid fa-arrow-up-right-from-square" style="margin-right:3px;font-size:10px;"></i>Get Free Key</a>
                         </div>
-                        <div style="position:relative;">
-                            <input type="password" id="gemini-api-key" placeholder="AIzaSy..." style="padding-right:44px;">
-                            <button type="button" onclick="var el=document.getElementById('gemini-api-key'); el.type=el.type==='password'?'text':'password'; this.innerHTML=el.type==='password'?'<i class=\'fa-regular fa-eye\'></i>':'<i class=\'fa-regular fa-eye-slash\'></i>'" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);">
-                                <i class="fa-regular fa-eye"></i>
-                            </button>
+                        <div style="padding:0 18px 14px 18px;">
+                            <div style="position:relative;">
+                                <input type="password" id="gemini-api-key" placeholder="AIzaSy..." style="margin:0;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:10px 44px 10px 14px;font-size:13px;width:100%;box-sizing:border-box;font-family:monospace;">
+                                <button type="button" onclick="var el=document.getElementById('gemini-api-key'); el.type=el.type==='password'?'text':'password'; this.innerHTML=el.type==='password'?'<i class=\'fa-regular fa-eye\'></i>':'<i class=\'fa-regular fa-eye-slash\'></i>'" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:14px;">
+                                    <i class="fa-regular fa-eye"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Groq -->
-                    <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:20px;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-                            <div style="display:flex; align-items:center; gap:10px;">
-                                <div style="width:32px;height:32px;border-radius:8px;background:#ff6c37;display:flex;align-items:center;justify-content:center;">
-                                    <span style="color:#fff;font-size:10px;font-weight:900;">G</span>
+                    <div class="ai-key-card" style="border:1px solid var(--border); border-radius:14px; overflow:hidden; margin-bottom:10px; background:var(--bg); transition:box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 4px 20px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
+                        <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 18px;">
+                            <div style="display:flex; align-items:center; gap:11px;">
+                                <div style="width:36px;height:36px;border-radius:10px;background:#ff6c37;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <span style="color:#fff;font-size:13px;font-weight:900;">G</span>
                                 </div>
                                 <div>
-                                    <div style="display:flex; align-items:center; gap:8px;">
-                                        <span style="font-size:14px;font-weight:700;">Groq</span>
-                                        <span style="background:#dcfce7;color:#059669;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;">⚡ Recommended</span>
+                                    <div style="display:flex; align-items:center; gap:7px;">
+                                        <span style="font-size:13px;font-weight:700;">Groq</span>
+                                        <span id="groq-key-status" style="display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;background:#fee2e2;color:#dc2626;transition:all 0.3s;">● No Key</span>
                                     </div>
-                                    <div style="font-size:12px;color:var(--text-muted);">Ultra-fast, free — best for cold email</div>
+                                    <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Ultra-fast &amp; free — ideal for cold email</div>
                                 </div>
                             </div>
-                            <a href="https://console.groq.com" target="_blank" style="font-size:12px;color:var(--p);font-weight:600;text-decoration:none;"><i class="fa-solid fa-arrow-up-right-from-square" style="margin-right:4px;"></i>Get Free Key</a>
+                            <a href="https://console.groq.com" target="_blank" style="font-size:11px;color:var(--p);font-weight:600;text-decoration:none;white-space:nowrap;opacity:0.8;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'"><i class="fa-solid fa-arrow-up-right-from-square" style="margin-right:3px;font-size:10px;"></i>Get Free Key</a>
                         </div>
-                        <div style="position:relative;">
-                            <input type="password" id="groq-api-key" placeholder="gsk_..." style="padding-right:44px;">
-                            <button type="button" onclick="var el=document.getElementById('groq-api-key'); el.type=el.type==='password'?'text':'password'; this.innerHTML=el.type==='password'?'<i class=\'fa-regular fa-eye\'></i>':'<i class=\'fa-regular fa-eye-slash\'></i>'" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);">
-                                <i class="fa-regular fa-eye"></i>
-                            </button>
+                        <div style="padding:0 18px 14px 18px;">
+                            <div style="position:relative;">
+                                <input type="password" id="groq-api-key" placeholder="gsk_..." style="margin:0;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:10px 44px 10px 14px;font-size:13px;width:100%;box-sizing:border-box;font-family:monospace;">
+                                <button type="button" onclick="var el=document.getElementById('groq-api-key'); el.type=el.type==='password'?'text':'password'; this.innerHTML=el.type==='password'?'<i class=\'fa-regular fa-eye\'></i>':'<i class=\'fa-regular fa-eye-slash\'></i>'" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:14px;">
+                                    <i class="fa-regular fa-eye"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
-                    
                     <!-- OpenAI -->
-                    <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:20px;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-                            <div style="display:flex; align-items:center; gap:10px;">
-                                <div style="width:32px;height:32px;border-radius:8px;background:#10a37f;display:flex;align-items:center;justify-content:center;">
+                    <div class="ai-key-card" style="border:1px solid var(--border); border-radius:14px; overflow:hidden; margin-bottom:10px; background:var(--bg); transition:box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 4px 20px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
+                        <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 18px;">
+                            <div style="display:flex; align-items:center; gap:11px;">
+                                <div style="width:36px;height:36px;border-radius:10px;background:#10a37f;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                                     <i class="fa-solid fa-bolt" style="color:#fff;font-size:14px;"></i>
                                 </div>
                                 <div>
-                                    <div style="display:flex; align-items:center; gap:8px;">
-                                        <span style="font-size:14px;font-weight:700;">OpenAI (ChatGPT)</span>
+                                    <div style="display:flex; align-items:center; gap:7px;">
+                                        <span style="font-size:13px;font-weight:700;">OpenAI (ChatGPT)</span>
+                                        <span id="openai-key-status" style="display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;background:#fee2e2;color:#dc2626;transition:all 0.3s;">● No Key</span>
                                     </div>
-                                    <div style="font-size:12px;color:var(--text-muted);">Industry standard AI models</div>
+                                    <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Industry-leading AI — premium quality</div>
                                 </div>
                             </div>
-                            <a href="https://platform.openai.com/api-keys" target="_blank" style="font-size:12px;color:var(--p);font-weight:600;text-decoration:none;"><i class="fa-solid fa-arrow-up-right-from-square" style="margin-right:4px;"></i>Get Key</a>
+                            <a href="https://platform.openai.com/api-keys" target="_blank" style="font-size:11px;color:var(--p);font-weight:600;text-decoration:none;white-space:nowrap;opacity:0.8;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'"><i class="fa-solid fa-arrow-up-right-from-square" style="margin-right:3px;font-size:10px;"></i>Get Key</a>
                         </div>
-                        <div style="position:relative;">
-                            <input type="password" id="openai-api-key" placeholder="sk-..." style="padding-right:44px;">
-                            <button type="button" onclick="var el=document.getElementById('openai-api-key'); el.type=el.type==='password'?'text':'password'; this.innerHTML=el.type==='password'?'<i class=&quot;fa-regular fa-eye&quot;></i>':'<i class=&quot;fa-regular fa-eye-slash&quot;></i>'" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);">
-                                <i class="fa-regular fa-eye"></i>
-                            </button>
+                        <div style="padding:0 18px 14px 18px;">
+                            <div style="position:relative;">
+                                <input type="password" id="openai-api-key" placeholder="sk-..." style="margin:0;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:10px 44px 10px 14px;font-size:13px;width:100%;box-sizing:border-box;font-family:monospace;">
+                                <button type="button" onclick="var el=document.getElementById('openai-api-key'); el.type=el.type==='password'?'text':'password'; this.innerHTML=el.type==='password'?'<i class=&quot;fa-regular fa-eye&quot;></i>':'<i class=&quot;fa-regular fa-eye-slash&quot;></i>'" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:14px;">
+                                    <i class="fa-regular fa-eye"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Anthropic -->
-                    <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:20px;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-                            <div style="display:flex; align-items:center; gap:10px;">
-                                <div style="width:32px;height:32px;border-radius:8px;background:#d97757;display:flex;align-items:center;justify-content:center;">
+                    <div class="ai-key-card" style="border:1px solid var(--border); border-radius:14px; overflow:hidden; margin-bottom:10px; background:var(--bg); transition:box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 4px 20px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
+                        <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 18px;">
+                            <div style="display:flex; align-items:center; gap:11px;">
+                                <div style="width:36px;height:36px;border-radius:10px;background:#d97757;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                                     <i class="fa-solid fa-cube" style="color:#fff;font-size:14px;"></i>
                                 </div>
                                 <div>
-                                    <div style="display:flex; align-items:center; gap:8px;">
-                                        <span style="font-size:14px;font-weight:700;">Anthropic (Claude)</span>
+                                    <div style="display:flex; align-items:center; gap:7px;">
+                                        <span style="font-size:13px;font-weight:700;">Anthropic (Claude)</span>
+                                        <span id="anthropic-key-status" style="display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;background:#fee2e2;color:#dc2626;transition:all 0.3s;">● No Key</span>
                                     </div>
-                                    <div style="font-size:12px;color:var(--text-muted);">Excellent for writing & coding</div>
+                                    <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Best for writing, analysis &amp; long emails</div>
                                 </div>
                             </div>
-                            <a href="https://console.anthropic.com/settings/keys" target="_blank" style="font-size:12px;color:var(--p);font-weight:600;text-decoration:none;"><i class="fa-solid fa-arrow-up-right-from-square" style="margin-right:4px;"></i>Get Key</a>
+                            <a href="https://console.anthropic.com/settings/keys" target="_blank" style="font-size:11px;color:var(--p);font-weight:600;text-decoration:none;white-space:nowrap;opacity:0.8;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'"><i class="fa-solid fa-arrow-up-right-from-square" style="margin-right:3px;font-size:10px;"></i>Get Key</a>
                         </div>
-                        <div style="position:relative;">
-                            <input type="password" id="anthropic-api-key" placeholder="sk-ant-..." style="padding-right:44px;">
-                            <button type="button" onclick="var el=document.getElementById('anthropic-api-key'); el.type=el.type==='password'?'text':'password'; this.innerHTML=el.type==='password'?'<i class=&quot;fa-regular fa-eye&quot;></i>':'<i class=&quot;fa-regular fa-eye-slash&quot;></i>'" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);">
-                                <i class="fa-regular fa-eye"></i>
-                            </button>
+                        <div style="padding:0 18px 14px 18px;">
+                            <div style="position:relative;">
+                                <input type="password" id="anthropic-api-key" placeholder="sk-ant-..." style="margin:0;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:10px 44px 10px 14px;font-size:13px;width:100%;box-sizing:border-box;font-family:monospace;">
+                                <button type="button" onclick="var el=document.getElementById('anthropic-api-key'); el.type=el.type==='password'?'text':'password'; this.innerHTML=el.type==='password'?'<i class=&quot;fa-regular fa-eye&quot;></i>':'<i class=&quot;fa-regular fa-eye-slash&quot;></i>'" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:14px;">
+                                    <i class="fa-regular fa-eye"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
                     <!-- DeepSeek -->
-                    <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:20px;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-                            <div style="display:flex; align-items:center; gap:10px;">
-                                <div style="width:32px;height:32px;border-radius:8px;background:#4d6bfe;display:flex;align-items:center;justify-content:center;">
+                    <div class="ai-key-card" style="border:1px solid var(--border); border-radius:14px; overflow:hidden; margin-bottom:16px; background:var(--bg); transition:box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 4px 20px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
+                        <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 18px;">
+                            <div style="display:flex; align-items:center; gap:11px;">
+                                <div style="width:36px;height:36px;border-radius:10px;background:#4d6bfe;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                                     <i class="fa-solid fa-water" style="color:#fff;font-size:14px;"></i>
                                 </div>
                                 <div>
-                                    <div style="display:flex; align-items:center; gap:8px;">
-                                        <span style="font-size:14px;font-weight:700;">DeepSeek</span>
+                                    <div style="display:flex; align-items:center; gap:7px;">
+                                        <span style="font-size:13px;font-weight:700;">DeepSeek</span>
+                                        <span id="deepseek-key-status" style="display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;background:#fee2e2;color:#dc2626;transition:all 0.3s;">● No Key</span>
                                     </div>
-                                    <div style="font-size:12px;color:var(--text-muted);">Cost-effective & powerful</div>
+                                    <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Cost-effective &amp; highly capable</div>
                                 </div>
                             </div>
-                            <a href="https://platform.deepseek.com/api_keys" target="_blank" style="font-size:12px;color:var(--p);font-weight:600;text-decoration:none;"><i class="fa-solid fa-arrow-up-right-from-square" style="margin-right:4px;"></i>Get Key</a>
+                            <a href="https://platform.deepseek.com/api_keys" target="_blank" style="font-size:11px;color:var(--p);font-weight:600;text-decoration:none;white-space:nowrap;opacity:0.8;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'"><i class="fa-solid fa-arrow-up-right-from-square" style="margin-right:3px;font-size:10px;"></i>Get Key</a>
                         </div>
-                        <div style="position:relative;">
-                            <input type="password" id="deepseek-api-key" placeholder="sk-..." style="padding-right:44px;">
-                            <button type="button" onclick="var el=document.getElementById('deepseek-api-key'); el.type=el.type==='password'?'text':'password'; this.innerHTML=el.type==='password'?'<i class=&quot;fa-regular fa-eye&quot;></i>':'<i class=&quot;fa-regular fa-eye-slash&quot;></i>'" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);">
-                                <i class="fa-regular fa-eye"></i>
-                            </button>
+                        <div style="padding:0 18px 14px 18px;">
+                            <div style="position:relative;">
+                                <input type="password" id="deepseek-api-key" placeholder="sk-..." style="margin:0;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:10px 44px 10px 14px;font-size:13px;width:100%;box-sizing:border-box;font-family:monospace;">
+                                <button type="button" onclick="var el=document.getElementById('deepseek-api-key'); el.type=el.type==='password'?'text':'password'; this.innerHTML=el.type==='password'?'<i class=&quot;fa-regular fa-eye&quot;></i>':'<i class=&quot;fa-regular fa-eye-slash&quot;></i>'" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:14px;">
+                                    <i class="fa-regular fa-eye"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -1800,7 +1838,7 @@
                 </div>
             </div>
             
-            <div class="glass" style="padding:0; overflow:hidden; border-radius:16px;">
+            <div class="glass" style="padding:0; overflow-x: auto; border-radius:16px;">
                 <table style="width:100%; border-collapse:collapse; text-align:left;">
                     <thead>
                         <tr style="background:#f8fafc; border-bottom:1px solid var(--border);">
@@ -1890,7 +1928,7 @@
                 <h1 class="page-title">Administration</h1>
                 <p class="page-subtitle">Manage users and access control</p>
             </div>
-            <div class="glass" style="padding:0;overflow:hidden;">
+            <div class="glass" style="padding:0;overflow-x: auto;">
                 <table>
                     <thead><tr><th>ID</th><th>User Email</th><th>Role</th><th style="width:100px;">Actions</th></tr></thead>
                     <tbody id="admin-users-body"></tbody>
@@ -2168,8 +2206,8 @@
 <div class="about-card" style="--icon-color-1:#6366f1; --icon-color-2:#4f46e5; --icon-color-rgb:99,102,241;">
     <div class="about-icon-wrapper"><i class="fa-solid fa-brain"></i></div>
     <h3 class="about-title">8. AI Autopilot: Cold Email & Icebreakers</h3>
-    <p class="about-text"><strong>English:</strong> Harness the power of Gemini & Groq AI. Let the AI automatically generate highly-converting cold email drafts and personalized icebreakers, or manually edit and refine the AI's suggestions in the rich text editor.</p>
-    <p class="about-text bn"><strong>Bangla:</strong> Gemini এবং Groq AI-এর মাধ্যমে অটোমেটিক কোল্ড ইমেইল ও আইসব্রেকার জেনারেট করুন। সিস্টেম নিজে থেকেই প্রফেশনাল মেইল লিখে দেবে, যা আপনি এডিটরে ম্যানুয়ালি নিজের মতো করে কাস্টমাইজ করে নিতে পারবেন।</p>
+    <p class="about-text"><strong>English:</strong> Harness the power of DeepSeek, Gemini, OpenAI, Claude & Groq AI. Let the AI automatically generate highly-converting cold email drafts and personalized icebreakers, or manually edit and refine the AI's suggestions in the rich text editor.</p>
+    <p class="about-text bn"><strong>Bangla:</strong> DeepSeek, Gemini, OpenAI, Claude এবং Groq AI-এর মাধ্যমে অটোমেটিক কোল্ড ইমেইল ও আইসব্রেকার জেনারেট করুন। সিস্টেম নিজে থেকেই প্রফেশনাল মেইল লিখে দেবে, যা আপনি এডিটরে ম্যানুয়ালি নিজের মতো করে কাস্টমাইজ করে নিতে পারবেন।</p>
 
     <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
         <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
@@ -2360,7 +2398,7 @@
 </div>
 
 <!-- Toast -->
-<div id="toast"><span id="toast-msg"></span></div>
+<div id="toast-container"></div>
 
 <!-- AI Chat -->
 <button id="ai-chat-btn" onclick="const p = document.getElementById('ai-chat-panel'); p.style.display = p.style.display === 'flex' ? 'none' : 'flex'; p.style.flexDirection='column';" style="display:none;position:fixed;bottom:32px;right:32px;width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg, #6366f1 0%, #a855f7 100%);border:none;color:#fff;font-size:24px;cursor:pointer;box-shadow:0 10px 25px -5px rgba(99,102,241,0.5);z-index:1000;align-items:center;justify-content:center;transition:transform 0.2s ease, box-shadow 0.2s ease;">
@@ -2629,337 +2667,23 @@
         </div>
     </div>
 
-    <!-- Image Gallery Modal -->
-    <div id="gallery-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.6);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(4px);">
-        <div style="background:#fff;width:800px;max-width:90%;height:600px;max-height:90vh;border-radius:12px;display:flex;flex-direction:column;box-shadow:0 10px 25px rgba(0,0,0,0.15);">
-            <div style="padding:20px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;">
-                <h3 style="margin:0;font-size:18px;color:#1e293b;"><i class="fa-solid fa-images"></i> Image Gallery</h3>
-                <button onclick="closeGalleryModal()" style="background:none;border:none;font-size:20px;color:#64748b;cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div style="padding:20px;border-bottom:1px solid #e2e8f0;display:flex;gap:10px;">
-                <input type="file" id="gallery-upload-input" accept="image/*" style="display:none;" onchange="handleGalleryUpload(event)">
-                <button onclick="document.getElementById('gallery-upload-input').click()" class="primary-btn" style="padding:8px 16px;"><i class="fa-solid fa-upload"></i> Upload Image</button>
-                <span id="gallery-upload-status" style="align-self:center;font-size:14px;color:#64748b;display:none;"><i class="fa-solid fa-spinner fa-spin"></i> Uploading...</span>
-            </div>
-            <div id="gallery-grid" style="flex:1;overflow-y:auto;padding:20px;display:grid;grid-template-columns:repeat(auto-fill, minmax(150px, 1fr));gap:15px;align-content:start;">
-                <!-- Images will be loaded here -->
-            </div>
-        </div>
-    </div>
-
-    <!-- AI Reply Modal -->
-    <div id="reply-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.6);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(4px);">
-        <div style="background:#fff;width:700px;max-width:90%;border-radius:12px;display:flex;flex-direction:column;box-shadow:0 10px 25px rgba(0,0,0,0.15);">
-            <div style="padding:20px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;">
-                <h3 style="margin:0;font-size:18px;color:#1e293b;"><i class="fa-solid fa-reply"></i> View & Reply</h3>
-                <button onclick="document.getElementById('reply-modal').style.display='none'" style="background:none;border:none;font-size:20px;color:#64748b;cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div style="padding:24px; overflow-y:auto; max-height:70vh; display:flex; flex-direction:column; gap:16px;">
-                
-                <input type="hidden" id="active-reply-id" value="">
-                
-                <div>
-                    <label style="font-size:12px; font-weight:600; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px; display:block;">Client's Original Message</label>
-                    <div id="client-original-message" style="background:#f1f5f9; padding:16px; border-radius:8px; font-size:14px; color:var(--text); white-space:pre-wrap; border:1px solid #cbd5e1;"></div>
+    <!-- Global Confirm Modal -->
+    <div id="confirm-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.6);z-index:10000;align-items:center;justify-content:center;backdrop-filter:blur(4px);">
+        <div style="background:#fff;width:400px;max-width:90%;border-radius:12px;display:flex;flex-direction:column;box-shadow:0 20px 40px -10px rgba(0,0,0,0.2);">
+            <div style="padding:24px;text-align:center;">
+                <div id="confirm-modal-icon" style="width:56px;height:56px;border-radius:50%;background:#fee2e2;color:#dc2626;font-size:24px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
                 </div>
-
-                <div style="text-align:center; margin:8px 0;">
-                    <button class="btn" style="background:#8b5cf6; color:#fff;" onclick="generateAiReplyDraft(this)"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate AI Reply</button>
-                </div>
-
-                <div>
-                    <label style="font-size:12px; font-weight:600; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px; display:block;">Your Reply (Type manually or Generate via AI)</label>
-                    <textarea id="ai-reply-draft" rows="8" placeholder="Type your manual reply here, or click the Generate button above..." style="width:100%; padding:12px; border:1px solid var(--border); border-radius:8px; font-family:var(--font); font-size:14px; resize:vertical;"></textarea>
+                <h3 id="confirm-modal-title" style="margin:0 0 8px;font-size:20px;font-weight:700;color:var(--text);">Are you sure?</h3>
+                <p id="confirm-modal-text" style="margin:0;font-size:14px;color:var(--text-muted);line-height:1.5;">This action cannot be undone.</p>
+                <div id="confirm-modal-input-container" style="display:none;margin-top:16px;text-align:left;">
+                    <label style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:8px;display:block;">Type <span id="confirm-modal-expected" style="font-weight:700;color:#dc2626;"></span> to confirm:</label>
+                    <input type="text" id="confirm-modal-input" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-family:monospace;font-size:14px;" autocomplete="off">
                 </div>
             </div>
-            
-            <div style="padding:20px;border-top:1px solid #e2e8f0;display:flex;justify-content:flex-end; gap:12px; background:#f8fafc; border-bottom-left-radius:12px; border-bottom-right-radius:12px;">
-                <button class="btn" onclick="document.getElementById('reply-modal').style.display='none'">Cancel</button>
-                <button class="btn primary" onclick="sendAiReply(this)"><i class="fa-solid fa-paper-plane"></i> Send Reply</button>
-            </div>
-        </div>
-    </div>
-
-</body>
-</html>
-                      </div>
-                  </div>
-              </div>
-
-              
-
-
-
-
-    </main>
-</div>
-
-<!-- Toast -->
-<div id="toast"><span id="toast-msg"></span></div>
-
-<!-- AI Chat -->
-<button id="ai-chat-btn" onclick="const p = document.getElementById('ai-chat-panel'); p.style.display = p.style.display === 'flex' ? 'none' : 'flex'; p.style.flexDirection='column';" style="display:none;position:fixed;bottom:32px;right:32px;width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg, #6366f1 0%, #a855f7 100%);border:none;color:#fff;font-size:24px;cursor:pointer;box-shadow:0 10px 25px -5px rgba(99,102,241,0.5);z-index:1000;align-items:center;justify-content:center;transition:transform 0.2s ease, box-shadow 0.2s ease;">
-    <i class="fa-solid fa-robot"></i>
-</button>
-<div id="ai-chat-panel" style="display:none;position:fixed;bottom:110px;right:32px;width:400px;height:600px;background:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:24px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);z-index:1001;flex-direction:column;overflow:hidden;">
-    <div style="background:linear-gradient(135deg, #6366f1 0%, #a855f7 100%);padding:24px;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;align-items:center;">
-        <div>
-            <div style="font-weight:700;font-size:18px;color:#fff;display:flex;align-items:center;gap:8px;"><i class="fa-solid fa-robot"></i> AI Copilot</div>
-            <div style="font-size:12px;color:rgba(255,255,255,0.8);font-weight:500;margin-top:4px;">Smart Email Assistant</div>
-        </div>
-        <button id="ai-chat-close" onclick="document.getElementById('ai-chat-panel').style.display = 'none';" style="background:rgba(255,255,255,0.2);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:14px;cursor:pointer;transition:background 0.2s;display:flex;align-items:center;justify-content:center;"><i class="fa-solid fa-times"></i></button>
-    </div>
-    <div id="ai-chat-messages" style="flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:16px;background:#fff;"></div>
-    <div style="padding:16px;border-top:1px solid var(--border);background:#f8fafc;display:flex;gap:12px;">
-        <input type="text" id="ai-chat-input" placeholder="Ask AI to write a high-converting email..."
-               style="flex:1;padding:14px 16px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;font-size:14px;color:var(--text);outline:none;box-shadow:0 2px 6px rgba(0,0,0,0.02);transition:border-color 0.2s;">
-        <button id="ai-chat-send" style="background:linear-gradient(135deg, #6366f1 0%, #a855f7 100%);border:none;color:#fff;width:48px;height:48px;border-radius:12px;cursor:pointer;font-size:16px;flex-shrink:0;box-shadow:0 4px 12px rgba(99,102,241,0.3);transition:transform 0.2s ease;">
-            <i class="fa-solid fa-paper-plane"></i>
-        </button>
-    </div>
-</div>
-
-<script>
-    const API = '/api';
-    let _token = null;
-    try { _token = localStorage.getItem('token'); } catch(e) {}
-
-    // Server ping
-    (function() {
-        var overlay = document.getElementById('wake-overlay');
-        function tryPing() {
-            fetch(API + '/ping').then(function(r) {
-                if (r.ok) { overlay.classList.remove('on'); }
-                else { overlay.classList.add('on'); setTimeout(tryPing, 2000); }
-            }).catch(function() {
-                overlay.classList.add('on');
-                setTimeout(tryPing, 2000);
-            });
-        }
-        tryPing();
-    })();
-
-    // Auth module
-    var AUTH = (function() {
-
-        function setAlert(id, msg, type) {
-            var el = document.getElementById(id);
-            if (!el) return;
-            el.className = 'aalert show ' + (type === 'err' ? 'err' : 'ok');
-            el.innerHTML = (type === 'err' ? '⚠️ ' : '✅ ') + msg;
-        }
-        function clearAlert(id) {
-            var el = document.getElementById(id);
-            if (el) { el.className = 'aalert'; el.textContent = ''; }
-        }
-        function show(id) { var el = document.getElementById(id); if (el) el.classList.remove('hidden'); }
-        function hide(id) { var el = document.getElementById(id); if (el) el.classList.add('hidden'); }
-
-        function showLogin() {
-            show('form-login'); hide('form-signup'); hide('verify-box'); hide('forgot-box');
-            document.getElementById('tab-login').classList.add('active');
-            document.getElementById('tab-signup').classList.remove('active');
-        }
-        function showSignup() {
-            hide('form-login'); show('form-signup'); hide('verify-box'); hide('forgot-box');
-            document.getElementById('tab-login').classList.remove('active');
-            document.getElementById('tab-signup').classList.add('active');
-        }
-        function showForgot() {
-            hide('form-login'); hide('form-signup'); hide('verify-box'); show('forgot-box');
-        }
-
-        function onLoginSuccess(data) {
-            _token = data.access_token;
-            try {
-                localStorage.setItem('token', _token);
-                localStorage.setItem('is_admin', data.is_admin ? 'true' : 'false');
-            } catch(e) {}
-            document.getElementById('auth-page').classList.add('hidden');
-            document.getElementById('app-page').classList.add('on');
-            if (data.is_admin) { 
-                var n = document.getElementById('nav-admin'); if (n) n.style.display = 'flex'; 
-                var edc = document.getElementById('admin-email-delivery-card'); if (edc) edc.style.display = 'block';
-            }
-            if (typeof window.APP_INIT === 'function') window.APP_INIT();
-        }
-
-        async function doLogin() {
-            var email = (document.getElementById('login-email') || {}).value || '';
-            var pass = (document.getElementById('login-pass') || {}).value || '';
-            clearAlert('login-alert');
-            if (!email.trim() || !pass) { setAlert('login-alert', 'Please fill in all fields.', 'err'); return; }
-            var btn = document.getElementById('login-btn');
-            btn.disabled = true; btn.textContent = 'Signing in...';
-            try {
-                var body = new URLSearchParams();
-                body.append('username', email.trim());
-                body.append('password', pass);
-                var res = await fetch(API + '/auth/token', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: body
-                });
-                var data = await res.json();
-                if (res.ok) { onLoginSuccess(data); }
-                else { setAlert('login-alert', data.detail || 'Wrong email or password.', 'err'); }
-            } catch(e) { setAlert('login-alert', 'Connection error. Try again.', 'err'); }
-            btn.disabled = false; btn.textContent = 'Sign In';
-        }
-
-        async function doSignup() {
-            var email = (document.getElementById('signup-email') || {}).value || '';
-            var pass = (document.getElementById('signup-pass') || {}).value || '';
-            var pass2 = (document.getElementById('signup-pass2') || {}).value || '';
-            clearAlert('signup-alert');
-            if (!email.trim() || !pass) { setAlert('signup-alert', 'Please fill in all fields.', 'err'); return; }
-            if (pass !== pass2) { setAlert('signup-alert', 'Passwords do not match.', 'err'); return; }
-            if (pass.length < 6) { setAlert('signup-alert', 'Password must be at least 6 characters.', 'err'); return; }
-            var btn = document.getElementById('signup-btn');
-            btn.disabled = true; btn.textContent = 'Creating...';
-            try {
-                var res = await fetch(API + '/auth/register', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: email.trim(), password: pass })
-                });
-                var data = await res.json();
-                if (res.ok) {
-                    if (data.status === 'needs_verification') {
-                        window._verifyEmail = email.trim();
-                        hide('form-signup'); show('verify-box');
-                    } else if (data.status === 'needs_approval') {
-                        setAlert('signup-alert', data.message || 'Account created! Waiting for admin approval.', 'ok');
-                        setTimeout(function(){ showLogin(); }, 2500);
-                    } else { onLoginSuccess(data); }
-                } else { setAlert('signup-alert', data.detail || 'Registration failed.', 'err'); }
-            } catch(e) { setAlert('signup-alert', 'Connection error. Please try again.', 'err'); }
-            btn.disabled = false; btn.textContent = 'Create Account';
-        }
-
-        async function doVerify() {
-            var code = (document.getElementById('verify-code') || {}).value || '';
-            var email = window._verifyEmail || '';
-            if (!code || code.length < 6) { setAlert('verify-alert', 'Enter the 6-digit code.', 'err'); return; }
-            var btn = document.getElementById('verify-btn');
-            btn.disabled = true; btn.textContent = 'Verifying...';
-            try {
-                var res = await fetch(API + '/auth/verify', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: email, code: code })
-                });
-                var data = await res.json();
-                if (res.ok) { onLoginSuccess(data); }
-                else { setAlert('verify-alert', data.detail || 'Invalid code.', 'err'); }
-            } catch(e) { setAlert('verify-alert', 'Connection error.', 'err'); }
-            btn.disabled = false; btn.textContent = 'Verify Account';
-        }
-
-        async function sendReset() {
-            var email = (document.getElementById('forgot-email') || {}).value || '';
-            clearAlert('forgot-alert');
-            if (!email) { setAlert('forgot-alert', 'Enter your email address.', 'err'); return; }
-            var btn = document.getElementById('forgot-btn');
-            btn.disabled = true; btn.textContent = 'Sending...';
-            try {
-                var res = await fetch(API + '/auth/forgot-password', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: email })
-                });
-                var data = await res.json();
-                if (res.ok) {
-                    document.getElementById('forgot-step1').classList.add('hidden');
-                    document.getElementById('forgot-step2').classList.remove('hidden');
-                    setAlert('forgot-alert', 'Code sent! Check your inbox.', 'ok');
-                    window._resetEmail = email;
-                } else { setAlert('forgot-alert', data.detail || 'Error sending code.', 'err'); }
-            } catch(e) { setAlert('forgot-alert', 'Connection error.', 'err'); }
-            btn.disabled = false; btn.textContent = 'Send Reset Code';
-        }
-
-        async function doReset() {
-            var code = (document.getElementById('reset-code') || {}).value || '';
-            var newPass = (document.getElementById('new-pass') || {}).value || '';
-            clearAlert('forgot-alert');
-            if (!code || !newPass) { setAlert('forgot-alert', 'Fill in all fields.', 'err'); return; }
-            if (newPass.length < 6) { setAlert('forgot-alert', 'Password must be 6+ characters.', 'err'); return; }
-            var btn = document.getElementById('reset-btn');
-            btn.disabled = true; btn.textContent = 'Resetting...';
-            try {
-                var res = await fetch(API + '/auth/reset-password', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: window._resetEmail, code: code, new_password: newPass })
-                });
-                var data = await res.json();
-                if (res.ok) {
-                    setAlert('forgot-alert', 'Password reset! Please log in.', 'ok');
-                    setTimeout(function(){ showLogin(); }, 2000);
-                } else { setAlert('forgot-alert', data.detail || 'Reset failed.', 'err'); }
-            } catch(e) { setAlert('forgot-alert', 'Connection error.', 'err'); }
-            btn.disabled = false; btn.textContent = 'Reset Password';
-        }
-
-        return { showLogin: showLogin, showSignup: showSignup, showForgot: showForgot, doLogin: doLogin, doSignup: doSignup, doVerify: doVerify, sendReset: sendReset, doReset: doReset };
-    })();
-
-    // Auto-login if token exists
-    document.addEventListener('DOMContentLoaded', function() {
-        if (_token) {
-            document.getElementById('auth-page').classList.add('hidden');
-            document.getElementById('app-page').classList.add('on');
-            var isAdmin = false;
-            try { isAdmin = localStorage.getItem('is_admin') === 'true'; } catch(e) {}
-            if (isAdmin) { 
-                var n = document.getElementById('nav-admin'); if (n) n.style.display = 'flex'; 
-                var edc = document.getElementById('admin-email-delivery-card'); if (edc) edc.style.display = 'block';
-            }
-            if (typeof window.APP_INIT === 'function') window.APP_INIT();
-        }
-    });
-</script>
-
-    <script src="assets/templates.js?v=1784052486"></script>
-    <script src="assets/app_v2.js?v=1784052486"></script>
-    <script src="assets/sending_accounts.js?v=1784052486"></script>
-    <script src="assets/ai_features.js?v=1784052486"></script>
-    <script src="assets/deliverability_v2.js?v=1784052486"></script>
-
-
-
-    <!-- Mobile Menu Button -->
-    <button class="mobile-menu-btn" id="mobile-menu-btn" onclick="window.toggleMobileMenu()" aria-label="Open menu">
-        <i class="fa-solid fa-bars"></i>
-    </button>
-    <!-- Sidebar Overlay -->
-    <div class="sidebar-overlay" id="sidebar-overlay" onclick="window.toggleMobileMenu()"></div>
-    <!-- Preflight Modal -->
-    <div id="preflight-modal" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.7); z-index:99999; flex-direction:column; align-items:center; justify-content:center; padding:24px; backdrop-filter: blur(8px);">
-        <div class="card" style="width:100%; max-width:550px; padding:32px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);">
-            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px;">
-                <h2 style="font-size:22px; font-weight:800; background: linear-gradient(135deg, #4f46e5 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Deliverability Optimizer <i class="fa-solid fa-plane-departure" style="color:var(--p); margin-left:8px;"></i></h2>
-                <span style="background:rgba(16,185,129,0.1); color:#10b981; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:700;"><i class="fa-solid fa-bullseye"></i> 99% Inbox Target</span>
-            </div>
-            <p style="color:var(--text-muted); margin-bottom:24px; font-size:14px; line-height:1.6;">We are performing a deep scan of your email content (Spam words, HTML ratio, broken links) and checking MX records to ensure maximum inbox placement.</p>
-            
-            <div id="preflight-loading" style="display:flex; flex-direction:column; align-items:center; gap:16px; margin-bottom:24px; padding: 32px; background:var(--surface); border-radius:12px; border: 1px dashed var(--border);">
-                <div class="spin" style="width:40px; height:40px; border:4px solid #e2e8f0; border-top-color:#4f46e5; border-radius:50%; animation:spin 0.8s linear infinite;"></div>
-                <span style="font-size:15px; font-weight:600; color:var(--text);">Analyzing content & verifying leads...</span>
-            </div>
-            
-            <div id="preflight-results" style="display:none; background:var(--surface); border-radius:12px; padding:20px; border:1px solid var(--border); margin-bottom:24px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid var(--border);">
-                    <span style="font-weight:700; color:var(--text);">Spam Score</span>
-                    <span id="preflight-score" style="font-weight:800; font-size:22px; color:var(--p);">10/10</span>
-                </div>
-                
-                <div id="preflight-warnings" style="margin-bottom:24px; font-size:14px; color:#ef4444;">
-                    <!-- Warnings go here -->
-                </div>
-                
-                <div style="display:flex; gap:12px; justify-content:flex-end;">
-                    <button class="btn" onclick="document.getElementById('preflight-modal').style.display='none'">Cancel</button>
-                    <button class="btn primary" id="btn-preflight-confirm" onclick="confirmPreflightSend()">Confirm & Send</button>
-                </div>
+            <div style="padding:16px 24px;background:#f8fafc;border-top:1px solid var(--border);border-bottom-left-radius:12px;border-bottom-right-radius:12px;display:flex;gap:12px;justify-content:flex-end;">
+                <button id="confirm-modal-cancel" class="btn" style="flex:1;">Cancel</button>
+                <button id="confirm-modal-ok" class="btn" style="flex:1;background:#dc2626;color:#fff;border-color:#dc2626;">Confirm</button>
             </div>
         </div>
     </div>
@@ -3015,5 +2739,36 @@
         </div>
     </div>
 
+    <!-- Command Palette -->
+    <div id="command-palette" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.8);z-index:99999;align-items:flex-start;justify-content:center;padding-top:10vh;backdrop-filter:blur(8px);">
+        <div style="background:var(--surface);width:600px;max-width:90%;border-radius:12px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);overflow:hidden;border:1px solid rgba(255,255,255,0.1);display:flex;flex-direction:column;">
+            <div style="padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;">
+                <i class="fa-solid fa-magnifying-glass" style="color:var(--text-muted);font-size:18px;"></i>
+                <input type="text" id="command-input" placeholder="Search campaigns, jump to pages, or run commands..." style="flex:1;background:transparent;border:none;color:var(--text);font-size:16px;outline:none;font-family:var(--font);">
+                <span style="font-size:12px;font-weight:600;color:var(--text-muted);background:var(--surface-1);padding:4px 8px;border-radius:4px;">ESC</span>
+            </div>
+            <div id="command-results" style="max-height:400px;overflow-y:auto;padding:8px 0;">
+                <!-- Results populate here -->
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
+
+<!-- ONBOARDING WIZARD MODAL -->
+<div id="onboarding-wizard-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); backdrop-filter:blur(4px); z-index:9999; align-items:center; justify-content:center;">
+    <div class="glass" style="width:100%; max-width:500px; padding:32px; border-radius:24px; position:relative;">
+        <div style="text-align:center; margin-bottom:24px;">
+            <div style="width:64px; height:64px; background:linear-gradient(135deg, #3b82f6, #8b5cf6); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:28px; margin:0 auto 16px auto; box-shadow:0 8px 16px rgba(59,130,246,0.3);"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+            <h2 style="font-size:24px; font-weight:800; margin-bottom:8px;">Welcome to XComic</h2>
+            <p style="color:var(--text-muted); font-size:15px;">Let's get you set up to send your first campaign.</p>
+        </div>
+        
+        <div style="display:flex; flex-direction:column; gap:16px;">
+            <button onclick="document.getElementById('onboarding-wizard-modal').style.display='none'; navTo('settings');" class="btn primary" style="width:100%; padding:16px; font-size:16px;"><i class="fa-solid fa-envelope-circle-check"></i> Connect Sending Account</button>
+            <button onclick="document.getElementById('onboarding-wizard-modal').style.display='none';" class="btn" style="width:100%; padding:16px; font-size:16px; background:#f8fafc; border:1px solid var(--border);">I'll do it later</button>
+        </div>
+    </div>
+</div>
+

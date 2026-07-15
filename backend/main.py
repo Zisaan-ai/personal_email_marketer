@@ -1861,11 +1861,11 @@ class DeepSeekKeyRequest(BaseModel):
 @app.get("/api/settings")
 def get_settings(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     return {
-        "gemini_api_key": current_user.gemini_api_key or "",
-        "groq_api_key": current_user.groq_api_key or "",
-        "openai_api_key": current_user.openai_api_key or "",
-        "anthropic_api_key": current_user.anthropic_api_key or "",
-        "deepseek_api_key": current_user.deepseek_api_key or "",
+        "has_gemini_api_key": bool(current_user.gemini_api_key),
+        "has_groq_api_key": bool(current_user.groq_api_key),
+        "has_openai_api_key": bool(current_user.openai_api_key),
+        "has_anthropic_api_key": bool(current_user.anthropic_api_key),
+        "has_deepseek_api_key": bool(current_user.deepseek_api_key),
     }
 
 @app.post("/api/settings/gemini")
@@ -1931,9 +1931,11 @@ def get_unsubscribes(current_user: database.User = Depends(auth.get_current_user
 @app.get('/api/bounces')
 def get_bounces(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     # BUG FIX: return serializable dicts
-    bounces = db.query(database.CampaignLead).filter(database.CampaignLead.status == 'bounced').all()
+    bounces = db.query(database.CampaignLead).join(database.Campaign).filter(
+        database.CampaignLead.status == 'bounced',
+        database.Campaign.user_id == str(current_user.id)
+    ).all()
     return [{"email": l.email, "campaign_id": l.campaign_id, "name": l.name} for l in bounces]
-
 
 
 

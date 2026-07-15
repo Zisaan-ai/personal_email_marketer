@@ -212,12 +212,10 @@ def suggest_warmup_limit(account) -> int:
         age_days = 999
         
     limit = 5
-    if age_days >= 30:
-        limit = 40
-    elif age_days >= 14:
-        limit = 30
-    elif age_days >= 7:
+    if age_days >= 14:
         limit = 20
+    elif age_days >= 7:
+        limit = 15
     elif age_days >= 3:
         limit = 10
         

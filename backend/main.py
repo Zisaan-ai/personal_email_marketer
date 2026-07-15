@@ -131,16 +131,20 @@ def _scheduler_start_scheduled_campaigns():
     try:
         from datetime import datetime
         now = datetime.utcnow()
-        campaigns = db.query(database.Campaign).filter(database.Campaign.status == "scheduled").all()
+        campaigns = db.query(database.Campaign).filter(database.Campaign.status.in_(["scheduled", "processing"])).all()
         for c in campaigns:
             if c.scheduled_at and now < c.scheduled_at:
                 continue
             if is_campaign_within_schedule(c):
                 from sqlalchemy import text
-                res = db.execute(text("UPDATE campaigns SET status='processing' WHERE id=:id AND status='scheduled'"), {"id": str(c.id)})
-                db.commit()
-                if res.rowcount > 0:
-                    print(f"Scheduler starting campaign {c.id}")
+                if c.status == "scheduled":
+                    res = db.execute(text("UPDATE campaigns SET status='processing' WHERE id=:id AND status='scheduled'"), {"id": str(c.id)})
+                    db.commit()
+                    if res.rowcount > 0:
+                        print(f"Scheduler starting campaign {c.id}")
+                        import threading
+                        threading.Thread(target=process_isolated_campaign, args=(str(c.id),)).start()
+                elif c.status == "processing":
                     import threading
                     threading.Thread(target=process_isolated_campaign, args=(str(c.id),)).start()
     finally:

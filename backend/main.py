@@ -1255,7 +1255,6 @@ def _run_campaign(db, campaign_id):
             if (time.time() - start_time + delay > 50) or (delay > 45):
                 c = db.query(database.Campaign).filter(database.Campaign.id == campaign_id).first()
                 if c:
-                    from datetime import datetime, timedelta
                     c.scheduled_at = datetime.utcnow() + timedelta(seconds=delay)
                     db.commit()
                 break
@@ -1274,7 +1273,6 @@ def _run_campaign(db, campaign_id):
             if (time.time() - start_time + delay > 50) or (delay > 45):
                 c = db.query(database.Campaign).filter(database.Campaign.id == campaign_id).first()
                 if c:
-                    from datetime import datetime, timedelta
                     c.scheduled_at = datetime.utcnow() + timedelta(seconds=delay)
                     db.commit()
                 break
@@ -2210,12 +2208,14 @@ def reset_my_stats(db: Session = Depends(database.get_db)):
     db.commit()
     return {"status": "success", "msg": "Stats reset to 0 for all accounts"}
 
-@app.get('/api/fix-invalid-leads')
-def fix_invalid_leads(db: Session = Depends(database.get_db)):
+@app.get("/api/admin/clean-leads")
+def clean_invalid_leads(db: Session = Depends(database.get_db)):
     try:
-        updated = db.query(database.CampaignLead).filter(database.CampaignLead.status == 'invalid').update({'status': 'pending'})
+        updated_invalid = db.query(database.CampaignLead).filter(database.CampaignLead.status == 'invalid').update({'status': 'pending'})
+        updated_bounced = db.query(database.CampaignLead).filter(database.CampaignLead.status.like('bounced: cannot access free variable%')).update({'status': 'pending'})
+        updated_bounced += db.query(database.CampaignLead).filter(database.CampaignLead.status.like('bounced: cannot access local variable%')).update({'status': 'pending'})
         db.commit()
-        return {'message': f'Fixed {updated} leads'}
+        return {'message': f'Fixed {updated_invalid} invalid leads and {updated_bounced} bounced leads'}
     except Exception as e:
         return {'error': str(e)}
 

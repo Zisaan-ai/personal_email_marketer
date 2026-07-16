@@ -30,6 +30,9 @@ def application(environ, start_response):
     
     # Extract path and query string
     path = environ.get('PATH_INFO', '/')
+    if not path.startswith('/api'):
+        path = '/api' + (path if path.startswith('/') else '/' + path)
+        
     qs = environ.get('QUERY_STRING', '')
     if qs:
         path += '?' + qs

@@ -20,7 +20,8 @@ def ensure_uvicorn_running():
     except:
         pass
         
-    os.system('nohup python -m uvicorn main:app --host 127.0.0.1 --port 47300 --workers 1 > uvicorn.log 2>&1 &')
+    import sys
+    os.system(f'nohup {sys.executable} -m uvicorn main:app --host 127.0.0.1 --port 47300 --workers 1 > uvicorn.log 2>&1 &')
 
 # The actual WSGI application is just a proxy
 def application(environ, start_response):

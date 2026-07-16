@@ -489,7 +489,7 @@ def _increment_warmup_count(account_id: str, count: int = 1):
         ).first()
         if db_acc:
             db_acc.warmup_sent_today = (db_acc.warmup_sent_today or 0) + count
-            db_acc.warmup_total_sent = (db_acc.warmup_total_sent or 0) + count
+            # db_acc.warmup_total_sent does not exist in db model
             db_acc.health_score = health_monitor.calculate_health_score(db_acc)
             db_write.commit()
     except Exception as e:

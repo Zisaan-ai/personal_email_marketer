@@ -1,0 +1,1445 @@
+AWSTATS DATA FILE 8.0 (build 20240604)
+# If you remove this file, all statistics for date 202606 will be lost/reset.
+# Last config file used to build this data file was /home/terapkco/tmp/awstats/awstats.short.terapk.com.conf.
+
+# Position (offset in bytes) in this file for beginning of each section for
+# direct I/O access. If you made changes somewhere in this file, you should
+# also remove completely the MAP section (AWStats will rewrite it at next
+# update).
+BEGIN_MAP 28
+POS_GENERAL 2084                
+POS_TIME 2753                
+POS_VISITOR 24744               
+POS_DAY 25280               
+POS_DOMAIN 3385                
+POS_LOGIN 3667                
+POS_ROBOT 3822                
+POS_WORMS 4336                
+POS_EMAILSENDER 4467                
+POS_EMAILRECEIVER 4610                
+POS_SESSION 25510               
+POS_FILESIZE 29251               
+POS_REQUESTTIME 29395               
+POS_SIDER 25657               
+POS_FILETYPES 4745                
+POS_DOWNLOADS 5003                
+POS_OS 5229                
+POS_BROWSER 5904                
+POS_SCREENSIZE 7987                
+POS_UNKNOWNREFERER 8061                
+POS_UNKNOWNREFERERBROWSER 8774                
+POS_ORIGIN 9030                
+POS_SEREFERRALS 9165                
+POS_PAGEREFS 9309                
+POS_SEARCHWORDS 9484                
+POS_KEYWORDS 9636                
+POS_MISC 2416                
+POS_ERRORS 9695                
+POS_CLUSTER 3523                
+POS_SIDER_404 9821                
+END_MAP
+
+# LastLine    = Date of last record processed - Last record line number in last log - Last record offset in last log - Last record signature value
+# FirstTime   = Date of first visit for history file
+# LastTime    = Date of last visit for history file
+# LastUpdate  = Date of last update - Nb of parsed records - Nb of parsed old records - Nb of parsed new records - Nb of parsed corrupted - Nb of parsed dropped
+# TotalVisits = Number of visits
+# TotalUnique = Number of unique visitors
+# MonthHostsKnown   = Number of hosts known
+# MonthHostsUnKnown = Number of hosts unknown
+BEGIN_GENERAL 8
+LastLine 20260701074641 173 15977 7664310659719
+FirstTime 0
+LastTime 20260630034024
+LastUpdate 20260701130731 173 0 172 0 0
+TotalVisits 14                  
+TotalUnique 12                  
+MonthHostsKnown 0                   
+MonthHostsUnknown 12                  
+END_GENERAL
+
+# Misc ID - Pages - Hits - Bandwidth
+BEGIN_MISC 10
+WindowsMediaPlayerSupport 0 0 0
+PDFSupport 0 0 0
+JavaEnabled 0 0 0
+AddToFavourites 0 11 0
+QuickTimeSupport 0 0 0
+TotalMisc 0 0 0
+DirectorSupport 0 0 0
+FlashSupport 0 0 0
+JavascriptDisabled 0 0 0
+RealPlayerSupport 0 0 0
+END_MISC
+
+# Hour - Pages - Hits - Bandwidth - Not viewed Pages - Not viewed Hits - Not viewed Bandwidth
+BEGIN_TIME 24
+0 4 4 60627 248 253 668810
+1 0 0 0 4 4 0
+2 1 1 28474 29 29 26382
+3 2 13 131689 29 30 26580
+4 0 0 0 187 187 468383
+5 132 141 0 15 17 396
+6 0 0 0 2 2 0
+7 11 17 28474 32 33 26580
+8 1 1 25613 35 40 42225
+9 0 0 0 5 6 198
+10 0 0 0 4 7 2752
+11 0 0 0 165 166 444326
+12 0 0 0 4 4 0
+13 0 0 0 2 4 2738
+14 0 0 0 289 291 781912
+15 0 0 0 6 7 14
+16 0 0 0 177 179 466806
+17 0 0 0 157 159 415575
+18 0 0 0 5 6 2498
+19 1 1 3261 5 6 198
+20 0 0 0 4 4 0
+21 0 0 0 315 316 941497
+22 3 3 9795 308 309 830568
+23 0 0 0 43 43 115898
+END_TIME
+
+# Domain - Pages - Hits - Bandwidth
+# The 25 first Pages must be first (order not required for others)
+BEGIN_DOMAIN 5
+us 149 164 48055
+bg 2 2 51241
+gb 2 2 56950
+au 1 1 28474
+vn 1 12 103213
+END_DOMAIN
+
+# Cluster ID - Pages - Hits - Bandwidth
+BEGIN_CLUSTER 0
+END_CLUSTER
+
+# Login - Pages - Hits - Bandwidth - Last visit
+# The 10 first Pages must be first (order not required for others)
+BEGIN_LOGIN 0
+END_LOGIN
+
+# Robot ID - Hits - Bandwidth - Last visit - Hits on robots.txt
+# The 25 first Hits must be first (order not required for others)
+BEGIN_ROBOT 11
+(firefox/)([0-9]\.|[0-1][0]\.) 7 0 20260609052335 0
+MJ12bot/ 4 56 20260629154143 4
+unknown 2 28 20260619171216 2
+no_user_agent 2 198635 20260615214447 0
+Googlebot\-News 1 0 20260609052334 0
+Konqueror/ 1 0 20260609052334 0
+Jigsaw/ 1 0 20260609052334 0
+Applebot/ 1 14 20260611181945 1
+link 1 0 20260609052334 0
+W3C_Validator/ 1 0 20260609052334 0
+ELinks[\x20]\( 1 0 20260609052335 0
+END_ROBOT
+
+# Worm ID - Hits - Bandwidth - Last visit
+# The 5 first Hits must be first (order not required for others)
+BEGIN_WORMS 0
+END_WORMS
+
+# EMail - Hits - Bandwidth - Last visit
+# The 20 first Hits must be first (order not required for others)
+BEGIN_EMAILSENDER 0
+END_EMAILSENDER
+
+# EMail - Hits - Bandwidth - Last visit
+# The 20 first hits must be first (order not required for others)
+BEGIN_EMAILRECEIVER 0
+END_EMAILRECEIVER
+
+# Files type - Hits - Bandwidth - Bandwidth without compression - Bandwidth after compression
+BEGIN_FILETYPES 14
+css 5 46411 0 0
+json 40 0 0 0
+yml 23 0 0 0
+ini 2 0 0 0
+gz 4 0 0 0
+py 1 0 0 0
+sql 20 0 0 0
+yaml 9 0 0 0
+php 21 165143 0 0
+zip 9 0 0 0
+bz2 1 0 0 0
+env 2 0 0 0
+js 7 53534 0 0
+Unknown 37 22845 0 0
+END_FILETYPES
+
+# Downloads - Hits - Bandwidth
+BEGIN_DOWNLOADS 10
+/dump.sql.gz 2 0 0
+/dump.zip 2 0 0
+/db.zip 2 0 0
+/www.zip 2 0 0
+/backup.sql.gz 1 0 0
+/web.zip 1 0 0
+/backup.zip 1 0 0
+/backup.tar.gz 1 0 0
+/backup.tar.bz2 1 0 0
+/site.zip 1 0 0
+END_DOWNLOADS
+
+# OS ID - Hits
+BEGIN_OS ID - Hits - Pages 44
+win8 1 1
+androidhoneycomb 1 1
+linux 11 8
+irix 1 1
+androiddonut 1 1
+win10 23 12
+winlong 1 1
+androidkitkat 2 1
+androidmarshmallow 1 1
+android 2 1
+androideclair 1 0
+macosx6 2 2
+androidnougat 7 6
+Unknown 12 12
+win2003 1 0
+win7 18 17
+j2me 1 1
+palmos 1 1
+macosx7 1 1
+ios_ipad 2 1
+blackberry 1 1
+linuxubuntu 6 6
+ios_iphone 6 6
+androidoreo 1 1
+macosx4 1 0
+androidics 1 1
+macosx13 1 1
+linuxcentos 1 1
+androidlollipop 1 1
+androidpie 26 26
+winxp 2 2
+macosx12 2 2
+beos 2 2
+winme 1 1
+win8.1 3 3
+symbian 1 1
+macosx14 14 10
+macosx10 12 12
+bsdfreebsd 1 1
+os/2 2 2
+bsdnetbsd 2 2
+macosx15 1 1
+androidcupcake 2 2
+bsdopenbsd 1 1
+END_OS
+
+# Browser ID - Hits - Pages
+BEGIN_BROWSER 103
+chrome131.0.0.0 1 1
+chrome14.0.835.186 1 1
+opera8.01 1 1
+firefox16.0 1 1
+sonyericsson 2 2
+chrome76.0.3809.87 2 2
+seamonkey 2 2
+chrome72.0.3626.121 1 1
+chrome55.0.2883.87 1 1
+itunes 1 1
+safari8.0 6 6
+chrome76.0.3809.111 14 14
+Unknown 5 5
+chrome74.0.3729.108 2 2
+chrome76.0.3809.100 6 6
+firefox45.0 1 1
+chrome72.0.3626.81 2 2
+safari10.0 1 1
+safari12.1.1 2 0
+chrome9.1.0.0 1 1
+minefield 2 2
+chrome75.0.3770.142 3 2
+firefox11.0 1 0
+chrome36.0.1985.135 1 1
+chrome62.0.3202.94 1 1
+firefox21.0 1 0
+chrome51.0.2704.81 1 0
+chrome78.0.3881.0 1 1
+netscape4.0 1 1
+chrome13.0.782.41 1 0
+chrome60.0.3112.107 1 1
+chrome75.0.3770.101 2 2
+msie10.6 2 2
+opera12.16 1 0
+chrome65.0.3325.162 1 1
+chrome73.0.3683.75 2 2
+safari2.0.1 1 1
+chrome74.0.3729.157 4 4
+chrome66.0.3359.126 3 3
+opera11.00 1 0
+chrome71.0.3578.141 1 1
+netscape4.77 1 1
+chrome77.0.3865.18 1 1
+firefox20.0 1 1
+safari17.6 1 1
+chrome51.0.2704.106 1 0
+msie5.5 1 1
+safari7.2.1.0 1 1
+chrome42.0.2311.111 1 1
+chrome55.0.2859.0 1 1
+chrome74.0.3729.169 2 2
+safari7.0 1 1
+chrome53.0.2785.124 1 1
+netscape5.0 4 4
+chrome78.0.3882.0 1 0
+chrome36.0.1985.125 1 1
+chrome149.0.0.0 12 1
+firefox68.0 1 1
+chrome74.0.3729.136 1 1
+chrome11.0.696.65 1 1
+firefox36.0 1 1
+chrome73.0.3683.86 2 2
+chrome56.0.2924.76 1 0
+chrome75.0.3770.100 1 1
+nokia 2 2
+chrome49.0.2623.87 1 1
+chrome38.0.2125.102 1 1
+msie7.0 1 1
+chrome10.0.613.0 1 1
+firefox38.0 1 1
+chrome77.0.3844.0 1 1
+chrome74.0.3729.131 2 2
+chrome52.0.2743.116 1 1
+safari6.0.0.141 1 1
+chrome70.0.3538.25 2 2
+mozilla 2 2
+safari 5 4
+chrome63.0.3239.132 1 1
+chrome77.0.3865.42 1 1
+firefox31.0 1 1
+android 5 4
+chrome59.0.3071.125 1 1
+msie11.0 1 1
+chrome63.0.3239.108 1 1
+chrome10.0.601.0 1 1
+chrome58.0.3029.110 1 1
+chrome75.0.3770.90 1 1
+firefox14.0.1 1 1
+chrome4.0.207.0 1 1
+chrome64.0.3282.119 1 1
+chrome57.0.2987.108 1 0
+opera60.0.3255.170 1 1
+safari8.0.8 1 1
+chrome67.0.3396.87 3 3
+iphone 2 2
+chrome76.0.3809.132 1 1
+chrome51.0.2704.79 1 1
+firefox30.0 1 1
+safari5.0 1 1
+chrome78.0.3875.0 1 1
+chrome76.0.3809.89 1 1
+chrome75.0.3770.143 4 4
+firefox35.0 1 1
+END_BROWSER
+
+# Screen size - Hits
+BEGIN_SCREENSIZE 0
+END_SCREENSIZE
+
+# Unknown referer OS - Last visit date
+BEGIN_UNKNOWNREFERER 9
+Web_Downloader/6.9 20260609052333
+Mozilla/5.0_(l9scan/2.0.435313e21313e2533323e2736313;__https://leakix.net) 20260630021118
+Mozilla/5.0_(PlayBook;_U;_RIM_Tablet_OS_2.1.0;_en-US)_AppleWebKit/536.2__(KHTML_like_Gecko)_Version/7.2.1.0_Safari/536.2_ 20260609052333
+Adobe_Application_Manager_2.0 20260609052334
+Facebot 20260609052334
+SonyEricssonT650i/R7AA_Browser/NetFront/3.3_Profile/MIDP-2.0_Configuration/CLDC-1.1 20260609052335
+NokiaN73-1/3.0649.0.0.1_Series60/3.0_Profile/MIDP2.0_Configuration/CLDC-1.1 20260609052334
+SearchExpress 20260609052334
+Nokia6230i/2.0_(03.80)_Profile/MIDP-2.0_Configuration/CLDC-1.1 20260609052333
+END_UNKNOWNREFERER
+
+# Unknown referer Browser - Last visit date
+BEGIN_UNKNOWNREFERERBROWSER 5
+Adobe_Application_Manager_2.0 20260609052334
+NetSurf/1.2_(NetBSD;_amd64) 20260609052334
+Facebot 20260609052334
+SearchExpress 20260609052334
+Web_Downloader/6.9 20260609052333
+END_UNKNOWNREFERERBROWSER
+
+# Origin - Pages - Hits 
+BEGIN_ORIGIN 6
+From0 152 167
+From1 0 0
+From2 0 0
+From3 1 1
+From4 2 13
+From5 0 0
+END_ORIGIN
+
+# Search engine referers ID - Pages - Hits
+BEGIN_SEREFERRALS 0
+END_SEREFERRALS
+
+# External page referers - Pages - Hits
+# The 25 first Pages must be first (order not required for others)
+BEGIN_PAGEREFS 1
+https://l.facebook.com 1 1
+END_PAGEREFS
+
+# Search keyphrases - Number of search
+# The 10 first number of search must be first (order not required for others)
+BEGIN_SEARCHWORDS 0
+END_SEARCHWORDS
+
+# Search keywords - Number of search
+# The 25 first number of search must be first (order not required for others)
+BEGIN_KEYWORDS 0
+END_KEYWORDS
+
+# Errors - Hits - Bandwidth
+BEGIN_ERRORS 4
+500 8 6400
+403 24 20532
+301 98 0
+404 1939 5036493
+END_ERRORS
+
+# URL with 404 errors - Hits - Last URL referrer
+BEGIN_SIDER_404 845
+/wp-includes/sodium_compat/ 2 -
+/sadcut1.php 4 -
+/ws48.php 1 -
+/images/ 2 -
+/da.php 1 -
+/kuj8rl.php 1 -
+/htt.php 1 -
+/adm1in.php 1 -
+/.well-known/about.php 4 -
+/dejavu.php 3 -
+/php_info.php 2 http://short.terapk.com/
+/xmrlpc.php 1 -
+/wp-class.php 2 -
+/007.php 1 -
+/super.php 2 -
+/file61.php 4 -
+/blurbs.php 1 -
+/rithin.php 1 -
+/gk.php 1 -
+/min.php 1 -
+/wp-kd4xalrg7m.php 3 -
+/5BltUjE9CrY.php 2 -
+/Okxob.php 4 -
+/alr.php 2 -
+/2222.php 2 -
+/blog.php7 1 -
+/hur.php 3 -
+/pinfo.php 2 http://short.terapk.com/
+/xse.php 1 -
+/4PJcpMFsD8B.php 4 -
+/edit.php 5 -
+/phpinfo.php 3 http://short.terapk.com/
+/alpha.php 1 -
+/lolz.php 1 -
+/rrr.php 1 -
+/fileas.php 3 -
+/grsiuk.php 4 -
+/55.php 1 -
+/zt2.php 1 -
+/wm.php 1 -
+/pass4.php 4 -
+/wp-content/uploads/admin.php 3 -
+/wp-admin/css/bolt.php 1 -
+/x123.php 2 -
+/puc.php 4 -
+/we.php 1 -
+/seiso.php 3 -
+/w3llstore.php 1 -
+/wp-admin/css/index.php 1 -
+/w3lls.php 1 -
+//wp-content/admin.php 4 -
+/mas80.php 1 -
+/web.config 2 http://short.terapk.com/
+/wp-kikikoko.php 1 -
+/config.php 2 http://short.terapk.com/
+/configuration.php 2 http://short.terapk.com/
+/aevly.php 4 -
+/ww.php 1 -
+/file5.php 5 -
+/jatuh.php 1 -
+/phpinfo.php2 1 -
+/s-axi.php 2 -
+/bbn.php 1 -
+/bnm.php 1 -
+/file31.php 3 -
+/wpconf.php 6 -
+/explorer/index_.php 3 -
+/xxa.php 1 -
+/xl9.php 1 -
+//rip.php 1 -
+/cfile.php 4 -
+//wp-includes/css/dist/ 4 -
+/wp-omao.php 1 -
+/f35.php 5 -
+/mr.php 1 -
+/wert.php 1 -
+/122.php 2 -
+/snus.php 1 -
+/wp-admin/txets.php 1 -
+/api/graphql 4 -
+/wplink.php 1 -
+/wp-admin/admin-ajax.php 1 -
+/cvngrth.php 1 -
+/public/vx.php 1 -
+/ano.php 1 -
+/ms-themes.php 1 -
+//zwso.php 1 -
+/201.php 4 -
+/ta0ol.php 1 -
+//themes.php 4 -
+/meigui.php 1 -
+/bless11.php 3 -
+/wmore1.php 4 -
+/tk.php 1 -
+/waq.php 1 -
+/zo.php 1 -
+/8573.php 2 -
+/sapez.php 1 -
+/006.php 3 -
+/congeree.php 1 -
+/hplfuns.php 5 -
+/uploads/index.php 1 -
+/bless18.php 2 -
+/xltt.php 1 -
+/x7W.php 1 -
+/als.php 4 -
+/son1.php 1 -
+/444.php 1 -
+/gettest.php 5 -
+/wp-class-atom.php 1 -
+/wp-su.php 4 -
+/layout.php 1 -
+/xff.php 1 -
+/55l453.php 1 -
+/w2026.php 1 -
+/wp-file.php 1 -
+/prosell2.php 1 -
+/sgettt.php 1 -
+/asd.php 2 -
+/.well-known/index.php 1 -
+/green3.php 1 -
+/wp-wz.php 3 -
+/atomlib.php 5 -
+/doc.php 1 -
+/ponxnwapemsce.php 1 -
+/acp.php 2 -
+/invisi.php 2 -
+/app/config/parameters.yml 2 http://short.terapk.com/
+/favicon.php 3 -
+//xwpg.php 4 -
+/bx.php 1 -
+/novax.php 2 -
+/66.php 4 -
+/asu.php 2 -
+/xstelth.php 4 -
+/fallbackapi.php 1 -
+/crgio.php 9 -
+/rasse.php 1 -
+/test11.php 4 -
+/security.php 1 -
+/fs9.php 1 -
+//wp-includes/l10n/ 4 -
+/wehrman.php 3 -
+/1.php 10 -
+/app.php 3 -
+/aboute.php 2 -
+/a2.php 3 -
+/php8.php 1 -
+/ss.php 2 -
+/rujgeote.php 1 -
+/.gitconfig 2 http://short.terapk.com/
+/wp-Blogs.php 3 -
+/re.php 1 -
+/eetu.php 2 -
+/file58.php 2 -
+/7gt.php 1 -
+/trace.axd 4 -
+/wp-admin/css/colors/sunrise/ 4 -
+/sid3.php 5 -
+/cakr3xr4.php 2 -
+/dropdown.php 4 -
+/s.php 2 -
+/init.php 1 -
+/wpb.php 1 -
+/wp-links.php 4 -
+/xa.php 5 -
+/wp-includes/blocks/post-comments-form/ 4 -
+/wp-blogs.php 1 -
+/functions.php 2 http://short.terapk.com/
+/lv.php 3 -
+/admin.php 3 -
+/pucci.php 4 -
+/ingfo.php 4 -
+//autovirgi.php 1 -
+//a1.php 4 -
+/file11.php 2 -
+/FWAZ.php 1 -
+/.dela.php 1 -
+/bcft.php 1 -
+/co.php 1 -
+/bthil.php 8 -
+/wxpass.php 1 -
+/only.php 1 -
+/berlin.php 1 -
+/wp-upload.php 1 -
+/zvz89.php 1 -
+/config.js 2 http://short.terapk.com/
+/wp-png.php 4 -
+/wp-firewall.php 3 -
+/retu11.PhP7 1 -
+/mmn.php 1 -
+/dr.php 5 -
+/database.php 6 http://short.terapk.com/
+/pass.php 1 -
+//nurseling.php 1 -
+/plugins.php 1 -
+/wp-lvminl.php 2 -
+//sql.php 2 -
+/wp-act.php 4 -
+/misgrimmerly.php 1 -
+/plugin-install.php 1 -
+/wp.php 6 -
+/owrlfoa.php 1 -
+/fs.php 5 -
+/wee.php 1 -
+/x.php 9 -
+/ops.php 6 -
+/zoo.php 1 -
+/lupo.php 1 -
+/zoro.php 2 -
+/kolda.php 3 -
+/forbidals.php 3 -
+/Charles.php 1 -
+/wp-info.php 1 -
+/2.php 1 -
+/tires.php 7 -
+/debug/default/view 4 -
+/xqq.php 3 -
+/bob.php 4 -
+/xoot.php 3 -
+/profile.php 2 -
+/bal.php 4 -
+/acip.php 1 -
+/jj.php 5 -
+/bnn_.php 1 -
+/gifclass.php 2 -
+/file48.php 4 -
+/waf.php 4 -
+/db.php 5 http://short.terapk.com/
+/mini.php 6 -
+/1a.php 1 -
+/wp-content/ 4 -
+/xs.php 1 -
+/wp-content/plugins/index.php 1 -
+/gaza.php 1 -
+/wp-tivate.php 1 -
+/a5.php 6 -
+/test.php 3 http://short.terapk.com/
+/wp-gr.php 1 -
+/h2.php 1 -
+/hello.php 3 -
+/samll.php 8 -
+/bardbdze.php 1 -
+/wp-content/plugins/hellopress/wp_filemanager.php 16 -
+/file81.php 2 -
+/file30.php 3 -
+/byypas.php 1 -
+/green1.php 3 -
+/ppx.php 1 -
+/cobaini.php 1 -
+/zeal.php 1 -
+/yellow.php 3 -
+/xy.php 1 -
+/wp-content/uploads/ 6 -
+/hoeig.php 1 -
+/eee.php 4 -
+/press.php 1 -
+/adminfuns.php 1 -
+/nic.php 1 -
+/0okj.php 2 -
+/file.php 5 -
+/av.php 3 -
+/momo.php 2 -
+/pp.php 1 -
+/filemanager.php 1 -
+/bless5.php 4 -
+/wemanso.php7 1 -
+/afggdg.php 1 -
+/2026w.php 1 -
+/hg.php 4 -
+/app.js 2 http://short.terapk.com/
+/ms.php 5 -
+/ax.php 1 -
+/css/database.php 1 -
+/aq.php 1 -
+/wp-blink.php 1 -
+//adminfuns.php 4 -
+/ahax.php 2 -
+/bolt.php 3 -
+/shell.php 1 -
+/t3s.php 3 -
+/mah.php 1 -
+/wsc.php 1 -
+/8.php 7 -
+/bkyac.php 1 -
+/2468.php 1 -
+//min.php 2 -
+/06.php 3 -
+/docker-compose.yml 2 http://short.terapk.com/
+/abc.php 2 -
+//wp-admin/js/index.php 4 -
+/un.php 1 -
+/wp-der.php 3 -
+/v2/_catalog 4 -
+/ZSLeDE.php 1 -
+/obfuscate.php 2 -
+/xmu.php 1 -
+/amxloxxr.php 4 -
+/bgymj.php 6 -
+/console/ 4 -
+/wp-content/admin.php 4 -
+/export.php 1 -
+/ws80.php 2 -
+/bks12.php 1 -
+/about2.php 2 -
+/file60.php 1 -
+/cx.php 1 -
+/fff.php 5 -
+/wp-content/index.php 3 -
+/inputs.php 8 -
+/Jcrop.php 2 -
+/166.php 2 -
+/ssh3ll.php 1 -
+/tiny2.php 1 -
+/an8.php 1 -
+/fcnlp.php 1 -
+/son.php 1 -
+/yj09.php 1 -
+//f6.php 4 -
+/clas11.php 1 -
+/shoyo.php 1 -
+/biufile.php 3 -
+/mode.php 4 -
+/classwithtostring.php 6 -
+/jga.php 1 -
+/7logs.php 1 -
+/zo.php/itil.php 1 -
+/lib.php 4 -
+/shadow-bot.php 1 -
+/mh.php 1 -
+/wp-update.php 3 -
+/wp4.php 3 -
+/goods.php 7 -
+/ppp.php 4 -
+/ayk.php 1 -
+//wp-includes/Requests/ 4 -
+/wolf.php 2 -
+/7.php 5 -
+/wp-admin/network/plugins.php 3 -
+/bogles.php 1 -
+//w3lls.php 2 -
+/sitemap.xml 1 -
+/nf_tracking.php 1 -
+/bc.php 1 -
+/file4.php 3 -
+/gm.php 1 -
+/shlo.php 1 -
+/disagrsxr.php 1 -
+/pedodont.php 1 -
+/gcqoa.php 1 -
+/ddd.php 4 -
+/koala.php 4 -
+/ecp/Current/exporttool/microsoft.exchange.ediscovery.exporttool.application 4 -
+/file59.php 5 -
+/dragonshell.php 2 -
+/000.php 2 -
+/ioxi-o.php 2 -
+/pouhg.php 3 -
+/awp-careers.php 1 -
+/simple.php 4 -
+/222.php 7 -
+/txets.php 5 -
+/s/435313e21313e2533323e2736313/_/ 4 -
+/FAQ.php 1 -
+/shelp.php 1 -
+/wp5.php 4 -
+/error_log.php 5 -
+/bless.php 4 -
+/an9.php 1 -
+/aa2.php 4 -
+/.DS_Store 4 -
+/css.php 1 -
+/wuasr.php 3 -
+/hypo.php 5 -
+/wp-admin/network/edit.php 4 -
+/composer.json 2 http://short.terapk.com/
+/wp-admin/css/colors/blue/ 4 -
+/kaza.php 1 -
+/ultradybbuks.php 2 -
+/wp-good.php 6 -
+/xb.php 2 -
+/server.js 2 http://short.terapk.com/
+/aaa.php 1 -
+/cord.php 1 -
+/images.php 1 -
+/rea889y.php 1 -
+/reze.php 3 -
+/set.php 1 -
+/ggb.php 1 -
+/wp-the1.php 1 -
+/leaf.php 1 -
+/d.php 2 -
+/xda.php 3 -
+/Ov-Simple1.php 3 -
+//abcd.php 4 -
+/footer.php 2 -
+/22name.php 1 -
+/.yuf.php 1 -
+/a1.php 2 -
+/wp-blog-header.php 1 -
+/alls.php 1 -
+/wp-includes/ID3/about.php 4 -
+/ianmg.php 1 -
+/ws88.php 2 -
+/CDX2.php 1 -
+/wp-includes/blocks/details/ 4 -
+/atkno.php 3 -
+/wp1.php 1 -
+/lim.php 1 -
+/___proxy_subdomain_whm/login 4 -
+/flox.php 2 -
+/xxc.php 1 -
+/portal/phpinfo.php 2 http://short.terapk.com/
+/wp-thi.php 3 -
+/greateb.php 1 -
+/wp-blog.php 5 -
+/.aws/credentials 2 http://short.terapk.com/
+/compatibility.php 1 -
+/bupa.php 1 -
+/an.php 1 -
+//btx25.php 2 -
+/css/shlo.php 1 -
+/dccs.php 3 -
+/aaf.php 5 -
+/tx79.php 1 -
+/admin-filters.php 1 -
+/gg.php 2 -
+/wp-temp.php 5 -
+//wp-includes/js/jquery/ 4 -
+/wp-ocsw.php 1 -
+/@vite/env 4 -
+/torsa1.php 1 -
+/f222.php 1 -
+//wp.php 3 -
+/vgtyu.php 3 -
+/wp-ver.php 4 -
+/scxy.php 3 -
+//admin.php 4 -
+/clque.php 1 -
+/666.php 4 -
+/.env.js 2 http://short.terapk.com/
+/mamzi.php 1 -
+/z.ph 1 -
+/flower.php 2 -
+/tymi.php 1 -
+/get.php 1 -
+/jk.php 1 -
+/taff.php 1 -
+/wk/index.php 1 -
+/wp-class-api.php 1 -
+/first.php 4 -
+/index/function.php 1 -
+/yoy123.php 2 -
+/shell20211028.php 3 -
+/wp-ssfc.php 1 -
+/dass.php 2 -
+/red.php 2 -
+/wso-x569.php 1 -
+/kiwkiw.php 1 -
+/p-blog.php 1 -
+/v2.php 3 -
+/domains.php 1 -
+/xx.php 2 -
+/wp-admin/css/colors/coffee/wp-adochan.php 2 -
+/wp-links-opml.php 4 -
+/one.php 3 -
+/greap.php 2 -
+/la.php 4 -
+/xyn.php 1 -
+/wplogbak.php 2 -
+/ff1.php 3 -
+/torsa.php 1 -
+/tw0.php 1 -
+/.env-config.js 2 http://short.terapk.com/
+/2P.php 4 -
+/eid.php 1 -
+/z.php 3 -
+/00.php 2 -
+/sdm.php 1 -
+/HLA-dd.php 1 -
+/cxl.php 2 -
+/cjfuns.php 1 -
+/bmi.php 1 -
+/aboutc.php 4 -
+/mosty.php 3 -
+/asdf.php 1 -
+/fm.php 1 -
+/f2.php 1 -
+/wp-slss.php 3 -
+/zdd.php 1 -
+/css/themes.php 1 -
+/unloathness.php 1 -
+/cabs.php 1 -
+/xxx.php 10 -
+/plugin-editor.php 1 -
+/wp-at.php 3 -
+/mk.php 1 -
+/uwa.php 3 -
+/fs6.php 1 -
+/file41.php 1 -
+/file25.php 3 -
+/wpls.php 1 -
+/sky.php 1 -
+/cream1.php 3 -
+/pdc.php 1 -
+/raw.php 1 -
+/wp-theme.php 1 -
+/wp-sanita.php 1 -
+/xwx1.php 1 -
+/m7rpo0.php 1 -
+/ng.php 1 -
+/new2.php 1 -
+/nom.php 1 -
+/ha.php 4 -
+/24name.php 1 -
+/pros.php 1 -
+/chosen.php 5 -
+/mjq.php 1 -
+/albrt.php 1 -
+/bel.php 2 -
+/12.php 3 -
+/error.php 3 -
+/file46.php 3 -
+/wp-foter.php 1 -
+/a7.php 2 -
+/a.php 2 -
+/wp-load.php 7 -
+/wefile.php 7 -
+/about.php 6 -
+/sd.php 1 -
+/this_is_a_new_hello_world.php 16 -
+/root.php 1 -
+/as.php 2 -
+/sm.php 1 -
+/bkxzo.php 1 -
+/s2.php 1 -
+/phpinfo/info.php 3 http://short.terapk.com/
+/black.php 1 -
+//wp-links-opml.php 1 -
+/wp-4sd6kt.php 1 -
+/config.json 8 http://short.terapk.com/
+/w.php 2 -
+/lufix.php 1 -
+/settings.py 2 http://short.terapk.com/
+/cxs.php 2 -
+/moon.php 1 -
+/heat3.php 1 -
+/.env.bak 2 http://short.terapk.com/
+/19.php 1 -
+/server 4 -
+/ckk.php 1 -
+/unzip.php 1 -
+/ftde.php 4 -
+/667.php 1 -
+/mass.php 3 -
+/blox.php 1 -
+/ethnogr.php 1 -
+/cu.php 2 -
+/ccu.php 1 -
+/wp-includes/Text/Diff/Engine/about.php 4 -
+/tiny.php 1 -
+/zzx.php 1 -
+/99.php 1 -
+/wp-content/themes/index.php 4 -
+/333.php 4 -
+/akcc.php 1 -
+/file2.php 1 -
+/xenon1337.php 4 -
+/cibai.php 1 -
+/Cap.php 2 -
+/bjeni.php 1 -
+/sbhu.php 3 -
+/wp-admin/css/colors/midnight/about.php 3 -
+/rh.php 2 -
+/drykl.php 6 -
+/enacting.php 1 -
+/application.yml 2 http://short.terapk.com/
+/gdn.php 1 -
+/md5.php 1 -
+/ccou.php 7 -
+/wp-tymanage.php 1 -
+/wp-editor.php 1 -
+/wp-admin/css/colors/blue/file.php 3 -
+/wp-bugs.php 1 -
+/api/gql 4 -
+/edit-tags.php 1 -
+/wp-admin/css/colors/modern/ 4 -
+/wp-wlx.php 2 -
+/pol.php 4 -
+/sukce.php 2 -
+/themes4.php 1 -
+/adoms.php 1 -
+//xxx.php 2 -
+/buy.php 1 -
+/png.php 3 -
+/core/init.php 1 -
+/199.php 2 -
+//wp-content/BypassBest.php 3 -
+/wp-scanner.php 2 -
+/wp-lamburg.php 1 -
+/file-gertdxz.php 1 -
+/wp-admin/maint/wp-is.php 3 -
+/term.php 5 -
+/like.php 6 -
+/link.php 1 -
+/index0.php 1 -
+//dx.php 2 -
+/___proxy_subdomain_cpanel 4 -
+/ahaoi.php 1 -
+/ah25.php 3 -
+/bootstrap.php 1 -
+/modules/mod_simplefileuploadv1.3/elements/filemanager.php 3 -
+/wp-trackback.php 3 -
+/wp-includes/blocks/audio/ 4 -
+/fix.php 2 -
+/spawns.php 3 -
+/ll.php 2 -
+/green.php 1 -
+/doo.php 1 -
+/ca-022.php 1 -
+/xamp.php 4 -
+/177.php 2 -
+/htto.php 2 -
+/wp-mail.php 1 -
+/molecular.php 1 -
+/lock.php 1 -
+/ca4.php 1 -
+/geforce.php 3 -
+/zz.php 1 -
+/actuator/env 4 -
+/dx.php 9 -
+/1index.php 3 -
+/sallu.php 1 -
+/multirole.php 1 -
+/wp-config.php 2 http://short.terapk.com/
+/left-sidebar.php 1 -
+/155.php 4 -
+/wp-admin/js/ 4 -
+/rum.php 2 -
+/op.php 1 -
+//test.php 1 -
+/uwu.php 3 -
+/wp-login.php 1 -
+/libgz.php 1 -
+/w2025.php 2 -
+/xmff.php 1 -
+/bhm.php 1 -
+/.vscode/sftp.json 4 -
+/no1.php 3 -
+/insc.php 2 -
+/kma.php 1 -
+/RIP.php 1 -
+/lef.php 1 -
+/sf.php 3 -
+/revealability.php 3 -
+/dex.php 2 -
+/albin.php 4 -
+/wp-form.php 2 -
+/telescope/requests 4 -
+/amwxl.php 1 -
+/lala.php 3 -
+/tdd.php 1 -
+/sfcl.php 1 -
+/wp-admin/css/ 4 -
+//wp-includes/block-bindings/ 4 -
+/ms-edit.php 9 -
+/mifta.php 3 -
+/asasx.php 3 -
+/sys.php 3 -
+/abcd.php 1 -
+/config/application.yml 2 http://short.terapk.com/
+/nco.php 1 -
+/Eva.php 1 -
+/mmp.php 1 -
+/curlgeto.php 1 -
+/about 4 -
+/ihodcrk.php 1 -
+/ahutr.php 1 -
+/900.php 4 -
+/motu.php 3 -
+/won.php 1 -
+/wp-content/themes/txets.php 1 -
+/amax.php 4 -
+/wen.php 1 -
+/fun.php 3 -
+/xper1.php 1 -
+//x.php 3 -
+/myfile.php 3 -
+/core.php 1 -
+/ff.php 7 -
+/loxico93.php 2 -
+/class.php 1 -
+/filefuns.php 1 -
+/zxcs.php 1 -
+/wander.php 3 -
+/100.php 6 -
+/p.php 5 -
+/wp-pp.php 2 -
+/bngv.php 1 -
+/xroot7.php 1 -
+/mac.php 5 -
+/alfa.php 1 -
+/ws66.php 1 -
+/graphql/api 4 -
+/maxro.php 1 -
+/filexp.php 1 -
+/yas.php 4 -
+/garcoy.php 1 -
+/ws78.php 1 -
+/wp-includes/blocks/buttons/ 4 -
+/wp-ccv.php 1 -
+/wp-demomav.php 1 -
+/dal.php 1 -
+/NewFile.php 3 -
+/h02ugyh.php 3 -
+//edit.php 6 -
+/harvestry.php 1 -
+/less.php 1 -
+/wp-sing.php 3 -
+/rnenu.php 1 -
+/bb.php 3 -
+/license.txt 4 -
+/coffexium.php 2 -
+/yw5bi63u.php 1 -
+/new4.php 5 -
+/btx25.php 1 -
+/wp-0fsdhv.php 1 -
+/wp-conflg.php 4 -
+/file52.php 2 -
+/options.php 1 -
+/server_info.php 2 http://short.terapk.com/
+/de.php 2 -
+/classc.php 1 -
+/s1.php 1 -
+/BDKR28WP.php 5 -
+//like.php 2 -
+/t.php 4 -
+/dczem.php 1 -
+/wp-aothait.php 4 -
+/gptsh.php 1 -
+/wp-content/radio.php 1 -
+/h2a2ck.php 2 -
+/test1.php 1 -
+/a4.php 2 -
+/dd.php 1 -
+/wp-access.php 4 -
+/settings.php 2 http://short.terapk.com/
+/class-t.api.php 5 -
+/i.php 3 -
+/11.php 4 -
+/alfa403.php 1 -
+/tt.php 1 -
+/jp.php 5 -
+/cc3.php 1 -
+/appsettings.json 2 http://short.terapk.com/
+/wornnessesal.php 1 -
+/ups.php 1 -
+/class-cc.php 1 -
+/tool.php 1 -
+/wp-admin/network/users.php 1 -
+/file3.php 1 -
+/style.php 1 -
+/adminl.php 1 -
+/wp-block.php 5 -
+/phpinfo.php5 1 -
+/bless24.php 2 -
+/wp-p2r3q9c8k4.php 1 -
+/size.php 1 -
+/c55cdler.php 1 -
+/wp-content/plugins/hellopress/wp_mna.php 1 -
+//wp-includes/assets/ 4 -
+/yyu.php 1 -
+/man.php 1 -
+/b.php 4 -
+/ok.php 4 -
+/class-bda.php 1 -
+/b00869ae6e.php 2 -
+/xslclbn.php 1 -
+/ccc.php 1 -
+/wp-kz.php 1 -
+/xozx.php 1 -
+/ws57.php 1 -
+/login.action 4 -
+/server-status 4 -
+/cA3bHIkVhgP.php 2 -
+/f5.php 1 -
+/ccs.php 3 -
+/cilng.php 1 -
+/by.php 3 -
+/class-wp-image.php 1 -
+/wp-ws68.php 1 -
+/sx21_1.php 1 -
+/mg.php 2 -
+/vx.php 5 -
+/bdktk.php 1 -
+/ws82.php 1 -
+/img.php 1 -
+/mariju.php 1 -
+/hellcut.php 2 -
+/spire.php 2 -
+/bajah.php 2 -
+/777.php 2 -
+/aa.php 5 -
+/wp-content/r.php 1 -
+/itil.php 1 -
+/config/parameters.yml 2 http://short.terapk.com/
+/6.php 1 -
+/nti.php 1 -
+/wp-admin/css/colour.php 4 -
+/cilus.php 4 -
+/asd67.php 1 -
+/half.php 2 -
+/adpvxwy.php 1 -
+/twinklingly.php 2 -
+/kj.php 9 -
+/wp-includes/Text/ 2 -
+/act.php 1 -
+/default.php 1 -
+/hroxw.php 1 -
+/wp-the.php 6 -
+/haz.php 1 -
+/file15.php 4 -
+/file6.php 6 -
+/wp-includes/txets.php 1 -
+/k.php 3 -
+/zwq.php 1 -
+//erty.php 3 -
+/reune.php 1 -
+/leuk.php 1 -
+/admlo.php 1 -
+/seo.php 1 -
+/wp-stat.php 1 -
+/fthdhf.php 1 -
+//av.php 4 -
+/ini.php 1 -
+/auto.php 2 -
+/new.php 4 -
+/css/w3llstore.php 1 -
+/whs73au5.php 1 -
+/25d653587fdfd1.php 4 -
+/lock360.php 2 -
+/class-wp.php 4 -
+/appt.php 2 -
+/wordpress/wp-admin/maint/ 3 -
+/tymn.php 1 -
+END_SIDER_404
+
+# Host - Pages - Hits - Bandwidth - Last visit date - [Start date of last visit] - [Last page of last visit]
+# [Start date of last visit] and [Last page of last visit] are saved only if session is not finished
+# The 25 first Hits must be first (order not required for others)
+BEGIN_VISITOR 12
+34.129.5.16 132 141 0 20260609052339
+34.131.203.121 10 16 0 20260613074009
+54.209.60.63 3 3 9787 20260616191230
+54.175.74.27 2 2 6534 20260606220757
+112.197.13.71 1 12 103213 20260630034024
+167.172.232.142 1 1 28474 20260630021118
+184.72.115.35 1 1 3256 20260605001729
+139.59.136.184 1 1 28474 20260623072508
+91.92.42.120 1 1 25613 20260613083228
+91.92.42.182 1 1 25628 20260603005154
+64.227.70.2 1 1 28478 20260609001117
+167.172.158.128 1 1 28476 20260616032916
+END_VISITOR
+
+# Date - Pages - Hits - Bandwidth - Visits
+BEGIN_DAY 8
+20260603 1 1 25628 1
+20260605 2 2 6521 2
+20260606 3 3 9795 2
+20260609 133 142 28478 2
+20260613 11 17 25613 2
+20260616 2 2 31737 2
+20260623 1 1 28474 1
+20260630 2 13 131687 2
+END_DAY
+
+# Session range - Number of visits
+BEGIN_SESSION 1
+0s-30s 14
+END_SESSION
+
+# URL - Pages - Bandwidth - Entry - Exit
+# The 25 first Pages must be first (order not required for others)
+BEGIN_SIDER 139
+/info.php 7 165143 6 6
+/pa1gJH 3 9795 2 2
+/sql/db.sql 2 0 0 1
+/backups/db.sql 2 0 0 0
+/backup/db.sql 2 0 0 0
+/9o7uPo 2 6521 2 2
+/api/credentials.json 2 0 0 0
+/backup/dump.sql 2 0 0 0
+/sql/dump.sql 2 0 0 0
+/backups/dump.sql 2 0 0 0
+/server/actuator/env 1 0 0 0
+/trace 1 0 0 0
+/aws-credentials.json 1 0 0 0
+/.aws/config 1 0 0 0
+/api/heapdump 1 0 0 0
+/api/phpinfo.php 1 0 0 0
+/database.sql 1 0 0 0
+/actuator/auditevents 1 0 0 0
+/actuator/threaddump 1 0 0 0
+/api/config.json 1 0 0 0
+/docker-compose.yml 1 0 0 0
+/secrets.yml 1 0 0 0
+/app/actuator/heapdump 1 0 0 0
+/api/database.php 1 0 0 0
+/api/actuator/env 1 0 0 0
+/service-account.json 1 0 0 0
+/database.php 1 0 0 0
+/actuator/sessions 1 0 0 0
+/.aws/credentials 1 0 0 0
+/settings.php 1 0 0 0
+/docker-compose.prod.yaml 1 0 0 0
+/appsettings.json 1 0 0 0
+/credentials.yml 1 0 0 0
+/api/application.properties 1 0 0 0
+/env 1 0 0 0
+/api/secrets.json 1 0 0 0
+/backup.sql 1 0 0 0
+/deploy/credentials.json 1 0 0 0
+/api/appsettings.json 1 0 0 0
+/database.yml 1 0 0 0
+/firebase-credentials.json 1 0 0 0
+/settings.yml 1 0 0 0
+/parameters.yaml 1 0 0 0
+/.credentials 1 0 0 0
+/tmp/backup.sql 1 0 0 0
+/api/v2/config.json 1 0 0 0
+/application.yaml 1 0 0 0
+/app.yml 1 0 0 0
+/gcp.json 1 0 0 0
+/application.json 1 0 0 0
+/api/config.yml 1 0 0 0
+/api/actuator/configprops 1 0 0 0
+/api/settings.json 1 0 0 0
+/api/v2/application.yml 1 0 0 0
+/app/settings.php 1 0 0 0
+/serviceaccount.json 1 0 0 0
+/actuator/httptrace 1 0 0 0
+/_profiler 1 0 0 0
+/settings.json 1 0 0 0
+/database.json 1 0 0 0
+/database.ini 1 0 0 0
+/config/aws.json 1 0 0 0
+/api/database.yml 1 0 0 0
+/v1/actuator/heapdump 1 0 0 0
+/secrets.yaml 1 0 0 0
+/private/service-account.json 1 0 0 0
+/api/config.php 1 0 0 0
+/app.json 1 0 0 0
+/pg_dump.sql 1 0 0 0
+/firebase-adminsdk.json 1 0 0 0
+/parameters.yml 1 0 0 0
+/phpinfo.php 1 0 0 0
+/docker-compose.yaml 1 0 0 0
+/application.yml 1 0 0 0
+/v2/actuator/configprops 1 0 0 0
+/config/service-account.json 1 0 0 0
+/app/secrets.json 1 0 0 0
+/tmp/dump.sql 1 0 0 0
+/.gcloud/credentials.json 1 0 0 0
+/db.sql 1 0 1 0
+/backend/service-account.json 1 0 0 0
+/keys.json 1 0 0 0
+/app/actuator/env 1 0 0 0
+/parameters.php 1 0 0 0
+/app.yaml 1 0 0 0
+/app/database.php 1 0 0 0
+/v1/actuator/configprops 1 0 0 0
+/docker-compose.prod.yml 1 0 0 0
+/api/aws.json 1 0 0 0
+/api/parameters.yml 1 0 0 0
+/app/config.json 1 0 0 0
+/config.env 1 0 0 0
+/db.json 1 0 0 0
+/api/application.yml 1 0 0 0
+/backend/actuator/heapdump 1 0 0 0
+/threaddump 1 0 0 0
+/CyY8R 1 3268 1 1
+/application.properties 1 0 0 0
+/config.php 1 0 0 0
+/configuration.php 1 0 0 0
+/secrets.env 1 0 0 0
+/secrets.json 1 0 0 0
+/backend/actuator/configprops 1 0 0 0
+/api/keys.json 1 0 0 0
+/api/settings.yml 1 0 0 0
+/app/credentials.json 1 0 0 0
+/cloud.json 1 0 0 0
+/P5ag 1 3261 1 1
+/exports/db.sql 1 0 0 0
+/config.json 1 0 0 0
+/api/v1/application.yml 1 0 0 0
+/settings.py 1 0 0 0
+/docker-compose.staging.yml 1 0 0 0
+/appsettings.Development.json 1 0 0 0
+/.github/workflows/deploy.yml 1 0 0 0
+/config/.aws/credentials 1 0 0 0
+/private.json 1 0 0 0
+/api/configprops 1 0 0 0
+/api_keys.yml 1 0 0 0
+/admin/phpinfo.php 1 0 0 0
+/app/config.php 1 0 0 0
+/server/actuator/heapdump 1 0 0 0
+/db.php 1 0 0 0
+/database.yaml 1 0 0 0
+/dump 1 0 0 0
+/config.yml 1 0 0 0
+/config.yaml 1 0 0 0
+/actuator/logfile 1 0 1 0
+/config.ini 1 0 0 0
+/db.yml 1 0 0 0
+/api_keys.json 1 0 0 0
+/.github/workflows/main.yml 1 0 0 1
+/credentials.yaml 1 0 0 0
+/credentials.json 1 0 0 0
+/profiler 1 0 0 0
+/app/config.yml 1 0 0 0
+/data.sql 1 0 0 0
+/app/settings.json 1 0 0 0
+/appsettings.Production.json 1 0 0 0
+END_SIDER
+
+# Payload Range - Payload Frequency
+BEGIN_FILESIZE 7
+2K-5K 1756
+500-1K 8
+100-500 12
+5K+ 14
+1K-2K 194
+44-100 24
+0-44 275
+END_FILESIZE
+
+# Request Time Range - Request Time Frequency
+BEGIN_REQUESTTIME 0
+END_REQUESTTIME

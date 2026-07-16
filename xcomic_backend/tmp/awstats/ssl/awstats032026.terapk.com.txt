@@ -1,0 +1,1788 @@
+AWSTATS DATA FILE 8.0 (build 20240604)
+# If you remove this file, all statistics for date 202603 will be lost/reset.
+# Last config file used to build this data file was /home/terapkco/tmp/awstats/ssl/awstats.terapk.com.conf.
+
+# Position (offset in bytes) in this file for beginning of each section for
+# direct I/O access. If you made changes somewhere in this file, you should
+# also remove completely the MAP section (AWStats will rewrite it at next
+# update).
+BEGIN_MAP 28
+POS_GENERAL 2082                
+POS_TIME 2754                
+POS_VISITOR 61431               
+POS_DAY 62831               
+POS_DOMAIN 3586                
+POS_LOGIN 3897                
+POS_ROBOT 4052                
+POS_WORMS 4363                
+POS_EMAILSENDER 4494                
+POS_EMAILRECEIVER 4637                
+POS_SESSION 63284               
+POS_FILESIZE 63926               
+POS_REQUESTTIME 64074               
+POS_SIDER 63441               
+POS_FILETYPES 4772                
+POS_DOWNLOADS 4938                
+POS_OS 4986                
+POS_BROWSER 5137                
+POS_SCREENSIZE 5415                
+POS_UNKNOWNREFERER 5489                
+POS_UNKNOWNREFERERBROWSER 5790                
+POS_ORIGIN 6086                
+POS_SEREFERRALS 6221                
+POS_PAGEREFS 6365                
+POS_SEARCHWORDS 6892                
+POS_KEYWORDS 7044                
+POS_MISC 2416                
+POS_ERRORS 7103                
+POS_CLUSTER 3753                
+POS_SIDER_404 7273                
+END_MAP
+
+# LastLine    = Date of last record processed - Last record line number in last log - Last record offset in last log - Last record signature value
+# FirstTime   = Date of first visit for history file
+# LastTime    = Date of last visit for history file
+# LastUpdate  = Date of last update - Nb of parsed records - Nb of parsed old records - Nb of parsed new records - Nb of parsed corrupted - Nb of parsed dropped
+# TotalVisits = Number of visits
+# TotalUnique = Number of unique visitors
+# MonthHostsKnown   = Number of hosts known
+# MonthHostsUnKnown = Number of hosts unknown
+BEGIN_GENERAL 8
+LastLine 20260401000914 684 125250 15408764782187
+FirstTime 0
+LastTime 20260331223047
+LastUpdate 20260401130123 684 0 683 0 0
+TotalVisits 39                  
+TotalUnique 34                  
+MonthHostsKnown 0                   
+MonthHostsUnknown 34                  
+END_GENERAL
+
+# Misc ID - Pages - Hits - Bandwidth
+BEGIN_MISC 10
+QuickTimeSupport 0 0 0
+JavascriptDisabled 0 0 0
+WindowsMediaPlayerSupport 0 0 0
+PDFSupport 0 0 0
+AddToFavourites 0 214 0
+JavaEnabled 0 0 0
+RealPlayerSupport 0 0 0
+TotalMisc 0 0 0
+FlashSupport 0 0 0
+DirectorSupport 0 0 0
+END_MISC
+
+# Hour - Pages - Hits - Bandwidth - Not viewed Pages - Not viewed Hits - Not viewed Bandwidth
+BEGIN_TIME 24
+0 2 2 75226 549 1320 2783178
+1 3 3 75790 317 1237 1305041
+2 1 1 37613 604 1524 2327754
+3 0 0 0 334 1303 1261348
+4 1 1 12456 349 1223 1165292
+5 1 1 540 449 1395 1460472
+6 1 1 12460 606 1557 1416556
+7 71 71 2661676 591 1835 2737939
+8 22 31 345574 287 1319 1373399
+9 1 1 12453 587 1490 2075708
+10 1 1 37625 945 2088 2052861
+11 2 2 50077 596 1650 2531920
+12 2 2 50080 598 1650 2060528
+13 2 2 12460 177 1295 1197158
+14 2 2 24911 495 1741 1714509
+15 1 1 12459 309 1515 1459583
+16 2 2 540 520 1749 2238269
+17 1 1 0 362 1545 1414011
+18 3 3 12992 653 1770 1956600
+19 3 3 13530 691 1528 1575655
+20 2 2 38165 373 1152 1427677
+21 2 2 38312 771 1656 2485387
+22 1 1 37613 583 1294 2010584
+23 1 1 37613 462 1387 1786254
+END_TIME
+
+# Domain - Pages - Hits - Bandwidth
+# The 25 first Pages must be first (order not required for others)
+BEGIN_DOMAIN 7
+in 70 70 2661136
+ru 19 19 236648
+us 18 27 188532
+ca 12 12 426253
+de 4 4 0
+nl 4 4 49824
+cn 1 1 37772
+END_DOMAIN
+
+# Cluster ID - Pages - Hits - Bandwidth
+BEGIN_CLUSTER 0
+END_CLUSTER
+
+# Login - Pages - Hits - Bandwidth - Last visit
+# The 10 first Pages must be first (order not required for others)
+BEGIN_LOGIN 0
+END_LOGIN
+
+# Robot ID - Hits - Bandwidth - Last visit - Hits on robots.txt
+# The 25 first Hits must be first (order not required for others)
+BEGIN_ROBOT 5
+unknown 9 26 20260327123703 9
+survey 4 150476 20260313082657 0
+bot[\s_+:,\.\;\/\\-] 3 12455 20260326102408 2
+crawl 2 24918 20260311160152 0
+no_user_agent 1 37613 20260303073609 0
+END_ROBOT
+
+# Worm ID - Hits - Bandwidth - Last visit
+# The 5 first Hits must be first (order not required for others)
+BEGIN_WORMS 0
+END_WORMS
+
+# EMail - Hits - Bandwidth - Last visit
+# The 20 first Hits must be first (order not required for others)
+BEGIN_EMAILSENDER 0
+END_EMAILSENDER
+
+# EMail - Hits - Bandwidth - Last visit
+# The 20 first hits must be first (order not required for others)
+BEGIN_EMAILRECEIVER 0
+END_EMAILRECEIVER
+
+# Files type - Hits - Bandwidth - Bandwidth without compression - Bandwidth after compression
+BEGIN_FILETYPES 6
+svg 1 2399 0 0
+html 91 2198289 0 0
+woff 3 68000 0 0
+php 34 1292955 0 0
+png 6 4794 0 0
+css 2 33728 0 0
+END_FILETYPES
+
+# Downloads - Hits - Bandwidth
+BEGIN_DOWNLOADS 0
+END_DOWNLOADS
+
+# OS ID - Hits
+BEGIN_OS ID - Hits - Pages 7
+win7 68 68
+macosx15 6 6
+macosx13 1 1
+macosx 3 3
+win10 21 21
+linux 22 13
+Unknown 16 16
+END_OS
+
+# Browser ID - Hits - Pages
+BEGIN_BROWSER 12
+chrome58.0.3029.110 2 2
+chrome122.0.0.0 11 11
+chrome142.0.0.0 5 5
+firefox121.0 3 3
+safari12.0.2 1 1
+firefox47.0 68 68
+firefox122.0 1 1
+chrome138.0.7204.23 13 4
+safari17.2 3 3
+Unknown 16 16
+chrome120.0.0.0 10 10
+netscape5.0 4 4
+END_BROWSER
+
+# Screen size - Hits
+BEGIN_SCREENSIZE 0
+END_SCREENSIZE
+
+# Unknown referer OS - Last visit date
+BEGIN_UNKNOWNREFERER 3
+quic-go-HTTP/3 20260327133432
+okhttp/5.3.0 20260323085150
+Hello_from_Palo_Alto_Networks,_find_out_more_about_our_scans_in_https://docs-cortex.paloaltonetworks.com/r/1/Cortex-Xpanse/Scanning-activity 20260331223047
+END_UNKNOWNREFERER
+
+# Unknown referer Browser - Last visit date
+BEGIN_UNKNOWNREFERERBROWSER 3
+quic-go-HTTP/3 20260327133432
+okhttp/5.3.0 20260323085150
+Hello_from_Palo_Alto_Networks,_find_out_more_about_our_scans_in_https://docs-cortex.paloaltonetworks.com/r/1/Cortex-Xpanse/Scanning-activity 20260331223047
+END_UNKNOWNREFERERBROWSER
+
+# Origin - Pages - Hits 
+BEGIN_ORIGIN 6
+From0 120 120
+From1 0 0
+From2 0 0
+From3 8 17
+From4 0 0
+From5 0 0
+END_ORIGIN
+
+# Search engine referers ID - Pages - Hits
+BEGIN_SEREFERRALS 0
+END_SEREFERRALS
+
+# External page referers - Pages - Hits
+# The 25 first Pages must be first (order not required for others)
+BEGIN_PAGEREFS 7
+https://webmail.terapk.com/cPanel_magic_revision_1748449569/unprotected/cpanel/fonts/open_sans/open_sans.min.css 3 3
+http://webmail.terapk.com 2 2
+http://cpanel.terapk.com/images/ 1 1
+http://cpanel.terapk.com 1 1
+http://cpanel.terapk.com 1 1
+https://webmail.terapk.com/cPanel_magic_revision_1758823910/unprotected/cpanel/style_v2_optimized.css 0 6
+https://webmail.terapk.com 0 3
+END_PAGEREFS
+
+# Search keyphrases - Number of search
+# The 10 first number of search must be first (order not required for others)
+BEGIN_SEARCHWORDS 0
+END_SEARCHWORDS
+
+# Search keywords - Number of search
+# The 25 first number of search must be first (order not required for others)
+BEGIN_KEYWORDS 0
+END_KEYWORDS
+
+# Errors - Hits - Bandwidth
+BEGIN_ERRORS 7
+308 1 109
+500 31682 25307200
+400 3 156
+401 30 38838
+404 4215 17986460
+403 57 70794
+301 2 1590
+END_ERRORS
+
+# URL with 404 errors - Hits - Last URL referrer
+BEGIN_SIDER_404 1435
+/mr.php 1 -
+/wp-admin/js/fi.php 2 -
+/wp-includes/num.php 1 -
+/s.php 9 -
+/locale.php 1 -
+/wp-includes/Requests/autoload_classmap.php 1 http://cpanel.terapk.com/wp-includes/Requests/autoload_classmap.php
+/acp.php 2 -
+/wp-includes/js/dist/vendor/about.php 1 http://cpanel.terapk.com/wp-includes/js/dist/vendor/about.php
+/gelay.php 7 -
+/ms-edit.php 21 -
+/wp-content/themes/merah/includes/options-framework/about.php 1 http://cpanel.terapk.com/wp-content/themes/merah/includes/options-framework/about.php
+/god.php 2 -
+/gpt-sh.php 3 -
+/ws81.php 6 -
+/tymn.php 1 -
+/wp-content/themes/news-portal/error.php 1 http://cpanel.terapk.com/wp-content/themes/news-portal/error.php
+/wp-includes/l10n/ 2 -
+/wp-includes/Requests/src/Response/1.php 1 -
+/.well-known/acme-challenge/autoload_classmap.php 4 -
+/a.php 4 http://cpanel.terapk.com/a.php
+/amax.php 5 -
+/.env.local.backup 2 -
+/wp-content/fonts/dancing-script/about.php 1 http://cpanel.terapk.com/wp-content/fonts/dancing-script/about.php
+/wp-includes/speculative8.php 1 http://cpanel.terapk.com/wp-includes/speculative8.php
+/av.php 5 -
+/wp-includes/rest-api/fields/ 1 http://cpanel.terapk.com/wp-includes/rest-api/fields/
+/wp-includes/block-patterns/ 5 -
+/.well-known/11.php 1 -
+/link.php 1 http://cpanel.terapk.com/link.php
+/radio.php 6 http://cpanel.terapk.com/radio.php
+/Radio.php 1 -
+/utky.php 2 -
+/wp-includes/css/dist/ 3 http://cpanel.terapk.com/wp-includes/css/dist/
+/okxh.php 3 -
+/wp-admin/includes/class-wp-screen-function.php 1 http://cpanel.terapk.com/wp-admin/includes/class-wp-screen-function.php
+/wp-admin/images/chosen.php 1 http://cpanel.terapk.com/wp-admin/images/chosen.php
+/h2h.php 1 -
+/csv.php 2 -
+/ahax.php 1 http://cpanel.terapk.com/ahax.php
+/wp-content/radio.php 5 -
+/wp-includes/interactivity-api/index.php 1 -
+/wp-includes/images/media/ 6 http://cpanel.terapk.com/wp-includes/images/media/
+/sitemap.xml 1 -
+/f35.php 5 -
+/wp-content/plugins/advanced-product-fields-for-woocommerce/db.php 1 http://cpanel.terapk.com/wp-content/plugins/advanced-product-fields-for-woocommerce/db.php
+/ws43.php 1 -
+/lock.php 3 -
+/wp-content/uploads/elementor/ 1 http://cpanel.terapk.com/wp-content/uploads/elementor/
+/io.php 1 -
+/laravel/.env 2 -
+/api/%5B%5B...slug%5D%5D 1 -
+/.well-known/db-status.php 1 -
+/varb.php 3 -
+/max.php 1 -
+/xr.php 1 -
+/.env.json 2 -
+/wp-includes/class-wp-widget-table.php 1 http://cpanel.terapk.com/wp-includes/class-wp-widget-table.php
+/.env.docker 2 -
+/bless.php 10 http://cpanel.terapk.com/bless.php
+/wp-admin/install.php 2 -
+/tx88.php 1 -
+/.well-known/classwithtostring.php 1 -
+/auth.php 3 -
+/asd.php 3 -
+/cong.php 6 -
+/app.php 2 -
+/ah25.php 3 -
+/xfun.php 3 -
+/wp-includes/blocks/list-item/test.php 1 http://cpanel.terapk.com/wp-includes/blocks/list-item/test.php
+/private/.env 2 -
+/wp-content/themes/wp-conflg.php 1 http://cpanel.terapk.com/wp-content/themes/wp-conflg.php
+/06.php 4 -
+/wo.php 1 -
+/wp-content/plugins/shell/ 1 http://cpanel.terapk.com/wp-content/plugins/shell/
+/jp.php 4 -
+/sc.php 6 -
+/wp-includes/l10n/chosen.php 1 http://cpanel.terapk.com/wp-includes/l10n/chosen.php
+/xpwer1.php 1 -
+/wp-content/plugins/query-monitor/collectors/about.php 1 http://cpanel.terapk.com/wp-content/plugins/query-monitor/collectors/about.php
+/sf.php 14 -
+/.env.container 2 -
+/wp-content/themes/index.php 11 -
+/.git/index 1 -
+/wp-admin/css/fff.php 1 -
+/enhancecp 1 -
+/pass2.php 1 -
+/file5.php 2 -
+/tbute.php 1 -
+/ammika.php 1 -
+/aa.php 16 http://cpanel.terapk.com/aa.php
+/flower2.php 1 -
+/upload/autoload_classmap.php 1 -
+/wp-content/themes/admin.php 25 -
+/wp-admin/maint/wp-conflg.php 1 http://cpanel.terapk.com/wp-admin/maint/wp-conflg.php
+/wp-aa.php 2 -
+/.env_backup 2 -
+/wp-admin/user/coffee/ 1 http://cpanel.terapk.com/wp-admin/user/coffee/
+/wp-content/uploads/new.php 1 -
+/nz.php 3 -
+/wp-admin/txets.php 1 http://cpanel.terapk.com/wp-admin/txets.php
+/wp-includes/Text/Diff/Engine/about.php 4 -
+/wp-content/themes/celuapuestas-theme/inc/functions/frontend/g0znuk/upload.php 1 http://cpanel.terapk.com/wp-content/themes/celuapuestas-theme/inc/functions/frontend/g0znuk/upload.php
+/wp-content/plugins/wordpress-seo/src/dashboard/application/search-rankings/about.php 1 http://cpanel.terapk.com/wp-content/plugins/wordpress-seo/src/dashboard/application/search-rankings/about.php
+/yos.php 1 -
+/wp-admin/includes/autoload_classmap.php 1 http://cpanel.terapk.com/wp-admin/includes/autoload_classmap.php
+/44.php 1 -
+/a1.php 2 -
+/ws47.php 1 -
+/no1.php 1 -
+/wp-good.php 21 -
+/ALFA_DATA/alfacgiapi/ 1 http://cpanel.terapk.com/ALFA_DATA/alfacgiapi/
+/wp-content/uploads/doc.php 1 -
+/invisi.php 1 -
+/app/.env 3 -
+/ccu.php 1 -
+/assets/images/ 1 http://cpanel.terapk.com/assets/images/
+/wp-content/uploads/2024/ 1 http://cpanel.terapk.com/wp-content/uploads/2024/
+/wp-mail.php/wp-includes/ID3/wp-mail.php 2 -
+/mk.php 1 -
+/wp-content/plugins/so-pinyin-slugs/inc/main_json.php 1 http://cpanel.terapk.com/wp-content/plugins/so-pinyin-slugs/inc/main_json.php
+/wp-admin/network/cache/gfhfv.php 1 http://cpanel.terapk.com/wp-admin/network/cache/gfhfv.php
+/aifa.php 1 -
+/anz.php 2 -
+/new/.env.staging 3 -
+/en/ 8 -
+/wp-signin.php 1 http://cpanel.terapk.com/wp-signin.php
+/wp-includes/assets/000.php 1 http://cpanel.terapk.com/wp-includes/assets/000.php
+/_next/static/chunks/pages/ 1 -
+/wp-includes/js/dist/script-modules/block-library/search/about.php 5 -
+/info.php 24 -
+/global.php 1 -
+/wp-admin/js/widgets/admin.php 1 http://cpanel.terapk.com/wp-admin/js/widgets/admin.php
+/wp-admin/maint/dtyh.php 1 -
+/.env.development.local 2 -
+/claw.php 1 -
+/mga.php 4 -
+/pLdK1.php 1 -
+/uang.php 1 -
+/cgi-bin/ 19 -
+/images/admin.php 2 -
+/ag.php 1 -
+/wp-content/plugins/template-singl-portfolio.php 1 http://cpanel.terapk.com/wp-content/plugins/template-singl-portfolio.php
+/rkiea.php 1 -
+/deepseek_d.php 1 http://cpanel.terapk.com/deepseek_d.php
+/wp-content/plugins/erinyani/ 2 -
+/xleet.php 2 -
+/atomlib.php 7 -
+/admin.php 35 -
+/ws85.php 4 -
+/mh.php 4 -
+/wp-content/uploads/ 23 -
+/wp-includes/block-bindings/zczv.php 1 http://cpanel.terapk.com/wp-includes/block-bindings/zczv.php
+/sa.php7 3 -
+/server/.env 2 -
+/colour.php 1 -
+/wp-includes/blocks/group/ 1 http://cpanel.terapk.com/wp-includes/blocks/group/
+/wp-includes/css/dist/commands/ 1 http://cpanel.terapk.com/wp-includes/css/dist/commands/
+/wp-includes/sodium_compat/lib/ 1 http://cpanel.terapk.com/wp-includes/sodium_compat/lib/
+/log.php 4 http://cpanel.terapk.com/log.php
+/ws61.php 1 -
+/wp-includes/certificates/ 1 http://cpanel.terapk.com/wp-includes/certificates/
+/randkeyword.PhP7 12 -
+/a2.php 5 -
+/server.php 2 -
+/wp-includes/assets/index.php 4 -
+/file.php 33 -
+/wp-content/plugins/wp-file-manager/file.php 1 http://cpanel.terapk.com/wp-content/plugins/wp-file-manager/file.php
+/fsgdjkl.php 1 -
+/xper1.php 1 -
+/mm.php 3 -
+/wp-class.php 1 -
+/rzki.php 3 -
+/Ov-Simple1.php 1 -
+/oxshell.php 3 -
+/feokc.php 1 -
+/wp-includes/mani.php 1 -
+/wp-content/themes/dlloduv/about.php 1 http://cpanel.terapk.com/wp-content/themes/dlloduv/about.php
+/wp-admin/user-new.php 1 -
+/.git/refs/heads/main 1 -
+/wp-includes/PHPMailer/autoload_classmap.php 1 http://cpanel.terapk.com/wp-includes/PHPMailer/autoload_classmap.php
+/.well-known/acme-challenge/ 3 http://cpanel.terapk.com/.well-known/acme-challenge/
+/lv.php 1 -
+/wp-includes/SimplePie/src/Content/Type/about.php 1 http://cpanel.terapk.com/wp-includes/SimplePie/src/Content/Type/about.php
+/wp-includes/blocks/missing/about.php 1 http://cpanel.terapk.com/wp-includes/blocks/missing/about.php
+/update/da222.php 8 -
+/wp-content/content.php 5 -
+/bo.php 3 -
+/333.php 1 -
+/bootstrap.php 3 -
+/wp-admin/images/wp-conflg.php 5 http://cpanel.terapk.com/wp-admin/images/wp-conflg.php
+/ticket.php 1 -
+/wp-scanner.php 1 -
+/wp-admin/maint/absorption.php 1 -
+/666.php 7 -
+/admin/function.php 4 http://cpanel.terapk.com/admin/function.php
+/h02ugyh.php 2 -
+/chati.php 2 -
+/wp-content/upgrade-temp-backup/wp-login.php 2 -
+/class.1.php 1 -
+/aw.php 4 -
+/wp-admin/user/radio.php 1 http://cpanel.terapk.com/wp-admin/user/radio.php
+/wp-admin/css/colors/sunrise/ 1 http://cpanel.terapk.com/wp-admin/css/colors/sunrise/
+/alfashell.php 2 -
+/wp-content/updraft/emptydir/ 1 http://cpanel.terapk.com/wp-content/updraft/emptydir/
+/wdf.php 6 -
+/phpmini.php 1 -
+/wp-content/themes/hideo/network.php 11 -
+/wp-includes/blocks/query-title/ 1 http://cpanel.terapk.com/wp-includes/blocks/query-title/
+/schal.php 1 -
+/files/num.php 1 -
+/environment.php 1 -
+/wp-includes/style-engine/ 5 -
+/r3grt7.php 1 -
+/wp-content/plugins/hello.php 1 http://cpanel.terapk.com/wp-content/plugins/hello.php
+/.well-known/1.php 2 -
+/assets/images/doc.php 2 -
+/wsa.php 1 -
+/wp-content/database.php 1 http://cpanel.terapk.com/wp-content/database.php
+/favicon.php 1 -
+/wp-content/themes/twentytwentytwo/assets/fonts/ 1 http://cpanel.terapk.com/wp-content/themes/twentytwentytwo/assets/fonts/
+/st.php 1 -
+/small.php 1 -
+/themes/zMousse/otuz1.php 2 -
+/public/hi.php 1 -
+/wp-content/gettest.php 1 http://cpanel.terapk.com/wp-content/gettest.php
+/bnn_.php 2 -
+/ws60.php 6 -
+/wtiiy.php 3 -
+/wp-includes/blocks/separator/ 1 http://cpanel.terapk.com/wp-includes/blocks/separator/
+/wp-includes/js/quicktags.js 1 -
+/assets/images/selam.php 1 http://cpanel.terapk.com/assets/images/selam.php
+/backoffice-Stopped/management/assets/assets/images/ 1 http://cpanel.terapk.com/backoffice-Stopped/management/assets/assets/images/
+/wp-content/admin.php 29 -
+/at.php 1 -
+/wp-content/lock360.php 1 http://cpanel.terapk.com/wp-content/lock360.php
+/wp-includes/blocks/footnotes/about.php 1 http://cpanel.terapk.com/wp-includes/blocks/footnotes/about.php
+/wp-2019.php 2 -
+/asf.php 1 http://cpanel.terapk.com/asf.php
+/ajax.php 5 -
+/wordpress/wp-includes/wp-config-sample.php 2 -
+/wp-includes/style-engine/wp-conflg.php 1 -
+/packed.php 2 -
+/wp3.php 1 -
+/adminer.php 2 -
+/index.bak.php 2 -
+/wp-admin/a.php 3 -
+/wp-includes/images/crystal/about.php 2 -
+/tool.php 5 -
+/wordpress/wp-admin/maint/ 1 http://cpanel.terapk.com/wordpress/wp-admin/maint/
+/wp-includes/assets/ 2 http://cpanel.terapk.com/wp-includes/assets/
+/o.php 4 -
+/wp-includes/js/dist/script-modules/block-library/file/ 1 http://cpanel.terapk.com/wp-includes/js/dist/script-modules/block-library/file/
+/.env.bak 2 -
+/wp-blog.php 10 -
+/mamzi.php 1 -
+/24.php 2 -
+/742.php 1 -
+/fs7.php 1 -
+/ku.php 1 -
+/chosen.php 15 -
+/identity.php 1 -
+/images/photo.php 1 -
+/xampp/phpinfo.php 1 -
+/admin/assets/dist/img/weather/ 1 http://cpanel.terapk.com/admin/assets/dist/img/weather/
+/jocundly.php 1 -
+/admin/controller/extension/extension/ 5 -
+/ws78.php 1 -
+/us.php 1 -
+/wp-content/themes/ 12 http://cpanel.terapk.com/wp-content/themes/
+/lara/info.php 1 -
+/wp-index.php 1 -
+/wp-admin/maint/chosen.php 1 http://cpanel.terapk.com/wp-admin/maint/chosen.php
+/cgi-bin/wp-2019.php 1 -
+/wp-includes/css/dist/customize-widgets/ 1 http://cpanel.terapk.com/wp-includes/css/dist/customize-widgets/
+/wp-includes/customize/autoload_classmap.php 1 http://cpanel.terapk.com/wp-includes/customize/autoload_classmap.php
+/nginx/.env 1 -
+/save.php 1 -
+/wp-content/themes/twentytwentyfive/assets/PHPMailer/ 1 http://cpanel.terapk.com/wp-content/themes/twentytwentyfive/assets/PHPMailer/
+/nux.php 2 -
+/public/storage.php 1 -
+/wp-admin/add.php 1 -
+/llb1J.php 1 -
+/inwp.php 2 -
+/wp-includes/sodium_compat/src/Core/ 1 http://cpanel.terapk.com/wp-includes/sodium_compat/src/Core/
+/run.php 1 -
+/admin/controller/extension/ 1 -
+/wp-admin/maint.php 1 -
+/wp-content/plugins/phpad/acp.php 1 http://cpanel.terapk.com/wp-content/plugins/phpad/acp.php
+/dropdown.php 10 http://cpanel.terapk.com/dropdown.php
+/drhunthq.php 4 -
+/sid3.php 6 -
+/xpass.php 1 -
+/config/.env.local 2 -
+/abrand.php 4 -
+/sitemaps.php 1 -
+/.tmb/cloud.php 1 -
+/wp-cxs.php 1 -
+/wer.php 1 -
+/.envrc 2 -
+/asus.php 4 -
+/ws80.php 5 -
+/public/moon.php 1 -
+/.env2 2 -
+/404.php 13 -
+/gec.php 1 -
+/path.php 5 -
+/wp-content/uploads/an.php 1 -
+/caiij.php 1 -
+/ws49.php 5 -
+/in.php 2 -
+/wp-content/upgrade/alfanew.php7 1 -
+/php8.php 2 -
+/wso112233.php 1 -
+/network.php 2 -
+/wp-includes/blocks/latest-comments/template-loader.php 1 http://cpanel.terapk.com/wp-includes/blocks/latest-comments/template-loader.php
+/fast.php 2 -
+/0x.php 5 -
+/ex.php 1 -
+/wp-includes/themes.php 1 http://cpanel.terapk.com/wp-includes/themes.php
+/bin.php 1 -
+/gk.php 1 -
+/tinyfilemanager.php 2 -
+/wp-content/languages/wp-login.php 2 -
+/wp-includes/html-api/ 9 -
+/wp-content/themes/twentytwentythree/gfhfv.php 1 http://cpanel.terapk.com/wp-content/themes/twentytwentythree/gfhfv.php
+/ff.php 1 -
+/ff1.php 11 -
+/wp-admin/css/colors/blue/index.php 9 -
+/sts.php 5 -
+//wp-includes/fonts/ 1 -
+/wp-content/about.php 6 http://cpanel.terapk.com/wp-content/about.php
+/wp-includes/SimplePie/Cache/about.php 2 -
+/wp-admin/css/colors/light/ 1 http://cpanel.terapk.com/wp-admin/css/colors/light/
+/wp-admin/user/index.php 10 -
+/ca4.php 2 -
+/wp-includes/Requests/library/ 1 http://cpanel.terapk.com/wp-includes/Requests/library/
+/wp-includes/pomo/about.php 1 http://cpanel.terapk.com/wp-includes/pomo/about.php
+/simple.php 3 http://cpanel.terapk.com/simple.php
+/alog.php 2 -
+/wp-includes/SimplePie/about.php 3 http://cpanel.terapk.com/wp-includes/SimplePie/about.php
+/wp-content/themes/twentytwentyfive/patterns/assets/ 1 http://cpanel.terapk.com/wp-content/themes/twentytwentyfive/patterns/assets/
+/wp-admin/about.php 2 http://cpanel.terapk.com/wp-admin/about.php
+/wp-admin/includes/images/ 1 http://cpanel.terapk.com/wp-admin/includes/images/
+/uk.php 1 -
+/prv8.php 2 -
+/wp-includes/blocks/ 6 http://cpanel.terapk.com/wp-includes/blocks/
+/albin.php 4 -
+/.env.production.bak 2 -
+/ms-themes.php 2 -
+/ao.php 1 -
+/wp-content/settings/gfhfv.php 1 http://cpanel.terapk.com/wp-content/settings/gfhfv.php
+/sef.php 2 -
+/filefuns.php 1 -
+/wp-includes/theme-compat/images/ 1 http://cpanel.terapk.com/wp-includes/theme-compat/images/
+/env/.env 1 -
+/wp-content/themes/twentytwentythree.php 1 -
+/cgi-bin/xmrlpc.php 2 -
+/.well-known/acme-challenge/index.php 5 -
+/cron/.env 2 -
+/file88.php 1 -
+/admin/uploads/fm.php 1 http://cpanel.terapk.com/admin/uploads/fm.php
+/wp-admin/sql.php 1 http://cpanel.terapk.com/wp-admin/sql.php
+/wp-admin/images/admin.php 5 -
+/lock360.php 4 http://cpanel.terapk.com/lock360.php
+/class.php 7 -
+/az.php 1 -
+/_next/data/buildId/home.json 1 -
+/wp-content/cong.php 2 -
+/wp-includes/js/tinymce/skins/lightgray/img/about.php 2 -
+/admin/index.php 3 -
+/images/index.php 2 -
+/wp-content/uploads/2025/ 6 http://cpanel.terapk.com/wp-content/uploads/2025/
+/about/function.php 3 -
+/wp-admin/images/ 11 -
+/wp-includes/blocks/post-content/ 1 http://cpanel.terapk.com/wp-includes/blocks/post-content/
+/api/endpoint 1 -
+/ol.php 2 -
+/wp-content/uploads/footer.php 1 -
+/uploads/admin.php 1 -
+/ini.php 2 -
+/gifclass.php 9 -
+/wp-admin/includes/gfhfv.php 1 http://cpanel.terapk.com/wp-admin/includes/gfhfv.php
+/wp-admin/css/colors/blue/file.php 1 -
+/config/env 2 -
+/robots.php 3 -
+/.env_secret 2 -
+/asasx.php 5 -
+/4h.php 2 -
+/xleet 2 -
+/wp-includes/Text/Diff/ 2 http://cpanel.terapk.com/wp-includes/Text/Diff/
+/pouhg.php 1 -
+/h.php 6 -
+/sql.php 2 -
+/fx.php 4 -
+/tools.php 1 -
+/wp-content/themes/news-portal/network.php 1 http://cpanel.terapk.com/wp-content/themes/news-portal/network.php
+/.well-known/acme-challenge/aa.php 1 -
+/wp-content/uploads/classwithtostring.php 2 -
+/plugins/DaoZM.php 2 -
+/wp-admin/includes/hp2.php 1 -
+/pm.php 1 -
+/maul.php 3 -
+/wp-content/themes/ftde.php 1 http://cpanel.terapk.com/wp-content/themes/ftde.php
+/tanjiro.php 2 -
+/w.php 6 -
+/ws73.php 2 -
+/wp-mail.php/wp-includes/ID3/.info.php 2 -
+/fe5.php 2 -
+/gecko.php 3 -
+/wp-content/plugins/protect-uploads/languages/about.php 1 http://cpanel.terapk.com/wp-content/plugins/protect-uploads/languages/about.php
+/8573.php 3 -
+/geck.php 1 -
+/block-bindings.php 1 -
+/wp-includes/customize/index.php 1 -
+/cloud.php 2 -
+/cat.php 1 -
+/lowpr.php 2 -
+/fun.php 1 -
+/admin/fckeditor/editor/filemanager/updates.php 2 -
+/ws62.php 1 -
+/makeasmtp.php 3 -
+/gptsh.php 4 -
+/kr.php 1 -
+/01.php 1 -
+/wp-content/languages/themes/num.php 1 -
+/595.php 1 -
+/.env.orig 2 -
+/css/item.php 1 -
+/images/about.php 1 -
+/wp-includes/blocks/nextpage/index.php 1 -
+/sim.php 1 -
+/wp-admin/css/colors/light/wp-login.php 2 -
+/ws82.php 1 -
+/wp-file.php 2 http://cpanel.terapk.com/wp-file.php
+/file22.php 2 -
+/wp-contentt.php 1 -
+/css/classwithtostring.php 5 -
+/wp-includes/block-bindings/ 2 http://cpanel.terapk.com/wp-includes/block-bindings/
+/buy.php 7 http://cpanel.terapk.com/buy.php
+/wp-includes/Text/Diff/Engine/template-singl-portfolio.php 1 http://cpanel.terapk.com/wp-includes/Text/Diff/Engine/template-singl-portfolio.php
+/h2.php 3 -
+/wp-admin/images/install.php 2 -
+/init.php 7 -
+/wp-content/themes/twentytwentyfour/patterns/template-singl-portfolio.php 1 http://cpanel.terapk.com/wp-content/themes/twentytwentyfour/patterns/template-singl-portfolio.php
+/text.php 2 -
+/wp-includes/sitemaps/ 1 http://cpanel.terapk.com/wp-includes/sitemaps/
+/raw.php 1 -
+/miansha.php 2 -
+/dtyh.php 1 -
+/setup.php 2 -
+/n.php 1 -
+/wp-content/themes/include.php 2 -
+/bjfl.php 3 -
+/root/.env 2 -
+/t.php 7 -
+/BDKR28WP.php 2 -
+/theme.php 1 -
+/wp-includes/widgets/chosen.php 1 http://cpanel.terapk.com/wp-includes/widgets/chosen.php
+/core/.env 2 -
+/r.php 3 -
+/lm15.php 3 -
+/option.php 1 -
+/manager.php 2 -
+/dox.php 1 -
+/wp-content/themes/twentytwenty/assets/fonts/inter/ 1 http://cpanel.terapk.com/wp-content/themes/twentytwenty/assets/fonts/inter/
+/gfd.php 5 -
+/ws77.php 6 -
+/strong.php 1 -
+/blog/fw.php 2 -
+/wp.php 6 http://cpanel.terapk.com/wp.php
+/assets/images/services/ 1 http://cpanel.terapk.com/assets/images/services/
+/inege.php 4 -
+/ws84.php 4 -
+/.env.production.local 2 -
+/myfile.php 7 -
+/css/xp.php 2 -
+/wp-admin/dofault.php 1 http://cpanel.terapk.com/wp-admin/dofault.php
+/kk.php 1 -
+/wen.php 8 -
+/db.php 6 -
+/wp-content/themes/astra/inc/ki1k.php 2 -
+/env.backup 1 -
+/motu.php 8 -
+/wp-content/wpvivid_uploads/wp-conflg.php 1 http://cpanel.terapk.com/wp-content/wpvivid_uploads/wp-conflg.php
+/wp-content/plugins/yanierin/akc.php 5 -
+/alfa-rex.php 2 -
+/api/test 1 -
+/wp-includes/blocks/paragraph/ 1 http://cpanel.terapk.com/wp-includes/blocks/paragraph/
+/kbfr.php 12 -
+/gettest.php 8 -
+/wxo.php 1 -
+/public/vx.php 5 -
+/wp-admin/chosen.php 2 -
+/wp-content/themes/news-portal/user-install.php 1 http://cpanel.terapk.com/wp-content/themes/news-portal/user-install.php
+/.well-known/security.txt 4 -
+/jquery.php 1 -
+/13.php 1 http://cpanel.terapk.com/13.php
+/wp-content.php 1 -
+/wp-content/uploads/cpo_temp/services.php 1 http://cpanel.terapk.com/wp-content/uploads/cpo_temp/services.php
+/php.php 4 http://cpanel.terapk.com/php.php
+/wp-includes/blocks/audio/ 1 http://cpanel.terapk.com/wp-includes/blocks/audio/
+/upload/medialibrary 1 -
+/my.php 1 -
+/logs.php 1 -
+/wp-includes/blocks/post-comments-form/ 1 http://cpanel.terapk.com/wp-includes/blocks/post-comments-form/
+/public/wp-blog.php 5 -
+/wp-admin/includes/v2.php 1 -
+/sweg.php 1 -
+/docker/.env.local 2 -
+/wp-content/plugins/core-plugin/include.php 3 -
+/e.php 1 -
+/system_log.php 4 http://cpanel.terapk.com/system_log.php
+/wp-includes/SimplePie/Content/Type/index.php 2 -
+/0.php 2 -
+/wp-includes/SimplePie/Content/Type/alfa-rex.php 2 -
+/mini 2 -
+/wp-content/themes/aounq/ 1 http://cpanel.terapk.com/wp-content/themes/aounq/
+/wp-includes/js/jcrop/ 1 http://cpanel.terapk.com/wp-includes/js/jcrop/
+/wp-includes/css/index.php 2 -
+/wp-content/upgrade/ 1 http://cpanel.terapk.com/wp-content/upgrade/
+/www/.env 3 -
+/wa/ 1 http://cpanel.terapk.com/wa/
+/.well-known/link.php 2 -
+/wp-includes/nav-menu.php 1 -
+/plss3.php 2 -
+/new/.env.production 3 -
+/55.php 1 -
+/66.php 11 -
+/agg.php 3 -
+/css.php 4 http://cpanel.terapk.com/css.php
+/assets/images/wp-login.php 2 -
+/wp-content/plugins/filester/assets/css/404.php 1 http://cpanel.terapk.com/wp-content/plugins/filester/assets/css/404.php
+/pinfo.php 2 -
+/themes.php 13 -
+/ioxi-o.php 42 -
+/north1.php 1 -
+/.env.development 2 -
+/file66.php 2 -
+/mar.php 5 -
+/wp-includes/blocks/archives/ 1 http://cpanel.terapk.com/wp-includes/blocks/archives/
+/assets/ 1 http://cpanel.terapk.com/assets/
+/index/admin.php 1 -
+/ms.php 9 -
+/uxijj.php 1 -
+/wp-includes/blocks/query-pagination/ 1 http://cpanel.terapk.com/wp-includes/blocks/query-pagination/
+/wp-includes/js/jquery/ 2 -
+/sx.php 6 http://cpanel.terapk.com/sx.php
+/wp-includes/sodium_compat/namespaced/Core/ 1 http://cpanel.terapk.com/wp-includes/sodium_compat/namespaced/Core/
+/_profiler/phpinfo 2 -
+/nrhogjyecktixbal0fnt5Cakc.php 1 http://cpanel.terapk.com/nrhogjyecktixbal0fnt5Cakc.php
+/wp-includes/fonts/ 2 http://cpanel.terapk.com/wp-includes/fonts/
+/b.php 9 -
+/api.php 1 -
+/knme.php 1 -
+/cron.php 2 -
+/8.php 7 -
+/qw_03b4ad31.php 1 -
+/wp-includes/images/smilies/about.php 5 -
+/swallowable.php 2 -
+/.env.backup 2 -
+/.env.prod 2 -
+/.git/refs/heads/master 1 -
+/mln.php 1 -
+/wp-content/uploads/admin.php 12 -
+/xxxx.php 5 -
+/wdone1.php 1 -
+/wp-admin/maint/wta.php 1 -
+/wp-includes/css/dist/customize-widgets/about.php 1 http://cpanel.terapk.com/wp-includes/css/dist/customize-widgets/about.php
+/cgi-bin/index.php 3 -
+/dev/.env 3 -
+/wp-content/themes/twentytwentythree/locks.php 1 http://cpanel.terapk.com/wp-content/themes/twentytwentythree/locks.php
+/ww.php 3 -
+/wp-includes/bk/ 1 http://cpanel.terapk.com/wp-includes/bk/
+/WSO.php 1 -
+/wp-blogs.php 5 -
+/wp-includes/style-engine/autoload_classmap.php 2 -
+/wp-includes/Text/Diff/Engine/wp-good.php 1 http://cpanel.terapk.com/wp-includes/Text/Diff/Engine/wp-good.php
+/bgymj.php 7 -
+/wk/index.php 15 -
+/.env.test 2 -
+/wp-content/themes/akses.php 1 http://cpanel.terapk.com/wp-content/themes/akses.php
+/aboutc.php 1 -
+/admin-footer.php 4 -
+/yt.php 1 -
+/file/function.php 1 -
+/images/wso.php 5 -
+/yellow.php 1 -
+/assets/css/ 1 http://cpanel.terapk.com/assets/css/
+/cu.php 6 -
+/new4.php 2 -
+/xmlrpc.php 22 -
+/xs.php 1 -
+/awh.php 2 -
+/core.php 3 -
+/wp-content/plugins/phpadmin/autoload_classmap.php 1 http://cpanel.terapk.com/wp-content/plugins/phpadmin/autoload_classmap.php
+/wp-includes/js/crop/about.php 1 http://cpanel.terapk.com/wp-includes/js/crop/about.php
+/root.php 5 -
+/55b76.php 3 -
+/wp-includes/Requests/Response/wp-login.php 2 -
+/wp-content/uploads/dropdown.php 1 -
+/wp-includes/images/wp-conflg.php 1 http://cpanel.terapk.com/wp-includes/images/wp-conflg.php
+/xmlrpc.php0 1 -
+/erty.php 5 -
+/wp-includes/theme-compat 1 -
+/xxx.php 1 -
+/cookie.php 1 -
+/mini.php 6 http://cpanel.terapk.com/mini.php
+/pas2.php 1 -
+/nw.php 10 -
+/al.php 4 -
+/dev.php 2 -
+/wp-content/plugins/junkfood/mainhack.php 1 http://cpanel.terapk.com/wp-content/plugins/junkfood/mainhack.php
+/wp-themes.php 6 http://cpanel.terapk.com/wp-themes.php
+/an.php 11 -
+/wp-admin/wp-admin.php 2 -
+/wp-content/drive.php 1 http://cpanel.terapk.com/wp-content/drive.php
+/assets/images/about/ 1 http://cpanel.terapk.com/assets/images/about/
+/callback.php 5 -
+/revealability.php 2 http://cpanel.terapk.com/revealability.php
+/wp-content/themes/Divi/common/scripts/ 1 http://cpanel.terapk.com/wp-content/themes/Divi/common/scripts/
+/wp-includes/Test.php 1 -
+/wp-content/ 3 http://cpanel.terapk.com/wp-content/
+/bugz.php 2 -
+/cs.php 1 -
+/.well-known/logs233/index.php 27 -
+/low.php 1 -
+/img//classwithtostring.php 1 -
+/filemanager.php 3 http://cpanel.terapk.com/filemanager.php
+/wp-includes/ID3 1 -
+/3PJcpMFsD8B.php 1 http://cpanel.terapk.com/3PJcpMFsD8B.php
+/wp-active.php 1 http://cpanel.terapk.com/wp-active.php
+/wp-includes/Text/network.php 2 -
+/wp-includes/blocks/post-terms/vx.php 1 http://cpanel.terapk.com/wp-includes/blocks/post-terms/vx.php
+/fix.php 3 -
+/disagreed.php 1 -
+/wp-content/plugins/about.php 5 -
+/lite.php 3 -
+/files.php 3 http://cpanel.terapk.com/files.php
+/wp-admin/user/block-patterns/ 1 http://cpanel.terapk.com/wp-admin/user/block-patterns/
+/wp-content/xp.php 1 http://cpanel.terapk.com/wp-content/xp.php
+/wp-includes/IXR 1 -
+/.well-known/gecko-litespeed.php 4 -
+/help.php 1 http://cpanel.terapk.com/help.php
+/wp-admin/packed.php 2 -
+/wp-admin/sx.php 1 http://cpanel.terapk.com/wp-admin/sx.php
+/flower.php 6 -
+/wp-includes/css/ 1 http://cpanel.terapk.com/wp-includes/css/
+/about.php 36 -
+/admin/.env 2 -
+/wp-includes/ID3/file.php 1 -
+/alfa-rex1.php 1 -
+/wp-includes/sodium_compat/src/alfa-rex.php 2 -
+/v3.php 1 -
+/ws79.php 2 -
+/txets.php 6 -
+/v4.php 1 -
+/.env.save 2 -
+/lp6.php 3 -
+/.well-known/load.php 1 -
+/foxr.php 1 -
+/btx25.php 3 -
+/kj.php 8 -
+/rere.php 1 -
+/6kDPjgFTmvS.php 3 -
+/goat.php 4 -
+/f6.php 4 -
+/tt.php 5 -
+/site/.env 3 -
+/5b9ac.php 3 -
+/.env.example 2 -
+/wp-content/ws29.php 1 http://cpanel.terapk.com/wp-content/ws29.php
+/rt.php 1 -
+/wp-content/plugins/hello-plus/classes/ehp-sarang.php 1 http://cpanel.terapk.com/wp-content/plugins/hello-plus/classes/ehp-sarang.php
+/spip.php 1 -
+/wp-includes/blocks/pullquote/ 1 http://cpanel.terapk.com/wp-includes/blocks/pullquote/
+/aves.php 1 -
+/asax.php 1 -
+/api/.env 4 -
+/god4m.php 4 -
+/adminer-3.3.4-cs.php 1 -
+/a1vx.php 1 -
+/infos.php 2 -
+/wp-content/plugins/pwnd/pwnd.php 1 http://cpanel.terapk.com/wp-content/plugins/pwnd/pwnd.php
+/gssdd.php 2 -
+/wp-content/themes/twentytwentyfour/patterns/zczv.php 1 http://cpanel.terapk.com/wp-content/themes/twentytwentyfour/patterns/zczv.php
+/wp-includes/blocks/group/about.php 1 http://cpanel.terapk.com/wp-includes/blocks/group/about.php
+/wso.php 1 -
+/test.php 4 -
+/leon.php 1 -
+/fonts/index.php 1 -
+/wp-admin/css/colors/ectoplasm/ 11 -
+/wp-includes/images/smilies/theme-compat/ 1 http://cpanel.terapk.com/wp-includes/images/smilies/theme-compat/
+/Assets/edit.php 2 -
+/file52.php 1 -
+/re.php 2 -
+/click.php 1 http://cpanel.terapk.com/click.php
+/wp-includes/sodium_compat/chosen.php 1 http://cpanel.terapk.com/wp-includes/sodium_compat/chosen.php
+/wp-admin/js/ 12 http://cpanel.terapk.com/wp-admin/js/
+/doc.php 4 -
+/wp-content/languages/plugins/admin.php 1 http://cpanel.terapk.com/wp-content/languages/plugins/admin.php
+/green.php 2 -
+/wp-includes/style-engine/index.php 1 -
+/web/.env 2 -
+/worksec.php 4 http://cpanel.terapk.com/worksec.php
+/wp-includes/customize/wp-conflg.php 1 http://cpanel.terapk.com/wp-includes/customize/wp-conflg.php
+/meta.php 3 -
+/wp-admin/network/admin.php 1 -
+/vaza.php 1 -
+/subdom/ant/makeasmtp.php 1 -
+/wp-includes/abilities-api/about.php 1 http://cpanel.terapk.com/wp-includes/abilities-api/about.php
+/reception1/includes/tcpdf/examples/config/ 1 http://cpanel.terapk.com/reception1/includes/tcpdf/examples/config/
+/_next/data/buildId/page.json 2 -
+/docker-compose.env 2 -
+/tmp.php 4 -
+/wp-michan.php 2 -
+/fgd.php 2 -
+/wp-admin/autoload_classmap.php 1 http://cpanel.terapk.com/wp-admin/autoload_classmap.php
+/wp-includes/ID3/ 10 http://cpanel.terapk.com/wp-includes/ID3/
+/index/function.php 19 -
+/gl.php 1 -
+/wp-admin/css/colors/coffee/alfa-rex.php 2 -
+/wsoyanz.php 3 -
+/wp-includes/blocks/nextpage/ 1 http://cpanel.terapk.com/wp-includes/blocks/nextpage/
+/wp-includes/Requests/src/Cookie/ 5 -
+/wp-admin/includes/xmrlpc.php 2 -
+/wp-includes/assets/about.php 6 -
+/ztv.php 2 -
+/wp-content/webp-express/webp-images/sitemap_index.xml/ 1 http://cpanel.terapk.com/wp-content/webp-express/webp-images/sitemap_index.xml/
+/ee.php 1 -
+/content.php 7 -
+/domains.php 4 -
+/.well-known/gecko.php 1 -
+/wp-content/languages/autoload_classmap.php 1 http://cpanel.terapk.com/wp-content/languages/autoload_classmap.php
+/image/chosen.php 1 http://cpanel.terapk.com/image/chosen.php
+/styll.php 2 -
+/wp-content/themes/cay-van-phong/filemanager.php 2 -
+/wp-includes/IXR/ 1 http://cpanel.terapk.com/wp-includes/IXR/
+/vx.php 6 -
+/resp.php 1 -
+/bal.php 2 -
+/plugin.php 4 -
+/assets/fonts/ 1 http://cpanel.terapk.com/assets/fonts/
+/wp-p2r3q9c8k4.php 6 -
+/wp-includes/PHPMailer/index.php 1 -
+/ab.php 4 http://cpanel.terapk.com/ab.php
+/images/class-config.php 2 -
+/room.php 1 -
+/wp-includes/Requests/src/Response/about.php 15 -
+/u.php 1 -
+/wp-content/plugins/eu-cookie-law/ 1 http://cpanel.terapk.com/wp-content/plugins/eu-cookie-law/
+/black.php 1 -
+/ws40.php 1 -
+/Cap.php 3 -
+/plugin-editor.php 1 -
+/co.php 1 -
+/alfa-rex.php7 2 -
+/wp-includes/sodium_compat/namespaced/customize/ 1 http://cpanel.terapk.com/wp-includes/sodium_compat/namespaced/customize/
+/wp-includes/js/crop/ 7 -
+/zcsu.php 1 -
+/wp-admin.php 4 -
+/p.php 5 -
+/wp/wp-admin/includes/wp-admin/default.php 1 -
+/new/.env 3 -
+/wp-includes/Requests/about.php 6 http://cpanel.terapk.com/wp-includes/Requests/about.php
+/wp-includes/js/tinymce/skins/wordpress/images/about.php 2 -
+/sbhu.php 4 -
+/new/.env.local 3 -
+/autogooey.php 5 -
+/wp-content/themes/404.php 1 http://cpanel.terapk.com/wp-content/themes/404.php
+/wp-content/plugins/elementor/includes/template-singl-portfolio.php 1 http://cpanel.terapk.com/wp-content/plugins/elementor/includes/template-singl-portfolio.php
+/high.php 1 -
+/wp-config-sample.php 2 http://cpanel.terapk.com/wp-config-sample.php
+/gelio1.php 1 -
+/wp-admin/css/maintenance.php 1 http://cpanel.terapk.com/wp-admin/css/maintenance.php
+/a5e0a.php 3 -
+/byp8.php 2 -
+/configs.php 2 -
+/wp9.php 13 -
+/a4.php 5 -
+/pp.php 5 -
+/wp-includes/blocks/video/ 1 http://cpanel.terapk.com/wp-includes/blocks/video/
+/themes/zmousse/otuz1.php 1 -
+/sys.php 5 -
+/wp-content/themes/haha.php 7 -
+/.well-known/install.php 1 -
+/wp-admin/network/index.php 3 -
+/fs.php 6 -
+/public/.env 3 -
+/wp-includes/mer_gagal.php 1 http://cpanel.terapk.com/wp-includes/mer_gagal.php
+/jeZDu.php 1 -
+/abcd.php 20 -
+/wp-includes/Text/xwx1.php 5 -
+/wp-includes/customize/fonts/ 1 http://cpanel.terapk.com/wp-includes/customize/fonts/
+/wp-content/themes/theme-check/main.php 1 http://cpanel.terapk.com/wp-content/themes/theme-check/main.php
+/wefile.php 3 -
+/tfm.php 8 -
+/gecko-new.php 2 http://cpanel.terapk.com/gecko-new.php
+/wp-admin/maint/includes/ 1 http://cpanel.terapk.com/wp-admin/maint/includes/
+/wp-includes/blocks/categories/chosen.php 1 http://cpanel.terapk.com/wp-includes/blocks/categories/chosen.php
+/k.php 9 -
+/patriotic/wp-includes/images/smilies/ 1 -
+/wp-includes/images/wp-login.php 5 -
+/wp-content/languages/ 2 http://cpanel.terapk.com/wp-content/languages/
+/mari.php 4 -
+/wp-admin/network/about.php 3 http://cpanel.terapk.com/wp-admin/network/about.php
+/wp-includes/block-supports/autoload_classmap.php 2 -
+/wp-wlx.php 1 http://cpanel.terapk.com/wp-wlx.php
+/dass.php 3 -
+/wp-content/themes/covr-wpcom/assets/fonts/manrope.php 1 http://cpanel.terapk.com/wp-content/themes/covr-wpcom/assets/fonts/manrope.php
+/dz.php 1 -
+/new.php 6 http://cpanel.terapk.com/new.php
+/wp-admin/gettest.php 1 http://cpanel.terapk.com/wp-admin/gettest.php
+/wp-includes/Requests/zczv.php 1 http://cpanel.terapk.com/wp-includes/Requests/zczv.php
+/.well-known/acme-challenge/about.php 1 -
+/WordPress/wp-admin/includes/zmFM.php 2 -
+/wp-content/themes/travelscape/json.php 2 -
+/wp-includes/blocks/calendar/ 1 http://cpanel.terapk.com/wp-includes/blocks/calendar/
+/10.php 6 -
+/wp-includes/PHPMailer/widgets/ 1 http://cpanel.terapk.com/wp-includes/PHPMailer/widgets/
+/wp-content/css/ 1 -
+/a5.php 4 -
+/wp-content/themes/wp-blog.php 1 http://cpanel.terapk.com/wp-content/themes/wp-blog.php
+/images/alfa-rex.php 1 -
+/.env 3 -
+/forbidals.php 1 -
+/saorix1.php 1 -
+/mah.php 1 http://cpanel.terapk.com/mah.php
+/wp-content/languages/index.php 2 -
+/wp-content/abb.php 1 http://cpanel.terapk.com/wp-content/abb.php
+/autoload_classmap/function.php 4 http://cpanel.terapk.com/autoload_classmap/function.php
+/edit-tags.php 1 -
+/config.php7 1 -
+/mass.php 1 -
+/wp-admin/wp-signin.php 1 http://cpanel.terapk.com/wp-admin/wp-signin.php
+/wp-content/export.php 1 -
+/ai.php 1 -
+/rmpoa.php 1 -
+/mah/function.php 2 http://cpanel.terapk.com/mah/function.php
+/wp-content/uploads/wcdp-uploads/temp/xxc/stuff/wp-class.php 1 http://cpanel.terapk.com/wp-content/uploads/wcdp-uploads/temp/xxc/stuff/wp-class.php
+/wp-content/backup.php 1 -
+/wp-content/plugins/hellopress/wp_filemanager.php 14 -
+/abc.php 15 -
+/modules/mod_simplefileuploadv1.3/elements/file.php 1 -
+/wp-includes/Text/Diff/Engine/ 1 http://cpanel.terapk.com/wp-includes/Text/Diff/Engine/
+/leaf.php 1 -
+/menu.php 1 -
+/.env.staging 2 -
+/adminfuns.php 35 -
+/wp-includes/blocks/social-links/ 1 http://cpanel.terapk.com/wp-includes/blocks/social-links/
+/phina.php 1 -
+/wp-includes/sodium_compat/namespaced/Core/Curve25519/wp-cron.php 1 http://cpanel.terapk.com/wp-includes/sodium_compat/namespaced/Core/Curve25519/wp-cron.php
+/nw_ok.php 1 -
+/we.php 3 http://cpanel.terapk.com/we.php
+/zz.php 1 -
+/rithin.php 4 -
+/bd.php 1 -
+/inputs.php 27 -
+/vanda.php 3 -
+/dragonshell.php 1 -
+/wp-content/uploads/chosen.php 2 -
+/wp-admin/images/html-api/ 1 http://cpanel.terapk.com/wp-admin/images/html-api/
+/Sanskrit.php 2 -
+/hehe.php 5 -
+/16.php 1 -
+/.well-known/ 40 -
+/wp-content/plugins/ 1 -
+/.well-known/about/function.php 4 -
+/wp-content/uploads 1 http://cpanel.terapk.com/wp-content/uploads
+/bh.php 1 -
+/au.php 1 -
+/plugins.php 3 -
+/wp-includes/rest-api/ 1 http://cpanel.terapk.com/wp-includes/rest-api/
+/.well-known/core.php 1 -
+/X57.php 3 -
+/.well-known/pki-validation/index.php 2 -
+/xmrlpc.php 8 -
+/wp-includes/js/mediaelement/ 1 http://cpanel.terapk.com/wp-includes/js/mediaelement/
+/wp-includes/pomo/includ.php 1 http://cpanel.terapk.com/wp-includes/pomo/includ.php
+/loud.php 1 -
+/classwithtostring.php 23 -
+/wp-content/uploads/back.php 1 http://cpanel.terapk.com/wp-content/uploads/back.php
+/.vscode/.env 1 -
+/nc4.php 1 -
+/app/ 8 -
+/wp-includes/js/crop/cropper.php 3 -
+/axx.php 2 -
+/wp-content/function.php 1 -
+/wp-content/uploads/file.php 2 -
+/wp-content/buy.php 1 http://cpanel.terapk.com/wp-content/buy.php
+/wp-includes/js/anskrit.php 1 http://cpanel.terapk.com/wp-includes/js/anskrit.php
+/wp-includes/blocks/nextpage/wp-cron.php 1 http://cpanel.terapk.com/wp-includes/blocks/nextpage/wp-cron.php
+/wp-content/plugins/alfa-rex.php 1 -
+/wp-content/plugins/WordPressCore/ 9 -
+/wp-includes/css/dist/block-library/ 1 http://cpanel.terapk.com/wp-includes/css/dist/block-library/
+/wp-includes/Requests/src/Auth/ 1 http://cpanel.terapk.com/wp-includes/Requests/src/Auth/
+/2.php 6 http://cpanel.terapk.com/2.php
+/lanou.php 1 -
+/elabel.php 1 -
+/xxw.php 5 -
+/X7T6.php 2 -
+/wp-includes/rest-api/autoload_classmap.php 3 http://cpanel.terapk.com/wp-includes/rest-api/autoload_classmap.php
+/x/ 2 -
+/wp-includes/pomo/ 2 http://cpanel.terapk.com/wp-includes/pomo/
+/wp-content/themes/twentytwentytwo/index.php 1 -
+/wp-includes/Text.php 1 -
+/backend/.env 2 -
+/wp-admin/network/ 1 http://cpanel.terapk.com/wp-admin/network/
+/.env.dev.local 2 -
+/.env.dev 2 -
+/wp-user.php 1 http://cpanel.terapk.com/wp-user.php
+/wp-includes/IXR/wp-conflg.php 1 http://cpanel.terapk.com/wp-includes/IXR/wp-conflg.php
+/wp-content/hplfuns.php 1 http://cpanel.terapk.com/wp-content/hplfuns.php
+/wp-content/plugins/classic-editor/wp-login.php 5 -
+/public/ws49.php 4 -
+/wp-content/themes/bbpress/mainhack.php 1 http://cpanel.terapk.com/wp-content/themes/bbpress/mainhack.php
+/wp-content/plugins/carousel-slider/templates/loop/classwithtostring.php 1 http://cpanel.terapk.com/wp-content/plugins/carousel-slider/templates/loop/classwithtostring.php
+/tmpls.php 1 -
+/wp-admin/css/index.php 1 -
+/img/post.php 1 -
+/asw.php 1 -
+/input.php 1 -
+/wp-content/plugins/x/wp-classs-editor.php 1 http://cpanel.terapk.com/wp-content/plugins/x/wp-classs-editor.php
+/_next/data/buildId/index.json 1 -
+/fff.php 14 -
+/wp-links-opml.php 8 http://cpanel.terapk.com/wp-links-opml.php
+/admin/ 1 http://cpanel.terapk.com/admin/
+/wp-access.php 6 -
+/sadd.php 1 -
+/.well-known/acme-challenge/wp-login.php 2 -
+/default.php 7 -
+/.trash7206/index.php 7 -
+/fat.php 1 -
+/wp-includes/Requests/Exception/file.php 1 -
+/.well-known/pki-validation/mariju.php 4 -
+/wp-includes/blocks/freeform/ 1 http://cpanel.terapk.com/wp-includes/blocks/freeform/
+/wp-includes/blocks/button 1 -
+/av6m.php 3 -
+/shop.php 1 -
+/wp-content/uploads/index.php 9 -
+/wp-update.php 3 http://cpanel.terapk.com/wp-update.php
+/feeds.php 1 -
+/management/assets/assets/css/ 1 http://cpanel.terapk.com/management/assets/assets/css/
+/wp-includes/Text/index.php 5 -
+/xqq.php 4 -
+/fox.php 2 -
+/home/.env 2 -
+/wp-content/images/uploads/admin.php 1 -
+/wp-admin/file-manager.php 1 http://cpanel.terapk.com/wp-admin/file-manager.php
+/wsvvs.php 4 -
+/wp-content/plugins/wpvivid-backuprestore/error/ 1 http://cpanel.terapk.com/wp-content/plugins/wpvivid-backuprestore/error/
+/goods.php 28 -
+/cvz.php 1 -
+/.well-known/module.php 1 -
+/css/index.php 3 -
+/wp-content/updates.php 1 http://cpanel.terapk.com/wp-content/updates.php
+/.env_settings 2 -
+/wp-admin/images/an.php 1 -
+/wp-content/plugins/wp.php 1 -
+/lb.php 2 -
+/ws87.php 2 -
+/size.php 1 -
+/wp-includes/assets/k.php 1 http://cpanel.terapk.com/wp-includes/assets/k.php
+/403.php 2 -
+/oirsbfkm.php 1 -
+/wp-includes/Text/Diff/Renderer/about.php 1 http://cpanel.terapk.com/wp-includes/Text/Diff/Renderer/about.php
+/eee.php 2 -
+/wp-content/plugins/wp-minibar/ 1 http://cpanel.terapk.com/wp-content/plugins/wp-minibar/
+/wp-admin/images/wp-ver.php 1 http://cpanel.terapk.com/wp-admin/images/wp-ver.php
+/item.php 3 http://cpanel.terapk.com/item.php
+/.well-known/pkivalidation/log.php 2 -
+/load.php 7 -
+/wp-content/plugins/revslider/includes/external/page/ 1 http://cpanel.terapk.com/wp-content/plugins/revslider/includes/external/page/
+/wp-admin/css/colors/coffee/Isolate/ 1 http://cpanel.terapk.com/wp-admin/css/colors/coffee/Isolate/
+/wp-mail.php/wp-includes/ID3/rk2.php 2 -
+/srv/.env 2 -
+/wp-includes/ 17 -
+/vwxbi.php 1 -
+/wp-admin/zwso.php 1 http://cpanel.terapk.com/wp-admin/zwso.php
+/ws67.php 1 -
+/ws83.php 4 -
+/memberfuns.php 1 -
+/wp-includes/SimplePie/wp-conflg.php 1 http://cpanel.terapk.com/wp-includes/SimplePie/wp-conflg.php
+/wp-admin/maint/ 8 http://cpanel.terapk.com/wp-admin/maint/
+/fi.php 2 -
+/wp-includes/SimplePie/src/Decode/HTML/sitemaps.php 1 http://cpanel.terapk.com/wp-includes/SimplePie/src/Decode/HTML/sitemaps.php
+/.env.php 2 -
+/wp-admin/maint/index.php 1 -
+/wp-content/uploads/wpforms/ 1 http://cpanel.terapk.com/wp-content/uploads/wpforms/
+/.well-known/222.php 1 -
+/wp-content/plugins/sccrbel/ 1 http://cpanel.terapk.com/wp-content/plugins/sccrbel/
+/ban.php 1 -
+/wp-includes/sitemaps/providers/ultra.php 1 -
+/bak.php 4 -
+/wp-includes/block-bindings/block-supports/ 1 http://cpanel.terapk.com/wp-includes/block-bindings/block-supports/
+/admin/controller/extension/extension/ultra.php 1 -
+/cgi-bin/about.php 1 -
+/wp-includes/Text/Diff/Renderer/user/ 1 http://cpanel.terapk.com/wp-includes/Text/Diff/Renderer/user/
+/wp-content/themes/about.php 6 http://cpanel.terapk.com/wp-content/themes/about.php
+/sale.php 2 -
+/wp-admin/css/colors/blue/wp-login.php 2 -
+/wp-includes/rest-api/alfa-rex.php 2 -
+/var/www/html/.env 2 -
+/wp-content/themes/twentytwentyfour/ 1 http://cpanel.terapk.com/wp-content/themes/twentytwentyfour/
+/config/.env 2 -
+/rtx.php 1 -
+/lib.php 6 -
+/wp-includes/block-bindings/rxzx.php 1 http://cpanel.terapk.com/wp-includes/block-bindings/rxzx.php
+/index.php 5 -
+/wp-includes/style-engine/wp-login.php 2 -
+/wp-includes/wp.php 1 http://cpanel.terapk.com/wp-includes/wp.php
+/as.php 35 -
+/wp-admin/css/colors/blue/wp-ait.php 1 http://cpanel.terapk.com/wp-admin/css/colors/blue/wp-ait.php
+/d12.php 3 -
+/sty.php 5 -
+/wp-includes/IXR/test1.php 3 -
+/wp-content/plugins/plugin/index.php 7 -
+/wp-content/updraft/fonts/ 1 http://cpanel.terapk.com/wp-content/updraft/fonts/
+/144.php 3 -
+/config.php 1 -
+/RIP.php 1 -
+/wp-includes/html-api/photo.php 1 -
+/config.json 1 -
+/users.php 3 -
+/rovoj.php 1 -
+/comments/feed/ 1 http://cpanel.terapk.com/comments/feed/
+/x12.php 2 -
+/wander.php 1 -
+/wp-includes/ID3/customize/ 1 http://cpanel.terapk.com/wp-includes/ID3/customize/
+/test1.php 10 -
+/wp-includes/wp-mails.php 1 https://cpanel.terapk.com/wp-includes/wp-mails.php
+/docker/app/.env 1 -
+/wp-content/wpvivid_uploads/Isolate/error/ 1 http://cpanel.terapk.com/wp-content/wpvivid_uploads/Isolate/error/
+/wordpress/wp-includes/blocks/accordion/ 1 http://cpanel.terapk.com/wordpress/wp-includes/blocks/accordion/
+/wp-content/plugins/seoplugins/index.php 2 -
+/mx.php 1 -
+/wp-includes/phpmailer/phpmailer.php 1 -
+/upload.php 6 -
+/uploads/ 9 -
+/ss.php 1 -
+/wp-admin/shell.php 1 http://cpanel.terapk.com/wp-admin/shell.php
+/wta.php 1 -
+/22.php 1 -
+/xmr.php 8 -
+/cxc.php 1 -
+/templates/beez3/error.php 1 -
+/tx79.php 2 -
+/aws-secret.yaml 2 -
+/bnm.php 6 -
+/file2.php 4 -
+/x1.php 1 -
+/wp-fclass.php 5 -
+/am.php 1 -
+/assets/css/index.php 6 -
+/zc-104.php 3 -
+/aa21.php 2 -
+/.env~ 2 -
+/assets/images/28c5400b0b.php 2 -
+/wp-load.php 1 -
+/znv3hcxz6mwjdz1jwxrxiCakc.php 1 http://cpanel.terapk.com/znv3hcxz6mwjdz1jwxrxiCakc.php
+/xex.php 1 -
+/wp-configs.php 1 -
+/56c53.php 3 -
+/x123x.php 1 -
+/wglum1.php 1 -
+/222.php 20 -
+/wp-admin/wp.php 1 http://cpanel.terapk.com/wp-admin/wp.php
+/wp-includes/fonts/vpi/ 1 http://cpanel.terapk.com/wp-includes/fonts/vpi/
+/wp-content/plugins/elementor/core/frontend/render-modes/about.php 1 http://cpanel.terapk.com/wp-content/plugins/elementor/core/frontend/render-modes/about.php
+/wp-content/plugins/dummyyummy/wp-signup.php 2 -
+/xa.php 2 -
+/class_api.php 1 -
+/upload/ 1 http://cpanel.terapk.com/upload/
+/gfile.php 4 -
+/.well-known/aa.php 1 -
+/readme.php 2 -
+/management1/assets/assets/images/gallery/ 1 http://cpanel.terapk.com/management1/assets/assets/images/gallery/
+/wb.php 1 -
+/wp-admin/classwithtostring.php 3 http://cpanel.terapk.com/wp-admin/classwithtostring.php
+/wp-content/uploads/ast-block-templates-json/search/ 1 http://cpanel.terapk.com/wp-content/uploads/ast-block-templates-json/search/
+/wp-content/mu-plugins/about.php 1 http://cpanel.terapk.com/wp-content/mu-plugins/about.php
+/file59.php 4 -
+/cc13.php 1 -
+/favicon.png 1 -
+/wp-includes/customize/class-wp-customize-cropped-image-control.php 5 -
+/zxin.php 1 -
+/wp-content/themes/twentytwentythree/templates/ 1 http://cpanel.terapk.com/wp-content/themes/twentytwentythree/templates/
+/wp-admin/alfa.php 3 -
+/wp-includes/widgets/ 1 http://cpanel.terapk.com/wp-includes/widgets/
+/zz8.php 1 -
+/wp-includes/js/dist 1 http://cpanel.terapk.com/wp-includes/js/dist
+/admin/admin.php 2 -
+/vvvb.php 1 -
+/shellerr.php 1 -
+/wp-content/file.php 2 -
+/term.php 5 -
+/wp-content/admin-header.php 6 http://cpanel.terapk.com/wp-content/admin-header.php
+/portal/.env 1 -
+/sh.php 1 -
+/alfanew.php 1 -
+/wp-includes/assets/script-modules-xxx.php 1 http://cpanel.terapk.com/wp-includes/assets/script-modules-xxx.php
+/ws88.php 3 -
+/options-writing.php 2 -
+/wp-includes/assets/autoload_classmap.php 1 http://cpanel.terapk.com/wp-includes/assets/autoload_classmap.php
+/wp-blog-header.php 5 -
+/wp-includes/block-supports/admin.php 1 http://cpanel.terapk.com/wp-includes/block-supports/admin.php
+/wp-admin/js/index.php 5 -
+/post.php 2 -
+/koiy.php 2 -
+/hplfuns.php 12 -
+/api/ 8 -
+/phpinfo 1 -
+/wp-admin/user.php 1 -
+/wp-config 2 -
+/_phpinfo.php 1 -
+/.git/logs/HEAD 1 -
+/wp-includes/blocks/categories/admin.php 1 http://cpanel.terapk.com/wp-includes/blocks/categories/admin.php
+/laravel/info.php 1 -
+/public/file.php 4 -
+/wp-includes/admin.php 1 -
+/fiyhxaae.php 1 -
+/upload/index.php 1 -
+/aaa.php 6 -
+/wp-admin/css/colors/midnight/test2.php 1 http://cpanel.terapk.com/wp-admin/css/colors/midnight/test2.php
+/shell.php 2 http://cpanel.terapk.com/shell.php
+/pass4.php 3 -
+/wp-includes/Text/Diff/Engine/hp2.php 1 -
+/css/autoload_classmap.php 4 -
+/htaccess.php 5 -
+/seetox.php 1 -
+/ccs.php 6 -
+/.well-known/security.php 1 -
+/wp-includes/js/dist/ 3 http://cpanel.terapk.com/wp-includes/js/dist/
+/wp-content/themes/chosen.php 1 http://cpanel.terapk.com/wp-content/themes/chosen.php
+/uploads/index.php 1 -
+/wp-conf.php 11 -
+/private/ 1 http://cpanel.terapk.com/private/
+/wp-includes/wp-conflg.php 1 http://cpanel.terapk.com/wp-includes/wp-conflg.php
+/wp-content/themes/theme-check/theme-check.php 1 http://cpanel.terapk.com/wp-content/themes/theme-check/theme-check.php
+/3.php 1 -
+/wp-includes/Requests/src/webdb.php 1 http://cpanel.terapk.com/wp-includes/Requests/src/webdb.php
+/var/www/.env 2 -
+/edit.php 26 -
+/bolt.php 16 -
+/kure.php 2 -
+/.git/config 3 -
+/ma.php 1 http://cpanel.terapk.com/ma.php
+/anonse/lock360.php 2 -
+/1.php 9 -
+/ws36.php 1 -
+/xc0252.php 1 -
+/pages.php 2 -
+/2ksm17n.php 2 -
+/ty.php 4 -
+/wp-admin/css/colors 3 -
+/profile.php 6 -
+/w2025.php 1 -
+/updates.php 2 -
+/function.php 1 -
+/an7.php 2 -
+/wp-includes/certificates/autoload_classmap.php 1 http://cpanel.terapk.com/wp-includes/certificates/autoload_classmap.php
+/eauu.php 1 -
+/system.php 4 http://cpanel.terapk.com/system.php
+/wp-the.php 8 -
+/x.php 3 http://cpanel.terapk.com/x.php
+/jga.php 7 -
+/update/f35.php 2 -
+/wp-content/themes/theme/about.php 7 -
+/colors.php 1 -
+/docker/.env 3 -
+/buc.php 3 -
+/baixy.php 3 -
+/wp-confiq.php 1 http://cpanel.terapk.com/wp-confiq.php
+/wp-includes/blocks/navigation-submenu/ 1 http://cpanel.terapk.com/wp-includes/blocks/navigation-submenu/
+/wp-admin/admin.php 2 -
+/bengi.php 2 -
+/ne2026.php 2 -
+/Rk41.php 2 -
+/fvvff.php 1 -
+/fs6.php 1 -
+/wp-includes/Text/about.php 1 http://cpanel.terapk.com/wp-includes/Text/about.php
+/.well-known/index.php 4 -
+/options-general.php 2 -
+/wp-content/languages/plugins/ 1 http://cpanel.terapk.com/wp-content/languages/plugins/
+/amp.php 5 -
+/.env1 2 -
+/files/berlin.php 1 -
+/NewFile.php 1 -
+/wp-includes/blocks/post-terms/ 1 http://cpanel.terapk.com/wp-includes/blocks/post-terms/
+/wp-includes/SimplePie/ 2 -
+/wp-includes/widgets/class-wp-widget-xxx.php 1 http://cpanel.terapk.com/wp-includes/widgets/class-wp-widget-xxx.php
+/wp-content/uploads/plugins.php 2 -
+/wp-includes/blocks/column/ 1 http://cpanel.terapk.com/wp-includes/blocks/column/
+/wp-admin/ 11 http://cpanel.terapk.com/wp-admin/
+/mailer/.env 1 -
+/lala.php 2 -
+/wp-content/plugins/tilnzqc/ 1 http://cpanel.terapk.com/wp-content/plugins/tilnzqc/
+/hi.php 2 -
+/bywaf.php 1 -
+/.tmb/dropdown.php 2 -
+/d.php 2 -
+/wp-content/uploads/my.php 1 -
+/work.php 1 -
+/fetch.php 1 -
+/wp-content/plugins/pretty-link/app/wp-cron.php 1 http://cpanel.terapk.com/wp-content/plugins/pretty-link/app/wp-cron.php
+/akc.php 8 -
+/ava.php 1 -
+/bs.php 1 -
+/_next/ 8 -
+/wp-admin/css/colors/midnight/ 2 http://cpanel.terapk.com/wp-admin/css/colors/midnight/
+/166.php 8 -
+/conf/.env 2 -
+/wp-includes/blocks/image/ 1 http://cpanel.terapk.com/wp-includes/blocks/image/
+/gaje.php 2 -
+/wp-content/plugins/index.php 15 -
+/wp-includes/html-api/widgets/ 1 http://cpanel.terapk.com/wp-includes/html-api/widgets/
+/wp-content/plugins/hello-plus/classes/ehp-social-elf.php 1 http://cpanel.terapk.com/wp-content/plugins/hello-plus/classes/ehp-social-elf.php
+/wp-content/index.php 6 -
+/wp-includes/js/tinymce/themes/inlite/ 4 -
+/m.php 3 http://cpanel.terapk.com/m.php
+/cc.php 2 -
+/database.php 2 -
+/G-In.php 3 -
+/wp-admin/css/colors/ 1 http://cpanel.terapk.com/wp-admin/css/colors/
+/wp-includes/config.php 1 http://cpanel.terapk.com/wp-includes/config.php
+/.well-known/passkey-endpoints 1 -
+/yuzuru1.php 1 -
+/wp-includes/blocks/details/ 1 http://cpanel.terapk.com/wp-includes/blocks/details/
+/bs1.php 2 -
+/awstats/.env 3 -
+/wp-admin/file.php 1 http://cpanel.terapk.com/wp-admin/file.php
+/accueil.php 1 -
+/wp-includes/html-api/wp-login.php 2 -
+/hots.php 4 -
+/ws50.php 1 -
+/autoload_classmap.php 16 -
+/_profiler/phpinfo/info.php 2 -
+/libraries/legacy/info.php 2 -
+/.env.old 2 -
+/user.php 4 http://cpanel.terapk.com/user.php
+/apk.php 1 -
+/111.php 1 -
+/maxro.php 5 -
+/z.php 1 -
+/wp-png.php 3 -
+/.well-known/dropdown.php 2 -
+/onclickfuns.php 1 -
+/bafFz.php 1 -
+/wp-admin/css/colors/ectoplasm/about.php 2 -
+/ca.php 1 -
+/11.php 2 -
+/ar.php 1 -
+/rip.php 20 -
+/install.php 9 -
+/wp-content/plugins/pixelyoursite/vendor/glenscott/about.php 1 http://cpanel.terapk.com/wp-content/plugins/pixelyoursite/vendor/glenscott/about.php
+/wp-includes/js/imgareaselect/ 1 http://cpanel.terapk.com/wp-includes/js/imgareaselect/
+/wp-admin/js/widgets/index.php 2 -
+/w4.php 2 -
+/mail/.env 1 -
+/wp-content/upgrade/index.php 5 -
+/wp-admin/css/colors/lock.php 1 http://cpanel.terapk.com/wp-admin/css/colors/lock.php
+/wp-includes/pomo.php 1 -
+/wp-includes/blocks/comment-content/ 1 http://cpanel.terapk.com/wp-includes/blocks/comment-content/
+/cache.php 16 -
+/wp-content/themes/radio.php 1 http://cpanel.terapk.com/wp-content/themes/radio.php
+/admin/alfa-rex.php 1 -
+/wp-includes/Text/ 2 http://cpanel.terapk.com/wp-includes/Text/
+/ant.php 1 -
+/.env.dist 2 -
+/gel4y.php 4 http://cpanel.terapk.com/gel4y.php
+/style.php 2 -
+/wp-includes/assets/themes.php 2 -
+/blnux.php 2 -
+/by.php 1 -
+/wp-includes/js/jquery/ui/nsuebz/ 1 http://cpanel.terapk.com/wp-includes/js/jquery/ui/nsuebz/
+/155.php 8 -
+/wp-tem.php 3 -
+/.well-known/acme-challenge/file.php 2 -
+/wxfyf.php 2 -
+/wp-admin/css/colors/PHPMailer/s 1 http://cpanel.terapk.com/wp-admin/css/colors/PHPMailer/s
+/wp-includes/images//lock360.php 1 -
+/wp-admin/admin-wolf.php 1 http://cpanel.terapk.com/wp-admin/admin-wolf.php
+/archive.php 1 -
+/wp-content/uploads/link.php 2 -
+/wp-differ1.php 1 http://cpanel.terapk.com/wp-differ1.php
+/_profiler/phpinfo/phpinfo.php 1 -
+/wp-includes/blocks/comments/ 1 http://cpanel.terapk.com/wp-includes/blocks/comments/
+/wp-content/languages/plugins/index.php 1 -
+/wp-includes/sitemaps/providers/class-wp-sitemaps-data.php 1 -
+/.well-known/acme-challenge/new.php 2 -
+/.well-known/admin.php 4 -
+/wp-includes/SimplePie/Content/Type/wp-login.php 2 -
+/ws75.php 5 -
+/functions.php 2 -
+/wp-trackback.php 12 -
+/js/fm.php 2 -
+/.env_config 2 -
+/wp5.php 6 -
+/uuu.php 5 -
+/wp-admin/css/ 2 http://cpanel.terapk.com/wp-admin/css/
+/js/style.php 2 -
+/ggb.php 1 -
+/wp-includes/js/ 1 http://cpanel.terapk.com/wp-includes/js/
+/wp-admin/datate.php 1 http://cpanel.terapk.com/wp-admin/datate.php
+/wp-admin/network/cache/ 1 http://cpanel.terapk.com/wp-admin/network/cache/
+/wp-content/themes/twentysixteen/includez.php 1 http://cpanel.terapk.com/wp-content/themes/twentysixteen/includez.php
+/bb.php 6 -
+/clss.php 3 -
+/moon.php 7 http://cpanel.terapk.com/moon.php
+/fm.php 3 http://cpanel.terapk.com/fm.php
+/ws42.php 1 -
+/aee.php 1 -
+/wp-content/edit-wolf.php 1 http://cpanel.terapk.com/wp-content/edit-wolf.php
+/wp-editor.php 1 -
+/ova.php 2 -
+/akses.php 1 -
+/xml.php 1 -
+/403.shtml 10 http://webmail.terapk.com//.git/HEAD
+/wp-includes/certificates/block-patterns/ 1 http://cpanel.terapk.com/wp-includes/certificates/block-patterns/
+/wp-includes/PHPMailer/ 17 -
+/ws44.php 1 -
+/ws86.php 4 -
+/teee.php 1 -
+/gg.php 4 -
+/wp-includes/rest-api/search/images/ 1 http://cpanel.terapk.com/wp-includes/rest-api/search/images/
+/v.php 1 -
+/class.api.php 1 http://cpanel.terapk.com/class.api.php
+/torsa1.php 4 -
+/wp-includes/widgets/woocommerce/ 1 http://cpanel.terapk.com/wp-includes/widgets/woocommerce/
+/wp-login.php 11 -
+/settings.php 1 -
+/laravel/core/.env 2 -
+/vv.php 2 -
+/wp-admin/includes/ 6 http://cpanel.terapk.com/wp-admin/includes/
+/grsiuk.php 6 -
+/wp-content/uploads/2021/02/index.php 2 -
+/wp-includes/blocks/tag-cloud/wp-load.php 1 http://cpanel.terapk.com/wp-includes/blocks/tag-cloud/wp-load.php
+/function/function.php 14 -
+/ws66.php 1 -
+/wp-includes/blocks/tag-cloud/ 1 http://cpanel.terapk.com/wp-includes/blocks/tag-cloud/
+/g.php 6 -
+/wp-includes/theme-compat/network/ 1 http://cpanel.terapk.com/wp-includes/theme-compat/network/
+/wp-includes/Requests/alfa-rex.php 5 -
+/ru.php 1 -
+/byypas.php 4 -
+/alpha.php 2 -
+/wp-content/themes/inputs.php 1 -
+/wp-includes/gettest.php 1 http://cpanel.terapk.com/wp-includes/gettest.php
+/upload/k2l66g.php 2 -
+/xsas.php 3 -
+/wp-includes/PHPMailer.php 1 -
+/wp-content/plugins/revslider/admin.php 1 -
+/eursi.php 1 -
+/mt.php 1 -
+/wp-includes/blocks/search/ 1 http://cpanel.terapk.com/wp-includes/blocks/search/
+/wgift1.php 1 -
+/alfanew.php7 1 -
+/roter.php 1 -
+/wp-admin/user/an.php 1 -
+/fleen.php 5 -
+/.env.local 2 -
+/.well-known/hp2.php 2 -
+/awm.php 1 -
+/wp-admin/includes/about.php 1 http://cpanel.terapk.com/wp-admin/includes/about.php
+/.git/HEAD 1 -
+/ws.php 16 -
+/v2.php 1 -
+/tx78.php 5 -
+/wp-content/plugins/Ultimate_VC_Addons/assets/alfa-rex.php7 5 -
+/bullet.php 1 -
+/wp-admin/js/widgets/ 17 http://cpanel.terapk.com/wp-admin/js/widgets/
+/wziar1.php 1 -
+/cash.php 1 -
+/composer.php 2 -
+/yindu.php 1 -
+/byp.php 4 -
+/options-reading.php 2 -
+/wp-content/txets.php 1 http://cpanel.terapk.com/wp-content/txets.php
+/wp-includes/Text/Diff/Renderer/ 5 -
+/iko.php 1 -
+/xda.php 2 -
+/wp-admin/css/bolt.php 18 -
+/defaults.php 13 -
+/msy.php 2 -
+/wp-includes/images/ 9 -
+/wp-includes/blocks/code/ 1 http://cpanel.terapk.com/wp-includes/blocks/code/
+/wp-true.php 1 -
+/wp11.php 1 -
+/.tresh/ 1 http://cpanel.terapk.com/.tresh/
+/momo.php 1 -
+/wp-content/plugins/akismet/views/cmd.php 1 http://cpanel.terapk.com/wp-content/plugins/akismet/views/cmd.php
+/mjq.php 1 -
+/wp-admin/css/colors/coffee/ 1 http://cpanel.terapk.com/wp-admin/css/colors/coffee/
+/.env.tmp 2 -
+/reception/includes/tcpdf/config/ 1 http://cpanel.terapk.com/reception/includes/tcpdf/config/
+/class-t.api.php 20 -
+/wp-content/plugins/mailpoet/vendor/composer/about.php 1 http://cpanel.terapk.com/wp-content/plugins/mailpoet/vendor/composer/about.php
+/bfuKK.php 1 -
+/7logs.php 2 -
+/ccou.php 1 -
+/ws71.php 1 -
+/update.php 1 -
+/Q73BO.php 1 -
+/.env.production 2 -
+/wp-content/webp-express/radio.php 1 http://cpanel.terapk.com/wp-content/webp-express/radio.php
+/n1GiO.php 1 -
+/wp-admin/css/colors/light/wxeagnaY.php 1 http://cpanel.terapk.com/wp-admin/css/colors/light/wxeagnaY.php
+/eu.php 1 -
+/un.php 1 -
+/fot.php 1 -
+/OpVq6.php 1 -
+/wp-content/plugins/pwnd/as.php 3 http://cpanel.terapk.com/wp-content/plugins/pwnd/as.php
+/wp-act.php 16 -
+/wp-admin/uuj_gagal.php 1 http://cpanel.terapk.com/wp-admin/uuj_gagal.php
+/.well-known/autoload_classmap.php 4 -
+/z60.php 1 -
+/.well-known/acme-challenge/admin.php 4 -
+/modules/mod_footer/tmpl/ 1 -
+/ad1.php 2 -
+/wp-includes/js/tinymce/themes/about.php 1 http://cpanel.terapk.com/wp-includes/js/tinymce/themes/about.php
+/wp-content/plugins/contact-form-7/includes/submission.php 1 http://cpanel.terapk.com/wp-content/plugins/contact-form-7/includes/submission.php
+/ok.php 3 -
+/lara/phpinfo.php 1 -
+/wp-includes/rest-api/endpoints/ 1 http://cpanel.terapk.com/wp-includes/rest-api/endpoints/
+/wp-admin/link-add.php 1 -
+/randkeyword.php 1 -
+/wp-conflg.php 1 -
+/wp-admin/network/shel.php 1 http://cpanel.terapk.com/wp-admin/network/shel.php
+/wp-includes/themes/uploads/config.php 1 -
+/alfa.php 6 -
+/wp-admin/zz.php 1 http://cpanel.terapk.com/wp-admin/zz.php
+/kaza.php 1 -
+/ad.php 2 -
+/js/.env 2 -
+/wp-includes/js/dist/development/ 1 http://cpanel.terapk.com/wp-includes/js/dist/development/
+/wp-content/plugins/admin.php 6 -
+END_SIDER_404
+
+# Host - Pages - Hits - Bandwidth - Last visit date - [Start date of last visit] - [Last page of last visit]
+# [Start date of last visit] and [Last page of last visit] are saved only if session is not finished
+# The 25 first Hits must be first (order not required for others)
+BEGIN_VISITOR 34
+45.148.10.120 70 70 2661136 20260303073642
+195.178.110.68 17 17 211741 20260312084100
+13.223.188.225 5 14 133833 20260323085229
+138.246.253.7 4 4 0 20260327133432
+64.176.220.66 2 2 24924 20260311130905
+205.210.31.48 2 2 75238 20260323102323
+20.63.12.125 1 1 540 20260324192514
+20.222.17.205 1 1 540 20260330074559
+4.205.8.150 1 1 540 20260330201601
+195.178.110.190 1 1 12455 20260322145331
+20.70.169.231 1 1 540 20260323053411
+159.89.175.11 1 1 12450 20260311191134
+198.235.24.143 1 1 37613 20260331223047
+20.104.195.176 1 1 540 20260330210537
+101.91.110.144 1 1 37772 20260302214126
+198.235.24.196 1 1 37613 20260320231147
+188.166.57.34 1 1 12456 20260316140619
+205.210.31.54 1 1 37625 20260321014817
+198.235.24.54 1 1 37613 20260326024146
+20.104.216.159 1 1 540 20260326184254
+143.244.143.238 1 1 12459 20260330150024
+52.138.39.105 1 1 540 20260323014852
+205.210.31.50 1 1 37613 20260330004459
+205.210.31.90 1 1 37625 20260327121924
+205.210.31.32 1 1 37625 20260302011820
+46.101.247.185 1 1 12455 20260325125811
+4.204.193.107 1 1 540 20260323162327
+205.210.31.146 1 1 37625 20260316201254
+145.220.91.19 1 1 12460 20260326063603
+20.226.72.134 1 1 540 20260329194614
+85.203.23.168 1 1 12453 20260304095918
+195.178.110.187 1 1 12452 20260304180052
+198.235.24.182 1 1 37613 20260321000010
+137.184.187.43 1 1 12456 20260302043344
+END_VISITOR
+
+# Date - Pages - Hits - Bandwidth - Visits
+BEGIN_DAY 19
+20260302 3 3 87853 3
+20260303 70 70 2661136 1
+20260304 2 2 24905 2
+20260306 1 1 0 1
+20260311 3 3 37374 3
+20260312 17 17 211741 1
+20260313 1 1 0 1
+20260316 2 2 50081 2
+20260320 2 2 37613 2
+20260321 2 2 75238 2
+20260322 2 2 50068 2
+20260323 9 18 173078 5
+20260324 1 1 540 1
+20260325 1 1 12455 1
+20260326 3 3 50613 3
+20260327 2 2 37625 2
+20260329 1 1 540 1
+20260330 5 5 51692 5
+20260331 1 1 37613 1
+END_DAY
+
+# Session range - Number of visits
+BEGIN_SESSION 2
+30s-2mn 2
+0s-30s 37
+END_SESSION
+
+# URL - Pages - Bandwidth - Entry - Exit
+# The 25 first Pages must be first (order not required for others)
+BEGIN_SIDER 7
+/ 81 2180976 29 27
+/phpinfo.php 34 1292955 0 1
+/.well-known/ 9 4860 9 9
+/images/ 1 12453 1 1
+/cPanel_magic_revision_1748449569/unprotected/cpanel/fonts/open_sans/OpenSans-Semibold-webfont.woff 1 22908 0 0
+/cPanel_magic_revision_1748449569/unprotected/cpanel/fonts/open_sans/OpenSans-Bold-webfont.woff 1 22432 0 1
+/cPanel_magic_revision_1748449569/unprotected/cpanel/fonts/open_sans/OpenSans-Regular-webfont.woff 1 22660 0 0
+END_SIDER
+
+# Payload Range - Payload Frequency
+BEGIN_FILESIZE 7
+44-100 24
+100-500 3
+0-44 82
+5K+ 1758
+2K-5K 2483
+500-1K 31850
+1K-2K 160
+END_FILESIZE
+
+# Request Time Range - Request Time Frequency
+BEGIN_REQUESTTIME 0
+END_REQUESTTIME

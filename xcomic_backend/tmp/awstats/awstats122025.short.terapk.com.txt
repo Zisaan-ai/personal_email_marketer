@@ -1,0 +1,304 @@
+AWSTATS DATA FILE 8.0 (build 20240604)
+# If you remove this file, all statistics for date 202512 will be lost/reset.
+# Last config file used to build this data file was /home/terapkco/tmp/awstats/awstats.short.terapk.com.conf.
+
+# Position (offset in bytes) in this file for beginning of each section for
+# direct I/O access. If you made changes somewhere in this file, you should
+# also remove completely the MAP section (AWStats will rewrite it at next
+# update).
+BEGIN_MAP 28
+POS_GENERAL 2084                
+POS_TIME 2745                
+POS_VISITOR 6817                
+POS_DAY 7059                
+POS_DOMAIN 3280                
+POS_LOGIN 3518                
+POS_ROBOT 3673                
+POS_WORMS 3866                
+POS_EMAILSENDER 3997                
+POS_EMAILRECEIVER 4140                
+POS_SESSION 7158                
+POS_FILESIZE 7491                
+POS_REQUESTTIME 7631                
+POS_SIDER 7314                
+POS_FILETYPES 4275                
+POS_DOWNLOADS 4425                
+POS_OS 4473                
+POS_BROWSER 4565                
+POS_SCREENSIZE 4675                
+POS_UNKNOWNREFERER 4749                
+POS_UNKNOWNREFERERBROWSER 4836                
+POS_ORIGIN 4918                
+POS_SEREFERRALS 5049                
+POS_PAGEREFS 5203                
+POS_SEARCHWORDS 5351                
+POS_KEYWORDS 5513                
+POS_MISC 2409                
+POS_ERRORS 5582                
+POS_CLUSTER 3374                
+POS_SIDER_404 5692                
+END_MAP
+
+# LastLine    = Date of last record processed - Last record line number in last log - Last record offset in last log - Last record signature value
+# FirstTime   = Date of first visit for history file
+# LastTime    = Date of last visit for history file
+# LastUpdate  = Date of last update - Nb of parsed records - Nb of parsed old records - Nb of parsed new records - Nb of parsed corrupted - Nb of parsed dropped
+# TotalVisits = Number of visits
+# TotalUnique = Number of unique visitors
+# MonthHostsKnown   = Number of hosts known
+# MonthHostsUnKnown = Number of hosts unknown
+BEGIN_GENERAL 8
+LastLine 20260101031914 3 304 12928177360258
+FirstTime 0
+LastTime 20251222142640
+LastUpdate 20260101125527 3 0 2 0 0
+TotalVisits 3                   
+TotalUnique 3                   
+MonthHostsKnown 0                   
+MonthHostsUnknown 5                   
+END_GENERAL
+
+# Misc ID - Pages - Hits - Bandwidth
+BEGIN_MISC 10
+JavascriptDisabled 0 0 0
+PDFSupport 0 0 0
+RealPlayerSupport 0 0 0
+AddToFavourites 0 7 0
+WindowsMediaPlayerSupport 0 0 0
+QuickTimeSupport 0 0 0
+JavaEnabled 0 0 0
+TotalMisc 0 0 0
+DirectorSupport 0 0 0
+FlashSupport 0 0 0
+END_MISC
+
+# Hour - Pages - Hits - Bandwidth - Not viewed Pages - Not viewed Hits - Not viewed Bandwidth
+BEGIN_TIME 24
+0 0 0 0 4 4 0
+1 0 0 0 0 0 0
+2 0 0 0 0 0 0
+3 0 0 0 2 3 198
+4 0 0 0 4 4 0
+5 9 22 285154 20 21 1568
+6 1 7 56786 11 13 212
+7 0 0 0 9 10 14
+8 0 0 0 2 3 198
+9 0 0 0 14 16 7079
+10 0 0 0 42 43 37550
+11 0 0 0 2 2 0
+12 0 0 0 4 4 0
+13 0 0 0 7 7 0
+14 1 1 508 7 10 4235
+15 0 0 0 12 12 8109
+16 0 0 0 26 26 0
+17 0 0 0 14 14 0
+18 0 0 0 3 3 0
+19 0 0 0 3 3 0
+20 0 0 0 1 2 1369
+21 0 0 0 4 5 14
+22 0 0 0 3 3 1242
+23 0 0 0 0 0 0
+END_TIME
+
+# Domain - Pages - Hits - Bandwidth
+# The 25 first Pages must be first (order not required for others)
+BEGIN_DOMAIN 2
+cn 10 29 341940
+us 1 1 508
+END_DOMAIN
+
+# Cluster ID - Pages - Hits - Bandwidth
+BEGIN_CLUSTER 0
+END_CLUSTER
+
+# Login - Pages - Hits - Bandwidth - Last visit
+# The 10 first Pages must be first (order not required for others)
+BEGIN_LOGIN 0
+END_LOGIN
+
+# Robot ID - Hits - Bandwidth - Last visit - Hits on robots.txt
+# The 25 first Hits must be first (order not required for others)
+BEGIN_ROBOT 2
+MJ12bot/ 4 56 20251226090342 4
+unknown 2 28 20251224140939 2
+END_ROBOT
+
+# Worm ID - Hits - Bandwidth - Last visit
+# The 5 first Hits must be first (order not required for others)
+BEGIN_WORMS 0
+END_WORMS
+
+# EMail - Hits - Bandwidth - Last visit
+# The 20 first Hits must be first (order not required for others)
+BEGIN_EMAILSENDER 0
+END_EMAILSENDER
+
+# EMail - Hits - Bandwidth - Last visit
+# The 20 first hits must be first (order not required for others)
+BEGIN_EMAILRECEIVER 0
+END_EMAILRECEIVER
+
+# Files type - Hits - Bandwidth - Bandwidth without compression - Bandwidth after compression
+BEGIN_FILETYPES 5
+html 1 508 0 0
+Unknown 9 16693 0 0
+css 6 91291 0 0
+js 13 156796 0 0
+woff2 1 77160 0 0
+END_FILETYPES
+
+# Downloads - Hits - Bandwidth
+BEGIN_DOWNLOADS 0
+END_DOWNLOADS
+
+# OS ID - Hits
+BEGIN_OS ID - Hits - Pages 2
+macosx14 1 1
+android 29 10
+END_OS
+
+# Browser ID - Hits - Pages
+BEGIN_BROWSER 3
+chrome76.0.3809.132 1 1
+android 7 1
+chrome97.0.4692.98 22 9
+END_BROWSER
+
+# Screen size - Hits
+BEGIN_SCREENSIZE 0
+END_SCREENSIZE
+
+# Unknown referer OS - Last visit date
+BEGIN_UNKNOWNREFERER 0
+END_UNKNOWNREFERER
+
+# Unknown referer Browser - Last visit date
+BEGIN_UNKNOWNREFERERBROWSER 0
+END_UNKNOWNREFERERBROWSER
+
+# Origin - Pages - Hits 
+BEGIN_ORIGIN 6
+From0 5 5
+From1 0 0
+From2 1 7
+From3 0 0
+From4 5 18
+From5 0 0
+END_ORIGIN
+
+# Search engine referers ID - Pages - Hits
+BEGIN_SEREFERRALS 1
+baidu 1 7
+END_SEREFERRALS
+
+# External page referers - Pages - Hits
+# The 25 first Pages must be first (order not required for others)
+BEGIN_PAGEREFS 0
+END_PAGEREFS
+
+# Search keyphrases - Number of search
+# The 10 first number of search must be first (order not required for others)
+BEGIN_SEARCHWORDS 1
+cameyaj 1
+END_SEARCHWORDS
+
+# Search keywords - Number of search
+# The 25 first number of search must be first (order not required for others)
+BEGIN_KEYWORDS 1
+cameyaj 1
+END_KEYWORDS
+
+# Errors - Hits - Bandwidth
+BEGIN_ERRORS 3
+403 7 6375
+404 42 53943
+301 146 0
+END_ERRORS
+
+# URL with 404 errors - Hits - Last URL referrer
+BEGIN_SIDER_404 37
+/debug/default/view 1 -
+/api/graphql 1 -
+/sitemap.xml 1 -
+/server-status 1 -
+/ygkvk 1 -
+/s/435313e21313e2533323e2736313/_/ 1 -
+/server 1 -
+/webjars/swagger-ui/index.html 1 -
+/config.json 1 -
+/actuator/env 1 -
+/swagger/v1/swagger.json 1 -
+/v2/api-docs 1 -
+/@vite/env 1 -
+/info.php 1 -
+/v3/api-docs 1 -
+/telescope/requests 1 -
+/login.action 1 -
+/v2/_catalog 1 -
+/swagger.json 1 -
+/swagger/index.html 1 -
+/graphql/api 1 -
+/wp-includes/ 2 -
+/wp-content/uploads/ 2 -
+/swagger-ui.html 1 -
+//short.terapk.com/js/ads.js 1 -
+/about 1 -
+/api-docs/swagger.json 1 -
+/wp-admin/ 2 -
+/api/swagger.json 1 -
+/api/gql 1 -
+/ecp/Current/exporttool/microsoft.exchange.ediscovery.exporttool.application 1 -
+/swagger/swagger-ui.html 1 -
+/_all_dbs 1 -
+/wp-content/plugins/ 2 -
+/.DS_Store 1 -
+/.vscode/sftp.json 1 -
+/wp-content/themes/ 2 -
+END_SIDER_404
+
+# Host - Pages - Hits - Bandwidth - Last visit date - [Start date of last visit] - [Last page of last visit]
+# [Start date of last visit] and [Last page of last visit] are saved only if session is not finished
+# The 25 first Hits must be first (order not required for others)
+BEGIN_VISITOR 5
+112.96.49.123 9 22 285154 20251216055842
+119.249.100.150 1 4 44235 20251216061831
+8.222.167.211 1 1 508 20251222142640
+119.249.100.25 0 1 6145 
+119.249.100.153 0 2 6406 
+END_VISITOR
+
+# Date - Pages - Hits - Bandwidth - Visits
+BEGIN_DAY 2
+20251216 10 29 341940 2
+20251222 1 1 508 1
+END_DAY
+
+# Session range - Number of visits
+BEGIN_SESSION 2
+0s-30s 2
+2mn-5mn 1
+END_SESSION
+
+# URL - Pages - Bandwidth - Entry - Exit
+# The 25 first Pages must be first (order not required for others)
+BEGIN_SIDER 4
+/YGkvK 5 16257 2 1
+/links/go 4 436 0 1
+/ 1 508 1 1
+/vendor/font-awesome/fonts/fontawesome-webfont.woff2 1 77160 0 0
+END_SIDER
+
+# Payload Range - Payload Frequency
+BEGIN_FILESIZE 7
+2K-5K 11
+44-100 6
+500-1K 1
+1K-2K 43
+100-500 13
+5K+ 12
+0-44 152
+END_FILESIZE
+
+# Request Time Range - Request Time Frequency
+BEGIN_REQUESTTIME 0
+END_REQUESTTIME

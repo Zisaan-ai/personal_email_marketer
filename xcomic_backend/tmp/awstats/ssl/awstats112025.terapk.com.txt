@@ -1,0 +1,1710 @@
+AWSTATS DATA FILE 8.0 (build 20240604)
+# If you remove this file, all statistics for date 202511 will be lost/reset.
+# Last config file used to build this data file was /home/terapkco/tmp/awstats/ssl/awstats.terapk.com.conf.
+
+# Position (offset in bytes) in this file for beginning of each section for
+# direct I/O access. If you made changes somewhere in this file, you should
+# also remove completely the MAP section (AWStats will rewrite it at next
+# update).
+BEGIN_MAP 28
+POS_GENERAL 2082                
+POS_TIME 2765                
+POS_VISITOR 34813               
+POS_DAY 53046               
+POS_DOMAIN 3661                
+POS_LOGIN 4529                
+POS_ROBOT 4684                
+POS_WORMS 5739                
+POS_EMAILSENDER 5870                
+POS_EMAILRECEIVER 6013                
+POS_SESSION 53468               
+POS_FILESIZE 58524               
+POS_REQUESTTIME 58675               
+POS_SIDER 53679               
+POS_FILETYPES 6148                
+POS_DOWNLOADS 6484                
+POS_OS 7953                
+POS_BROWSER 8447                
+POS_SCREENSIZE 12231               
+POS_UNKNOWNREFERER 12305               
+POS_UNKNOWNREFERERBROWSER 13663               
+POS_ORIGIN 14463               
+POS_SEREFERRALS 14611               
+POS_PAGEREFS 14882               
+POS_SEARCHWORDS 15210               
+POS_KEYWORDS 15362               
+POS_MISC 2429                
+POS_ERRORS 15421               
+POS_CLUSTER 4385                
+POS_SIDER_404 15623               
+END_MAP
+
+# LastLine    = Date of last record processed - Last record line number in last log - Last record offset in last log - Last record signature value
+# FirstTime   = Date of first visit for history file
+# LastTime    = Date of last visit for history file
+# LastUpdate  = Date of last update - Nb of parsed records - Nb of parsed old records - Nb of parsed new records - Nb of parsed corrupted - Nb of parsed dropped
+# TotalVisits = Number of visits
+# TotalUnique = Number of unique visitors
+# MonthHostsKnown   = Number of hosts known
+# MonthHostsUnKnown = Number of hosts unknown
+BEGIN_GENERAL 8
+LastLine 20251201000631 475 103207 20960339863806
+FirstTime 20251118165919
+LastTime 20251130235549
+LastUpdate 20251201125426 475 0 474 0 0
+TotalVisits 571                 
+TotalUnique 368                 
+MonthHostsKnown 0                   
+MonthHostsUnknown 513                 
+END_GENERAL
+
+# Misc ID - Pages - Hits - Bandwidth
+BEGIN_MISC 10
+PDFSupport 0 0 0
+JavaEnabled 0 0 0
+RealPlayerSupport 0 0 0
+QuickTimeSupport 0 0 0
+DirectorSupport 0 0 0
+FlashSupport 0 0 0
+AddToFavourites 0 7 0
+WindowsMediaPlayerSupport 0 0 0
+TotalMisc 0 0 0
+JavascriptDisabled 0 0 0
+END_MISC
+
+# Hour - Pages - Hits - Bandwidth - Not viewed Pages - Not viewed Hits - Not viewed Bandwidth
+BEGIN_TIME 24
+0 81 86 224973 68 113 965681
+1 50 50 340710 39 62 426182
+2 57 91 653092 101 113 1384126
+3 14 17 229019 31 74 537048
+4 19 19 233841 132 202 4464402
+5 63 114 1389307 29 38 638910
+6 87 96 353782 75 100 1858776
+7 9 15 240507 39 81 464323
+8 24 69 625098 48 90 654197
+9 219 731 12544868 118 151 2085691
+10 188 580 4221502 64 82 503057
+11 378 534 15449944 42 152 1028620
+12 103 300 3624152 65 113 999150
+13 480 1030 19333847 88 153 1568116
+14 208 354 6197394 140 250 2370184
+15 368 876 10570699 181 312 2871562
+16 150 406 5793160 236 271 2249544
+17 269 726 13237304 100 139 1178906
+18 103 199 3754419 41 105 735677
+19 157 354 4342590 111 254 4950981
+20 68 120 984243 48 143 1659012
+21 42 116 1493270 28 68 375562
+22 135 137 395880 42 53 253898
+23 114 135 1081358 49 68 587023
+END_TIME
+
+# Domain - Pages - Hits - Bandwidth
+# The 25 first Pages must be first (order not required for others)
+BEGIN_DOMAIN 45
+in 1977 4451 85700628
+us 829 1374 9947438
+nl 138 241 809004
+jp 113 119 2277768
+gb 53 170 1455971
+de 36 36 30936
+br 35 40 206198
+ro 33 33 29282
+cn 28 64 718803
+pk 20 20 8373
+mx 18 19 45923
+ca 17 100 772375
+ru 17 82 701199
+pl 15 50 315003
+es 6 15 244216
+bd 6 81 982194
+fr 6 15 78813
+zz 5 5 72219
+au 5 35 256127
+eu 5 5 88830
+cz 4 36 292028
+se 4 5 93908
+am 4 38 230101
+tt 3 34 253783
+vn 3 38 255016
+my 0 2 76712
+ua 1 7 81229
+sv 0 1 38356
+mn 0 2 76712
+id 1 9 322083
+kh 0 3 115068
+sa 0 1 38356
+ba 1 1 699
+ma 0 1 38356
+ar 0 1 38356
+hk 0 1 38356
+la 0 1 38356
+no 2 3 42757
+dz 0 1 38356
+uz 0 1 38356
+ph 0 7 268492
+jo 0 1 2889
+be 0 2 26208
+kr 0 3 115068
+ir 1 1 14058
+END_DOMAIN
+
+# Cluster ID - Pages - Hits - Bandwidth
+BEGIN_CLUSTER 0
+END_CLUSTER
+
+# Login - Pages - Hits - Bandwidth - Last visit
+# The 10 first Pages must be first (order not required for others)
+BEGIN_LOGIN 0
+END_LOGIN
+
+# Robot ID - Hits - Bandwidth - Last visit - Hits on robots.txt
+# The 25 first Hits must be first (order not required for others)
+BEGIN_ROBOT 24
+Applebot/ 383 5201214 20251130203034 15
+GPTBot/ 355 8785123 20251130090354 0
+Googlebot/ 210 1253683 20251130235548 11
+MJ12bot/ 135 1066765 20251130155137 76
+PetalBot 118 1564297 20251130061047 4
+SemrushBot/ 86 710886 20251130230038 28
+bot[\s_+:,\.\;\/\\-] 76 488393 20251130212019 14
+bingbot/ 38 216213 20251129222655 5
+no_user_agent 32 395550 20251130021031 0
+Go\-http\-client/ 13 93513 20251129085617 1
+unknown 9 552 20251128190946 9
+facebookexternalhit/ 8 306848 20251126050311 0
+crawl 3 42024 20251129034513 0
+robot 3 282 20251130090325 3
+Baiduspider- 2 51460 20251127105029 0
+Amazonbot/ 2 216 20251128004738 2
+Googlebot\-Image/ 2 15993 20251126032438 0
+TelegramBot 2 8371 20251120091903 0
+Slackbot\-LinkExpanding 1 699 20251119000400 0
+curl 1 46484 20251122184819 0
+link 1 12301 20251119110754 0
+(firefox/)([0-9]\.|[0-1][0]\.) 1 14056 20251123175053 0
+yandex 1 15134 20251128040040 0
+msnbot/ 1 14753 20251119170220 0
+END_ROBOT
+
+# Worm ID - Hits - Bandwidth - Last visit
+# The 5 first Hits must be first (order not required for others)
+BEGIN_WORMS 0
+END_WORMS
+
+# EMail - Hits - Bandwidth - Last visit
+# The 20 first Hits must be first (order not required for others)
+BEGIN_EMAILSENDER 0
+END_EMAILSENDER
+
+# EMail - Hits - Bandwidth - Last visit
+# The 20 first hits must be first (order not required for others)
+BEGIN_EMAILRECEIVER 0
+END_EMAILRECEIVER
+
+# Files type - Hits - Bandwidth - Bandwidth without compression - Bandwidth after compression
+BEGIN_FILETYPES 14
+php 2371 37877236 0 0
+txt 25 26038 0 0
+js 1536 13067243 0 0
+woff2 120 2327300 0 0
+cur 1 326 0 0
+svg 107 73162 0 0
+Unknown 12 21475 0 0
+woff 10 399948 0 0
+css 1542 4976698 0 0
+png 424 32987101 0 0
+jpeg 5 35648 0 0
+gif 68 386436 0 0
+html 872 14378687 0 0
+jpg 62 757661 0 0
+END_FILETYPES
+
+# Downloads - Hits - Bandwidth
+BEGIN_DOWNLOADS 26
+/wp-content/plugins/code-snippets/readme.txt 1 0 0
+/wp-content/plugins/coming-soon/readme.txt 1 0 0
+/wp-content/plugins/astra-sites/readme.txt 1 0 0
+/wp-content/plugins/complianz-gdpr/readme.txt 1 0 0
+/wp-content/plugins/smart-slider-3/readme.txt 1 0 0
+/wp-content/plugins/duplicator/readme.txt 1 0 0
+/wp-content/plugins/essential-addons-for-elementor-lite/readme.txt 1 0 0
+/wp-content/plugins/autoptimize/readme.txt 1 0 0
+/wp-content/plugins/disable-comments/readme.txt 1 0 0
+/wp-content/plugins/ewww-image-optimizer/readme.txt 1 0 0
+/wp-content/plugins/loginizer/readme.txt 1 0 9286
+/wp-content/plugins/google-analytics-for-wordpress/readme.txt 1 0 0
+/wp-content/plugins/w3-total-cache/readme.txt 1 0 0
+/wp-content/plugins/envato-elements/readme.txt 1 0 0
+/wp-content/plugins/svg-support/readme.txt 1 0 0
+/wp-content/plugins/wp-file-manager/readme.txt 1 0 0
+/wp-content/plugins/better-wp-security/readme.txt 1 0 0
+/wp-content/themes/5play/assets/highslide/graphics/outlines/Outlines.psd 1 0 171802
+/wp-content/plugins/ultimate-addons-for-gutenberg/readme.txt 1 0 0
+/wp-content/plugins/wp-super-cache/readme.txt 1 0 0
+/license.txt 1 0 7291
+/wp-content/plugins/all-in-one-wp-security-and-firewall/readme.txt 1 0 0
+/wp-content/plugins/sg-security/readme.txt 1 0 0
+/wp-content/plugins/redux-framework/readme.txt 1 0 9461
+/wp-content/plugins/wps-hide-login/readme.txt 1 0 0
+/wp-content/plugins/wp-optimize/readme.txt 1 0 0
+END_DOWNLOADS
+
+# OS ID - Hits
+BEGIN_OS ID - Hits - Pages 29
+macosx9 21 21
+winnt 10 8
+android13 30 19
+macosx 86 86
+macosx14 1 1
+winxp 10 10
+ios_ipad 2 2
+Unknown 372 344
+androidpie 1 1
+win7 122 21
+win11 29 29
+androidoreo 44 5
+android10 1440 365
+androidnougat 6 6
+android 54 45
+ios_iphone 211 210
+android11 7 1
+macosx10 9 9
+androidmarshmallow 18 18
+macosx11 1 1
+macosx6 1 1
+linuxubuntu 65 65
+win10 3973 1847
+win8.1 34 32
+linux 307 82
+macos12 39 39
+macosx15 170 66
+win8 38 38
+android12 54 14
+END_OS
+
+# Browser ID - Hits - Pages
+BEGIN_BROWSER 194
+edge88 1 1
+chrome108.0.5359.95 23 2
+safari7.1.6 8 8
+opera66.0.0.0 1 1
+edge93 2 2
+opera71.0.0.0 1 1
+chrome136.0.0.0 39 3
+firefox79.0.0.0 1 1
+edge99 1 1
+opera74.0.0.0 2 2
+firefox145.0 1 0
+chrome139.0.0.0 399 101
+chrome68.0.3440.91 1 1
+opera80.0.0.0 2 2
+chrome31.0.1650.63 8 8
+firefox120.0 20 20
+edge96 4 4
+chrome108.0.0.0 5 5
+chrome102.0.0.0 1 1
+chrome103.0.5060.66 1 1
+firefox76.0.0.0 4 4
+firefox36.0 8 8
+safari15.6.5 4 4
+safari18.0 1 1
+firefox81.0.0.0 2 2
+edge100 2 2
+chrome58.0.3029.110 1 1
+chrome42.0.2311.135 7 7
+opera67.0.0.0 1 1
+chrome69.0.1759 1 0
+chrome81.0.0.0 1 1
+chrome129.0.0.0 1 1
+chrome97.0.0.0 4 4
+firefox80.0.0.0 1 1
+chrome103.0.5042.0 1 1
+chrome16.0.912.36 1 1
+chrome86.0.0.0 2 2
+chrome96.0.4664.45 1 1
+msie8.0 4 4
+chrome105.0.0.0 5 4
+opera78.0.0.0 1 1
+edge80 4 4
+firefox84.0.0.0 2 2
+chrome103.0.5060.114 1 1
+chrome69.0.3497.128 40 5
+firefox121.0 30 30
+android 9 7
+chrome107.0.0.0 1 1
+chrome142.0.7444.102 12 0
+chrome138.0.7204.179 4 0
+opera73.0.0.0 3 3
+chrome126.0.0.0 2 1
+opera75.0.0.0 2 2
+firefox99.0.0.0 1 1
+firefox83.0.0.0 1 1
+opera72.0.0.0 6 6
+firefox59.0 2 2
+opera69.0.0.0 1 1
+chrome138.0.7204.23 6 1
+chrome90.0.0.0 1 1
+edge90 2 2
+chrome60.0.3112.107 4 4
+chrome141.0.7390.124 1 0
+firefox82.0.0.0 1 1
+safari11.0 1 1
+firefox88.0.0.0 2 2
+firefox96.0.0.0 2 2
+chrome101.0.0.0 1 1
+firefox122.0 9 9
+chrome97.0.4692.98 1 0
+opera60.0.0.0 1 1
+chrome116.0.0.0 56 22
+edge98 5 5
+firefox85.0.0.0 4 4
+edge89 2 2
+safari17.0.1 2 2
+Unknown 259 236
+chrome99.0.0.0 1 1
+netscape5.0 97 97
+chrome84.0.0.0 2 2
+firefox87.0.0.0 1 1
+edge86 1 1
+chrome79.0.3945.79 6 0
+chrome142.0.7444.106 7 0
+chrome119.0.0.0 71 39
+chrome104.0.0.0 41 6
+chrome82.0.0.0 1 1
+chrome110.0.0.0 3 3
+chrome133.0.0.0 2 1
+chrome107.0.4 1 0
+firefox72.0.0.0 1 1
+safari17.2 14 14
+firefox38.0 2 0
+edge119 13 13
+chrome106.0.0.0 1 1
+chrome72.0.3626.121 1 1
+chrome67.0.3396.99 1 1
+chrome84.0.4147.89 2 2
+chrome66.0.3359.117 3 3
+firefox91.0.0.0 2 2
+samsung 1 0
+opera70.0.0.0 1 1
+mozilla 21 16
+chrome125.0.0.0 29 2
+firefox139.0 9 5
+chrome95.0.0.0 2 2
+chrome109.0.0.0 40 6
+chrome114.0.0.0 80 39
+firefox73.0.0.0 1 1
+edge81 4 4
+chrome132.0.0.0 1 0
+chrome85.0.4183.102 1 1
+edge92 3 3
+chrome138.0.0.0 194 25
+safari 47 46
+chrome135.0.0.0 2 1
+edge94 2 2
+chrome94.0.4606.61 1 1
+opera79.0.0.0 5 5
+chrome142.0.0.0 3289 1330
+firefox94.0.0.0 3 3
+firefox114.0 13 13
+chrome23.0.1271.64 2 0
+chrome122.0.0.0 2 2
+chrome128.0.0.0 1 1
+chrome60.0.3112.113 27 2
+firefox77.0.0.0 3 3
+chrome43.0.2357.134 2 2
+chrome91.0.0.0 2 2
+opera62.0.0.0 3 3
+opera65.0.0.0 2 2
+edge95 1 1
+safari16.6 2 2
+chrome137.0.0.0 2 2
+firefox90.0.0.0 1 1
+firefox75.0.0.0 2 2
+firefox35.0 2 2
+chrome111.0.0.0 1 1
+chrome91.0.4472.124 5 5
+edge84 1 1
+chrome80.0.0.0 1 1
+opera68.0.0.0 4 4
+firefox100.0.0.0 1 1
+firefox20.0 1 1
+firefox52.0 1 1
+chrome124.0.0.0 5 5
+chrome90.0.4430.85 2 2
+opera63.0.0.0 1 1
+firefox98.0.0.0 3 3
+safari17.0 12 12
+safari13.0.3 162 162
+firefox71.0.0.0 1 1
+chrome117.0.5938.132 8 0
+edge85 1 1
+opera47.0.2631.55 1 1
+chrome10.0.601.0 1 0
+chrome131.0.0.0 61 56
+chrome101.0.4950.0 1 1
+firefox89.0.0.0 2 2
+edge120 14 14
+chrome123.0.6312.118 1 0
+firefox93.0.0.0 2 2
+chrome140.0.0.0 5 1
+opera77.0.0.0 2 2
+chrome120.0.0.0 116 116
+chrome117.0.0.0 42 25
+chrome45.0.2454.85 115 15
+safari8.0 4 4
+firefox97.0.0.0 1 1
+chrome98.0.4758.82 37 4
+chrome121.0.0.0 51 51
+safari17.1 39 39
+chrome141.0.7390.122 16 16
+edge97 5 5
+chrome94.0.0.0 3 3
+chrome141.0.0.0 989 464
+chrome130.0.0.0 193 19
+chrome75.0.3770.80 1 1
+chrome113.0.0.0 45 10
+firefox74.0.0.0 3 3
+chrome97.0.71 1 1
+chrome135.0.7049.79 1 0
+opera76.0.0.0 2 2
+chrome134.0.0.0 5 5
+chrome63.0.3239.111 39 4
+opera61.0.0.0 1 1
+firefox95.0.0.0 1 1
+edge82 1 1
+chrome67.0.3396.68 1 1
+opera64.0.0.0 3 3
+edge91 4 4
+chrome89.0.0.0 1 1
+chrome98.0.0.0 2 2
+chrome101.0.4951.41 1 1
+END_BROWSER
+
+# Screen size - Hits
+BEGIN_SCREENSIZE 0
+END_SCREENSIZE
+
+# Unknown referer OS - Last visit date
+BEGIN_UNKNOWNREFERER 23
+Softaculous 20251120095505
+Mozilla/5.0_(compatible;_UGAResearchAgent/1.0;_Please_visit:_NISLabUGA.github.io) 20251120095930
+Hello_from_Palo_Alto_Networks,_find_out_more_about_our_scans_in_https://docs-cortex.paloaltonetworks.com/r/1/Cortex-Xpanse/Scanning-activity 20251128091323
+Mozilla/5.0_(compatible;_ips-agent) 20251120020559
+okhttp/5.3.0 20251124111736
+python-httpx/0.16.1 20251130160709
+Google-Safety 20251130174948
+\ 20251128050152
+python-requests/2.32.4 20251128101031
+Python/3.11_aiohttp/3.13.0 20251120135339
+Mozilla/5.0_(l9scan/2.0.435313e21313e2533323e2736313;__https://leakix.net) 20251128170806
+python-requests/2.26.0 20251126081251
+python-requests/2.32.5 20251120052442
+Mozilla/5.0_AppleWebKit/605.1.15_(KHTML,_like_Gecko)_Chrome/139.0.0.0_Safari/605.1.15 20251129215702
+WordPress/6.8.3;_https://terapk.com/bn 20251120013936
+Mozilla/5.0_(compatible;_InternetMeasurement/1.0;__https://internet-measurement.com/) 20251125181835
+shortio-metadata/1.0_(_https://short.io/) 20251121184746
+Python/3.10_aiohttp/3.13.1 20251119120919
+python-httpx/0.28.1 20251122201611
+Mozilla/5.0 20251128030309
+WordPress/6.8.3;_https://terapk.com 20251130235549
+Mozilla/5.0_(compatible;_CensysInspect/1.1;__https://about.censys.io/) 20251130175014
+quic-go-HTTP/3 20251128143649
+END_UNKNOWNREFERER
+
+# Unknown referer Browser - Last visit date
+BEGIN_UNKNOWNREFERERBROWSER 16
+Softaculous 20251120095505
+WordPress/6.8.3;_https://terapk.com/bn 20251120013936
+python-requests/2.32.5 20251120052442
+python-requests/2.26.0 20251126081251
+python-httpx/0.16.1 20251130160709
+okhttp/5.3.0 20251124111736
+Python/3.10_aiohttp/3.13.1 20251119120919
+shortio-metadata/1.0_(_https://short.io/) 20251121184746
+Hello_from_Palo_Alto_Networks,_find_out_more_about_our_scans_in_https://docs-cortex.paloaltonetworks.com/r/1/Cortex-Xpanse/Scanning-activity 20251128091323
+\ 20251128050152
+python-requests/2.32.4 20251128101031
+python-httpx/0.28.1 20251122201611
+Google-Safety 20251130174948
+quic-go-HTTP/3 20251128143649
+Python/3.11_aiohttp/3.13.0 20251120135339
+WordPress/6.8.3;_https://terapk.com 20251130235549
+END_UNKNOWNREFERERBROWSER
+
+# Origin - Pages - Hits 
+BEGIN_ORIGIN 6
+From0 1374 1495
+From1 58 60
+From2 30 30
+From3 20 87
+From4 1904 5483
+From5 0 0
+END_ORIGIN
+
+# Search engine referers ID - Pages - Hits
+BEGIN_SEREFERRALS 7
+www_google_co_uk 6 6
+www_google_com 8 8
+yahoo_catchall 4 4
+www_bing_com 5 5
+www_google_de 4 4
+www_google_fr 1 1
+duckduckgo 2 2
+END_SEREFERRALS
+
+# External page referers - Pages - Hits
+# The 25 first Pages must be first (order not required for others)
+BEGIN_PAGEREFS 6
+https://eu-host-1.championstack.com:2083 7 7
+http://miniature.io 5 40
+https://short.terapk.com 4 36
+https://ouo.io 2 2
+https://tpi.li 1 1
+http://167.235.11.154:80/wp-login.php 1 1
+END_PAGEREFS
+
+# Search keyphrases - Number of search
+# The 10 first number of search must be first (order not required for others)
+BEGIN_SEARCHWORDS 0
+END_SEARCHWORDS
+
+# Search keywords - Number of search
+# The 25 first number of search must be first (order not required for others)
+BEGIN_KEYWORDS 0
+END_KEYWORDS
+
+# Errors - Hits - Bandwidth
+BEGIN_ERRORS 10
+500 2 1964
+206 6 237353
+400 4 83
+405 11 480
+302 169 14878
+503 1 807
+401 13 532
+404 1003 14073581
+301 291 3180
+403 139 170699
+END_ERRORS
+
+# URL with 404 errors - Hits - Last URL referrer
+BEGIN_SIDER_404 440
+/2025/11/23/stickman-vs-monster-idle-rpg/ 2 -
+/.env.remote 3 -
+/style.php 2 www.google.com
+/debug/default/view 6 -
+/bn/2025/11/19/sniper-3d%EF%BC%9Agun-shooting-games/ 33 -
+/p/sitemap.html 1 https://www.terapk.com/p/sitemap.html
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/https%3A/terapk.com/wp-content/themes/5play/assets/css/top.styles.css%3Fver%3D8.6 1 -
+/tink_chat/ 1 -
+/sberbank-quiz-4 2 -
+/wp-content/themes/5play/assets/js/%22+dle_root+dle_admin+ 1 -
+/telescope/requests 6 -
+/assets/.env.old 1 -
+/forum/showthread.php 3 -
+/aws-config.js 1 -
+/public/.env.bak 1 -
+/.gitlab-ci.yml 1 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/version.css%3Fver%3D8.6 1 -
+/.vscode/sftp.json 6 -
+/wp-content/plugins/posts-like-dislike-5play/css/fontawesome/webfonts/fa-solid-900.woff2 1 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/cores.styles.css%3Fver%3D8.6 1 -
+/ruxeeklu.php 1 www.google.com
+/lander/-bull--sovkombank_quiz/ 2 -
+/config/.env.save 1 -
+/secrets.json 1 -
+/config/app.yml 1 -
+/api/gql 6 -
+/enhancecp 1 -
+/wp-content/plugins/posts-like-dislike-5play/css/fontawesome/webfonts/fa-solid-900.woff 1 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/style_cst.css%3Fver%3D8.6 1 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/https%3A/terapk.com/wp-content/plugins/comments-like-dislike/css/cld-frontend.css%3Fver%3D1.1.9 1 -
+/wp-content/plugins/posts-like-dislike-5play/css/fontawesome/webfonts/fa-brands-400.woff 1 -
+/https%3A/terapk.com/ 1 -
+/bn/category/action/ 1 https://terapk.com/category/action/
+/configuration.json 1 -
+/wp-emoji-release.min.js 3 -
+/azprkuvw.php 1 www.google.com
+/NWJs6k27 2 -
+/public/.env.save 1 -
+/5fH7sTTJ 1 -
+/.aws/config 1 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/https%3A/terapk.com/wp-content/themes/5play/assets/css/fullstory.styles.css%3Fver%3D8.6 1 -
+/.gcloud/credentials 1 -
+/https%3A/terapk.com/2025/11/ 1 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/admin.css%3Fver%3D8.6 1 -
+/CMdTKBx3 2 -
+/app/etc/env.php 1 -
+/app/.env.old 1 -
+/mxnsriyl.php 1 www.google.com
+/83036323 2 -
+/js 6 -
+/forum/ 5 https://terapk.com/forum/
+/config/.env.bak 1 -
+/.env.tmp 1 -
+/wp-content/themes/5play/assets/highslide/+%20this.src%20+ 1 -
+/KLFzmbdm 2 -
+/bn/2025/11/ 2 https://terapk.com/bn/
+/wp-content/plugins/wordpress-database-reset/readme.txt 1 -
+/dump.sql 1 -
+/gpLFR5sr 2 -
+/https%3A/terapk.com/wp-content/plugins/posts-like-dislike-5play/css/fontawesome/css/all.min.css%3Fver%3D1.1.0 1 -
+/lander/testsberv4-copy--1/ 2 -
+/merchant/code 5 -
+/qJYNKtCd 1 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/https%3A/terapk.com/wp-content/themes/5play/assets/css/other.styles.css%3Fver%3D8.6 1 -
+/inputs.php 1 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/https%3A/terapk.com/wp-content/themes/5play/assets/css/dark.styles.css%3Fver%3D6.8.3 1 -
+/webshell 1 -
+/api-docs/swagger.json 6 -
+/262LBNFp 2 -
+/xv2qwZ3s 2 -
+/wp-content/themes/5play/assets/js/'+dle_root+ 1 -
+/lander/sberchat5v4_tds_newcrm_017-ec_register-_1730370309/ 1 -
+/2025/11/19/sniper-3d%ef%bc%9agun-shooting-games/ 1 -
+/https%3A/terapk.com/news 1 -
+/categories 7 -
+/settings.json 1 -
+/category/apps 1 -
+/web.config 1 -
+/28kxhS 2 -
+/error.log 1 -
+/src/.env.save 1 -
+/https%3A/terapk.com/category/sports/ 1 -
+/config/config.yml 1 -
+/wp-content/plugins/posts-like-dislike-5play/css/fontawesome/webfonts/fa-brands-400.eot 1 -
+/api/.env.old 1 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/https%3A/terapk.com/news 1 -
+/wp-content/plugins/translatepress-multilingual/includes/trp-ajax.php 1 -
+/.s3cfg 1 -
+/.secrets 1 -
+/database.sql 1 -
+/file/ 1 -
+/wp-plain.php 9 www.google.com
+/2023/09/spiderman-ultimate-power-mod-apk-v4-1-2-unlimited-money-and-gems-download.html 4 https://terapk.com/2023/09/spiderman-ultimate-power-mod-apk-v4-1-2-unlimited-money-and-gems-download.html
+/keys.json 1 -
+/config.yml 1 -
+/cord.php 1 -
+/cbhurxjz.php 1 www.google.com
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/mobile.css%3Fver%3D8.6 1 -
+/ss.php 1 -
+/app/etc/local.xml 1 -
+/robots.txt 7 -
+/src/.env.bak 1 -
+/2023/10/gangstar-city-mod-apk-unlimited-diamonds-download-link.html 2 -
+/wp-content/plugins/wordfence/readme.txt 1 -
+/phpinfo 4 -
+/config.zip 1 -
+/favicon.png 2 -
+/.env 1 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/https%3A/terapk.com/wp-includes/css/classic-themes.min.css%3Fver%3D6.8.3 1 -
+/wp-content/plugins/updraftplus/readme.txt 1 -
+/assets/.env.save 1 -
+/dwztdbhG 2 -
+/swagger/swagger-ui.html 6 -
+/.env.test 1 -
+/wp-content/themes/seotheme/db.php 9 www.google.com
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/https%3A/terapk.com/wp-content/themes/5play/assets/css/mobile.css%3Fver%3D8.6 1 -
+/forum/member.php 5 -
+/bn/news/ 1 https://terapk.com/bn/bookmark/
+/v2/api-docs 6 -
+/bolt.php 1 -
+/wp-content/plugins/wp-video-lightbox/readme.txt 1 -
+/wp-content/plugins/posts-like-dislike-5play/css/fontawesome/webfonts/fa-regular-400.eot 1 -
+/YRWnWHy7 2 -
+/schallfuns.php 1 -
+/2023/07/clash-of-clans-summer-offline_8.html 1 https://terapk.com/2023/07/clash-of-clans-summer-offline_8.html
+/config/.env.old 1 -
+/app.config 1 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/https%3A/terapk.com/wp-content/plugins/report-post-content/static/css/styles.css%3Fver%3D6.8.3 1 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/https%3A/terapk.com/wp-content/themes/5play/assets/css/style_cst_2.css%3Fver%3D8.6 1 -
+/swagger-ui.html 6 -
+/aws.config.js 1 -
+/bn/category/apps/ 5 -
+/.DS_Store 7 -
+/php 2 -
+/api/swagger.json 6 -
+/images/info.svg 1 -
+/https%3A/terapk.com/wp-content/plugins/comments-like-dislike/css/fontawesome/css/all.min.css%3Fver%3D1.1.9 1 -
+/public/.env.old 1 -
+/wp-content/plugins/wp-fastest-cache/readme.txt 1 -
+/assets/.env.bak 1 -
+/5jshCV 2 -
+/wp-content/plugins/posts-like-dislike-5play/css/fontawesome/webfonts/fa-solid-900.svg 1 -
+/file-manager/ckeditor 1 -
+/v3/api-docs 6 -
+/cpqomzwq.php 1 www.google.com
+/BSDLw5Mp 2 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/https%3A/terapk.com/wp-content/themes/5play/assets/css/styles.css%3Fver%3D8.6 1 -
+/yZdx79 2 -
+/https%3A/terapk.com/wp-content/plugins/report-post-content/static/css/styles.css%3Fver%3D6.8.3 1 -
+/wp-content/plugins/kingcomposer/readme.txt 1 -
+/wp-content/plugins/mailchimp-for-wp/readme.txt 1 -
+/6bXX29bt 1 -
+/shell.php 1 -
+/%23 1 -
+/wp-content/plugins/posts-like-dislike-5play/css/fontawesome/webfonts/fa-brands-400.svg 1 -
+/phpinfo.php 4 -
+/wp-content/plugins/header-footer-elementor/readme.txt 1 -
+/%23add_your_link 1 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/https%3A/terapk.com/category/apps/ 1 -
+/lander/sberchat5v4_tds_newcrm_017-ec_register-_1732091122/ 2 -
+/sitemap.xml 9 -
+/bn/category/games/ 2 https://terapk.com/bn/bookmark/
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/dark.styles.css%3Fver%3D6.8.3 1 -
+/https%3A/terapk.com/category/racing/ 1 -
+/lander/sber/ 2 -
+/Thumbs.db 1 -
+/wp-content/plugins/really-simple-ssl/readme.txt 1 -
+/filemanager 1 -
+/application.properties 1 -
+/swagger.json 6 -
+/bn/2025/11/23/cat-legends-idle-rpg-games/ 2 https://terapk.com/bn/
+/.aws/credentials 1 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/custom.styles.css%3Fver%3D6.8.3 1 -
+/_all_dbs 6 -
+/ikxmahnc.php 1 www.google.com
+/n4TWwtZ4 2 -
+/debug.log 1 -
+/lander/sberchat5v4_tds_newcrm_028-vnutr/ 2 -
+/aws-config.json 1 -
+/https%3A/terapk.com/wp-login.php%3Faction%3Dlostpassword 1 -
+/https%3A/terapk.com/wp-content/plugins/posts-like-dislike-5play/css/pld-frontend.css%3Fver%3D1.1.0 1 -
+/bn/Terabox/ 2 -
+/3ds.php 5 -
+https://terapk.com/forum/showthread.php 2 -
+/merchant/z/payment/ 5 -
+/.dockerenv 1 -
+/admin/.env.bak 1 -
+/https%3A/terapk.com/wp-includes/css/classic-themes.min.css%3Fver%3D6.8.3 1 -
+/wp-content/plugins/wp-time-capsule/readme.txt 1 -
+/2021/09/total-conquest-mod-offline-download-link.html 5 https://terapk.com/2021/09/total-conquest-mod-offline-download-link.html
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/https%3A/terapk.com/wp-content/plugins/posts-like-dislike-5play/css/fontawesome/css/all.min.css%3Fver%3D1.1.0 1 -
+/laravel-filemanager 1 -
+/SrBkPK64 1 -
+/webjars/swagger-ui/index.html 6 -
+/wp-content/plugins/iwp-client/readme.txt 1 -
+/tokens.json 1 -
+/.env.prod 1 -
+/admin/.env.save 1 -
+/wp-content/themes/5play/assets/js/psy_duplicate.js 101 https://terapk.com/wp-admin/post.php
+/site-backup.zip 1 -
+/wp-content/plugins/duplicate-post/readme.txt 1 -
+/Kd67Fq1x 2 -
+/wp-admin/ 1 www.google.com
+/wp-content/plugins/wpschoolpress/readme.txt 1 -
+/9hs69 2 -
+/wp-content/plugins/limit-login-attempts-reloaded/readme.txt 1 -
+/2025/11/20/preschool-kindergarten-games/ 2 -
+/wp-content/plugins/bbpress/readme.txt 1 -
+/.env~ 1 -
+/login.action 6 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/https%3A/terapk.com/wp-content/plugins/posts-like-dislike-5play/css/pld-frontend.css%3Fver%3D1.1.0 1 -
+/.env.swp 1 -
+/bn/2025/11/23/shadow-fight-2/ 2 https://terapk.com/bn/
+/config.yaml 1 -
+/sapp-plugin-activate.php 1 -
+/wp-content/plugins/elementor/readme.txt 1 -
+/api/.env.bak 1 -
+/includes/.env.bak 1 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/other.styles.css%3Fver%3D8.6 1 -
+/app/logs/dev.log 1 -
+/ 2 -
+/BNp8hDTk 2 -
+/v2/_catalog 6 -
+/settings.yml 1 -
+/category/apps/ 23 -
+/_profiler/phpinfo 2 -
+/assets/img/controlbar-black-border.gif 1 -
+/apikeys.json 1 -
+/actuator/env 6 -
+/.config 1 -
+/lander/sber-fix/ 2 -
+/api/.env.save 1 -
+/order/ 11 -
+/server-status 6 -
+/nqw80 2 -
+/docker-compose.yaml 1 -
+/vNyFhhL5 2 -
+/hpvsfdem.php 1 www.google.com
+/src/.env.old 1 -
+/_debug 1 -
+/db_backup.sql 1 -
+/wp-content/plugins/fancy-product-designer/readme.txt 1 -
+/wp-content/plugins/contact-form-7/readme.txt 1 -
+/wp-content/plugins/wpforms-lite/readme.txt 1 -
+/bn/author/hm0q6/ 1 https://terapk.com/author/hm0q6/
+/4gpzSvhY 2 -
+/config.json 8 -
+/forum/forumdisplay.php 2 https://terapk.com/forum/forumdisplay.php
+/server 6 -
+/n6PdMqLz 2 -
+/index.min.js 3 -
+/config/database.yml 1 -
+/.env.sample 1 -
+/wp-content/themes/5play/libs/addons/assets/img/spinner.gif 1 https://terapk.com/wp-content/themes/5play/libs/addons/assets/css_2/aps-admin.css
+/oauth.json 1 -
+/2025/11/23/cat-legends-idle-rpg-games/ 2 https://terapk.com/author/hm0q6/
+/https%3A/terapk.com/category/games/ 1 -
+/sberbank-quiz-v2/ 1 -
+/sbr 1 -
+/kXMGtQpC 2 -
+/config/secrets.yml 1 -
+/wp-content/plugins/google-site-kit/readme.txt 1 -
+/app/logs/prod.log 1 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/https%3A/terapk.com/wp-content/themes/5play/assets/css/style_cst.css%3Fver%3D8.6 1 -
+/2021/09/hill-climb-racing-offline-mod_1.html 1 https://terapk.com/2021/09/hill-climb-racing-offline-mod_1.html
+/wp-content/plugins/posts-like-dislike-5play/css/fontawesome/webfonts/fa-regular-400.woff 1 -
+/assets/img/fullexpand.gif 1 -
+/errors.log 1 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/https%3A/terapk.com/wp-content/themes/5play/assets/css/comments.styles.css%3Fver%3D8.6 1 -
+/https%3A/terapk.com/category/apps/ 1 -
+/backup.tar.gz 1 -
+/app/.env.save 1 -
+/wp-content/plugins/insert-headers-and-footers/readme.txt 1 -
+/wp-content/themes/5play/assets/js/+a(this).attr 1 -
+/.env.staging 1 -
+/txets.php 1 -
+/bn/category/games/action/ 2 https://terapk.com/bn/
+/aws.json 1 -
+/.azure/credentials 1 -
+/2025/11/19/snake-io-fun-snake-io-games/ 3 -
+/s/435313e21313e2533323e2736313/_/ 6 -
+/wp-content/plugins/advanced-custom-fields/readme.txt 1 -
+/postnews.php 1 -
+/wp-content/themes/5play/assets/js/%22+dle_root+%22engine/ajax/controller.php 1 -
+/wp-content/plugins/better-search-replace/readme.txt 1 -
+/api_keys.json 1 -
+/wp-content/plugins/litespeed-cache/readme.txt 1 -
+/wp-content/plugins/woocommerce/readme.txt 1 -
+/.env.old 1 -
+/wp-content/plugins/wordpress-seo/readme.txt 1 -
+/2021/10/clash-of-clans-winter-offline_2.html 2 https://terapk.com/2021/10/clash-of-clans-winter-offline_2.html
+/.env.backup 1 -
+/ecp/Current/exporttool/microsoft.exchange.ediscovery.exporttool.application 6 -
+/ehiohmym.php 1 www.google.com
+/php_info.php 2 -
+/config.js 1 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/comments.styles.css%3Fver%3D8.6 1 -
+/app/.env.bak 1 -
+/3ds1633693954432212 5 -
+/5/130/narodanimat-1/index.html 5 -
+/sFRWyHsz 1 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/short.styles.css%3Fver%3D8.6 1 -
+/9LBgkTzq 2 -
+/wp-content/plugins/seo-by-rank-math/readme.txt 1 -
+/kubernetes.yml 1 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/https%3A/terapk.com/wp-content/themes/5play/assets/css/version.css%3Fver%3D8.6 1 -
+/bn/forum/ 2 https://terapk.com/bn/forum/
+/GJcjXsGY 2 -
+/sKmcMfjD 2 -
+/.env.dist 1 -
+/shell 1 -
+/wp-content/plugins/hostinger/readme.txt 1 -
+/wp-content/plugins/redirection/readme.txt 1 -
+/auth.json 1 -
+/q1gpDhK4 2 -
+/credentials.json 1 -
+/wp-content/plugins/posts-like-dislike-5play/css/fontawesome/webfonts/fa-solid-900.eot 1 -
+/wp-content/plugins/posts-like-dislike-5play/css/fontawesome/webfonts/fa-regular-400.woff2 1 -
+/wp-content/plugins/wp-user-avatar/readme.txt 1 -
+/feeds/posts/default 1 -
+/3vt4yTCT 1 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/style_cst_2.css%3Fver%3D8.6 1 -
+/wp-content/themes/5play/libs/addons/assets/img/img/stars_fill.svg 14 https://terapk.com/wp-content/themes/5play/libs/addons/assets/css/result.css
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/https%3A/terapk.com/category/games/ 1 -
+/bn/order/ 3 -
+/storage/logs/laravel.log 1 -
+/SyhZkyvD 2 -
+/azure.json 1 -
+/bn/2025/11/19/snake-io-fun-snake-io-games/ 3 https://terapk.com/2025/11/19/snake-io-fun-snake-io-games/
+/.env.local 3 -
+/2025/11/23/shadow-fight-2/ 3 -
+/gcp-credentials.json 1 -
+/2023/09/spiderman-ultimate-power-mod-apk-v412.html 3 https://terapk.com/2023/09/spiderman-ultimate-power-mod-apk-v412.html
+/lvnrgyvp.php 1 www.google.com
+/bn/2025/11/20/preschool-kindergarten-games/ 2 https://terapk.com/2025/11/20/preschool-kindergarten-games/
+/config.php 1 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/https%3A/terapk.com/wp-content/plugins/comments-like-dislike/css/fontawesome/css/all.min.css%3Fver%3D1.1.9 1 -
+/2025/11/19/sniper-3d%EF%BC%9Agun-shooting-games/ 26 -
+/.env.bak 2 -
+/admin-ajax.php 2 -
+/nfvX2mRq 2 -
+/cgi-bin/postnews.php 1 -
+/.env.save 1 -
+/php_error.log 1 -
+/debug.php 1 -
+/webshell.php 1 -
+/2025/11/19/little-kitty-town/ 2 https://terapk.com/
+/wp-content/plugins/all-in-one-seo-pack/readme.txt 1 -
+/wp-content/plugins/jetpack/readme.txt 1 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/https%3A/terapk.com/ 1 -
+/lander/sberchat5v4_tds_newcrm_038-vnutr_1721815245/ 2 -
+/wp-content/plugins/fix/up.php 2 -
+/bn/ 2 -
+/2023/09/tank-stars-mod-apk-unlocked-everything.html 5 https://www.youtube.com/
+/2021/09/green-farm-3-offline-mod_2.html 3 https://terapk.com/2021/09/green-farm-3-offline-mod_2.html
+/2025/11/19/sniper-3d%EF%BC%9Agun-shooting-games/file/ 1 https://terapk.com/2025/11/19/sniper-3d%ef%bc%9agun-shooting-games/
+/wp-content/plugins/posts-like-dislike-5play/css/fontawesome/webfonts/fa-regular-400.ttf 1 -
+/9XgxmrM3 1 -
+/sites/default/settings.php 1 -
+/CtdJ76V 1 -
+/wp-content/plugins/all-in-one-wp-migration/readme.txt 1 -
+/@vite/env 6 -
+/https%3A/terapk.com/wp-content/plugins/kk-star-ratings/src/core/public/css/kk-star-ratings.min.css%3Fver%3D5.4.10.2 1 -
+/mQ2bDkV4 1 -
+/.env.development 1 -
+/.env.production 3 -
+/wp-content/themes/5play/assets/images/green_cloud.svg 1 -
+/application.yml 1 -
+/payment/ 1 -
+/wp-content/plugins/posts-like-dislike-5play/css/fontawesome/webfonts/fa-brands-400.woff2 1 -
+/uploads/settings 1 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/https%3A/terapk.com/wp-content/themes/5play/assets/css/custom.styles.css%3Fver%3D6.8.3 1 -
+/.env.dev 1 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/fullstory.styles.css%3Fver%3D8.6 1 -
+/.env.example 1 -
+/wp-content/themes/5play/assets/images/dark_cloud.svg 1 -
+/category/educational/ 3 -
+/about 6 -
+/https%3A/terapk.com/category/strategy/ 1 -
+/https%3A/terapk.com/wp-content/plugins/comments-like-dislike/css/cld-frontend.css%3Fver%3D1.1.9 1 -
+/s3.yml 1 -
+/Dockerfile 1 -
+/admin/.env.old 1 -
+/.env.orig 1 -
+/swagger/index.html 6 -
+/bn/developer/kooapps-games-fun-arcade-and-casual-action-games/ 1 https://terapk.com/developer/kooapps-games-fun-arcade-and-casual-action-games/
+/test.php 2 -
+/.api_keys 1 -
+/api/graphql 6 -
+/2025/11/19/snake-io-fun-snake-io-games/file/ 2 https://terapk.com/2025/11/19/snake-io-fun-snake-io-games/
+/zxDLJZ 2 -
+/https%3A/terapk.com/category/arcade/ 1 -
+/includes/.env.save 1 -
+/wp-content/plugins/posts-like-dislike-5play/css/fontawesome/webfonts/fa-solid-900.ttf 1 -
+/lander/sberquiz-2223-3 2 -
+/sberchat008-prilca/ 2 -
+/sitemaps.xml 2 -
+/wp-content/themes/5play/assets/css/core.styles.css 2 -
+/docker-compose.yml 1 -
+/ahax.php 1 -
+/wp-content/themes/5play/assets/js/'+dle_root+dle_admin+ 1 -
+/.docker/config.json 1 -
+/aspera/faspex/ 1 -
+/secrets.yml 1 -
+/cabinet 1 -
+/zMmL28CN 2 -
+/https%3A/terapk.com/category/games/action/ 1 -
+/p3y69 2 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/https%3A/terapk.com/wp-content/themes/5play/assets/css/admin.css%3Fver%3D8.6 1 -
+/2025/11/23/stickman-vs-monster-idle-rpg/file/ 2 https://terapk.com/2025/11/23/stickman-vs-monster-idle-rpg/file/
+/prVdNCXD 2 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/https%3A/terapk.com/wp-content/themes/5play/assets/css/short.styles.css%3Fver%3D8.6 1 -
+/api 6 -
+/index.html 4 https://www.terapk.com/index.html
+/2023/07/clash-of-clans-halloween-offline_4.html 1 https://terapk.com/2023/07/clash-of-clans-halloween-offline_4.html
+/wp-admin/admin-ajax.php 7 https://terapk.com/wp-admin/themes.php
+/wp-content/plugins/posts-like-dislike-5play/css/fontawesome/webfonts/fa-brands-400.ttf 1 -
+/backup.sql 1 -
+/YWy6BPtM 2 -
+/logs/application.log 1 -
+/configuration.php 1 -
+/wp-content/plugins/wp-central/readme.txt 1 -
+/bn/category/role-playing/ 1 https://terapk.com/bn/
+/j26HRfdD 1 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/https%3A/terapk.com/wp-content/themes/5play/assets/css/cores.styles.css%3Fver%3D8.6 1 -
+/wp-content/plugins/duplicate-page/readme.txt 1 -
+/info.php 8 -
+/wp-content/plugins/optinmonster/readme.txt 1 -
+/n5cw4Z3Y 2 -
+/fpyB8SZ3 1 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/https%3A/terapk.com/wp-content/plugins/kk-star-ratings/src/core/public/css/kk-star-ratings.min.css%3Fver%3D5.4.10.2 1 -
+/swagger/v1/swagger.json 6 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/styles.css%3Fver%3D8.6 1 -
+/graphql/api 6 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/%23add_your_link 1 -
+/graphql 6 -
+/wp-content/plugins/posts-like-dislike-5play/css/fontawesome/webfonts/fa-regular-400.svg 1 -
+/backup.zip 1 -
+/https%3A/terapk.com/wp-content/themes/5play/assets/css/top.styles.css%3Fver%3D8.6 1 -
+/2021/09/kingdoms-and-lords-offline-mod_0.html 2 https://terapk.com/2021/09/kingdoms-and-lords-offline-mod_0.html
+END_SIDER_404
+
+# Host - Pages - Hits - Bandwidth - Last visit date - [Start date of last visit] - [Last page of last visit]
+# [Start date of last visit] and [Last page of last visit] are saved only if session is not finished
+# The 25 first Hits must be first (order not required for others)
+BEGIN_VISITOR 513
+103.161.151.14 1132 2574 50046067 20251126065012
+103.115.242.94 335 759 16678840 20251130135212
+167.235.11.154 219 219 521291 20251130235549
+103.115.242.95 135 250 5709092 20251130134711
+194.26.192.18 122 122 52055 20251128101630
+103.115.242.93 108 185 4500315 20251125175554
+157.245.114.147 74 74 381110 20251128030309
+75.119.142.80 61 61 23494 20251126225936
+45.83.31.36 60 60 26781 20251123155632
+104.248.15.35 53 53 317764 20251122231135
+104.28.227.206 42 42 17239 20251126065406
+223.233.70.178 41 41 16836 20251120225706
+45.187.149.1 38 38 15627 20251127022708
+103.87.251.230 37 189 3362607 20251119175017
+201.77.175.56 34 34 14015 20251120010215
+193.26.115.213 33 33 30936 20251123101614
+103.115.242.92 32 82 1547085 20251130134508
+45.80.158.122 32 32 25394 20251121001005
+195.24.236.104 32 32 24297 20251123104417
+103.87.251.224 31 120 1395293 20251123154728
+103.114.64.102 25 25 10388 20251122141937
+103.161.151.12 20 70 1238708 20251121135450
+103.150.242.194 19 19 7970 20251124130548
+31.6.58.229 18 101 846529 20251120102921
+201.141.104.179 18 18 7567 20251120024818
+119.12.166.230 1 30 168789 20251126194128
+43.130.37.243 1 1 1660 20251124202220
+170.106.72.178 2 2 46178 20251130082647
+103.4.250.227 1 1 13443 20251122112903
+43.167.239.66 2 2 58619 20251129191359
+182.252.87.237 0 1 38356 
+103.25.248.78 4 31 46475 20251127211702
+4.205.173.159 2 2 10168 20251128065825
+43.130.67.33 1 1 27835 20251124190202
+202.46.63.59 0 2 2607 
+103.161.151.15 2 3 18945 20251120052913
+45.131.195.205 0 9 61422 
+102.46.239.90 0 1 38356 
+103.15.42.201 0 1 13104 
+43.159.152.184 1 1 27741 20251130042749
+44.222.20.176 3 3 39290 20251128053724
+43.157.50.58 2 2 17502 20251130060719
+166.1.173.196 7 7 4905 20251119065911
+44.205.29.107 2 2 26836 20251130052031
+119.94.142.102 0 1 38356 
+202.46.63.66 0 3 5683 
+87.236.176.89 0 1 13104 
+106.75.18.15 1 2 20724 20251122185054
+97.191.98.53 1 1 403 20251123132224
+147.185.132.240 1 1 4985 20251128091323
+54.242.36.67 4 39 230288 20251122131241
+204.101.161.15 4 36 292031 20251128181632
+139.59.73.129 1 1 2187 20251121043022
+117.20.115.211 0 1 38356 
+104.164.126.63 1 1 13441 20251122153400
+47.246.164.133 1 2 16773 20251127202307
+170.106.163.48 1 1 28431 20251124161619
+43.135.138.128 2 2 16787 20251124200207
+43.164.195.17 1 1 27386 20251129190435
+49.51.180.2 1 1 14995 20251123142917
+195.164.49.144 9 9 64309 20251121193259
+170.106.167.214 1 1 13639 20251130015538
+103.4.250.131 2 2 26884 20251120172422
+103.4.250.65 2 2 26882 20251122153411
+54.158.176.240 1 1 0 20251129215702
+124.156.226.179 2 2 7204 20251128194230
+101.32.49.171 1 1 29065 20251120122252
+107.172.195.137 1 1 13469 20251123045338
+54.92.250.111 1 2 16329 20251121184745
+205.169.39.198 0 2 8371 
+193.34.74.156 1 5 4517 20251119002150
+3.208.116.168 1 1 13425 20251126065229
+47.246.164.155 0 1 331 
+185.247.137.134 1 1 15141 20251125130258
+79.142.79.184 1 1 46484 20251123033211
+125.235.237.251 0 1 38356 
+43.130.57.46 1 1 29300 20251128222419
+103.12.173.130 0 6 154380 
+147.45.50.230 0 1 38356 
+177.67.52.215 0 1 38356 
+49.51.73.183 1 1 16661 20251119210904
+157.230.148.75 1 1 2156 20251125221705
+44.204.93.10 1 2 18005 20251120045814
+94.247.172.129 1 1 15235 20251122112036
+49.51.253.26 1 1 14056 20251123174858
+43.166.128.187 1 1 2156 20251130011049
+62.169.135.15 3 3 39950 20251129233601
+62.169.135.11 1 1 1886 20251129232455
+94.102.49.206 5 39 245334 20251122121910
+170.106.180.246 2 2 56609 20251130052753
+177.240.15.151 0 1 38356 
+198.12.69.94 8 8 158404 20251127202429
+49.51.52.250 1 1 29300 20251123185848
+58.145.190.141 0 2 51460 
+202.173.122.68 0 1 38356 
+47.246.164.130 1 2 22302 20251126232415
+62.169.135.19 4 4 28506 20251129233639
+195.211.77.142 1 1 699 20251118191517
+37.46.119.245 1 1 46484 20251123053636
+170.106.113.159 1 1 15553 20251128172240
+43.153.19.83 1 1 28350 20251130044653
+79.127.185.219 4 36 292028 20251126153119
+43.157.158.178 1 1 1368 20251119183259
+43.153.119.119 1 1 28350 20251130054800
+45.156.129.128 1 11 33980 20251120200403
+150.109.230.210 2 2 23268 20251129235645
+47.246.164.134 0 1 4270 
+43.165.65.180 2 2 30952 20251128223715
+202.46.63.64 0 1 1 
+119.28.177.175 1 1 16555 20251119212913
+43.130.139.136 1 1 303 20251119130329
+138.197.168.33 1 2 28339 20251129084806
+62.169.135.18 4 4 54124 20251129233613
+43.130.32.245 1 1 15365 20251123154103
+170.106.73.216 1 1 12390 20251119132345
+104.164.173.20 2 2 26598 20251120063904
+103.176.18.100 1 7 6976 20251118194949
+66.249.79.131 1 1 24981 20251126075403
+172.200.72.235 1 1 5905 20251121201538
+43.157.174.69 1 1 15968 20251119150228
+43.250.82.102 0 1 38356 
+170.106.187.106 1 1 35761 20251130013636
+43.131.26.226 1 1 1174 20251119140255
+35.183.174.210 1 1 15132 20251129172108
+194.104.8.216 4 38 230080 20251122122327
+3.80.61.171 2 2 30349 20251120180522
+34.96.52.6 1 1 13470 20251122201542
+43.165.190.5 1 1 28929 20251124155613
+43.159.145.153 1 1 29242 20251123174101
+103.87.251.240 2 7 46476 20251122171223
+47.246.164.131 0 1 164 
+47.246.164.147 0 1 1461 
+104.197.69.115 0 4 59831 
+104.155.116.123 1 1 15835 20251130135528
+43.153.192.98 1 1 15444 20251127173240
+203.144.93.149 0 1 38356 
+47.246.164.145 0 3 11281 
+103.15.42.197 0 2 51460 
+89.248.171.23 4 38 230101 20251122122037
+94.102.49.123 0 1 2889 
+49.51.183.75 2 2 31558 20251124163603
+129.227.46.133 1 1 13441 20251122160023
+150.129.166.189 1 1 403 20251125083810
+43.154.140.188 1 1 29301 20251128231756
+34.182.53.19 1 5 4517 20251119082705
+167.71.187.107 1 2 18122 20251121065407
+43.250.82.100 0 2 76712 
+49.51.243.156 1 1 28929 20251128174232
+43.155.26.193 1 1 15579 20251129210526
+189.78.255.99 0 1 38356 
+24.199.119.94 1 1 15242 20251123075823
+104.28.165.203 0 1 38356 
+182.1.201.195 0 1 38356 
+43.245.232.69 0 1 13104 
+149.57.180.144 4 36 292031 20251129022949
+43.157.148.38 1 1 16465 20251130050629
+43.156.232.190 1 1 12390 20251119135400
+104.252.191.108 1 1 13299 20251120063841
+62.169.135.14 1 1 13248 20251129233547
+43.133.220.37 2 2 30438 20251124182149
+13.223.37.227 1 1 0 20251125140546
+202.144.184.229 0 1 38356 
+45.8.25.10 1 8 55544 20251122132801
+104.164.173.189 2 2 26884 20251120192151
+45.156.129.71 1 1 15116 20251119220204
+103.196.9.247 1 1 13299 20251120053702
+84.247.191.22 2 2 4401 20251122001340
+103.130.118.71 0 1 38356 
+54.91.156.102 1 1 15233 20251121011528
+45.156.129.125 1 6 15233 20251120200409
+101.32.15.141 1 1 29300 20251128230714
+122.171.23.4 0 1 38356 
+43.159.132.207 1 1 28872 20251125013004
+49.51.132.100 1 1 28426 20251124160719
+44.211.134.14 1 1 15133 20251127183734
+72.13.46.3 2 2 31472 20251120020559
+3.88.26.208 0 1 38356 
+74.125.212.169 1 11 84068 20251123154017
+81.177.135.2 1 1 14944 20251120204926
+54.224.254.191 0 1 2889 
+202.173.122.52 0 1 38356 
+170.106.180.153 1 1 29301 20251128232818
+177.125.46.82 0 1 38356 
+43.153.74.75 1 1 17750 20251119220048
+205.169.39.54 0 2 8371 
+185.134.176.122 3 34 253783 20251124081433
+162.62.231.139 1 1 16357 20251119192325
+47.88.4.75 3 3 40610 20251121131412
+177.92.52.92 0 2 76712 
+170.106.15.3 1 1 2146 20251130000709
+47.246.164.148 0 2 172 
+49.51.72.76 1 1 16772 20251119184420
+52.209.201.141 1 1 15132 20251129203701
+43.128.67.187 1 1 16760 20251120021144
+66.249.79.129 10 10 133318 20251126142118
+122.201.31.163 0 1 38356 
+202.46.63.71 0 3 11533 
+199.167.138.34 1 1 48984 20251124131344
+44.255.100.16 1 1 15133 20251127145202
+45.156.129.127 0 6 7291 
+205.169.39.49 0 2 8371 
+205.169.39.100 0 2 8371 
+43.135.142.37 1 1 29304 20251128224818
+43.131.253.14 1 1 29301 20251128234745
+195.62.50.35 1 1 15227 20251120103414
+105.105.67.99 0 1 38356 
+128.192.12.120 1 1 15235 20251120095930
+190.87.168.65 0 1 38356 
+47.246.164.129 0 1 9800 
+202.173.120.132 0 1 38356 
+47.246.164.142 0 2 944 
+43.157.153.236 2 2 14778 20251123171837
+43.157.38.228 2 2 30023 20251128192218
+43.153.7.191 1 1 12301 20251119133426
+103.141.67.3 0 1 38356 
+154.28.229.45 1 1 13426 20251125144903
+18.117.180.221 1 1 15135 20251130014911
+74.125.212.71 4 27 153883 20251119175003
+47.246.164.139 0 1 164 
+203.76.223.5 0 2 76712 
+124.156.225.181 1 1 35761 20251119203935
+159.223.132.86 2 2 49284 20251127021746
+208.68.163.87 1 1 30681 20251121180348
+43.130.141.193 1 1 28419 20251128180320
+192.241.137.43 1 1 15235 20251122021834
+210.14.102.167 0 1 38356 
+43.157.168.43 1 1 2147 20251125032007
+103.4.250.16 1 1 13442 20251120172406
+43.135.186.135 2 2 18918 20251125041005
+194.5.82.62 1 10 43256 20251122132801
+66.249.83.137 0 1 38356 
+188.113.244.153 0 1 38356 
+175.176.51.178 0 1 38356 
+135.119.134.30 4 4 20330 20251125062124
+49.51.33.159 2 2 46902 20251123190843
+64.233.173.101 3 21 145040 20251123154018
+178.62.82.141 5 5 88830 20251126121436
+51.81.245.138 1 1 15235 20251120094853
+202.46.63.57 1 2 17548 20251119183111
+43.156.156.96 1 1 15637 20251127170527
+45.153.34.133 1 1 12431 20251130180941
+43.166.224.244 1 1 16471 20251125014033
+103.196.9.56 1 1 13442 20251120192141
+190.210.192.87 0 1 38356 
+62.149.110.133 0 1 38356 
+104.164.173.48 2 2 26886 20251122112917
+192.34.62.157 1 2 17351 20251123093838
+185.247.137.42 1 1 15141 20251125181834
+118.235.6.64 0 3 115068 
+43.153.48.240 2 2 45196 20251130011553
+52.91.184.165 1 2 27162 20251124111735
+43.153.104.196 1 1 29298 20251123184039
+172.200.109.98 4 4 20330 20251123220629
+16.146.74.211 8 78 460576 20251120153554
+203.76.223.4 0 2 76712 
+4.205.216.69 2 2 10168 20251129111353
+23.146.184.239 4 4 59044 20251127202431
+43.153.85.46 2 2 930 20251124192212
+43.157.142.101 2 2 43822 20251130055715
+45.82.78.112 1 1 15116 20251119205544
+103.111.227.120 0 2 51460 
+43.164.197.177 1 1 15562 20251124153528
+43.166.226.57 1 1 29395 20251129201626
+190.58.206.19 3 34 253783 20251128051330
+188.245.193.111 1 1 14058 20251124112114
+13.217.204.224 1 1 15134 20251128134929
+164.92.244.132 2 2 46863 20251120094911
+103.20.141.5 0 1 38356 
+205.210.31.42 1 1 4985 20251128001159
+54.174.244.189 1 5 4517 20251118212908
+43.155.140.157 3 3 49726 20251127174601
+18.236.67.123 4 4 56805 20251124035455
+106.75.66.75 0 1 5482 
+202.46.63.70 0 6 18432 
+103.15.244.132 0 1 38356 
+100.27.71.49 1 1 0 20251122115326
+59.54.177.243 1 1 15239 20251123030633
+103.197.156.5 0 2 76712 
+116.197.132.27 0 1 38356 
+182.180.173.60 10 10 4343 20251126060746
+107.172.195.239 2 2 26598 20251120053720
+103.124.55.69 0 1 38356 
+43.130.67.6 1 1 28861 20251130012709
+202.46.63.67 0 1 940 
+43.155.188.157 1 1 14917 20251125010950
+43.157.82.252 2 2 24515 20251128184153
+45.235.106.101 0 1 38356 
+202.173.122.5 0 1 38356 
+202.46.63.63 0 1 2851 
+176.53.216.241 1 1 15270 20251123000024
+202.46.63.60 1 2 38945 20251119183107
+207.154.226.99 1 1 5796 20251122142415
+199.167.138.22 2 2 91099 20251123130003
+43.155.27.244 1 1 15437 20251130084540
+140.213.67.108 0 1 38356 
+64.233.173.102 3 23 115988 20251123195234
+43.130.228.73 1 1 16404 20251130040756
+43.153.87.54 1 1 2147 20251129213437
+47.246.164.150 0 1 2984 
+43.250.82.232 0 1 38356 
+106.208.62.221 0 1 38356 
+74.125.212.167 1 11 72741 20251123154017
+48.210.10.204 1 1 5905 20251122154103
+66.102.8.38 0 1 38356 
+47.246.164.154 0 4 17642 
+163.53.140.70 0 1 13104 
+43.131.39.179 2 2 15733 20251130014619
+49.51.72.236 1 1 28420 20251128185321
+47.246.164.156 0 3 10746 
+165.232.71.137 1 1 12425 20251119064828
+62.169.135.12 5 5 54970 20251129233635
+170.106.160.90 1 1 14671 20251119185500
+205.169.39.4 0 2 8371 
+4.218.17.104 1 1 5076 20251130211500
+47.246.164.143 0 1 4270 
+110.39.7.66 10 10 4030 20251126070616
+43.157.53.115 1 1 16332 20251120102157
+49.51.196.42 1 1 326 20251124203152
+43.135.185.59 1 1 28420 20251128190157
+119.28.140.106 1 1 14975 20251119172522
+38.154.74.91 1 1 1887 20251127174717
+74.179.70.65 10 85 1527213 20251122164357
+104.164.173.91 2 2 26598 20251120081424
+47.246.164.151 0 1 2708 
+103.25.251.132 0 1 38356 
+20.122.102.171 3 3 15363 20251126122324
+46.101.111.185 2 2 2061 20251118165921
+184.147.208.75 1 1 15233 20251120135339
+122.201.31.131 0 1 38356 
+129.226.174.80 1 1 35761 20251124191150
+198.46.154.21 8 8 158398 20251125205234
+44.243.134.110 1 1 15132 20251129134209
+47.246.164.135 0 2 1063 
+170.106.161.78 1 1 29069 20251120112221
+202.173.122.54 0 1 38356 
+202.46.63.61 0 1 2179 
+43.166.246.180 1 1 2146 20251124172618
+69.91.132.1 4 36 291067 20251124102050
+113.211.124.194 0 1 38356 
+49.51.183.220 1 1 16555 20251119203012
+49.51.141.76 1 1 45313 20251130021007
+43.130.72.177 1 1 28872 20251124232755
+62.169.135.13 3 3 40902 20251129233642
+15.204.182.106 2 2 30232 20251120064853
+143.44.192.64 0 1 38356 
+43.157.62.101 1 1 1646 20251120114408
+192.210.150.196 2 2 28939 20251125205236
+43.157.156.190 2 2 29525 20251124210041
+103.122.143.228 0 1 38356 
+176.32.195.85 4 38 230101 20251122131857
+103.87.251.129 1 3 20361 20251120091940
+154.28.229.164 2 2 26882 20251120095752
+129.226.93.214 1 1 15670 20251120014916
+49.51.233.95 1 1 1090 20251119145316
+103.133.206.77 0 1 38356 
+43.164.197.209 2 2 30300 20251130005606
+163.53.140.69 0 1 13104 
+43.153.123.4 1 1 17402 20251120111138
+43.166.242.189 1 1 27742 20251130043820
+34.72.176.129 0 2 8371 
+23.162.8.157 1 1 13175 20251119172314
+43.173.1.57 1 1 8337 20251128233806
+47.246.164.146 0 3 4215 
+43.157.175.122 1 1 28356 20251124184200
+163.53.140.68 0 1 13104 
+68.183.67.188 5 5 10825 20251125205406
+47.246.164.140 0 1 1066 
+162.243.4.24 1 1 19957 20251122021836
+198.12.69.93 10 10 196046 20251127202432
+103.116.13.229 0 1 38356 
+136.118.181.199 8 44 288436 20251121105145
+103.230.105.29 2 20 113315 20251129113847
+47.246.164.144 0 2 2727 
+205.169.39.189 0 2 51460 
+20.190.234.210 4 4 20330 20251124061919
+43.153.15.51 1 1 16772 20251124173549
+66.249.79.130 5 5 81837 20251126115114
+98.93.69.230 1 1 15116 20251120021020
+47.246.164.137 0 2 11261 
+47.246.164.141 0 2 2882 
+217.138.216.99 4 38 230099 20251122121616
+5.133.192.105 1 2 18131 20251122193923
+20.1.146.255 4 4 20330 20251125210913
+52.86.122.215 4 36 291067 20251124103606
+103.126.22.7 0 1 38356 
+43.166.239.145 1 1 15529 20251129195453
+98.81.73.75 1 1 699 20251118212837
+43.157.22.109 1 1 49212 20251124195154
+47.246.164.153 0 2 1645 
+202.46.63.58 0 4 45341 
+103.207.37.225 1 1 15142 20251126081251
+43.166.240.231 1 1 29301 20251128225938
+195.178.110.210 2 2 12301 20251119120919
+178.214.4.5 5 40 245517 20251121161909
+136.158.11.150 0 1 38356 
+47.246.164.138 1 2 22290 20251127202307
+199.45.154.152 1 2 18122 20251120221755
+103.99.27.150 0 1 38356 
+103.25.251.228 0 1 38356 
+212.112.19.114 1 1 14058 20251124102451
+175.100.6.199 0 1 38356 
+43.135.135.57 1 1 2187 20251119173314
+150.162.149.186 1 1 403 20251128180247
+23.27.145.143 1 1 15134 20251128224635
+43.132.214.228 1 1 13638 20251124194134
+150.109.46.88 1 1 106112 20251119144358
+157.245.117.193 1 1 15116 20251120073258
+45.156.129.126 0 4 0 
+65.130.5.52 1 3 23596 20251120102057
+43.134.141.244 2 2 46295 20251125002906
+43.159.128.155 2 2 30414 20251129203507
+157.245.34.123 1 1 12430 20251124113153
+34.193.202.67 1 1 0 20251128004818
+43.135.115.233 1 1 29297 20251123184928
+154.28.229.96 1 1 13441 20251122124423
+54.196.3.161 0 1 13104 
+202.46.63.54 1 4 27376 20251119183108
+47.246.164.132 1 2 19468 20251126232415
+195.211.77.140 1 1 0 20251118191449
+43.157.43.147 2 2 57858 20251128183203
+114.10.94.142 0 1 38356 
+43.156.228.27 1 1 29298 20251123181920
+170.106.181.163 1 1 29298 20251123181439
+167.172.158.128 2 2 46797 20251123064337
+142.111.108.175 1 1 12451 20251124102036
+202.46.63.62 0 1 208 
+91.225.142.93 0 2 76712 
+38.154.78.103 12 12 149212 20251127174733
+43.130.16.212 1 1 16251 20251120120244
+205.210.31.44 1 1 48858 20251127220037
+45.156.129.70 1 1 15134 20251128015203
+142.93.229.101 1 2 28247 20251125090817
+128.192.12.114 1 1 699 20251118183405
+51.159.181.33 1 1 15143 20251125054956
+149.88.102.115 0 1 38356 
+74.125.212.69 1 16 55326 20251119175003
+170.106.148.137 1 1 16373 20251125005957
+144.86.57.64 0 2 76712 
+114.10.121.144 0 1 38356 
+95.215.0.144 2 2 30418 20251124131531
+104.164.173.171 2 2 26882 20251122124432
+43.130.111.40 1 1 15132 20251129200434
+173.252.87.6 0 1 38356 
+149.88.24.1 4 36 291067 20251124101925
+43.130.72.40 1 1 29066 20251120123220
+199.45.154.139 1 2 28939 20251130175009
+172.245.92.92 4 4 57151 20251127202432
+13.221.198.249 0 1 2889 
+202.46.63.55 0 1 593 
+43.166.130.123 1 1 28864 20251130004729
+87.236.176.181 0 1 13104 
+103.15.42.71 0 1 38356 
+38.196.251.89 0 1 38356 
+138.246.253.7 3 3 0 20251128143649
+165.22.236.49 1 1 699 20251119081814
+43.130.26.3 1 1 14919 20251125002454
+162.62.213.187 1 1 29067 20251120113145
+170.106.72.93 1 1 1646 20251130051641
+43.157.150.69 2 2 17462 20251124235953
+43.130.60.195 1 1 28430 20251124171616
+103.21.42.198 0 2 51460 
+23.19.216.72 1 1 12450 20251123221911
+195.3.223.235 1 1 5177 20251125162216
+34.96.52.45 0 5 11754 
+103.15.42.199 0 1 13104 
+103.25.250.130 0 2 51460 
+62.169.135.20 5 5 68582 20251129233534
+192.253.209.101 2 10 69572 20251122132800
+202.46.63.56 0 3 35269 
+139.59.132.8 2 2 46795 20251120094913
+165.227.153.64 1 2 28256 20251127075729
+43.166.253.94 2 2 45821 20251128171220
+54.215.202.5 1 1 0 20251130160709
+175.139.101.123 0 1 38356 
+205.169.39.15 0 2 51460 
+23.19.82.96 2 7 72836 20251126085545
+212.34.140.200 6 15 244216 20251128050152
+103.130.118.6 0 1 38356 
+103.166.23.8 0 4 102920 
+42.62.176.219 0 1 38356 
+43.130.100.35 1 1 1653 20251124201245
+46.161.50.108 4 36 292042 20251124131536
+74.125.212.168 1 8 185124 20251123154016
+103.196.9.237 3 11 142490 20251125144909
+202.173.120.133 0 1 38356 
+146.70.185.32 1 1 0 20251118193829
+43.164.197.224 1 1 45313 20251125040034
+202.46.63.69 0 2 15689 
+43.159.135.203 2 2 44504 20251130033734
+74.125.212.70 2 18 154439 20251119175003
+203.25.124.208 1 1 0 20251118221437
+14.175.248.115 3 37 216660 20251120133551
+157.245.113.227 2 2 49176 20251128170806
+178.77.188.102 0 1 2889 
+23.27.145.35 1 1 15235 20251122150812
+47.246.164.149 0 1 737 
+64.233.173.96 6 19 158088 20251123195233
+1.37.67.197 0 1 38356 
+125.167.26.124 0 1 38356 
+43.153.96.233 1 1 29749 20251119191330
+43.135.211.148 1 1 16627 20251119221006
+104.252.191.199 1 1 13441 20251120095734
+170.106.193.108 1 1 27744 20251130041727
+162.62.132.25 1 1 15553 20251128182130
+195.24.236.57 1 1 4985 20251124084841
+43.156.109.53 1 1 29749 20251119181539
+109.105.210.68 1 1 699 20251118185201
+102.129.252.22 1 1 15235 20251122121752
+170.106.11.6 1 1 18765 20251119125345
+154.28.229.191 2 2 26918 20251123045351
+185.247.137.19 0 1 13104 
+43.157.180.116 2 2 43985 20251130034649
+218.252.112.49 0 1 38356 
+END_VISITOR
+
+# Date - Pages - Hits - Bandwidth - Visits
+BEGIN_DAY 13
+20251118 16 34 27483 13
+20251119 582 1323 21042853 64
+20251120 313 862 11601876 67
+20251121 169 468 6423412 20
+20251122 167 506 4233063 41
+20251123 1063 2072 37432101 67
+20251124 273 561 11766042 63
+20251125 75 124 1677182 42
+20251126 229 327 1203224 32
+20251127 169 219 1187722 34
+20251128 136 229 2180924 48
+20251129 63 129 1534281 35
+20251130 131 301 7004796 45
+END_DAY
+
+# Session range - Number of visits
+BEGIN_SESSION 7
+30s-2mn 5
+1h+ 30
+5mn-15mn 16
+15mn-30mn 12
+0s-30s 463
+30mn-1h 38
+2mn-5mn 7
+END_SESSION
+
+# URL - Pages - Bandwidth - Entry - Exit
+# The 25 first Pages must be first (order not required for others)
+BEGIN_SIDER 109
+/wp-admin/admin-ajax.php 723 364833 12 19
+/xmlrpc.php 543 133655 15 24
+/ 432 5897556 195 143
+/wp-content/themes/5play/assets/js/general3.php 310 9837767 7 39
+/wp-login.php 211 966881 43 37
+/wp-cron.php 192 0 96 95
+/wp-admin/admin.php 99 13884891 0 0
+/wp-admin/post.php 57 3567755 1 1
+/wp-content/themes/5play/assets/fonts/manrope-v3-cyrillic-regular.woff2 54 872144 8 11
+/wp-content/themes/5play/assets/fonts/manrope-v3-cyrillic-700.woff2 54 871520 8 9
+/wp-admin/load-styles.php 44 4434269 1 1
+/2025/11/23/minecraft-dream-it-build-it/ 43 1169897 22 19
+/wp-admin/edit.php 37 1164360 0 0
+/wp-admin/load-scripts.php 34 875148 3 2
+/wp-admin/themes.php 30 482005 0 0
+/wp-admin/ 27 817265 0 0
+/2025/11/23/shadow-fight-2/file/ 23 208962 0 1
+/2025/11/23/minecraft-dream-it-build-it/file/ 20 164366 5 7
+/2025/11/23/cat-legends-idle-rpg-games/file/ 16 139866 0 0
+/top/ 16 228687 7 7
+/news/ 16 211284 6 5
+/category/games/ 15 224067 6 6
+/2025/11/19/sniper-3d%ef%bc%9agun-shooting-games/ 15 426731 3 3
+/wp-admin/plugins.php 13 423505 0 0
+/2025/11/23/cat-legends-idle-rpg-games/ 13 331288 0 0
+/.git/config 1 12431 1 1
+/author/hm0q6/ 10 160323 2 1
+/wp-content/plugins/redux-framework/redux-core/assets/fonts/elusiveicons-webfont.woff 7 343476 0 0
+/2025/11/24/robbery-bob-king-of-sneak/ 10 276270 9 9
+/2025/11/24/beach-buggy-racing-2/file/ 1 8985 0 0
+/bn/category/action/ 1 17602 1 1
+/bn/ 3 44627 1 1
+/wp-admin/post-new.php 7 366606 0 0
+/wp-admin/index.php 1 34223 0 0
+/wp-admin/theme-install.php 3 39963 0 0
+/2025/11/24/beach-buggy-racing-2/ 5 139657 3 3
+/check_charset.php 3 231 0 0
+/category/role-playing/ 1 15697 0 0
+/category/educational/ 2 32664 2 2
+/tag/the-spike-cross-volleyball/ 1 12351 1 1
+/category/strategy/ 5 72072 2 4
+/category/games/action/ 10 146403 5 4
+/2025/11/24/the-spike-cross-volleyball/file/ 2 16454 0 1
+/2025/11/23/shadow-fight-2/ 12 313033 2 1
+/bn/2025/11/19/snake-io-fun-snake-io-games/ 1 27854 0 0
+/2025/11/19/kinemaster-mod-apk/ 4 91481 0 0
+/wp-content/themes/twentytwentyfive/assets/fonts/manrope/Manrope-VariableFont_wght.woff2 2 107200 0 1
+/2025/11/24/battle-of-warships-online/ 10 285161 8 7
+/wp-content/themes/twentytwentyfive/assets/fonts/fira-code/FiraCode-VariableFont_wght.woff2 1 106112 1 1
+/wp-content/themes/5play/libs/addons/inc/slink.php 8 3813 0 0
+/2025/11/19/sniper-3d%ef%bc%9agun-shooting-games/file/Terabox/ 4 37350 0 1
+/bn/news/ 1 15670 1 1
+/category/action/ 3 47547 2 3
+/bn/category/educational/ 2 34803 2 2
+/2025/11/23/stickman-vs-monster-idle-rpg/ 4 105088 0 0
+/wp-admin/profile.php 4 167880 0 0
+/2025/11/19/sniper-3d%ef%bc%9agun-shooting-games/file/ 5 46925 3 3
+/wp-json/wp/v2/users 8 5728 2 0
+/2025/11/19/little-kitty-town/ 7 175957 0 0
+/wp-config.php 2 0 1 2
+/category/sports/ 6 86894 3 4
+/sample-page/ 2 24780 2 2
+/2025/11/19/sniper-3d%EF%BC%9Agun-shooting-games/ 4 105473 3 1
+/2025/11/24/robbery-bob-king-of-sneak/file/ 1 7445 0 1
+/2025/11/24/the-spike-cross-volleyball/ 9 235810 4 2
+/update_pass.php 3 699 0 0
+/2025/11/ 7 109230 4 5
+/tag/build-it/ 1 12342 0 1
+/category/racing/ 6 87518 3 3
+/wp-includes/js/tinymce/skins/lightgray/fonts/tinymce.woff 3 56472 0 0
+/wp-admin/update-core.php 5 118719 0 0
+/2025/ 5 82369 5 5
+/comments/feed/ 1 730 1 1
+/bookmark/ 1 11855 0 1
+/2025/11/24/stick-war-legacy/ 7 198187 7 7
+https://terapk.com/wp-content/themes/5play/assets/fonts/manrope-v3-cyrillic-700.woff2 2 33520 2 2
+/2025/11/24/battle-of-warships-online/file/ 1 8354 1 1
+/2025/11/23/stickman-vs-monster-idle-rpg/file/ 8 65985 0 0
+/wp-admin/term.php 4 104087 0 0
+/2025/11/19/kinemaster-mod-apk/file/ 2 16973 0 0
+/wp-content/themes/5play/assets/highslide/graphics/zoomin.cur 1 326 1 1
+/2025/11/20/preschool-kindergarten-games/ 12 330286 5 5
+/2025/11/19/hello-world/ 3 54151 2 2
+/feed/ 1 732 1 1
+/wp-content/themes/5play/ 3 594 3 3
+/2025/11/24/fr-legends/ 10 277539 8 6
+/wp-comments-post.php 7 8113 0 7
+https://terapk.com/wp-content/themes/5play/assets/fonts/manrope-v3-cyrillic-regular.woff2 2 33544 2 2
+/category/arcade/ 8 117136 3 4
+/wp-admin/plugin-install.php 5 56880 0 0
+/wp-admin/async-upload.php 3 1706 0 0
+/wp-admin/customize.php 3 192907 0 0
+/2025/11/19/snake-io-fun-snake-io-games/file/ 1 9311 0 0
+/bn/category/games/ 1 17422 1 1
+/2025/11/19/hello-world/feed/ 1 722 1 1
+/2025/11/24/plants-vs-zombies/ 4 113404 4 4
+/wp-admin/options-general.php 8 261177 1 0
+/wp-content/themes/5play/libs/addons/assets/css_2/font/aps-icons.woff2 5 303260 0 0
+/bn/2025/11/ 1 17750 1 1
+/bn/top/ 1 16161 1 1
+/register/ 3 16953 2 3
+/wp-json/oembed/1.0/embed 2 2142 2 2
+/wp-content/themes/5play/assets/highslide/graphics/ 6 9904 6 5
+/wp-admin/widgets.php 2 90081 0 0
+/wp-json/ 2 38722 2 2
+/2025/11/19/little-kitty-town/file/ 1 7826 0 0
+/wp-admin/edit-tags.php 10 295082 0 0
+/wp-json/wp/v2/pages/2 1 1174 1 1
+/2025/11/19/snake-io-fun-snake-io-games/ 13 352186 2 4
+END_SIDER
+
+# Payload Range - Payload Frequency
+BEGIN_FILESIZE 7
+0-44 1325
+44-100 595
+100-500 1280
+2K-5K 947
+5K+ 4364
+500-1K 874
+1K-2K 957
+END_FILESIZE
+
+# Request Time Range - Request Time Frequency
+BEGIN_REQUESTTIME 0
+END_REQUESTTIME

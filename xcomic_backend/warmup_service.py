@@ -364,10 +364,9 @@ def run_warmup_cycle():
     except Exception as e:
         print(f"[Warmup] Could not create lock file: {e}")
 
-    try:
-        print("[Warmup] ══ Starting warmup cycle ══")
-        db = database.SessionLocal()
-        detached_accounts = []
+    print("[Warmup] ══ Starting warmup cycle ══")
+    db = database.SessionLocal()
+    detached_accounts = []
 
     try:
         accounts = db.query(database.SendingAccount).filter(

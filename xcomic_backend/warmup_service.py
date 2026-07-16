@@ -388,6 +388,9 @@ def run_warmup_cycle():
                 self.smtp_password = acc.smtp_password
                 self.warmup_daily_limit = acc.warmup_daily_limit or 5
                 self.warmup_sent_today = acc.warmup_sent_today or 0
+                self.smart_warmup_enabled = getattr(acc, "smart_warmup_enabled", False)
+                self.health_score = acc.health_score
+                self.created_at = acc.created_at
 
         detached_accounts = [DetachedAccount(a) for a in accounts]
 
@@ -415,33 +418,65 @@ def run_warmup_cycle():
                 _increment_warmup_count(acc.id, replied)
                 acc.warmup_sent_today = (acc.warmup_sent_today or 0) + replied
 
-    # ── Phase 2: Send fresh warmup emails (probabilistic) ──
+    # ── Phase 2: Send fresh warmup emails (paced over 24 hours) ──
+    import pytz
+    from datetime import datetime
+    import math
+    import time
+    import health_monitor
+
+    # Calculate pacing progress based on current Bangladesh Time (UTC+6)
+    # The cron resets counts at 18:00 UTC (12:00 AM BD Time)
+    bst = pytz.timezone("Asia/Dhaka")
+    now_bst = datetime.now(bst)
+    minutes_passed = now_bst.hour * 60 + now_bst.minute
+    total_minutes = 1440
+    # Add 5% buffer so it aims to complete slightly before midnight
+    progress = min(1.0, (minutes_passed / total_minutes) * 1.05)
+
     for acc in detached_accounts:
-        if acc.warmup_sent_today >= acc.warmup_daily_limit:
-            print(f"[Warmup] Daily limit reached for {acc.email} ({acc.warmup_sent_today}/{acc.warmup_daily_limit})")
+        if acc.smart_warmup_enabled:
+            target_limit = health_monitor.suggest_warmup_limit(acc)
+        else:
+            target_limit = acc.warmup_daily_limit
+
+        expected_sent = int(math.ceil(target_limit * progress))
+        
+        if acc.warmup_sent_today >= target_limit:
+            print(f"[Warmup] Daily limit reached for {acc.email} ({acc.warmup_sent_today}/{target_limit})")
             continue
 
-        # ~60% chance to send this cycle (adds natural randomness)
-        if random.random() > 0.6:
+        if acc.warmup_sent_today >= expected_sent:
+            print(f"[Warmup] {acc.email} is on track ({acc.warmup_sent_today}/{expected_sent} expected by now). Skipping.")
             continue
+            
+        # We are behind schedule! Calculate how many to send to catch up.
+        # Cap at 3 emails per cycle to prevent sudden spam-like bursts if far behind.
+        to_send = expected_sent - acc.warmup_sent_today
+        to_send = min(to_send, 3)
 
         targets = [t for t in detached_accounts if t.id != acc.id]
         if not targets:
             continue
+            
+        print(f"[Warmup] {acc.email} needs to send {to_send} to catch up (progress: {progress:.2%}).")
 
-        target = random.choice(targets)
-        result = send_warmup_email(acc, target)
-
-        if result["success"]:
-            _increment_warmup_count(acc.id, 1)
+        for _ in range(to_send):
+            target = random.choice(targets)
+            result = send_warmup_email(acc, target)
+    
+            if result["success"]:
+                _increment_warmup_count(acc.id, 1)
+                acc.warmup_sent_today += 1
+            time.sleep(2)  # brief pause between sends in a burst
 
     print("[Warmup] ══ Warmup cycle complete ══")
-    finally:
-        import os
-        lock_file = os.path.join(os.path.dirname(__file__), "warmup.lock")
-        if os.path.exists(lock_file):
-            try: os.remove(lock_file)
-            except: pass
+    
+    import os
+    lock_file = os.path.join(os.path.dirname(__file__), "warmup.lock")
+    if os.path.exists(lock_file):
+        try: os.remove(lock_file)
+        except: pass
 
 
 def _increment_warmup_count(account_id: str, count: int = 1):

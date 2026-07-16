@@ -231,6 +231,43 @@ def suggest_daily_limit(account) -> int:
         return user_limit
 
 
+def suggest_warmup_limit(account) -> int:
+    """
+    Suggest a safe daily warmup limit based on account health and age.
+    """
+    user_limit = account.warmup_daily_limit or 5
+    if not getattr(account, 'smart_warmup_enabled', False):
+        return user_limit
+    
+    # Age-based limits
+    if account.created_at:
+        age_days = (datetime.utcnow() - account.created_at).days
+    else:
+        age_days = 999
+        
+    health = account.health_score or 100
+    
+    # Critical or low health restricts warmup to a minimum to avoid triggering filters
+    if health < 50:
+        return min(user_limit, 2)
+    elif health < 70:
+        return min(user_limit, 5)
+    elif health < 85:
+        return min(user_limit, 15)
+    
+    # Base on age for healthy accounts
+    if age_days < 3:
+        return min(user_limit, 3)
+    elif age_days < 7:
+        return min(user_limit, 10)
+    elif age_days < 14:
+        return min(user_limit, 20)
+    elif age_days < 30:
+        return min(user_limit, 35)
+        
+    return user_limit
+
+
 # ============================================================
 # DAILY STATS TRACKING
 # ============================================================

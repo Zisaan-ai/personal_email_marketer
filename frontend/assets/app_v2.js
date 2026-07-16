@@ -225,136 +225,66 @@ async function apiCall(endpoint, method = 'GET', body = null) {
 
 
 
-// Custom Confirm Modal (V2)
-function getEmptyStateHtml(iconClass, title, description, colspan = 1) {
-    return `<tr>
-        <td colspan="${colspan}" style="padding:0; border:none; background:transparent;">
-            <div class="empty-state">
-                <div class="empty-state-icon"><i class="${iconClass}" style="background:linear-gradient(135deg, #4f46e5, #a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;"></i></div>
-                <h3>${title}</h3>
-                <p>${description}</p>
-            </div>
-        </td>
-    </tr>`;
-}
+// Toast notification
 
-function customConfirm(title, message, expectedString = null) {
-    return new Promise((resolve) => {
-        const modal = document.getElementById('confirm-modal');
-        if (!modal) {
-            resolve(confirm(title + '\n' + message)); // Fallback
-            return;
-        }
-
-        document.getElementById('confirm-modal-title').textContent = title || 'Are you sure?';
-        document.getElementById('confirm-modal-text').textContent = message || 'This action cannot be undone.';
-        
-        const inputContainer = document.getElementById('confirm-modal-input-container');
-        const input = document.getElementById('confirm-modal-input');
-        const btnOk = document.getElementById('confirm-modal-ok');
-        const btnCancel = document.getElementById('confirm-modal-cancel');
-        
-        if (expectedString) {
-            inputContainer.style.display = 'block';
-            document.getElementById('confirm-modal-expected').textContent = expectedString;
-            input.value = '';
-            btnOk.disabled = true;
-            btnOk.style.opacity = '0.5';
-            
-            input.oninput = function() {
-                if (input.value === expectedString) {
-                    btnOk.disabled = false;
-                    btnOk.style.opacity = '1';
-                } else {
-                    btnOk.disabled = true;
-                    btnOk.style.opacity = '0.5';
-                }
-            };
-        } else {
-            inputContainer.style.display = 'none';
-            btnOk.disabled = false;
-            btnOk.style.opacity = '1';
-        }
-
-        modal.style.display = 'flex';
-        if (expectedString) {
-            setTimeout(() => input.focus(), 100);
-        }
-
-        const cleanup = () => {
-            modal.style.display = 'none';
-            btnOk.onclick = null;
-            btnCancel.onclick = null;
-            input.oninput = null;
-        };
-
-        btnOk.onclick = () => {
-            cleanup();
-            resolve(true);
-        };
-
-        btnCancel.onclick = () => {
-            cleanup();
-            resolve(false);
-        };
-    });
-}
-
-// // Toast notification (V2 Stacked with Progress)
 function showToast(message, type) {
-    const container = document.getElementById('toast-container');
-    if (!container) return;
 
-    // Create toast element
-    const toast = document.createElement('div');
-    toast.className = 'toast-item';
-    
-    // Icon and colors based on type
-    let icon = '<i class="fa-solid fa-check-circle"></i>';
-    let iconColor = '#059669'; // success green
-    let progressColor = '#10b981';
+    var toast = document.getElementById('toast');
 
-    if (type === 'error') {
-        icon = '<i class="fa-solid fa-circle-exclamation"></i>';
-        iconColor = '#dc2626';
-        progressColor = '#ef4444';
-    } else if (type === 'warning') {
-        icon = '<i class="fa-solid fa-triangle-exclamation"></i>';
-        iconColor = '#d97706';
-        progressColor = '#f59e0b';
-    } else if (type === 'info') {
-        icon = '<i class="fa-solid fa-circle-info"></i>';
-        iconColor = '#3b82f6';
-        progressColor = '#60a5fa';
-    }
+    var msg = document.getElementById('toast-msg');
 
-    // Set duration
-    const duration = 4000;
+    if (!toast || !msg) return;
 
-    // Toast HTML
-    toast.innerHTML = `
-        <div class="toast-content">
-            <span class="toast-icon" style="color: ${iconColor};">${icon}</span>
-            <span class="toast-text">${escapeHtml(message)}</span>
-            <button class="toast-close" onclick="this.parentElement.parentElement.classList.add('hide'); setTimeout(() => this.parentElement.parentElement.remove(), 300);"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div class="toast-progress" style="background: ${progressColor}; animation-duration: ${duration}ms;"></div>
-    `;
+    // clear any existing timeout
 
-    // Add to container
-    container.appendChild(toast);
+    if (window._toastTimer) clearTimeout(window._toastTimer);
 
-    // Auto remove after duration
-    setTimeout(() => {
-        if (document.body.contains(toast)) {
-            toast.classList.add('hide');
-            setTimeout(() => {
-                if (document.body.contains(toast)) {
-                    toast.remove();
-                }
-            }, 300);
-        }
-    }, duration);
+    var icon = type === 'error' ? '&#10006;' : type === 'warning' ? '&#9888;' : '&#10003;';
+
+    var bg = type === 'error' ? 'linear-gradient(135deg,#dc2626,#b91c1c)' 
+
+           : type === 'warning' ? 'linear-gradient(135deg,#d97706,#b45309)'
+
+           : 'linear-gradient(135deg,#059669,#047857)';
+
+    toast.style.background = bg;
+
+    toast.style.boxShadow = '0 8px 32px rgba(0,0,0,0.25)';
+
+    toast.style.borderRadius = '12px';
+
+    toast.style.padding = '14px 20px';
+
+    toast.style.display = 'flex';
+
+    toast.style.alignItems = 'center';
+
+    toast.style.gap = '10px';
+
+    toast.style.minWidth = '260px';
+
+    toast.style.maxWidth = '420px';
+
+    msg.innerHTML = '<span style="font-size:16px;">' + icon + '</span><span style="font-size:14px;font-weight:500;">' + message + '</span>';
+
+    toast.style.bottom = '24px';
+
+    toast.style.opacity = '1';
+
+    toast.style.transform = 'translateY(0)';
+
+    toast.style.transition = 'all 0.3s cubic-bezier(0.34,1.56,0.64,1)';
+
+    window._toastTimer = setTimeout(function() {
+
+        toast.style.opacity = '0';
+
+        toast.style.transform = 'translateY(20px)';
+
+        setTimeout(function() { toast.style.bottom = '-200px'; }, 300);
+
+    }, 3500);
+
 }
 
 
@@ -501,7 +431,7 @@ function populateAnalytics(campaignId) {
 
 
 
-    document.getElementById('analytics-title').textContent = c.name || c.subject || 'Untitled Campaign';
+    document.getElementById('analytics-title').textContent = c.subject || 'Untitled Campaign';
 
     const statusEl = document.getElementById('analytics-status');
 
@@ -642,17 +572,13 @@ window.populateVbAnalytics = function(id) {
     // Fetch and render analytics leads table
     const tbody = document.getElementById('vb-analytics-leads-tbody');
     if (tbody) {
-        tbody.innerHTML = Array(3).fill('<tr>' + 
-            '<td><span class="skeleton" style="width:120px;height:20px;"></span></td>' +
-            '<td><span class="skeleton" style="width:160px;height:20px;"></span></td>' +
-            '<td><span class="skeleton" style="width:80px;height:20px;"></span></td>' +
-            '</tr>').join('');
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:24px;color:var(--text-muted);">Loading leads...</td></tr>';
         apiCall('/campaigns/' + id + '/leads')
             .then(res => res.json())
             .then(leads => {
                 tbody.innerHTML = '';
                 if (!leads || leads.length === 0) {
-                    tbody.innerHTML = getEmptyStateHtml('fa-solid fa-users-slash', 'No leads found', 'Upload a CSV to add leads to this campaign.', 3);
+                    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:24px;color:var(--text-muted);">No leads found for this campaign.</td></tr>';
                     return;
                 }
                 leads.forEach(l => {
@@ -735,12 +661,7 @@ window.populateColdAnalytics = function(id) {
 
     if (tbody) {
 
-        tbody.innerHTML = Array(3).fill('<tr>' + 
-            '<td><span class="skeleton" style="width:120px;height:20px;"></span></td>' +
-            '<td><span class="skeleton" style="width:160px;height:20px;"></span></td>' +
-            '<td><span class="skeleton" style="width:80px;height:20px;"></span></td>' +
-            '<td><span class="skeleton" style="width:100px;height:20px;"></span></td>' +
-            '</tr>').join('');
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--text-muted);">Loading leads...</td></tr>';
 
         apiCall('/campaigns/' + id + '/leads')
 
@@ -752,7 +673,7 @@ window.populateColdAnalytics = function(id) {
 
                 if (!leads || leads.length === 0) {
 
-                    tbody.innerHTML = getEmptyStateHtml('fa-solid fa-users-slash', 'No leads found', 'Upload a CSV to add leads to this campaign.', 4);
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--text-muted);">No leads found for this campaign.</td></tr>';
 
                     return;
 
@@ -885,18 +806,14 @@ async function fetchDashboard() {
     var statEls = document.querySelectorAll('[id^="stat-"]');
 
     statEls.forEach(function(el) {
-        el.innerHTML = '<span class="skeleton" style="width:40px;height:18px;"></span>';
+
+        el.innerHTML = '<span class="shimmer-bar" style="display:inline-block;width:40px;height:18px;background:linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%);border-radius:4px;animation:shimmer 1.2s infinite;background-size:200% 100%;"></span>';
+
     });
 
     var tbody = document.querySelector('#dashboard-unified-table tbody');
 
-    if (tbody) tbody.innerHTML = Array(3).fill('<tr>' +
-        '<td><span class="skeleton" style="width:140px;height:20px;"></span></td>' +
-        '<td><span class="skeleton" style="width:80px;height:20px;"></span></td>' +
-        '<td><span class="skeleton" style="width:200px;height:20px;"></span></td>' +
-        '<td><span class="skeleton" style="width:60px;height:20px;"></span></td>' +
-        '<td><span class="skeleton" style="width:100px;height:20px;"></span></td>' +
-        '</tr>').join('');
+    if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:#94a3b8;"><i class="fa-solid fa-spinner fa-spin" style="margin-right:8px;"></i>Loading campaigns...</td></tr>';
 
 
 
@@ -1006,35 +923,7 @@ async function fetchDashboard() {
 
     if (!campaigns || campaigns.length === 0) {
 
-        if (unifiedTbody) unifiedTbody.innerHTML = getEmptyStateHtml('fa-regular fa-paper-plane', 'No campaigns yet', 'Create your first Cold Mail or Newsletter campaign to get started.', 6);
-
-        
-
-        // Onboarding logic
-
-        if (!localStorage.getItem('onboarding_dismissed_v2')) {
-
-            try {
-
-                const accRes = await apiCall('/sending-accounts');
-
-                if (accRes && accRes.ok) {
-
-                    const accData = await accRes.json();
-
-                    if (accData.length === 0) {
-
-                        document.getElementById('onboarding-wizard-modal').style.display = 'flex';
-
-                        localStorage.setItem('onboarding_dismissed_v2', 'true');
-
-                    }
-
-                }
-
-            } catch(e) { console.error('Onboarding check failed', e); }
-
-        }
+        if (unifiedTbody) unifiedTbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:48px 24px;"><div style="display:flex;flex-direction:column;align-items:center;gap:12px;"><div style="width:56px;height:56px;background:#f1f5f9;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;">&#128231;</div><p style="font-weight:600;color:#374151;margin:0;font-size:15px;">No campaigns yet</p><p style="color:#9ca3af;margin:0;font-size:13px;">Create your first Cold Mail or Newsletter campaign</p></div></td></tr>';
 
     } else {
 
@@ -1126,11 +1015,9 @@ async function fetchDashboard() {
 
             tr.innerHTML =
 
-                '<td style="text-align:center;"><input type="checkbox" class="bulk-campaign-cb" value="' + c.id + '" onchange="window.updateBulkSelectState()"></td>' +
-
                 '<td style="font-weight:600;color:var(--text);">' +
 
-                    '<div style="margin-bottom:2px;">' + (c.name || c.subject || 'Untitled') + abBadge + '</div>' +
+                    '<div style="margin-bottom:2px;">' + (c.subject || 'Untitled') + abBadge + '</div>' +
 
                     (dateStr ? '<div style="font-size:12px;color:var(--text-muted);">' + dateStr + '</div>' : '') +
 
@@ -1922,7 +1809,7 @@ window.editCampaign = function(id) {
 
 window.pauseCampaign = async function(id) {
 
-    if (!(await customConfirm('Pause Campaign', 'Are you sure you want to pause this campaign?'))) return;
+    if (!confirm('Are you sure you want to pause this campaign?')) return;
 
     try {
 
@@ -1960,7 +1847,7 @@ window.pauseCampaign = async function(id) {
 
 window.resumeCampaign = async function(id) {
 
-    if (!(await customConfirm('Resume Campaign', 'Are you sure you want to resume this campaign?'))) return;
+    if (!confirm('Are you sure you want to resume this campaign?')) return;
 
     try {
 
@@ -1998,7 +1885,7 @@ window.resumeCampaign = async function(id) {
 
 window.deleteCampaign = async function(id) {
 
-    if (!(await customConfirm('Delete Campaign', 'Are you sure you want to delete this campaign? This action cannot be undone.', 'DELETE'))) return;
+    if (!confirm('Are you sure you want to delete this campaign? This action cannot be undone.')) return;
 
     
 
@@ -2766,52 +2653,37 @@ function setupSettings() {
 
                 // Save Gemini key
 
-                const setBadgeActive = (badgeId) => {
-                    const badge = document.getElementById(badgeId);
-                    if (badge) {
-                        badge.style.background = '#dcfce7';
-                        badge.style.color = '#16a34a';
-                        badge.innerHTML = '● Active';
-                    }
-                };
-
                 if (geminiKey) {
+
                     await apiCall('/settings/gemini', 'POST', { gemini_api_key: geminiKey });
-                    document.getElementById('gemini-api-key').value = '';
-                    setBadgeActive('gemini-key-status');
+
                 }
+
                 if (groqKey) {
                     await apiCall('/settings/groq', 'POST', { groq_api_key: groqKey });
-                    document.getElementById('groq-api-key').value = '';
-                    setBadgeActive('groq-key-status');
                 }
                 if (openaiKey) {
                     await apiCall('/settings/openai', 'POST', { openai_api_key: openaiKey });
-                    document.getElementById('openai-api-key').value = '';
-                    setBadgeActive('openai-key-status');
                 }
                 if (anthropicKey) {
                     await apiCall('/settings/anthropic', 'POST', { anthropic_api_key: anthropicKey });
-                    document.getElementById('anthropic-api-key').value = '';
-                    setBadgeActive('anthropic-key-status');
                 }
                 if (deepseekKey) {
                     await apiCall('/settings/deepseek', 'POST', { deepseek_api_key: deepseekKey });
-                    document.getElementById('deepseek-api-key').value = '';
-                    setBadgeActive('deepseek-key-status');
                 }
 
                 const geminiStatus = document.getElementById('gemini-status');
+
                 if (geminiStatus) {
-                    if (geminiKey || groqKey || openaiKey || anthropicKey || deepseekKey) {
-                        geminiStatus.textContent = '✅ AI Keys saved successfully!';
-                        geminiStatus.className = 'alert success';
-                    } else {
-                        geminiStatus.textContent = 'ℹ️ No new keys entered to save.';
-                        geminiStatus.className = 'alert info';
-                    }
+
+                    geminiStatus.textContent = '✅ AI Keys saved successfully!';
+
+                    geminiStatus.className = 'alert success';
+
                     geminiStatus.style.display = 'block';
+
                     setTimeout(() => { geminiStatus.style.display = 'none'; }, 3000);
+
                 }
 
             } catch(e) { showToast('Error saving keys', 'error'); }
@@ -2830,36 +2702,13 @@ function setupSettings() {
 
         const s = await res.json();
 
-        const setKeyStatus = (badgeId, status) => {
-            const badge = document.getElementById(badgeId);
-            if (!badge) return;
-            if (status === 'active') {
-                badge.style.background = '#dcfce7';
-                badge.style.color = '#16a34a';
-                badge.innerHTML = '● Active';
-            } else if (status === 'expired') {
-                badge.style.background = '#fef9c3';
-                badge.style.color = '#ca8a04';
-                badge.innerHTML = '● Expired';
-            } else {
-                badge.style.background = '#fee2e2';
-                badge.style.color = '#dc2626';
-                badge.innerHTML = '● No Key';
-            }
-        };
+        const setVal = (id, v) => { const el = document.getElementById(id); if (el && v) el.value = v; };
 
-        const setVal = (id, hasKey, badgeId, expired) => { 
-            const el = document.getElementById(id); 
-            if (el) el.value = '';
-            const status = !hasKey ? 'missing' : expired ? 'expired' : 'active';
-            setKeyStatus(badgeId, status);
-        };
-
-        setVal('gemini-api-key', s.has_gemini_api_key, 'gemini-key-status', s.gemini_key_expired);
-        setVal('groq-api-key', s.has_groq_api_key, 'groq-key-status', s.groq_key_expired);
-        setVal('openai-api-key', s.has_openai_api_key, 'openai-key-status', s.openai_key_expired);
-        setVal('anthropic-api-key', s.has_anthropic_api_key, 'anthropic-key-status', s.anthropic_key_expired);
-        setVal('deepseek-api-key', s.has_deepseek_api_key, 'deepseek-key-status', s.deepseek_key_expired);
+        setVal('gemini-api-key', s.gemini_api_key);
+        setVal('groq-api-key', s.groq_api_key);
+        setVal('openai-api-key', s.openai_api_key);
+        setVal('anthropic-api-key', s.anthropic_api_key);
+        setVal('deepseek-api-key', s.deepseek_api_key);
 
     }).catch(() => {});
 
@@ -4274,9 +4123,7 @@ function setupCampaignBuilder() {
         const delayMin = parseInt(document.getElementById('vb-sch-delay-min')?.value) || 30;
         const delayMax = parseInt(document.getElementById('vb-sch-delay-max')?.value) || 90;
 
-        const campaignName = document.getElementById('newsletter-name-text')?.textContent;
         const payload = {
-            name: campaignName === 'New Campaign' ? null : campaignName,
             subject: subject || 'Draft Campaign',
             body: finalHTML,
             type: 'newsletter',
@@ -4406,8 +4253,7 @@ function setupCampaignBuilder() {
 
             });
 
-            const campaignName = document.getElementById('newsletter-name-text')?.textContent;
-            const payload = { name: campaignName === 'New Campaign' ? null : campaignName, subject, body: finalHTML, type: 'newsletter', campaign_id: window.currentCampaignId || null };
+            const payload = { subject, body: finalHTML, type: 'newsletter', campaign_id: window.currentCampaignId || null };
 
             
 
@@ -4491,7 +4337,7 @@ function setupCampaignBuilder() {
 
     // ---- TEMPLATE GALLERY ----
 
-    async function loadTemplate(templateId) {
+    function loadTemplate(templateId) {
 
         const tmpl = window.EmailTemplates ? window.EmailTemplates.find(t => t.id === templateId) : null;
 
@@ -4499,7 +4345,7 @@ function setupCampaignBuilder() {
 
         if (canvas.querySelectorAll('.email-block').length > 0) {
 
-            if (!(await customConfirm('Load Template', 'This will replace your current design. Continue?'))) return;
+            if (!confirm('This will replace your current design. Continue?')) return;
 
         }
 
@@ -4876,9 +4722,7 @@ function setupSequenceBuilder() {
 
         let delayMax = parseInt((document.getElementById('sch-delay-max') || {}).value); if(isNaN(delayMax)) delayMax = 90;
 
-        const campaignName = document.getElementById('cold-name-text')?.textContent;
         const payload = {
-            name: campaignName === 'New Sequence' ? null : campaignName,
 
             subject: s1.subject,
 
@@ -5005,9 +4849,7 @@ function setupSequenceBuilder() {
 
         let delayMax = parseInt((document.getElementById('sch-delay-max') || {}).value); if(isNaN(delayMax)) delayMax = 90;
 
-        const campaignName = document.getElementById('cold-name-text')?.textContent;
         const payload = {
-            name: campaignName === 'New Sequence' ? null : campaignName,
 
             subject: s1.subject,
 
@@ -5362,7 +5204,7 @@ async function loadReplies() {
 }
 
 async function deleteReply(replyId, btn) {
-    if (!(await customConfirm('Delete Reply', 'Are you sure you want to delete this reply?', 'DELETE'))) return;
+    if (!confirm("Are you sure you want to delete this reply?")) return;
     const oldHtml = btn.innerHTML;
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
     btn.disabled = true;
@@ -5555,7 +5397,7 @@ window.approveUser = async function(id) {
 
 window.deleteUser = async function(id) {
 
-    if (!(await customConfirm('Delete User', 'Are you sure you want to delete this user completely?', 'DELETE'))) return;
+    if (!confirm('Are you sure you want to delete this user completely?')) return;
 
     try {
 
@@ -5611,7 +5453,7 @@ async function renderColdMailList() {
 
     if (campaigns.length === 0) {
 
-        tbody.innerHTML = getEmptyStateHtml('fa-solid fa-envelope-open-text', 'No cold mail campaigns', 'Create your first cold mail sequence to start reaching out.', 5);
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text-muted);">No Cold Mail campaigns found.</td></tr>';
 
         return;
 
@@ -5635,7 +5477,7 @@ async function renderColdMailList() {
 
         tr.innerHTML = `
 
-            <td><div style="font-weight:600;color:var(--text);">${c.name || c.subject || 'Untitled'}</div></td>
+            <td><div style="font-weight:600;color:var(--text);">${c.subject || 'Untitled'}</div></td>
 
             <td>
 
@@ -5692,7 +5534,7 @@ async function renderNewsletterList() {
 
     if (campaigns.length === 0) {
 
-        tbody.innerHTML = getEmptyStateHtml('fa-solid fa-newspaper', 'No newsletters', 'Create your first newsletter to engage your audience.', 4);
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:32px;color:var(--text-muted);">No Newsletters found.</td></tr>';
 
         return;
 
@@ -5712,7 +5554,7 @@ async function renderNewsletterList() {
 
         tr.innerHTML = `
 
-            <td><div style="font-weight:600;color:var(--text);">${c.name || c.subject || 'Untitled'}</div></td>
+            <td><div style="font-weight:600;color:var(--text);">${c.subject || 'Untitled'}</div></td>
 
             <td>
 
@@ -6048,42 +5890,63 @@ function setupDragDrop(id) {
 
                     
 
-                    showToast(`Loading ${lines.length} leads...`, 'success');
+                    showToast(`Validating ${lines.length} leads... please wait.`, 'success');
+
+                    el.value = text;
 
                     
 
-                    const formattedLines = lines.map(l => {
-
-                        const parts = l.split(',');
-
-                        const e = parts[0] ? parts[0].trim() : '';
-
-                        const n = parts[1] ? parts[1].trim() : '';
-
-                        const c = parts[2] ? parts[2].trim() : '';
-
-                        
-
-                        return `${e},${n},${c}`;
-
-                    }).filter(l => l.length > 0);
+                    const emailsToCheck = lines.map(l => l.split(',')[0].trim()).filter(e => e);
 
                     
 
-                    el.value = formattedLines.join('\n');
+                    try {
 
-                    
+                        const res = await apiCall('/validate-leads', 'POST', { emails: emailsToCheck });
 
-                    showToast(`✅ Successfully loaded ${formattedLines.length} leads!`, 'success');
+                        if (res.ok) {
 
-                    
+                            const data = await res.json();
 
-                    if (typeof window.renderLeadsList === 'function') {
-                        window.renderLeadsList('bulk-leads-input');
+                            const invalidEmails = new Set(data.results.filter(r => !r.valid).map(r => r.email.toLowerCase()));
+
+                            
+
+                            const validLines = lines.filter(l => {
+
+                                const e = l.split(',')[0].trim().toLowerCase();
+
+                                return !invalidEmails.has(e);
+
+                            });
+
+                            
+
+                            el.value = validLines.join('\n');
+
+                            
+
+                            const removed = lines.length - validLines.length;
+
+                            if (removed > 0) {
+
+                                showToast(`⚠️ Removed ${removed} invalid/inactive leads. Loaded ${validLines.length} valid leads.`, 'error');
+
+                            } else {
+
+                                showToast(`✅ Successfully loaded ${validLines.length} healthy leads!`, 'success');
+
+                            }
+
+                        }
+
+                    } catch (err) {
+
+                        showToast(`✅ Loaded ${lines.length} leads (validation skipped)`, 'success');
+
                     }
+
                 };
-
-
 
                 reader.readAsText(file);
 
@@ -6297,7 +6160,7 @@ window.loadAdminUsers = async function() {
 
         if (!users || !users.length) {
 
-            tbody.innerHTML = getEmptyStateHtml('fa-solid fa-user-slash', 'No users found', 'No users have registered yet.', 4);
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#888;padding:20px;">No users found.</td></tr>';
 
             return;
 
@@ -6387,7 +6250,7 @@ window.approveUser = async function(id) {
 
 window.deleteUser = async function(id) {
 
-    if (!(await customConfirm('Delete User', 'Are you sure you want to delete this user?', 'DELETE'))) return;
+    if (!confirm('Are you sure you want to delete this user?')) return;
 
     try {
 
@@ -6437,9 +6300,9 @@ window.saveLeads = function(id) {
 
 
 
-window.clearLeads = async function(id) {
+window.clearLeads = function(id) {
 
-    if(!(await customConfirm('Clear Leads', 'Are you sure you want to clear all leads?', 'CLEAR'))) return;
+    if(!confirm('Are you sure you want to clear all leads?')) return;
 
     const el = document.getElementById(id);
 
@@ -6754,8 +6617,8 @@ window.handleGalleryUpload = function(event) {
     });
 };
 
-window.deleteGalleryImage = async function(id) {
-    if(!(await customConfirm('Delete Image', 'Delete this image?'))) return;
+window.deleteGalleryImage = function(id) {
+    if(!confirm('Delete this image?')) return;
     fetch('/api/gallery/' + id, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
@@ -6864,309 +6727,3 @@ window.filterAccounts = function(input, containerId) {
         }
     });
 };
-
-// ============================================================
-// COMMAND PALETTE & KEYBOARD SHORTCUTS (V2)
-// ============================================================
-
-const cmdPalette = document.getElementById('command-palette');
-const cmdInput = document.getElementById('command-input');
-const cmdResults = document.getElementById('command-results');
-let cmdIndex = -1;
-
-const commands = [
-    { id: 'nav-dashboard', title: 'Go to Dashboard', desc: 'View high-level overview', icon: 'fa-solid fa-house', color: '#6366f1' },
-    { id: 'nav-campaigns', title: 'Go to Newsletters', desc: 'Manage email newsletters', icon: 'fa-solid fa-newspaper', color: '#8b5cf6' },
-    { id: 'nav-cold-mail', title: 'Go to Cold Mail', desc: 'Manage cold email sequences', icon: 'fa-solid fa-envelope-open-text', color: '#10b981' },
-    { id: 'nav-sending-accounts', title: 'Go to Sending Accounts', desc: 'Configure SMTP and IMAP', icon: 'fa-solid fa-server', color: '#f59e0b' },
-    { id: 'nav-admin', title: 'Go to Admin Settings', desc: 'System configuration', icon: 'fa-solid fa-shield-halved', color: '#dc2626' }
-];
-
-function openCommandPalette() {
-    if(!cmdPalette) return;
-    cmdPalette.style.display = 'flex';
-    cmdInput.value = '';
-    renderCommands('');
-    setTimeout(() => cmdInput.focus(), 50);
-}
-
-function closeCommandPalette() {
-    if(!cmdPalette) return;
-    cmdPalette.style.display = 'none';
-}
-
-function renderCommands(query) {
-    cmdResults.innerHTML = '';
-    cmdIndex = -1;
-    const q = query.toLowerCase();
-    
-    // Base commands
-    let results = commands.filter(c => c.title.toLowerCase().includes(q) || c.desc.toLowerCase().includes(q));
-    
-    // Dynamic campaigns
-    if (window.lastFetchedCampaigns) {
-        const campMatches = window.lastFetchedCampaigns.filter(c => c.name.toLowerCase().includes(q) || c.id.includes(q));
-        campMatches.forEach(c => {
-            results.push({
-                id: 'jump-camp-' + c.id,
-                title: c.name,
-                desc: 'Jump to ' + (c.type === 'cold_mail' ? 'Cold Mail' : 'Newsletter'),
-                icon: c.type === 'cold_mail' ? 'fa-solid fa-envelope-open-text' : 'fa-solid fa-newspaper',
-                color: c.type === 'cold_mail' ? '#10b981' : '#8b5cf6',
-                action: () => { window.editCampaign(c.id); }
-            });
-        });
-    }
-    
-    if (results.length === 0) {
-        cmdResults.innerHTML = '<div style="padding:24px;text-align:center;color:var(--text-muted);font-size:14px;">No results found</div>';
-        return;
-    }
-    
-    results.slice(0, 8).forEach((r, i) => {
-        const el = document.createElement('div');
-        el.className = 'cmd-item';
-        el.innerHTML = `
-            <div class="cmd-icon" style="background:${r.bg || '#f1f5f9'};color:${r.color || '#475569'};"><i class="${r.icon}"></i></div>
-            <div>
-                <div class="cmd-title">${r.title}</div>
-                <div class="cmd-desc">${r.desc}</div>
-            </div>
-        `;
-        el.onclick = () => {
-            closeCommandPalette();
-            if (r.action) r.action();
-            else if (r.id.startsWith('nav-')) window.navTo(r.id.replace('nav-', '') + '-list');
-        };
-        cmdResults.appendChild(el);
-    });
-}
-
-if (cmdInput) {
-    cmdInput.addEventListener('input', (e) => renderCommands(e.target.value));
-    cmdInput.addEventListener('keydown', (e) => {
-        const items = cmdResults.querySelectorAll('.cmd-item');
-        if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            cmdIndex = Math.min(cmdIndex + 1, items.length - 1);
-            updateCmdSelection(items);
-        } else if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            cmdIndex = Math.max(cmdIndex - 1, 0);
-            updateCmdSelection(items);
-        } else if (e.key === 'Enter' && cmdIndex >= 0) {
-            e.preventDefault();
-            items[cmdIndex].click();
-        } else if (e.key === 'Escape') {
-            closeCommandPalette();
-        }
-    });
-}
-
-function updateCmdSelection(items) {
-    items.forEach((item, i) => {
-        if (i === cmdIndex) item.classList.add('active');
-        else item.classList.remove('active');
-    });
-}
-
-document.addEventListener('keydown', (e) => {
-    // Check if user is typing in an input field
-    const isTyping = ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName) || e.target.isContentEditable;
-
-    // Global Shortcuts (Ctrl+K)
-    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        openCommandPalette();
-    }
-    
-    // Close on Escape
-    if (e.key === 'Escape') {
-        closeCommandPalette();
-    }
-
-    // Single key shortcuts
-    if (!isTyping && !e.ctrlKey && !e.metaKey && !e.altKey) {
-        switch(e.key.toLowerCase()) {
-            case 'n': window.navTo('campaign-builder'); break;
-            case 'c': window.navTo('cold-mail-builder'); break;
-            case 's': window.navTo('sending-accounts'); break;
-            case 'd': window.navTo('dashboard-unified'); break;
-            case '?': openCommandPalette(); break;
-        }
-    }
-});
-
-// ============================================================
-// INLINE CAMPAIGN NAME EDITING
-// ============================================================
-
-window.startEditCampaignName = function(type) {
-    const textEl = document.getElementById(type + '-name-text');
-    const inputEl = document.getElementById(type + '-name-input');
-    const containerEl = document.getElementById(type + '-title-container');
-    
-    if (!textEl || !inputEl || !containerEl) return;
-    
-    inputEl.value = textEl.textContent === 'New Campaign' || textEl.textContent === 'New Sequence' ? '' : textEl.textContent;
-    containerEl.style.display = 'none';
-    inputEl.style.display = 'block';
-    inputEl.focus();
-}
-
-window.cancelEditCampaignName = function(type) {
-    const inputEl = document.getElementById(type + '-name-input');
-    const containerEl = document.getElementById(type + '-title-container');
-    if (!inputEl || !containerEl) return;
-    
-    inputEl.style.display = 'none';
-    containerEl.style.display = 'flex';
-}
-
-window.saveCampaignName = function(type) {
-    const textEl = document.getElementById(type + '-name-text');
-    const inputEl = document.getElementById(type + '-name-input');
-    const containerEl = document.getElementById(type + '-title-container');
-    if (!textEl || !inputEl || !containerEl) return;
-    
-    const val = inputEl.value.trim();
-    if (val) {
-        textEl.textContent = val;
-        // If campaign exists, we might want to save it instantly, but since it saves on Draft/Send, we'll just keep it in the DOM and the payload function will read it.
-    } else {
-        textEl.textContent = type === 'cold' ? 'New Sequence' : 'New Campaign';
-    }
-    
-    inputEl.style.display = 'none';
-    containerEl.style.display = 'flex';
-}
-
-
-// ============================================================
-// CSV FILE UPLOAD
-// ============================================================
-
-window.handleCSVUpload = function(e, textareaId) {
-    const file = e.target.files[0];
-    if (!file) return;
-    
-    const reader = new FileReader();
-    reader.onload = async function(evt) {
-        const text = evt.target.result;
-        let lines = text.split('\n').filter(l => l.trim().length > 0);
-        showToast(`Loading ${lines.length} leads...`, 'success');
-        
-        const el = document.getElementById(textareaId);
-        
-        const formattedLines = lines.map(l => {
-            const parts = l.split(',');
-            const e = parts[0] ? parts[0].trim() : '';
-            const n = parts[1] ? parts[1].trim() : '';
-            const c = parts[2] ? parts[2].trim() : '';
-            
-            if (c) return `${e},${n},${c}`;
-            if (n) return `${e},${n}`;
-            return e;
-        }).filter(l => l.length > 0);
-        
-        if (el) el.value = formattedLines.join('\n');
-        
-        showToast(`✅ Successfully loaded ${formattedLines.length} leads!`, 'success');
-        
-        if (typeof window.renderLeadsList === 'function') {
-            window.renderLeadsList(textareaId);
-        }
-        window.saveLeads(textareaId, true); // silent save
-    };
-    reader.readAsText(file);
-    
-    // reset input so same file can be selected again
-    e.target.value = '';
-}
-
-
-// ============================================================
-// CSV EXPORT
-// ============================================================
-
-window.exportCSV = function(textareaId) {
-    const el = document.getElementById(textareaId);
-    if (!el || !el.value.trim()) {
-        showToast('No leads to export!', 'error');
-        return;
-    }
-    
-    const lines = el.value.split('\n').filter(l => l.trim().length > 0);
-    
-    let csvContent = `data:text/csv;charset=utf-8,Email,Name,Company,Status\n`;
-    lines.forEach(line => {
-        const parts = line.split(',');
-        const e = parts[0] ? parts[0].trim() : '';
-        const n = parts[1] ? parts[1].trim() : '';
-        const c = parts[2] ? parts[2].trim() : '';
-        csvContent += `${e},${n},${c},Pending\n`;
-    });
-    
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `leads_export_${Date.now()}.csv`);
-    document.body.appendChild(link); // Required for FF
-    
-    link.click();
-    document.body.removeChild(link);
-    showToast('Leads exported successfully!', 'success');
-}
-
-
-// ============================================================
-// BULK ACTIONS
-// ============================================================
-
-window.toggleBulkSelect = function(e) {
-    const checked = e.target.checked;
-    const checkboxes = document.querySelectorAll('.bulk-campaign-cb');
-    checkboxes.forEach(cb => cb.checked = checked);
-    window.updateBulkSelectState();
-}
-
-window.updateBulkSelectState = function() {
-    const checkboxes = document.querySelectorAll('.bulk-campaign-cb:checked');
-    const container = document.getElementById('bulk-actions-container');
-    const countSpan = document.getElementById('bulk-selected-count');
-    if (checkboxes.length > 0) {
-        container.style.display = 'flex';
-        countSpan.textContent = checkboxes.length + ' selected';
-    } else {
-        container.style.display = 'none';
-        const allCb = document.getElementById('bulk-select-all');
-        if (allCb) allCb.checked = false;
-    }
-}
-
-window.bulkDeleteCampaigns = async function() {
-    const checkboxes = document.querySelectorAll('.bulk-campaign-cb:checked');
-    const ids = Array.from(checkboxes).map(cb => cb.value);
-    if (ids.length === 0) return;
-    
-    if (!await window.confirmModal('Delete ' + ids.length + ' campaigns?', 'This action cannot be undone.')) {
-        return;
-    }
-    
-    showToast('Deleting campaigns...', 'info');
-    
-    let deletedCount = 0;
-    for (const id of ids) {
-        try {
-            const res = await apiCall('/campaigns/' + id, 'DELETE');
-            if (res.ok) {
-                deletedCount++;
-            }
-        } catch(e) {
-            console.error('Failed to delete campaign', id, e);
-        }
-    }
-    
-    showToast(`Deleted ${deletedCount} campaigns.`, 'success');
-    window.fetchCampaigns();
-}

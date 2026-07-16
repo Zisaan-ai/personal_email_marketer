@@ -480,10 +480,62 @@ function populateAnalytics(campaignId) {
 
 
 
+window.renderAnalyticsInfo = async function(c, prefix) {
+    // Schedule info
+    const schedEl = document.getElementById(`${prefix}-analytics-schedule-info`);
+    if (schedEl) {
+        let schedText = '';
+        if (c.sending_days) {
+            schedText += `<strong>Days:</strong> ${c.sending_days}<br>`;
+        } else {
+            schedText += `<strong>Days:</strong> Mon-Sun<br>`;
+        }
+        
+        let startTime = c.start_hour !== undefined ? c.start_hour + ':00' : '00:00';
+        let endTime = c.end_hour !== undefined ? c.end_hour + ':00' : '23:59';
+        schedText += `<strong>Time:</strong> ${startTime} - ${endTime} (${c.timezone || 'UTC'})<br>`;
+        
+        if (c.delay_min !== undefined) {
+            schedText += `<strong>Delay:</strong> ${c.delay_min} to ${c.delay_max || c.delay_min} minutes`;
+        }
+        
+        schedEl.innerHTML = schedText;
+    }
+    
+    // Accounts info
+    const accEl = document.getElementById(`${prefix}-analytics-accounts-info`);
+    if (accEl) {
+        accEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading accounts...';
+        try {
+            const res = await apiCall('/sending-accounts');
+            if (res.ok) {
+                const accounts = await res.json();
+                const selectedIds = c.selected_sender_ids ? c.selected_sender_ids.split(',').map(s => s.trim()) : [];
+                if (selectedIds.length === 0) {
+                    accEl.innerHTML = '<span style="color:var(--text-muted);">All active accounts</span>';
+                } else {
+                    const matched = accounts.filter(a => selectedIds.includes(a.id.toString()) || selectedIds.includes(a.id));
+                    if (matched.length > 0) {
+                        accEl.innerHTML = matched.map(a => `<div style="padding:4px 0;border-bottom:1px solid var(--border);">${escapeHtml(a.email || a.name || a.id)}</div>`).join('');
+                    } else {
+                        accEl.innerHTML = '<span style="color:var(--text-muted);">No specific accounts found</span>';
+                    }
+                }
+            } else {
+                accEl.innerHTML = '<span style="color:var(--danger);">Failed to load accounts</span>';
+            }
+        } catch(e) {
+            accEl.innerHTML = '<span style="color:var(--danger);">Failed to load accounts</span>';
+        }
+    }
+};
+
 window.populateVbAnalytics = function(id) {
     if (!window.lastFetchedCampaigns) return;
     const c = window.lastFetchedCampaigns.find(x => x.id === id);
     if (!c) return;
+    
+    window.renderAnalyticsInfo(c, 'vb');
 
     const statusEl = document.getElementById('vb-analytics-status');
     const actionsEl = document.getElementById('vb-analytics-actions');
@@ -554,6 +606,8 @@ window.populateColdAnalytics = function(id) {
     const c = window.lastFetchedCampaigns.find(x => x.id === id);
 
     if (!c) return;
+    
+    window.renderAnalyticsInfo(c, 'cold');
 
     if (c.type !== 'cold_mail') return;
 
@@ -2584,8 +2638,16 @@ function setupSettings() {
             const geminiKey = document.getElementById('gemini-api-key').value;
 
             const groqKeyEl = document.getElementById('groq-api-key');
-
             const groqKey = groqKeyEl ? groqKeyEl.value : '';
+            
+            const openaiKeyEl = document.getElementById('openai-api-key');
+            const openaiKey = openaiKeyEl ? openaiKeyEl.value : '';
+            
+            const anthropicKeyEl = document.getElementById('anthropic-api-key');
+            const anthropicKey = anthropicKeyEl ? anthropicKeyEl.value : '';
+            
+            const deepseekKeyEl = document.getElementById('deepseek-api-key');
+            const deepseekKey = deepseekKeyEl ? deepseekKeyEl.value : '';
 
             try {
 
@@ -2597,12 +2659,17 @@ function setupSettings() {
 
                 }
 
-                // Save Groq key
-
                 if (groqKey) {
-
                     await apiCall('/settings/groq', 'POST', { groq_api_key: groqKey });
-
+                }
+                if (openaiKey) {
+                    await apiCall('/settings/openai', 'POST', { openai_api_key: openaiKey });
+                }
+                if (anthropicKey) {
+                    await apiCall('/settings/anthropic', 'POST', { anthropic_api_key: anthropicKey });
+                }
+                if (deepseekKey) {
+                    await apiCall('/settings/deepseek', 'POST', { deepseek_api_key: deepseekKey });
                 }
 
                 const geminiStatus = document.getElementById('gemini-status');
@@ -2638,8 +2705,10 @@ function setupSettings() {
         const setVal = (id, v) => { const el = document.getElementById(id); if (el && v) el.value = v; };
 
         setVal('gemini-api-key', s.gemini_api_key);
-
         setVal('groq-api-key', s.groq_api_key);
+        setVal('openai-api-key', s.openai_api_key);
+        setVal('anthropic-api-key', s.anthropic_api_key);
+        setVal('deepseek-api-key', s.deepseek_api_key);
 
     }).catch(() => {});
 
@@ -5607,8 +5676,10 @@ window.openNewsletterBuilder = async function(id) {
         if (typeof window.renderLeadsList === 'function') window.renderLeadsList('newsletter-leads');
 
         localStorage.removeItem('saved_leads_newsletter-leads');
-
         
+        if (window.renderSendingAccountsSelector) {
+            window.renderSendingAccountsSelector('vb-sender-accounts-list', null);
+        }
 
         // Reset schedule UI manually for a fresh start
 
@@ -6609,12 +6680,19 @@ window.renderSendingAccountsSelector = async function(containerId, selectedIdsSt
             return;
         }
         
-        let html = '';
+        let html = `
+            <div style="margin-bottom:10px; position:relative;">
+                <i class="fa-solid fa-search" style="position:absolute; left:10px; top:10px; color:var(--text-muted); font-size:12px;"></i>
+                <input type="text" placeholder="Search accounts by name or email..." onkeyup="filterAccounts(this, '${containerId}')" style="width:100%; padding:8px 8px 8px 30px; font-size:13px; border:1px solid var(--border); border-radius:4px; background:var(--bg); color:var(--text); outline:none; box-sizing:border-box;">
+            </div>
+            <div class="accounts-list-scroll" style="max-height:160px; overflow-y:auto; padding-right:5px;">
+        `;
         accounts.forEach(acc => {
             const isChecked = selectedIds.includes(acc.id) ? 'checked' : '';
+            const searchStr = ((acc.name||'') + ' ' + (acc.email||'')).toLowerCase().replace(/'/g, "");
             html += `
-                <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px; padding:4px 0;">
-                    <input type="checkbox" class="sender-acc-checkbox" value="${acc.id}" ${isChecked}>
+                <label class="account-item-lbl" data-search="${searchStr}" style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px; padding:6px; border-radius:4px; transition:background 0.2s;" onmouseover="this.style.background='rgba(0,0,0,0.03)'" onmouseout="this.style.background='transparent'">
+                    <input type="checkbox" class="sender-acc-checkbox" value="${acc.id}" ${isChecked} style="width:auto; margin:0;">
                     <div>
                         <div style="font-weight:600; color:var(--p);">${acc.name || 'No Name'}</div>
                         <div style="color:var(--text-muted); font-size:11px;">${acc.email}</div>
@@ -6622,6 +6700,7 @@ window.renderSendingAccountsSelector = async function(containerId, selectedIdsSt
                 </label>
             `;
         });
+        html += '</div>';
         container.innerHTML = html;
     } catch (e) {
         container.innerHTML = '<div style="color:var(--danger); font-size:13px;">Error loading accounts.</div>';

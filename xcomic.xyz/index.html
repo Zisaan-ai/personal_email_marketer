@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>XComic Email Marketer — Elegant Email Marketing</title>
     <meta name="description" content="AI-powered email marketing platform. Clean, elegant, powerful.">
-    <link rel="stylesheet" href="/assets/style.css?v=1783012228">
+    <link rel="stylesheet" href="/assets/style.css?v=1784052486">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -466,6 +466,7 @@
             <a class="nav-item" data-target="about-view" onclick="window.navTo('about-view')">
                 <i class="fa-solid fa-circle-info"></i><span>About</span>
             </a>
+
             <div style="border-top:1px solid var(--border); margin:12px 0;"></div>
             <a class="nav-item" id="theme-toggle" onclick="window.toggleTheme()" style="cursor:pointer; justify-content:space-between;">
                 <div style="display:flex;align-items:center;gap:12px;"><i class="fa-solid fa-moon" id="theme-icon"></i><span>Dark Mode</span></div>
@@ -757,6 +758,7 @@
                 <div class="vb-tab active" data-vbtab="audience" style="padding-bottom:12px;font-weight:700;color:var(--p);cursor:pointer;border-bottom:3px solid var(--p);">1. Select Audience</div>
                 <div class="vb-tab" data-vbtab="design" style="padding-bottom:12px;font-weight:600;color:var(--text-muted);cursor:pointer;">2. Design Editor</div>
                 <div class="vb-tab" data-vbtab="send" style="padding-bottom:12px;font-weight:600;color:var(--text-muted);cursor:pointer;">3. Send / Schedule</div>
+                <div class="vb-tab" data-vbtab="options" style="padding-bottom:12px;font-weight:600;color:var(--text-muted);cursor:pointer;">4. Options</div>
             </div>
 
             <div id="tab-builder">
@@ -768,6 +770,21 @@
                     <span class="status-pill" id="vb-analytics-status" style="font-size:13px;padding:4px 12px;">Loading</span>
                     <div style="flex:1;"></div>
                     <div id="vb-analytics-actions" style="display:flex;gap:12px;"></div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:repeat(2, 1fr);gap:24px;margin-bottom:32px;">
+                    <div style="background:#fff;padding:20px;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.03);border:1px solid rgba(0,0,0,0.04);">
+                        <h4 style="font-size:14px;color:var(--text-muted);font-weight:600;margin-bottom:12px;"><i class="fa-regular fa-clock" style="margin-right:6px;"></i> Sending Schedule</h4>
+                        <div id="vb-analytics-schedule-info" style="font-size:13px;color:var(--text);line-height:1.6;">
+                            <!-- populated by JS -->
+                        </div>
+                    </div>
+                    <div style="background:#fff;padding:20px;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.03);border:1px solid rgba(0,0,0,0.04);">
+                        <h4 style="font-size:14px;color:var(--text-muted);font-weight:600;margin-bottom:12px;"><i class="fa-solid fa-users-viewfinder" style="margin-right:6px;"></i> Sending Accounts</h4>
+                        <div id="vb-analytics-accounts-info" style="font-size:13px;color:var(--text);line-height:1.6;max-height:120px;overflow-y:auto;">
+                            <!-- populated by JS -->
+                        </div>
+                    </div>
                 </div>
 
                 <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:24px;margin-bottom:32px;">
@@ -1018,16 +1035,7 @@
                             </div>
                         </div>
 
-                        <div style="display:flex; gap:10px; margin-bottom:24px;">
-                            <div style="display:flex; flex-direction:column; gap:5px; flex:1;">
-                                <label style="font-size:13px; color:var(--text-muted); font-weight:600;">Min Delay (sec)</label>
-                                <input type="number" id="vb-delay-min" value="30" style="padding:10px; border:1px solid var(--border); border-radius:8px; font-size:14px; outline:none;">
-                            </div>
-                            <div style="display:flex; flex-direction:column; gap:5px; flex:1;">
-                                <label style="font-size:13px; color:var(--text-muted); font-weight:600;">Max Delay (sec)</label>
-                                <input type="number" id="vb-delay-max" value="90" style="padding:10px; border:1px solid var(--border); border-radius:8px; font-size:14px; outline:none;">
-                            </div>
-                        </div>
+
 
                         <div style="display:flex;gap:24px;">
                             <button id="save-newsletter-draft-btn" class="btn" style="padding:16px 32px;font-size:15px;flex:1;background:var(--surface-1);border:1px solid var(--border);"><i class="fa-solid fa-save"></i> Save Draft</button>
@@ -1037,6 +1045,52 @@
                     </div>
                 </div>
 
+                <!-- OPTIONS TAB -->
+                <div id="vb-tab-options" class="vb-tab-content" style="display:none;">
+                    <div class="glass" style="max-width:800px;">
+                        <h3 style="font-size:18px;font-weight:700;margin-bottom:24px;">Campaign Options</h3>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+                            <div class="form-group">
+                                <label>Open Tracking</label>
+                                <select id="vb-track-opens">
+                                    <option value="1">Enabled (Invisible Pixel)</option>
+                                    <option value="0">Disabled</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Link Tracking</label>
+                                <select id="vb-track-clicks">
+                                    <option value="1">Enabled</option>
+                                    <option value="0">Disabled</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Include Unsubscribe Link</label>
+                                <select id="vb-use-unsubscribe">
+                                    <option value="1">Enabled</option>
+                                    <option value="0">Disabled</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Max Emails Per Day</label>
+                                <input id="vb-max-emails" type="number" value="50" min="1">
+                            </div>
+                            <div class="form-group">
+                                <label>Daily Ramp Up</label>
+                                <input id="vb-ramp-up" type="number" value="5" min="0" title="Increase limit by this amount every day">
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-top:20px; border-top:1px solid var(--border); padding-top:16px;">
+                            <label>Sending Accounts</label>
+                            <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Select which accounts to send this campaign from. Leave all unchecked to auto-rotate across all active accounts.</div>
+                            <div id="vb-sender-accounts-list" style="max-height:200px; overflow-y:auto; border:1px solid var(--border); border-radius:6px; padding:8px; background:var(--bg-lighter);">
+                            </div>
+                        </div>
+                        <div style="display:flex;justify-content:flex-end;margin-top:16px;">
+                            <button class="btn primary" id="vb-save-options-btn" style="padding:10px 24px;" onclick="saveCampaignOptions('vb')">Save Options</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1100,6 +1154,21 @@
                     <div style="display:flex;gap:12px;">
                         <div id="cold-analytics-actions" style="display:flex;gap:12px;"></div>
                         <button class="btn" style="padding:8px 16px;font-size:13px;background:#fff;"><i class="fa-solid fa-share-nodes"></i> Share Report</button>
+                    </div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:repeat(2, 1fr);gap:24px;margin-bottom:32px;">
+                    <div style="background:#fff;padding:20px;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.03);border:1px solid rgba(0,0,0,0.04);">
+                        <h4 style="font-size:14px;color:var(--text-muted);font-weight:600;margin-bottom:12px;"><i class="fa-regular fa-clock" style="margin-right:6px;"></i> Sending Schedule</h4>
+                        <div id="cold-analytics-schedule-info" style="font-size:13px;color:var(--text);line-height:1.6;">
+                            <!-- populated by JS -->
+                        </div>
+                    </div>
+                    <div style="background:#fff;padding:20px;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.03);border:1px solid rgba(0,0,0,0.04);">
+                        <h4 style="font-size:14px;color:var(--text-muted);font-weight:600;margin-bottom:12px;"><i class="fa-solid fa-users-viewfinder" style="margin-right:6px;"></i> Sending Accounts</h4>
+                        <div id="cold-analytics-accounts-info" style="font-size:13px;color:var(--text);line-height:1.6;max-height:120px;overflow-y:auto;">
+                            <!-- populated by JS -->
+                        </div>
                     </div>
                 </div>
 
@@ -1355,7 +1424,14 @@
                         </div>
                         <div class="form-group">
                             <label>Link Tracking</label>
-                            <select>
+                            <select id="cold-track-clicks">
+                                <option value="1">Enabled</option>
+                                <option value="0">Disabled</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Include Unsubscribe Link</label>
+                            <select id="cold-use-unsubscribe">
                                 <option value="1">Enabled</option>
                                 <option value="0">Disabled</option>
                             </select>
@@ -1369,8 +1445,14 @@
                             <input id="cold-ramp-up" type="number" value="5" min="0" title="Increase limit by this amount every day">
                         </div>
                     </div>
+                    <div class="form-group" style="margin-top:20px; border-top:1px solid var(--border); padding-top:16px;">
+                        <label>Sending Accounts</label>
+                        <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Select which accounts to send this campaign from. Leave all unchecked to auto-rotate across all active accounts.</div>
+                        <div id="cold-sender-accounts-list" style="max-height:200px; overflow-y:auto; border:1px solid var(--border); border-radius:6px; padding:8px; background:var(--bg-lighter);">
+                        </div>
+                    </div>
                     <div style="display:flex;justify-content:flex-end;margin-top:16px;">
-                        <button class="btn primary" style="padding:10px 24px;">Save Options</button>
+                        <button class="btn primary" id="cold-save-options-btn" style="padding:10px 24px;" onclick="saveCampaignOptions('cold')">Save Options</button>
                     </div>
                 </div>
             </div>
@@ -1600,6 +1682,79 @@
                         </div>
                     </div>
 
+                    
+                    <!-- OpenAI -->
+                    <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:20px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <div style="width:32px;height:32px;border-radius:8px;background:#10a37f;display:flex;align-items:center;justify-content:center;">
+                                    <i class="fa-solid fa-bolt" style="color:#fff;font-size:14px;"></i>
+                                </div>
+                                <div>
+                                    <div style="display:flex; align-items:center; gap:8px;">
+                                        <span style="font-size:14px;font-weight:700;">OpenAI (ChatGPT)</span>
+                                    </div>
+                                    <div style="font-size:12px;color:var(--text-muted);">Industry standard AI models</div>
+                                </div>
+                            </div>
+                            <a href="https://platform.openai.com/api-keys" target="_blank" style="font-size:12px;color:var(--p);font-weight:600;text-decoration:none;"><i class="fa-solid fa-arrow-up-right-from-square" style="margin-right:4px;"></i>Get Key</a>
+                        </div>
+                        <div style="position:relative;">
+                            <input type="password" id="openai-api-key" placeholder="sk-..." style="padding-right:44px;">
+                            <button type="button" onclick="var el=document.getElementById('openai-api-key'); el.type=el.type==='password'?'text':'password'; this.innerHTML=el.type==='password'?'<i class=&quot;fa-regular fa-eye&quot;></i>':'<i class=&quot;fa-regular fa-eye-slash&quot;></i>'" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Anthropic -->
+                    <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:20px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <div style="width:32px;height:32px;border-radius:8px;background:#d97757;display:flex;align-items:center;justify-content:center;">
+                                    <i class="fa-solid fa-cube" style="color:#fff;font-size:14px;"></i>
+                                </div>
+                                <div>
+                                    <div style="display:flex; align-items:center; gap:8px;">
+                                        <span style="font-size:14px;font-weight:700;">Anthropic (Claude)</span>
+                                    </div>
+                                    <div style="font-size:12px;color:var(--text-muted);">Excellent for writing & coding</div>
+                                </div>
+                            </div>
+                            <a href="https://console.anthropic.com/settings/keys" target="_blank" style="font-size:12px;color:var(--p);font-weight:600;text-decoration:none;"><i class="fa-solid fa-arrow-up-right-from-square" style="margin-right:4px;"></i>Get Key</a>
+                        </div>
+                        <div style="position:relative;">
+                            <input type="password" id="anthropic-api-key" placeholder="sk-ant-..." style="padding-right:44px;">
+                            <button type="button" onclick="var el=document.getElementById('anthropic-api-key'); el.type=el.type==='password'?'text':'password'; this.innerHTML=el.type==='password'?'<i class=&quot;fa-regular fa-eye&quot;></i>':'<i class=&quot;fa-regular fa-eye-slash&quot;></i>'" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- DeepSeek -->
+                    <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:20px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <div style="width:32px;height:32px;border-radius:8px;background:#4d6bfe;display:flex;align-items:center;justify-content:center;">
+                                    <i class="fa-solid fa-water" style="color:#fff;font-size:14px;"></i>
+                                </div>
+                                <div>
+                                    <div style="display:flex; align-items:center; gap:8px;">
+                                        <span style="font-size:14px;font-weight:700;">DeepSeek</span>
+                                    </div>
+                                    <div style="font-size:12px;color:var(--text-muted);">Cost-effective & powerful</div>
+                                </div>
+                            </div>
+                            <a href="https://platform.deepseek.com/api_keys" target="_blank" style="font-size:12px;color:var(--p);font-weight:600;text-decoration:none;"><i class="fa-solid fa-arrow-up-right-from-square" style="margin-right:4px;"></i>Get Key</a>
+                        </div>
+                        <div style="position:relative;">
+                            <input type="password" id="deepseek-api-key" placeholder="sk-..." style="padding-right:44px;">
+                            <button type="button" onclick="var el=document.getElementById('deepseek-api-key'); el.type=el.type==='password'?'text':'password'; this.innerHTML=el.type==='password'?'<i class=&quot;fa-regular fa-eye&quot;></i>':'<i class=&quot;fa-regular fa-eye-slash&quot;></i>'" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
                     <button id="save-gemini-btn" class="btn primary" style="width:100%; justify-content:center; padding:14px;">
                         <i class="fa-solid fa-floppy-disk" style="margin-right:8px;"></i>Save AI Keys
                     </button>
@@ -1698,10 +1853,19 @@
                         <label>Daily Sending Limit</label>
                         <input type="number" id="acc-daily-limit" value="500">
                     </div>
+
+                    <div class="form-group" style="display:flex; justify-content:space-between; align-items:center; margin-top:24px; padding:16px; background:var(--surface-1); border-radius:8px; border:1px solid var(--border);">
+                        <div>
+                            <strong style="display:block; margin-bottom:4px; font-size:15px;">Smart Warmup (Auto-pilot)</strong>
+                            <span style="font-size:13px; color:var(--text-muted);">Automatically adjust warmup limits based on account age and health score.</span>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="acc-smart-warmup-enabled" onchange="document.getElementById('manual-warmup-settings').style.display = this.checked ? 'none' : 'grid';">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
                     
-                    <hr style="border:none; border-top:1px solid rgba(255,255,255,0.1); margin:24px 0;">
-                    
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:32px;">
+                    <div id="manual-warmup-settings" style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:32px; margin-top: 16px;">
                         <div class="form-group">
                             <label>Warmup Starting Limit</label>
                             <input type="number" id="acc-warmup-limit" value="5">
@@ -1857,123 +2021,301 @@
                 }
             </style>
 
-            <div class="about-grid">
-                
-                <div class="about-card" style="--icon-color-1:#3b82f6; --icon-color-2:#2563eb; --icon-color-rgb:59,130,246;">
-                    <div class="about-icon-wrapper"><i class="fa-solid fa-server"></i></div>
-                    <h3 class="about-title">1. Multi-Sender & Account Rotation</h3>
-                    <p class="about-text"><strong>English:</strong> Connect unlimited SMTP configurations or professional Google Workspace accounts using secure App Passwords. The system intelligently rotates outbound profiles to balance load, preventing rate limits and safeguarding inbox reputation.</p>
-                    <p class="about-text bn"><strong>Bangla:</strong> এখানে একাধিক SMTP বা প্রফেশনাল গুগল ওয়ার্কস্পেস অ্যাকাউন্ট যুক্ত করতে পারবেন। আমাদের স্মার্ট রাউটিং সিস্টেম প্রতিটি অ্যাকাউন্টের মধ্যে ইমেইল লোড ব্যালেন্স করে স্বয়ংক্রিয়ভাবে ইমেইল আদান-প্রদান পরিচালনা করে, যা স্প্যাম ফিল্টার এড়াতে অত্যন্ত কার্যকর।</p>
-                </div>
+            
+              
+              <div class="about-grid">
 
-                <div class="about-card" style="--icon-color-1:#f59e0b; --icon-color-2:#d97706; --icon-color-rgb:245,158,11;">
-                    <div class="about-icon-wrapper"><i class="fa-solid fa-temperature-arrow-up"></i></div>
-                    <h3 class="about-title">2. Auto-Warmup & Smart Limits</h3>
-                    <p class="about-text"><strong>English:</strong> Build domain authority progressively with automated daily limit ramping. The system actively tracks delivery status; in the event of high bounce rates, it auto-pauses individual profiles to protect domain health.</p>
-                    <p class="about-text bn"><strong>Bangla:</strong> অটো-ওয়ার্মআপ অ্যালগরিদম পর্যায়ক্রমে আপনার দৈনিক প্রেরণের সীমা বৃদ্ধি করে ডোমেইন রেপুটেশন উন্নত করে। তাছাড়া, 'স্মার্ট লিমিট' সিস্টেম বাউন্স রেট পর্যবেক্ষণ করে উচ্চ বাউন্সের ক্ষেত্রে ডোমেইন সুরক্ষায় অ্যাকাউন্ট সাময়িকভাবে স্থগিত (auto-pause) করে।</p>
-                </div>
+<div class="about-card" style="--icon-color-1:#10b981; --icon-color-2:#059669; --icon-color-rgb:16,185,129;">
+    <div class="about-icon-wrapper"><i class="fa-solid fa-users-gear"></i></div>
+    <h3 class="about-title">1. Multi-Sender & Account Rotation</h3>
+    <p class="about-text"><strong>English:</strong> Seamlessly integrate multiple SMTP accounts. Choose Automatic Load Balancing (Round-Robin) to let the system dynamically rotate senders, or manually select specific sending accounts for targeted campaigns to protect domain reputation.</p>
+    <p class="about-text bn"><strong>Bangla:</strong> একসাথে অনেকগুলো SMTP অ্যাকাউন্ট যুক্ত করার সুবিধা। আপনি চাইলে অটোমেটিক রোটেশন অন করে রাখতে পারেন (সিস্টেম নিজে থেকে অ্যাকাউন্ট পরিবর্তন করে মেইল পাঠাবে), অথবা ম্যানুয়ালি নির্দিষ্ট কোনো অ্যাকাউন্ট সিলেক্ট করে ক্যাম্পেইন রান করতে পারবেন।</p>
 
-                <div class="about-card" style="--icon-color-1:#10b981; --icon-color-2:#059669; --icon-color-rgb:16,185,129;">
-                    <div class="about-icon-wrapper"><i class="fa-solid fa-shield-halved"></i></div>
-                    <h3 class="about-title">3. Advanced Deliverability Check</h3>
-                    <p class="about-text"><strong>English:</strong> Before campaigns launch, the diagnostic engine verifies critical DNS records (SPF, DKIM, DMARC), filters text copies for high-frequency spam triggers, and ensures compliance with mandatory unsubscribe headers.</p>
-                    <p class="about-text bn"><strong>Bangla:</strong> ক্যাম্পেইন চালুর পূর্বে এটি স্বয়ংক্রিয়ভাবে SPF, DKIM ও DMARC সহ প্রয়োজনীয় DNS রেকর্ডসমূহ পরীক্ষা করে। একই সাথে ইমেইলের কন্টেন্টে থাকা সংবেদনশীল স্প্যাম কিওয়ার্ড শনাক্ত করে এবং আনসাবস্ক্রাইব লিংক সংযুক্তির নিশ্চয়তা প্রদান করে।</p>
-                </div>
-
-                <div class="about-card" style="--icon-color-1:#8b5cf6; --icon-color-2:#6d28d9; --icon-color-rgb:139,92,246;">
-                    <div class="about-icon-wrapper"><i class="fa-solid fa-users-gear"></i></div>
-                    <h3 class="about-title">4. Audience & Auto-Cleaning</h3>
-                    <p class="about-text"><strong>English:</strong> Import large lead databases via CSV or TXT. Leverage the validation scanner to purge invalid or unresponsive mailboxes prior to execution, maintaining a near-zero hard-bounce rate.</p>
-                    <p class="about-text bn"><strong>Bangla:</strong> সহজেই CSV বা টেক্সট ফাইল ফরমেটে গ্রাহক তালিকা আপলোড করুন। ক্যাম্পেইন প্রেরণের পূর্বে আমাদের এডভান্সড ক্লিনিং টুলস ব্যবহার করে অকার্যকর ইমেইলগুলো যাচাইপূর্বক নিষ্কাশন করুন, যা বাউন্স রেট সর্বনিম্ন পর্যায়ে রাখতে সাহায্য করবে।</p>
-                </div>
-
-                <div class="about-card" style="--icon-color-1:#ec4899; --icon-color-2:#be185d; --icon-color-rgb:236,72,153;">
-                    <div class="about-icon-wrapper"><i class="fa-solid fa-envelope-open-text"></i></div>
-                    <h3 class="about-title">5. Cold Email & Spintax</h3>
-                    <p class="about-text"><strong>English:</strong> Personalize outreach at scale using dynamic merge variables and nested Spintax variations. Every email compiled is structurally distinct to bypass algorithmic spam detection, backed by A/B split testing.</p>
-                    <p class="about-text bn"><strong>Bangla:</strong> ডাইনামিক মার্জ ট্যাগ এবং স্পিনট্যাক্স (Spintax) ব্যবহারের মাধ্যমে প্রতিটি গ্রাহকের নিকট সম্পূর্ণ কাস্টমাইজড ইমেইল প্রেরণ নিশ্চিত করুন। ভিন্ন ভিন্ন ইমেইল সংস্করণ তৈরির মাধ্যমে স্প্যাম ফিল্টার ও প্রোমোশন ট্যাব এড়ানো সহজ হবে।</p>
-                </div>
-
-                <div class="about-card" style="--icon-color-1:#f43f5e; --icon-color-2:#e11d48; --icon-color-rgb:244,63,94;">
-                    <div class="about-icon-wrapper"><i class="fa-solid fa-paintbrush"></i></div>
-                    <h3 class="about-title">6. Visual Newsletter Builder</h3>
-                    <p class="about-text"><strong>English:</strong> Construct responsive HTML marketing materials using the built-in drag-and-drop designer. Embed structured text, media blocks, custom action links, and preserve customized layouts for reusable deployment.</p>
-                    <p class="about-text bn"><strong>Bangla:</strong> ভিজ্যুয়াল ড্র্যাগ অ্যান্ড ড্রপ নিউজলেটার এডিটরের মাধ্যমে প্রফেশনাল ডিজাইন সম্পন্ন রেসপন্সিভ HTML লেআউট তৈরি করুন। আপনার কাস্টম ডিজাইনগুলো পুনরায় ব্যবহারের সুবিধার্থে টেমপ্লেট লাইব্রেরিতে সংরক্ষণ করা যাবে।</p>
-                </div>
-
-                <div class="about-card" style="--icon-color-1:#0ea5e9; --icon-color-2:#0284c7; --icon-color-rgb:14,165,233;">
-                    <div class="about-icon-wrapper"><i class="fa-solid fa-robot"></i></div>
-                    <h3 class="about-title">7. Next-Gen AI Features</h3>
-                    <p class="about-text"><strong>English:</strong> Harness deep AI models to draft responsive copywriting, suggest high-performing subject lines, auto-generate personalized opening icebreakers based on company profiles, and handle automated lead replies.</p>
-                    <p class="about-text bn"><strong>Bangla:</strong> জেনারেটিভ এআই প্রযুক্তির মাধ্যমে সহজেই কনভার্টিং ইমেইল কপিরাইটিং, আকর্ষণীয় সাবজেক্ট লাইন এবং গ্রাহকের কোম্পানি প্রোফাইলের ওপর ভিত্তি করে পার্সোনালাইজড ওপেনিং লাইন তৈরি করুন।</p>
-                </div>
-
-                <div class="about-card" style="--icon-color-1:#14b8a6; --icon-color-2:#0f766e; --icon-color-rgb:20,184,166;">
-                    <div class="about-icon-wrapper"><i class="fa-solid fa-clock"></i></div>
-                    <h3 class="about-title">8. Campaign Scheduling</h3>
-                    <p class="about-text"><strong>English:</strong> Schedule outbound campaigns targeting specific operational days and define targeted sending windows to guarantee delivery during business hours when open rates are highest.</p>
-                    <p class="about-text bn"><strong>Bangla:</strong> লক্ষ্যবস্তু অনুযায়ী নির্দিষ্ট দিনে ক্যাম্পেইন নির্ধারণ করুন এবং 'সেন্ডিং উইন্ডো' (যেমন সকাল ৯টা থেকে বিকাল ৫টা) সেট করুন, যাতে ক্লায়েন্টরা কর্মব্যস্ততার সময়ে ইনবক্সে মেইলটি পেতে পারেন।</p>
-                </div>
-
-                <div class="about-card" style="--icon-color-1:#84cc16; --icon-color-2:#65a30d; --icon-color-rgb:132,204,22;">
-                    <div class="about-icon-wrapper"><i class="fa-solid fa-inbox"></i></div>
-                    <h3 class="about-title">9. IMAP Processing: Bounces & Replies</h3>
-                    <p class="about-text"><strong>English:</strong> Connect via secure IMAP configurations to automate inbox synchronization. The system separates standard bounce notifications from genuine human responses, sorting them cleanly for immediate response.</p>
-                    <p class="about-text bn"><strong>Bangla:</strong> সিকিউরড IMAP প্রোটোকলের মাধ্যমে সিস্টেমটি স্বয়ংক্রিয়ভাবে আপনার ইনবক্স সিঙ্ক করে। এটি বাউন্স ইমেইল ও আসল মানুষের কাছ থেকে আসা ইতিবাচক উত্তরগুলোকে আলাদা ফোল্ডারে সুবিন্যস্ত করে রাখে।</p>
-                </div>
-
-                <div class="about-card" style="--icon-color-1:#a855f7; --icon-color-2:#7e22ce; --icon-color-rgb:168,85,247;">
-                    <div class="about-icon-wrapper"><i class="fa-solid fa-chart-line"></i></div>
-                    <h3 class="about-title">10. Real-time Analytics</h3>
-                    <p class="about-text"><strong>English:</strong> Track accurate click-throughs and message openings in real-time. Link-redirection headers and secure tracking assets provide complete campaign performance visibility directly inside your dashboard.</p>
-                    <p class="about-text bn"><strong>Bangla:</strong> লাইভ ট্র্যাকিং পিক্সেল ও রিডাইরেকশন প্রযুক্তির সাহায্যে রিয়েল-টাইম ওপেন রেট ও সিটিআর (CTR) বিশ্লেষণ করুন, যা প্রচারণার সামগ্রিক রূপরেখা ও কার্যকারিতা ড্যাশবোর্ডে প্রদর্শন করে।</p>
-                </div>
-                
-                <div class="about-card" style="--icon-color-1:#f97316; --icon-color-2:#c2410c; --icon-color-rgb:249,115,22;">
-                    <div class="about-icon-wrapper"><i class="fa-solid fa-reply-all"></i></div>
-                    <h3 class="about-title">11. AI Reply Management</h3>
-                    <p class="about-text"><strong>English:</strong> Review prospect replies inline within the central control panel. Generate contextual response drafts leveraging specialized LLM models, or manage control histories with intuitive delete tools.</p>
-                    <p class="about-text bn"><strong>Bangla:</strong> সেন্ট্রাল ড্যাশবোর্ড থেকেই গ্রাহকের সকল প্রত্যুত্তর সরাসরি পর্যালোচনা করুন। এআই-এর সহায়তায় প্রাসঙ্গিক ড্রাফট তৈরি করুন অথবা ইনবক্সের কার্যকারিতা বজায় রাখতে অহেতুক মেইলগুলো তাৎক্ষণিক ডিলিট করুন।</p>
-                </div>
-
-                <div class="about-card" style="--icon-color-1:#10b981; --icon-color-2:#059669; --icon-color-rgb:16,185,129;">
-                    <div class="about-icon-wrapper"><i class="fa-solid fa-stopwatch"></i></div>
-                    <h3 class="about-title">12. Dynamic Human-like Delays</h3>
-                    <p class="about-text"><strong>English:</strong> Implement randomized delay intervals between messages to mirror human operational tempos, successfully bypassing pattern-detection firewalls on major mail service providers.</p>
-                    <p class="about-text bn"><strong>Bangla:</strong> প্রতিটি ইমেইল প্রেরণের মধ্যবর্তী সময়ে র‍্যান্ডম বিরতি নির্ধারণের মাধ্যমে মানবিক প্যাটার্ন তৈরি করুন, যা বড় বড় ইমেইল সেবা প্রদানকারীদের সিকিউরিটি ফায়ারওয়াল ও ডিটেকশন অ্যালগরিদম এড়াতে সাহায্য করে।</p>
-                </div>
-
-                <div class="about-card" style="--icon-color-1:#f43f5e; --icon-color-2:#e11d48; --icon-color-rgb:244,63,94;">
-                    <div class="about-icon-wrapper"><i class="fa-solid fa-layer-group"></i></div>
-                    <h3 class="about-title">13. 100+ Responsive Layouts</h3>
-                    <p class="about-text"><strong>English:</strong> Instantly utilize a comprehensive suite of pre-configured responsive layouts tailored for newsletters, SaaS platforms, corporate communications, and direct marketing events.</p>
-                    <p class="about-text bn"><strong>Bangla:</strong> আমাদের ভিজ্যুয়াল বিল্ডারে যুক্ত ১০০টিরও বেশি উচ্চ মানের প্রফেশনাল ও রেডিমেড লেআউট অ্যাক্সেস করুন। নিউজলেটার, স্টার্টআপ বা সার্ভিস প্রমোশন এক ক্লিকে টেমপ্লেট লোড করে শুরু করতে পারবেন।</p>
-                </div>
-
-                <div class="about-card" style="--icon-color-1:#06b6d4; --icon-color-2:#0891b2; --icon-color-rgb:6,182,212;">
-                    <div class="about-icon-wrapper"><i class="fa-solid fa-rotate"></i></div>
-                    <h3 class="about-title">14. Timezone-Aware Auto Reset</h3>
-                    <p class="about-text"><strong>English:</strong> Ensure systematic count resets exactly at Bangladesh Midnight (UTC+6) directly via UI initiation, providing maximum service reliability regardless of server status or hosting environments.</p>
-                    <p class="about-text bn"><strong>Bangla:</strong> ড্যাশবোর্ড লোড হওয়ার সাথে সাথে সিস্টেমটি বাংলাদেশ সময় মধ্যরাত ১২টায় (UTC+6) স্বয়ংক্রিয়ভাবে দৈনিক ইমেইল প্রেরণের সীমা রিসেট করে দেয়, যা যেকোনো হোস্টিং সার্ভারে নিখুঁত স্থায়িত্ব প্রদান করে।</p>
-                </div>
-
-                <div class="about-card" style="--icon-color-1:#f59e0b; --icon-color-2:#d97706; --icon-color-rgb:245,158,11;">
-                    <div class="about-icon-wrapper"><i class="fa-solid fa-chart-line"></i></div>
-                    <h3 class="about-title">15. Campaign Limits & Organic Ramp Up</h3>
-                    <p class="about-text"><strong>English:</strong> Set precise daily limits per campaign alongside automated ramp-up increments. The system gradually scales your sending volume, successfully bypassing spam triggers for maximum inbox deliverability.</p>
-                    <p class="about-text bn"><strong>Bangla:</strong> প্রতিটি ক্যাম্পেইনের জন্য নির্দিষ্ট দৈনিক লিমিট এবং অটোমেটিক র‍্যাম্প-আপ (ধাপে ধাপে বৃদ্ধি) সেট করুন। সিস্টেমটি মানুষের মত ধীরগতিতে ভলিউম বাড়িয়ে আপনার মেইল সরাসরি ইনবক্সে ল্যান্ডিং নিশ্চিত করে।</p>
-                </div>
-
-                <div class="about-card" style="--icon-color-1:#64748b; --icon-color-2:#475569; --icon-color-rgb:100,116,139;">
-                    <div class="about-icon-wrapper"><i class="fa-solid fa-code"></i></div>
-                    <h3 class="about-title">16. Engineered by Monem Rahman Zisan</h3>
-                    <p class="about-text"><strong>English:</strong> Designed and engineered by Monem Rahman Zisan to deliver a robust, highly optimized, and completely self-hosted email automation ecosystem that reduces overhead and scales outreach.</p>
-                    <p class="about-text bn"><strong>Bangla:</strong> সফটওয়্যারটি সম্পূর্ণ স্বয়ংক্রিয় এবং ক্লাউড-অপ্টিমাইজড আর্কিটেকচারে ডেভেলপ করেছেন মোনেম রহমান জিসান, যা আপনার ব্যবসার প্রমোশনাল ব্যয় উল্লেখযোগ্য হারে কমিয়ে আনতে সাহায্য করবে।</p>
-                </div>
+    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
+        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
+            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
+            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+        </button>
+        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
+            <div style="padding: 16px;">
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Go to 'Accounts' > 'Add Account' to add SMTPs. In campaigns, select 'Auto-Rotate' or manually pick specific accounts.</p>
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> Accounts থেকে SMTP অ্যাড করুন। ক্যাম্পেইন চালানোর সময় Auto-Rotate সিলেক্ট করুন অথবা ম্যানুয়ালি নির্দিষ্ট অ্যাকাউন্ট বেছে নিন।</p>
             </div>
         </div>
+    </div>
+</div>
 
-        <!-- INBOX PREVIEW MODAL -->
+<div class="about-card" style="--icon-color-1:#3b82f6; --icon-color-2:#2563eb; --icon-color-rgb:59,130,246;">
+    <div class="about-icon-wrapper"><i class="fa-solid fa-arrow-trend-up"></i></div>
+    <h3 class="about-title">2. Auto-Warmup vs Manual Warmup</h3>
+    <p class="about-text"><strong>English:</strong> Build domain trust effectively. Enable Smart Auto-Warmup to algorithmically scale your daily sending volume, or set Manual Warmup parameters to strictly control the exact number of emails sent per day.</p>
+    <p class="about-text bn"><strong>Bangla:</strong> ডোমেইন ট্রাস্ট বিল্ড করার জন্য স্মার্ট ওয়ার্মআপ। আপনি 'Auto-Warmup' অন করে দিলে সিস্টেম নিজে থেকেই প্রতিদিন লিমিট বাড়াবে, আর চাইলে ম্যানুয়াল লিমিট সেট করে প্রতিদিন ঠিক কয়টা মেইল যাবে তা নিজে কন্ট্রোল করতে পারবেন।</p>
+
+    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
+        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
+            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
+            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+        </button>
+        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
+            <div style="padding: 16px;">
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> In Sending Accounts, toggle 'Warmup' for automatic scaling, or manually type your preferred daily limit.</p>
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> Sending Accounts পেজ থেকে 'Warmup' টগল অন করুন (অটোমেটিকের জন্য) অথবা ইনপুট বক্সে ম্যানুয়ালি আপনার পছন্দমতো লিমিট বসিয়ে দিন।</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="about-card" style="--icon-color-1:#f59e0b; --icon-color-2:#d97706; --icon-color-rgb:245,158,11;">
+    <div class="about-icon-wrapper"><i class="fa-solid fa-heart-pulse"></i></div>
+    <h3 class="about-title">3. Delivery-Based System Health Monitor</h3>
+    <p class="about-text"><strong>English:</strong> Dynamic health assessment based on true deliverability metrics. The system auto-calculates health percentage from open/reply rates vs bounces. You can manually pause unhealthy accounts before reputation drops.</p>
+    <p class="about-text bn"><strong>Bangla:</strong> রিয়েল ডেলিভারি ডাটা দিয়ে হেলথ ক্যালকুলেট হয়। বেশি মেইল ওপেন হলে অটোমেটিক্যালি হেলথ বাড়বে, আর বাউন্স হলে হেলথ কমে যাবে। হেলথ কম দেখলে আপনি ম্যানুয়ালি অ্যাকাউন্ট পজ করে দিতে পারবেন।</p>
+
+    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
+        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
+            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
+            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+        </button>
+        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
+            <div style="padding: 16px;">
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Monitor the real-time health progress bars. If health drops below 50%, the system flags it—manually pause the account to recover.</p>
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> রিয়েল টাইমে অ্যাকাউন্টের হেলথ বার খেয়াল রাখুন। হেলথ খুব কমে গেলে ম্যানুয়ালি পজ বাটনে ক্লিক করে অ্যাকাউন্ট সাময়িকভাবে বন্ধ রাখুন।</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="about-card" style="--icon-color-1:#a855f7; --icon-color-2:#9333ea; --icon-color-rgb:168,85,247;">
+    <div class="about-icon-wrapper"><i class="fa-solid fa-shield-check"></i></div>
+    <h3 class="about-title">4. Pre-Flight Deliverability Optimizer</h3>
+    <p class="about-text"><strong>English:</strong> Ensure maximum inbox placement. The system automatically performs DNS (SPF/DKIM/DMARC) validation and algorithmic spam-word analysis before launching, while you can manually tweak the content based on its feedback.</p>
+    <p class="about-text bn"><strong>Bangla:</strong> মেইল স্প্যামে যাওয়ার হাত থেকে বাঁচাতে প্রি-ফ্লাইট অপ্টিমাইজার। ক্যাম্পেইন লঞ্চ করার আগে সিস্টেম অটোমেটিক্যালি ডোমেইন রেকর্ড (SPF/DKIM/DMARC) এবং স্প্যাম ওয়ার্ড স্ক্যান করে, এরপর আপনি ম্যানুয়ালি মেইলের টেক্সট পরিবর্তন করে ঠিক করতে পারবেন।</p>
+
+    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
+        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
+            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
+            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+        </button>
+        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
+            <div style="padding: 16px;">
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Click 'Launch Campaign'. Review the auto-generated deliverability report, manually fix highlighted spam triggers, and confirm.</p>
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> Launch Campaign-এ ক্লিক করলে অটোমেটিক্যালি স্প্যাম রিপোর্ট আসবে। কোনো রেড ফ্ল্যাগ থাকলে তা ম্যানুয়ালি ফিক্স করে তারপর কনফার্ম করুন।</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="about-card" style="--icon-color-1:#ef4444; --icon-color-2:#dc2626; --icon-color-rgb:239,68,68;">
+    <div class="about-icon-wrapper"><i class="fa-solid fa-inbox"></i></div>
+    <h3 class="about-title">5. Live Inbox & Spam Placement Testing</h3>
+    <p class="about-text"><strong>English:</strong> Never guess your deliverability. Use the manual Inbox Test feature to send a live probe email to any address and instantly verify if it lands in the Inbox, Promotions, or Spam folder.</p>
+    <p class="about-text bn"><strong>Bangla:</strong> আপনার মেইল ইনবক্সে যাচ্ছে নাকি স্প্যামে, তা লাইভ টেস্ট করে দেখুন। মূল ক্যাম্পেইন শুরুর আগে যেকোনো ইমেইল অ্যাড্রেস বসিয়ে ম্যানুয়ালি টেস্ট সেন্ড করে ডেলিভারি স্ট্যাটাস যাচাই করতে পারবেন।</p>
+
+    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
+        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
+            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
+            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+        </button>
+        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
+            <div style="padding: 16px;">
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Click the 'Test Inbox' icon next to any sending account, type your test email, and check the inbox placement manually.</p>
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> যেকোনো অ্যাকাউন্টের পাশে থাকা 'Test Inbox' আইকনে ক্লিক করে ইমেইল অ্যাড্রেস দিন এবং ম্যানুয়ালি টেস্ট করে দেখুন।</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="about-card" style="--icon-color-1:#14b8a6; --icon-color-2:#0d9488; --icon-color-rgb:20,184,166;">
+    <div class="about-icon-wrapper"><i class="fa-solid fa-link"></i></div>
+    <h3 class="about-title">6. Custom Tracking Domains</h3>
+    <p class="about-text"><strong>English:</strong> Bypass rigid spam filters by masking click/open tracking links. Set a Custom Tracking Domain manually for each sender to maintain a pristine sender reputation and avoid blacklisted shared domains.</p>
+    <p class="about-text bn"><strong>Bangla:</strong> শেয়ার্ড ট্র্যাকিং ডোমেইন ব্যবহার করলে স্প্যামে যাওয়ার চান্স থাকে। তাই প্রতিটি অ্যাকাউন্টের জন্য ম্যানুয়ালি নিজস্ব 'Custom Tracking Domain' সেট করে ট্র্যাকিং লিংক হাইড করুন এবং ইনবক্স রেট ১০০% নিশ্চিত করুন।</p>
+
+    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
+        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
+            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
+            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+        </button>
+        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
+            <div style="padding: 16px;">
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Edit an account, toggle 'Custom Tracking Domain', and manually enter your verified CNAME domain URL.</p>
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> অ্যাকাউন্ট এডিট করে Custom Tracking Domain টগল অন করুন এবং ম্যানুয়ালি আপনার ডোমেইন URL টি বসিয়ে সেভ করুন।</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="about-card" style="--icon-color-1:#f43f5e; --icon-color-2:#e11d48; --icon-color-rgb:244,63,94;">
+    <div class="about-icon-wrapper"><i class="fa-solid fa-filter-circle-xmark"></i></div>
+    <h3 class="about-title">7. Audience & Intelligent Auto-Cleaning</h3>
+    <p class="about-text"><strong>English:</strong> Maintain a pristine lead list. The system auto-detects hard bounces and invalidates them immediately. You can also manually upload CSVs, delete inactive leads, and segment audiences for precision targeting.</p>
+    <p class="about-text bn"><strong>Bangla:</strong> অটোমেটিক অডিয়েন্স ক্লিনিং ফিচার। কোনো মেইল বাউন্স হলে সিস্টেম সাথে সাথেই সেটিকে ইনভ্যালিড করে দেয়। এছাড়া আপনি ম্যানুয়ালি CSV আপলোড করতে পারবেন এবং অব্যবহৃত পুরোনো লিডগুলো ডিলিট করতে পারবেন।</p>
+
+    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
+        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
+            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
+            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+        </button>
+        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
+            <div style="padding: 16px;">
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Manually import leads via CSV. The platform's automated chron-jobs handle hard bounce invalidation behind the scenes.</p>
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> Audience প্যানেলে ম্যানুয়ালি CSV ফাইল আপলোড করুন। মেইল বাউন্স হলে সিস্টেম ব্যাকগ্রাউন্ডে অটোমেটিক্যালি তা ব্লক করে দেবে।</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="about-card" style="--icon-color-1:#6366f1; --icon-color-2:#4f46e5; --icon-color-rgb:99,102,241;">
+    <div class="about-icon-wrapper"><i class="fa-solid fa-brain"></i></div>
+    <h3 class="about-title">8. AI Autopilot: Cold Email & Icebreakers</h3>
+    <p class="about-text"><strong>English:</strong> Harness the power of Gemini & Groq AI. Let the AI automatically generate highly-converting cold email drafts and personalized icebreakers, or manually edit and refine the AI's suggestions in the rich text editor.</p>
+    <p class="about-text bn"><strong>Bangla:</strong> Gemini এবং Groq AI-এর মাধ্যমে অটোমেটিক কোল্ড ইমেইল ও আইসব্রেকার জেনারেট করুন। সিস্টেম নিজে থেকেই প্রফেশনাল মেইল লিখে দেবে, যা আপনি এডিটরে ম্যানুয়ালি নিজের মতো করে কাস্টমাইজ করে নিতে পারবেন।</p>
+
+    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
+        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
+            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
+            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+        </button>
+        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
+            <div style="padding: 16px;">
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> In the Composer, click 'AI Assistant', input your product details, auto-generate the content, and manually refine the text.</p>
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> মেইল লেখার সময় 'AI Assistant' এ ক্লিক করে কমান্ড দিন। AI অটোমেটিক্যালি মেইল লিখে দেবে, এরপর ম্যানুয়ালি এডিট করে নিন।</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="about-card" style="--icon-color-1:#0ea5e9; --icon-color-2:#0284c7; --icon-color-rgb:14,165,233;">
+    <div class="about-icon-wrapper"><i class="fa-solid fa-reply-all"></i></div>
+    <h3 class="about-title">9. AI Auto-Reply & Manual Inbox Management</h3>
+    <p class="about-text"><strong>English:</strong> Manage client responses seamlessly. Let the AI automatically read incoming replies and draft contextual responses, or take manual control to write and send highly personalized follow-ups directly from the dashboard.</p>
+    <p class="about-text bn"><strong>Bangla:</strong> ক্লায়েন্টের রিপ্লাই ম্যানেজ করুন খুব সহজেই। ইনবক্সে আসা মেইলের রিপ্লাই AI দিয়ে অটোমেটিকভাবে ড্রাফট করাতে পারবেন, অথবা ম্যানুয়ালি টাইপ করে নিজের মতো করে প্রফেশনাল রিপ্লাই পাঠাতে পারবেন।</p>
+
+    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
+        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
+            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
+            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+        </button>
+        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
+            <div style="padding: 16px;">
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Open any replied email. Click 'Generate AI Reply' for an automated draft, or manually type your response and hit Send.</p>
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> যেকোনো রিপ্লাই ওপেন করে 'Generate AI Reply' বাটনে ক্লিক করলে অটোমেটিক রিপ্লাই রেডি হবে, অথবা ম্যানুয়ালি লিখে Send করুন।</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="about-card" style="--icon-color-1:#eab308; --icon-color-2:#ca8a04; --icon-color-rgb:234,179,8;">
+    <div class="about-icon-wrapper"><i class="fa-solid fa-clock"></i></div>
+    <h3 class="about-title">10. Anti-Spam Humanized Delays</h3>
+    <p class="about-text"><strong>English:</strong> Evade rigorous anti-spam algorithms. The system automatically randomizes sending intervals between your configured boundaries, while you manually define the Min and Max delay ranges to dictate the pacing.</p>
+    <p class="about-text bn"><strong>Bangla:</strong> অ্যান্টি-স্প্যাম বাইপাস করার জন্য হিউম্যানাইজড ডিলে। আপনি ম্যানুয়ালি Min এবং Max গ্যাপ সেট করে দেবেন, আর সিস্টেম অটোমেটিক্যালি সেই গ্যাপের ভেতর র‍্যান্ডম সেকেন্ড পর পর মেইল পাঠাবে, যাতে কোনো রোবটিক প্যাটার্ন ধরা না পড়ে।</p>
+
+    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
+        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
+            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
+            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+        </button>
+        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
+            <div style="padding: 16px;">
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Before Campaign launch, manually set Min (e.g. 60s) and Max Delay (e.g. 120s). The engine auto-randomizes delays in between.</p>
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> ক্যাম্পেইন চালুর আগে ম্যানুয়ালি Min এবং Max Delay সেকেন্ড সেট করুন। সিস্টেম এর মাঝে অটোমেটিক র‍্যান্ডম টাইম গ্যাপ তৈরি করে মেইল সেন্ড করবে।</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="about-card" style="--icon-color-1:#22c55e; --icon-color-2:#16a34a; --icon-color-rgb:34,197,94;">
+    <div class="about-icon-wrapper"><i class="fa-solid fa-chart-line"></i></div>
+    <h3 class="about-title">11. Background IMAP Sync & Analytics</h3>
+    <p class="about-text"><strong>English:</strong> True 360-degree analytics. The system automatically syncs via IMAP in the background to securely detect replies without pixel tracking. Meanwhile, you can manually analyze campaign metrics from the visual dashboard.</p>
+    <p class="about-text bn"><strong>Bangla:</strong> থার্ড-পার্টি পিক্সেল ছাড়াই IMAP সিঙ্ক করে ডাইরেক্ট ইনবক্স থেকে ট্র্যাকিং। সিস্টেম ব্যাকগ্রাউন্ডে অটোমেটিক্যালি রিপ্লাই ট্র্যাক করবে, আর আপনি ড্যাশবোর্ড থেকে ম্যানুয়ালি আপনার ক্যাম্পেইনের সম্পূর্ণ পারফরম্যান্স অ্যানালাইজ করতে পারবেন।</p>
+
+    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
+        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
+            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
+            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+        </button>
+        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
+            <div style="padding: 16px;">
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Input IMAP details manually when adding an account. The system will automatically fetch open/reply data in the background.</p>
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> অ্যাকাউন্ট যোগ করার সময় ম্যানুয়ালি IMAP পোর্ট ও সার্ভার দিয়ে দিন। এরপর সিস্টেম অটোমেটিক্যালি ব্যাকগ্রাউন্ডে ডাটা সিঙ্ক করবে।</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="about-card" style="--icon-color-1:#8b5cf6; --icon-color-2:#7c3aed; --icon-color-rgb:139,92,246;">
+    <div class="about-icon-wrapper"><i class="fa-solid fa-calendar-days"></i></div>
+    <h3 class="about-title">12. Campaign Scheduling & Timezone Mastery</h3>
+    <p class="about-text"><strong>English:</strong> Precision timing for maximum conversion. The automated chron-job resets all daily limits precisely at midnight Bangladesh Time (BST). You can also manually schedule campaigns to trigger on specific days and times.</p>
+    <p class="about-text bn"><strong>Bangla:</strong> অটোমেটিক ডাটা রিসেট এবং ম্যানুয়াল শিডিউলিং। প্রতিদিন রাত ১২টায় বাংলাদেশ সময় অনুযায়ী সিস্টেম অটোমেটিক সব লিমিট রিসেট করে দেবে। এছাড়া আপনি চাইলে ম্যানুয়ালি নির্দিষ্ট দিন ও সময়ে ক্যাম্পেইন শিডিউল করে রাখতে পারেন।</p>
+
+    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
+        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
+            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
+            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+        </button>
+        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
+            <div style="padding: 16px;">
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Limits auto-reset at 12:00 AM BST. Manually select active sending days (Mon-Fri) in the Campaign creation settings.</p>
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> রাত ১২টায় লিমিট অটো-রিসেট হবে। ক্যাম্পেইন বানানোর সময় কোন কোন দিন মেইল যাবে, তা ম্যানুয়ালি টিক দিয়ে সিলেক্ট করুন।</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="about-card" style="--icon-color-1:#f59e0b; --icon-color-2:#d97706; --icon-color-rgb:245,158,11;">
+    <div class="about-icon-wrapper"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+    <h3 class="about-title">13. Spintax & Hyper-Personalization</h3>
+    <p class="about-text"><strong>English:</strong> Avoid duplicate content penalties. Manually insert Spintax {Hi|Hello|Hey} into your emails, and the engine automatically generates unique variations for every single lead on the fly.</p>
+    <p class="about-text bn"><strong>Bangla:</strong> স্পিনট্যাক্স সাপোর্ট এবং পার্সোনালাইজেশন। আপনি ম্যানুয়ালি {Hi|Hello|Hey} ফরম্যাটে টেক্সট দিয়ে রাখলে, সিস্টেম অটোমেটিক্যালি প্রত্যেকটি লিডের জন্য আলাদা আলাদা ইউনিক ভেরিয়েশন তৈরি করে মেইল পাঠাবে।</p>
+
+    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
+        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
+            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
+            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+        </button>
+        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
+            <div style="padding: 16px;">
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Manually write {{FirstName}} or Spintax {A|B} in the editor. The system auto-replaces these variables during sending.</p>
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> এডিটরে ম্যানুয়ালি স্পিনট্যাক্স বা ভেরিয়েবল লিখুন। মেইল যাওয়ার সময় সিস্টেম অটোমেটিক্যালি সেগুলো চেঞ্জ করে সেন্ড করবে।</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="about-card" style="--icon-color-1:#ec4899; --icon-color-2:#db2777; --icon-color-rgb:236,72,153;">
+    <div class="about-icon-wrapper"><i class="fa-solid fa-laptop-code"></i></div>
+    <h3 class="about-title">14. State-of-the-Art Visual Template Engine</h3>
+    <p class="about-text"><strong>English:</strong> Build stunning newsletters instantly. Use 100+ auto-responsive pre-built layouts, or switch to the Advanced Source Code view to manually inject your own highly-customized HTML & CSS.</p>
+    <p class="about-text bn"><strong>Bangla:</strong> ভিজ্যুয়াল নিউজলেটার বিল্ডার। সিস্টেমের ১০০+ অটো-রেস্পন্সিভ টেমপ্লেট দিয়ে নিমিষেই ডিজাইন করতে পারবেন, অথবা Source কোড অন করে ম্যানুয়ালি নিজের মতো HTML ও CSS দিয়ে সম্পূর্ণ কাস্টম ডিজাইন তৈরি করতে পারবেন।</p>
+
+    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
+        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
+            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
+            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+        </button>
+        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
+            <div style="padding: 16px;">
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;"><strong>English:</strong> Choose auto-layouts from the Gallery, or click '< >' to manually write HTML/CSS code.</p>
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;"><strong>Bangla:</strong> গ্যালারি থেকে অটো টেমপ্লেট সিলেক্ট করুন অথবা '< >' আইকনে ক্লিক করে ম্যানুয়ালি HTML কোড লিখুন।</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="about-card" style="grid-column: 1 / -1; --icon-color-1:#4f46e5; --icon-color-2:#ec4899; --icon-color-rgb:79,70,229; background: linear-gradient(135deg, rgba(79, 70, 229, 0.05), rgba(236, 72, 153, 0.05)); border: 1px solid rgba(79, 70, 229, 0.2);">
+    <div class="about-icon-wrapper" style="margin-left:auto; margin-right:auto; margin-bottom: 16px;"><i class="fa-solid fa-user-shield"></i></div>
+    <h3 class="about-title" style="text-align:center;">Engineered & Administered by Monem Rahman Zisan</h3>
+    <p class="about-text" style="text-align:center; max-width: 900px; margin: 0 auto 16px; line-height: 1.8;"><strong>English:</strong> Architected, designed, and meticulously engineered by <strong>Monem Rahman Zisan</strong>. This advanced email marketing infrastructure is built on a highly scalable, robust framework tailored for enterprise-grade performance. It features a state-of-the-art Secure Admin Dashboard fortified with strict Role-Based Access Control (RBAC), end-to-end JWT token-based authentication, and deep algorithmic encryption. Accessible exclusively by the creator, the backend control center actively monitors automated background chron-jobs, dynamically mitigates server overloads, manages database integrity, and ensures granular manual overriding capabilities. This multi-layered security approach guarantees maximum data protection, zero vulnerability tolerance, and an uncompromising standard of platform stability.</p>
+    <p class="about-text bn" style="text-align:center; max-width: 900px; margin: 0 auto; line-height: 1.8;"><strong>Bangla:</strong> এই সম্পূর্ণ অ্যাডভান্সড ইমেইল মার্কেটিং সিস্টেমটি আর্কিটেক্ট, ডিজাইন এবং ডেভেলপ করেছেন <strong>মোনেম রহমান জিসান</strong>। এন্টারপ্রাইজ-গ্রেড পারফরম্যান্স এবং ম্যাক্সিমাম সিকিউরিটি নিশ্চিত করার জন্য এতে রয়েছে অত্যন্ত শক্তিশালী ও নিরাপদ একটি অ্যাডমিন ড্যাশবোর্ড, যা শুধুমাত্র ক্রিয়েটরের জন্য সংরক্ষিত। এখানে JWT টোকেন-বেসড অথেনটিকেশন, স্ট্রিক্ট RBAC (Role-Based Access Control), এবং ডিপ এনক্রিপশন অ্যালগরিদম ব্যবহার করা হয়েছে। সিস্টেমের ব্যাকগ্রাউন্ড অটোমেশন, ক্রন-জবস, সার্ভার লোড ব্যালেন্সিং, এবং ডাটাবেস ইন্টিগ্রিটি সরাসরি এই কোর ড্যাশবোর্ড থেকে মনিটর ও নিয়ন্ত্রণ করা হয়। যেকোনো ইমার্জেন্সিতে ম্যানুয়াল ওভাররাইড করার সুবিধাসহ, এই মাল্টি-লেয়ারড সিকিউরিটি ইনফ্রাস্ট্রাকচার ইউজারদের ডাটা প্রটেকশন এবং ১০০% প্ল্যাটফর্ম স্ট্যাবিলিটি নিশ্চিত করে।</p>
+</div>
+
+</div>
+          </div>
+
+<!-- INBOX PREVIEW MODAL -->
 
         <div id="inbox-preview-modal" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.8); z-index:10000; backdrop-filter:blur(4px); align-items:center; justify-content:center;">
             <div style="background:var(--surface); width:100%; max-width:700px; border-radius:12px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.5); border:1px solid var(--border); overflow:hidden; display:flex; flex-direction:column;">
@@ -2022,13 +2364,13 @@
 
 <!-- AI Chat -->
 <button id="ai-chat-btn" onclick="const p = document.getElementById('ai-chat-panel'); p.style.display = p.style.display === 'flex' ? 'none' : 'flex'; p.style.flexDirection='column';" style="display:none;position:fixed;bottom:32px;right:32px;width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg, #6366f1 0%, #a855f7 100%);border:none;color:#fff;font-size:24px;cursor:pointer;box-shadow:0 10px 25px -5px rgba(99,102,241,0.5);z-index:1000;align-items:center;justify-content:center;transition:transform 0.2s ease, box-shadow 0.2s ease;">
-    <i class="fa-solid fa-wand-magic-sparkles"></i>
+    <i class="fa-solid fa-robot"></i>
 </button>
 <div id="ai-chat-panel" style="display:none;position:fixed;bottom:110px;right:32px;width:400px;height:600px;background:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:24px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);z-index:1001;flex-direction:column;overflow:hidden;">
     <div style="background:linear-gradient(135deg, #6366f1 0%, #a855f7 100%);padding:24px;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;align-items:center;">
         <div>
-            <div style="font-weight:700;font-size:18px;color:#fff;display:flex;align-items:center;gap:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Copilot</div>
-            <div style="font-size:12px;color:rgba(255,255,255,0.8);font-weight:500;margin-top:4px;">Powered by Groq</div>
+            <div style="font-weight:700;font-size:18px;color:#fff;display:flex;align-items:center;gap:8px;"><i class="fa-solid fa-robot"></i> AI Copilot</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.8);font-weight:500;margin-top:4px;">Smart Email Assistant</div>
         </div>
         <button id="ai-chat-close" onclick="document.getElementById('ai-chat-panel').style.display = 'none';" style="background:rgba(255,255,255,0.2);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:14px;cursor:pointer;transition:background 0.2s;display:flex;align-items:center;justify-content:center;"><i class="fa-solid fa-times"></i></button>
     </div>
@@ -2241,11 +2583,346 @@
     });
 </script>
 
-    <script src="assets/templates.js?v=3007"></script>
-    <script src="assets/app.js?v=1784218568"></script>
-    <script src="assets/sending_accounts.js?v=1784217595"></script>
-    <script src="assets/ai_features.js?v=1783084988"></script>
-    <script src="assets/deliverability_v2.js?v=1783096001"></script>
+    <script src="assets/templates.js?v=1784052486"></script>
+    <script src="assets/app_v2.js?v=1784052486"></script>
+    <script src="assets/sending_accounts.js?v=1784052486"></script>
+    <script src="assets/ai_features.js?v=1784052486"></script>
+    <script src="assets/deliverability_v2.js?v=1784052486"></script>
+
+
+
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" id="mobile-menu-btn" onclick="window.toggleMobileMenu()" aria-label="Open menu">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="window.toggleMobileMenu()"></div>
+    <!-- Preflight Modal -->
+    <div id="preflight-modal" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.7); z-index:99999; flex-direction:column; align-items:center; justify-content:center; padding:24px; backdrop-filter: blur(8px);">
+        <div class="card" style="width:100%; max-width:550px; padding:32px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px;">
+                <h2 style="font-size:22px; font-weight:800; background: linear-gradient(135deg, #4f46e5 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Deliverability Optimizer <i class="fa-solid fa-plane-departure" style="color:var(--p); margin-left:8px;"></i></h2>
+                <span style="background:rgba(16,185,129,0.1); color:#10b981; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:700;"><i class="fa-solid fa-bullseye"></i> 99% Inbox Target</span>
+            </div>
+            <p style="color:var(--text-muted); margin-bottom:24px; font-size:14px; line-height:1.6;">We are performing a deep scan of your email content (Spam words, HTML ratio, broken links) and checking MX records to ensure maximum inbox placement.</p>
+            
+            <div id="preflight-loading" style="display:flex; flex-direction:column; align-items:center; gap:16px; margin-bottom:24px; padding: 32px; background:var(--surface); border-radius:12px; border: 1px dashed var(--border);">
+                <div class="spin" style="width:40px; height:40px; border:4px solid #e2e8f0; border-top-color:#4f46e5; border-radius:50%; animation:spin 0.8s linear infinite;"></div>
+                <span style="font-size:15px; font-weight:600; color:var(--text);">Analyzing content & verifying leads...</span>
+            </div>
+            
+            <div id="preflight-results" style="display:none; background:var(--surface); border-radius:12px; padding:20px; border:1px solid var(--border); margin-bottom:24px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid var(--border);">
+                    <span style="font-weight:700; color:var(--text);">Spam Score</span>
+                    <span id="preflight-score" style="font-weight:800; font-size:22px; color:var(--p);">10/10</span>
+                </div>
+                
+                <div id="preflight-warnings" style="margin-bottom:24px; font-size:14px; color:#ef4444;">
+                    <!-- Warnings go here -->
+                </div>
+                
+                <div style="display:flex; gap:12px; justify-content:flex-end;">
+                    <button class="btn" onclick="document.getElementById('preflight-modal').style.display='none'">Cancel</button>
+                    <button class="btn primary" id="btn-preflight-confirm" onclick="confirmPreflightSend()">Confirm & Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Gallery Modal -->
+    <div id="gallery-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.6);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(4px);">
+        <div style="background:#fff;width:800px;max-width:90%;height:600px;max-height:90vh;border-radius:12px;display:flex;flex-direction:column;box-shadow:0 10px 25px rgba(0,0,0,0.15);">
+            <div style="padding:20px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;">
+                <h3 style="margin:0;font-size:18px;color:#1e293b;"><i class="fa-solid fa-images"></i> Image Gallery</h3>
+                <button onclick="closeGalleryModal()" style="background:none;border:none;font-size:20px;color:#64748b;cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div style="padding:20px;border-bottom:1px solid #e2e8f0;display:flex;gap:10px;">
+                <input type="file" id="gallery-upload-input" accept="image/*" style="display:none;" onchange="handleGalleryUpload(event)">
+                <button onclick="document.getElementById('gallery-upload-input').click()" class="primary-btn" style="padding:8px 16px;"><i class="fa-solid fa-upload"></i> Upload Image</button>
+                <span id="gallery-upload-status" style="align-self:center;font-size:14px;color:#64748b;display:none;"><i class="fa-solid fa-spinner fa-spin"></i> Uploading...</span>
+            </div>
+            <div id="gallery-grid" style="flex:1;overflow-y:auto;padding:20px;display:grid;grid-template-columns:repeat(auto-fill, minmax(150px, 1fr));gap:15px;align-content:start;">
+                <!-- Images will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Reply Modal -->
+    <div id="reply-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.6);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(4px);">
+        <div style="background:#fff;width:700px;max-width:90%;border-radius:12px;display:flex;flex-direction:column;box-shadow:0 10px 25px rgba(0,0,0,0.15);">
+            <div style="padding:20px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;">
+                <h3 style="margin:0;font-size:18px;color:#1e293b;"><i class="fa-solid fa-reply"></i> View & Reply</h3>
+                <button onclick="document.getElementById('reply-modal').style.display='none'" style="background:none;border:none;font-size:20px;color:#64748b;cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div style="padding:24px; overflow-y:auto; max-height:70vh; display:flex; flex-direction:column; gap:16px;">
+                
+                <input type="hidden" id="active-reply-id" value="">
+                
+                <div>
+                    <label style="font-size:12px; font-weight:600; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px; display:block;">Client's Original Message</label>
+                    <div id="client-original-message" style="background:#f1f5f9; padding:16px; border-radius:8px; font-size:14px; color:var(--text); white-space:pre-wrap; border:1px solid #cbd5e1;"></div>
+                </div>
+
+                <div style="text-align:center; margin:8px 0;">
+                    <button class="btn" style="background:#8b5cf6; color:#fff;" onclick="generateAiReplyDraft(this)"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate AI Reply</button>
+                </div>
+
+                <div>
+                    <label style="font-size:12px; font-weight:600; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px; display:block;">Your Reply (Type manually or Generate via AI)</label>
+                    <textarea id="ai-reply-draft" rows="8" placeholder="Type your manual reply here, or click the Generate button above..." style="width:100%; padding:12px; border:1px solid var(--border); border-radius:8px; font-family:var(--font); font-size:14px; resize:vertical;"></textarea>
+                </div>
+            </div>
+            
+            <div style="padding:20px;border-top:1px solid #e2e8f0;display:flex;justify-content:flex-end; gap:12px; background:#f8fafc; border-bottom-left-radius:12px; border-bottom-right-radius:12px;">
+                <button class="btn" onclick="document.getElementById('reply-modal').style.display='none'">Cancel</button>
+                <button class="btn primary" onclick="sendAiReply(this)"><i class="fa-solid fa-paper-plane"></i> Send Reply</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
+                      </div>
+                  </div>
+              </div>
+
+              
+
+
+
+
+    </main>
+</div>
+
+<!-- Toast -->
+<div id="toast"><span id="toast-msg"></span></div>
+
+<!-- AI Chat -->
+<button id="ai-chat-btn" onclick="const p = document.getElementById('ai-chat-panel'); p.style.display = p.style.display === 'flex' ? 'none' : 'flex'; p.style.flexDirection='column';" style="display:none;position:fixed;bottom:32px;right:32px;width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg, #6366f1 0%, #a855f7 100%);border:none;color:#fff;font-size:24px;cursor:pointer;box-shadow:0 10px 25px -5px rgba(99,102,241,0.5);z-index:1000;align-items:center;justify-content:center;transition:transform 0.2s ease, box-shadow 0.2s ease;">
+    <i class="fa-solid fa-robot"></i>
+</button>
+<div id="ai-chat-panel" style="display:none;position:fixed;bottom:110px;right:32px;width:400px;height:600px;background:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:24px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);z-index:1001;flex-direction:column;overflow:hidden;">
+    <div style="background:linear-gradient(135deg, #6366f1 0%, #a855f7 100%);padding:24px;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;align-items:center;">
+        <div>
+            <div style="font-weight:700;font-size:18px;color:#fff;display:flex;align-items:center;gap:8px;"><i class="fa-solid fa-robot"></i> AI Copilot</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.8);font-weight:500;margin-top:4px;">Smart Email Assistant</div>
+        </div>
+        <button id="ai-chat-close" onclick="document.getElementById('ai-chat-panel').style.display = 'none';" style="background:rgba(255,255,255,0.2);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:14px;cursor:pointer;transition:background 0.2s;display:flex;align-items:center;justify-content:center;"><i class="fa-solid fa-times"></i></button>
+    </div>
+    <div id="ai-chat-messages" style="flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:16px;background:#fff;"></div>
+    <div style="padding:16px;border-top:1px solid var(--border);background:#f8fafc;display:flex;gap:12px;">
+        <input type="text" id="ai-chat-input" placeholder="Ask AI to write a high-converting email..."
+               style="flex:1;padding:14px 16px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;font-size:14px;color:var(--text);outline:none;box-shadow:0 2px 6px rgba(0,0,0,0.02);transition:border-color 0.2s;">
+        <button id="ai-chat-send" style="background:linear-gradient(135deg, #6366f1 0%, #a855f7 100%);border:none;color:#fff;width:48px;height:48px;border-radius:12px;cursor:pointer;font-size:16px;flex-shrink:0;box-shadow:0 4px 12px rgba(99,102,241,0.3);transition:transform 0.2s ease;">
+            <i class="fa-solid fa-paper-plane"></i>
+        </button>
+    </div>
+</div>
+
+<script>
+    const API = '/api';
+    let _token = null;
+    try { _token = localStorage.getItem('token'); } catch(e) {}
+
+    // Server ping
+    (function() {
+        var overlay = document.getElementById('wake-overlay');
+        function tryPing() {
+            fetch(API + '/ping').then(function(r) {
+                if (r.ok) { overlay.classList.remove('on'); }
+                else { overlay.classList.add('on'); setTimeout(tryPing, 2000); }
+            }).catch(function() {
+                overlay.classList.add('on');
+                setTimeout(tryPing, 2000);
+            });
+        }
+        tryPing();
+    })();
+
+    // Auth module
+    var AUTH = (function() {
+
+        function setAlert(id, msg, type) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            el.className = 'aalert show ' + (type === 'err' ? 'err' : 'ok');
+            el.innerHTML = (type === 'err' ? '⚠️ ' : '✅ ') + msg;
+        }
+        function clearAlert(id) {
+            var el = document.getElementById(id);
+            if (el) { el.className = 'aalert'; el.textContent = ''; }
+        }
+        function show(id) { var el = document.getElementById(id); if (el) el.classList.remove('hidden'); }
+        function hide(id) { var el = document.getElementById(id); if (el) el.classList.add('hidden'); }
+
+        function showLogin() {
+            show('form-login'); hide('form-signup'); hide('verify-box'); hide('forgot-box');
+            document.getElementById('tab-login').classList.add('active');
+            document.getElementById('tab-signup').classList.remove('active');
+        }
+        function showSignup() {
+            hide('form-login'); show('form-signup'); hide('verify-box'); hide('forgot-box');
+            document.getElementById('tab-login').classList.remove('active');
+            document.getElementById('tab-signup').classList.add('active');
+        }
+        function showForgot() {
+            hide('form-login'); hide('form-signup'); hide('verify-box'); show('forgot-box');
+        }
+
+        function onLoginSuccess(data) {
+            _token = data.access_token;
+            try {
+                localStorage.setItem('token', _token);
+                localStorage.setItem('is_admin', data.is_admin ? 'true' : 'false');
+            } catch(e) {}
+            document.getElementById('auth-page').classList.add('hidden');
+            document.getElementById('app-page').classList.add('on');
+            if (data.is_admin) { 
+                var n = document.getElementById('nav-admin'); if (n) n.style.display = 'flex'; 
+                var edc = document.getElementById('admin-email-delivery-card'); if (edc) edc.style.display = 'block';
+            }
+            if (typeof window.APP_INIT === 'function') window.APP_INIT();
+        }
+
+        async function doLogin() {
+            var email = (document.getElementById('login-email') || {}).value || '';
+            var pass = (document.getElementById('login-pass') || {}).value || '';
+            clearAlert('login-alert');
+            if (!email.trim() || !pass) { setAlert('login-alert', 'Please fill in all fields.', 'err'); return; }
+            var btn = document.getElementById('login-btn');
+            btn.disabled = true; btn.textContent = 'Signing in...';
+            try {
+                var body = new URLSearchParams();
+                body.append('username', email.trim());
+                body.append('password', pass);
+                var res = await fetch(API + '/auth/token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: body
+                });
+                var data = await res.json();
+                if (res.ok) { onLoginSuccess(data); }
+                else { setAlert('login-alert', data.detail || 'Wrong email or password.', 'err'); }
+            } catch(e) { setAlert('login-alert', 'Connection error. Try again.', 'err'); }
+            btn.disabled = false; btn.textContent = 'Sign In';
+        }
+
+        async function doSignup() {
+            var email = (document.getElementById('signup-email') || {}).value || '';
+            var pass = (document.getElementById('signup-pass') || {}).value || '';
+            var pass2 = (document.getElementById('signup-pass2') || {}).value || '';
+            clearAlert('signup-alert');
+            if (!email.trim() || !pass) { setAlert('signup-alert', 'Please fill in all fields.', 'err'); return; }
+            if (pass !== pass2) { setAlert('signup-alert', 'Passwords do not match.', 'err'); return; }
+            if (pass.length < 6) { setAlert('signup-alert', 'Password must be at least 6 characters.', 'err'); return; }
+            var btn = document.getElementById('signup-btn');
+            btn.disabled = true; btn.textContent = 'Creating...';
+            try {
+                var res = await fetch(API + '/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email.trim(), password: pass })
+                });
+                var data = await res.json();
+                if (res.ok) {
+                    if (data.status === 'needs_verification') {
+                        window._verifyEmail = email.trim();
+                        hide('form-signup'); show('verify-box');
+                    } else if (data.status === 'needs_approval') {
+                        setAlert('signup-alert', data.message || 'Account created! Waiting for admin approval.', 'ok');
+                        setTimeout(function(){ showLogin(); }, 2500);
+                    } else { onLoginSuccess(data); }
+                } else { setAlert('signup-alert', data.detail || 'Registration failed.', 'err'); }
+            } catch(e) { setAlert('signup-alert', 'Connection error. Please try again.', 'err'); }
+            btn.disabled = false; btn.textContent = 'Create Account';
+        }
+
+        async function doVerify() {
+            var code = (document.getElementById('verify-code') || {}).value || '';
+            var email = window._verifyEmail || '';
+            if (!code || code.length < 6) { setAlert('verify-alert', 'Enter the 6-digit code.', 'err'); return; }
+            var btn = document.getElementById('verify-btn');
+            btn.disabled = true; btn.textContent = 'Verifying...';
+            try {
+                var res = await fetch(API + '/auth/verify', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, code: code })
+                });
+                var data = await res.json();
+                if (res.ok) { onLoginSuccess(data); }
+                else { setAlert('verify-alert', data.detail || 'Invalid code.', 'err'); }
+            } catch(e) { setAlert('verify-alert', 'Connection error.', 'err'); }
+            btn.disabled = false; btn.textContent = 'Verify Account';
+        }
+
+        async function sendReset() {
+            var email = (document.getElementById('forgot-email') || {}).value || '';
+            clearAlert('forgot-alert');
+            if (!email) { setAlert('forgot-alert', 'Enter your email address.', 'err'); return; }
+            var btn = document.getElementById('forgot-btn');
+            btn.disabled = true; btn.textContent = 'Sending...';
+            try {
+                var res = await fetch(API + '/auth/forgot-password', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email })
+                });
+                var data = await res.json();
+                if (res.ok) {
+                    document.getElementById('forgot-step1').classList.add('hidden');
+                    document.getElementById('forgot-step2').classList.remove('hidden');
+                    setAlert('forgot-alert', 'Code sent! Check your inbox.', 'ok');
+                    window._resetEmail = email;
+                } else { setAlert('forgot-alert', data.detail || 'Error sending code.', 'err'); }
+            } catch(e) { setAlert('forgot-alert', 'Connection error.', 'err'); }
+            btn.disabled = false; btn.textContent = 'Send Reset Code';
+        }
+
+        async function doReset() {
+            var code = (document.getElementById('reset-code') || {}).value || '';
+            var newPass = (document.getElementById('new-pass') || {}).value || '';
+            clearAlert('forgot-alert');
+            if (!code || !newPass) { setAlert('forgot-alert', 'Fill in all fields.', 'err'); return; }
+            if (newPass.length < 6) { setAlert('forgot-alert', 'Password must be 6+ characters.', 'err'); return; }
+            var btn = document.getElementById('reset-btn');
+            btn.disabled = true; btn.textContent = 'Resetting...';
+            try {
+                var res = await fetch(API + '/auth/reset-password', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: window._resetEmail, code: code, new_password: newPass })
+                });
+                var data = await res.json();
+                if (res.ok) {
+                    setAlert('forgot-alert', 'Password reset! Please log in.', 'ok');
+                    setTimeout(function(){ showLogin(); }, 2000);
+                } else { setAlert('forgot-alert', data.detail || 'Reset failed.', 'err'); }
+            } catch(e) { setAlert('forgot-alert', 'Connection error.', 'err'); }
+            btn.disabled = false; btn.textContent = 'Reset Password';
+        }
+
+        return { showLogin: showLogin, showSignup: showSignup, showForgot: showForgot, doLogin: doLogin, doSignup: doSignup, doVerify: doVerify, sendReset: sendReset, doReset: doReset };
+    })();
+
+    // Auto-login if token exists
+    document.addEventListener('DOMContentLoaded', function() {
+        if (_token) {
+            document.getElementById('auth-page').classList.add('hidden');
+            document.getElementById('app-page').classList.add('on');
+            var isAdmin = false;
+            try { isAdmin = localStorage.getItem('is_admin') === 'true'; } catch(e) {}
+            if (isAdmin) { 
+                var n = document.getElementById('nav-admin'); if (n) n.style.display = 'flex'; 
+                var edc = document.getElementById('admin-email-delivery-card'); if (edc) edc.style.display = 'block';
+            }
+            if (typeof window.APP_INIT === 'function') window.APP_INIT();
+        }
+    });
+</script>
+
+    <script src="assets/templates.js?v=1784052486"></script>
+    <script src="assets/app_v2.js?v=1784052486"></script>
+    <script src="assets/sending_accounts.js?v=1784052486"></script>
+    <script src="assets/ai_features.js?v=1784052486"></script>
+    <script src="assets/deliverability_v2.js?v=1784052486"></script>
 
 
 

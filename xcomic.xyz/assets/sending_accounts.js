@@ -23,7 +23,7 @@ const ACCOUNTS = {
         const tbody = document.getElementById('accounts-table-body');
         tbody.innerHTML = '';
         if(this.list.length === 0) {
-            tbody.innerHTML = <tr><td colspan=\"7\" style=\"padding:32px;text-align:center;color:var(--text-muted);\">No accounts connected yet. Setup your first sending account to start delivering campaigns.</td></tr>;
+            tbody.innerHTML = `<tr><td colspan="7" style="padding:32px;text-align:center;color:var(--text-muted);">No accounts connected yet. Setup your first sending account to start delivering campaigns.</td></tr>`;
             return;
         }
         

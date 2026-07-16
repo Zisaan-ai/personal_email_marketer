@@ -18,36 +18,59 @@ import database
 # ============================================================
 # HEALTH SCORE CALCULATION
 # ============================================================
-def calculate_health_score(account) -> int:
+def calculate_health_score(account, db=None) -> int:
     """
     Calculate health score (0-100) based on account metrics.
-    Starts at 100 and reduces based on bounces.
+    Starts at 0 and increases based on age, domain health, and sending/warmup activity.
     """
+    score = 0
+    
+    # 1. Account Age (Max 20 points)
+    if account.created_at:
+        age_days = (datetime.utcnow() - account.created_at).days
+        score += min(max(age_days, 0), 20)  # 1 point per day, max 20
+        
+    # 2. Domain Reputation (Max 30 points)
+    if db and account.email:
+        try:
+            domain = account.email.split('@')[-1]
+            domain_cache = db.query(database.DomainHealthCache).filter(
+                database.DomainHealthCache.domain == domain
+            ).first()
+            if domain_cache:
+                if domain_cache.has_spf:
+                    score += 10
+                if getattr(domain_cache, 'has_dkim', False):
+                    score += 10
+                if getattr(domain_cache, 'has_dmarc', False):
+                    score += 10
+        except Exception:
+            pass # ignore parsing or DB errors
+            
+    # 3. Sending & Warmup Activity (Max 50 points)
     total_sent = account.total_sent or 0
-    total_bounced = account.total_bounced or 0
     total_opened = account.total_opened or 0
     total_replied = account.total_replied or 0
-    bounce_streak = account.bounce_streak or 0
-
-    base_score = 100
-
-    if total_sent > 0:
-        bounce_rate = total_bounced / total_sent
-        bounce_penalty = bounce_rate * 100  # e.g., 20% bounce rate = -20 points
-
-        streak_penalty = min(bounce_streak * 5, 30)
-
-        open_rate = total_opened / total_sent
-        open_bonus = min(open_rate * 20, 10)
-
-        reply_rate = total_replied / total_sent
-        reply_bonus = min(reply_rate * 50, 15)
-
-        score = base_score - bounce_penalty - streak_penalty + open_bonus + reply_bonus
-    else:
-        score = base_score
-
-    return max(0, min(100, int(round(score))))
+    total_bounced = account.total_bounced or 0
+    
+    # Volume: 1 point per 10 emails, max 20 points
+    volume_score = min(total_sent // 10, 20)
+    score += volume_score
+    
+    # Engagement: Open (Max 15 points) -> 2 points per open
+    open_score = min(total_opened * 2, 15)
+    score += open_score
+    
+    # Engagement: Reply (Max 15 points) -> 5 points per reply
+    reply_score = min(total_replied * 5, 15)
+    score += reply_score
+    
+    # 4. Penalties
+    # Bounces: -10 points per bounce
+    bounce_penalty = total_bounced * 10
+    score -= bounce_penalty
+    
+    return max(0, min(100, int(score)))
 
 
 # ============================================================
@@ -70,7 +93,7 @@ def update_health_after_send(db, account_id: str, success: bool):
         account.bounce_streak = (account.bounce_streak or 0) + 1
 
     # Recalculate health score
-    account.health_score = calculate_health_score(account)
+    account.health_score = calculate_health_score(account, db)
     account.last_health_check = datetime.utcnow()
     db.commit()
 
@@ -91,7 +114,7 @@ def update_health_after_open(db, account_id: str):
         return
 
     account.total_opened = (account.total_opened or 0) + 1
-    account.health_score = calculate_health_score(account)
+    account.health_score = calculate_health_score(account, db)
     db.commit()
 
     _record_daily_stat(db, account_id, "opened")
@@ -106,7 +129,7 @@ def update_health_after_reply(db, account_id: str):
         return
 
     account.total_replied = (account.total_replied or 0) + 1
-    account.health_score = calculate_health_score(account)
+    account.health_score = calculate_health_score(account, db)
     db.commit()
 
     _record_daily_stat(db, account_id, "replied")
@@ -338,7 +361,7 @@ def run_health_audit():
         paused_count = 0
         for acc in accounts:
             # Recalculate health
-            acc.health_score = calculate_health_score(acc)
+            acc.health_score = calculate_health_score(acc, db)
             acc.last_health_check = datetime.utcnow()
 
             # Check auto-pause
@@ -363,7 +386,7 @@ def get_health_report(db, account_id: str) -> dict:
         return {"error": "Account not found"}
 
     # --- FIX: Recalculate health on the fly to ensure accuracy on cPanel ---
-    real_health = calculate_health_score(account)
+    real_health = calculate_health_score(account, db)
     if account.health_score != real_health:
         account.health_score = real_health
         db.commit()

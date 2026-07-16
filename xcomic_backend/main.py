@@ -1,4 +1,4 @@
-﻿import shutil
+import shutil
 import base64
 import asyncio
 from fastapi import FastAPI, Depends, HTTPException, status, Request, BackgroundTasks, Response
@@ -1462,7 +1462,7 @@ def get_sending_accounts(current_user: database.User = Depends(auth.get_current_
             "warmup_sent_today": acc.warmup_sent_today,
             "smart_limit_enabled": getattr(acc, "smart_limit_enabled", False),
             "smart_warmup_enabled": getattr(acc, "smart_warmup_enabled", False),
-            "health_score": health_monitor.calculate_health_score(acc),
+            "health_score": health_monitor.calculate_health_score(acc, db),
             "created_at": acc.created_at,
             # --- New health fields ---
             "total_sent": acc.total_sent or 0,
@@ -2206,7 +2206,7 @@ def debug_health(db: Session = Depends(database.get_db)):
     out = []
     for acc in accounts:
         # Trigger health calculation
-        health = health_monitor.calculate_health_score(acc)
+        health = health_monitor.calculate_health_score(acc, db)
         out.append({
             "email": acc.email,
             "total_sent": acc.total_sent,

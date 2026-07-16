@@ -145,7 +145,7 @@ class SendingAccount(Base):
     imap_server = Column(String, nullable=True)
     imap_port = Column(Integer, default=993)
     imap_password = Column(String, nullable=True)
-    health_score = Column(Integer, default=100)
+    health_score = Column(Integer, default=0)
     warmup_enabled = Column(Boolean, default=False)
     warmup_daily_limit = Column(Integer, default=5)
     warmup_increment_per_day = Column(Integer, default=2)

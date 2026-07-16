@@ -84,7 +84,7 @@ def inject_tracking_pixel(body_html: str, pixel_url: str) -> str:
     pixel_img = f'<img src="{pixel_url}" width="1" height="1" style="display:none;" />'
     if "</body>" in body_html.lower():
         # Inject right before closing body tag
-        return re.sub(r'(</body>)', f'{pixel_img}\\1', body_html, flags=re.IGNORECASE)
+        return re.sub(r'(</body>)', lambda m: f'{pixel_img}{m.group(1)}', body_html, flags=re.IGNORECASE)
     else:
         # Just append at the end
         return body_html + pixel_img
@@ -195,33 +195,105 @@ def generate_clean_plaintext(html: str) -> str:
 # ============================================================
 # EMAIL VALIDATION (MX CHECK)
 # ============================================================
+import threading
 MX_CACHE = {}
+MX_CACHE_LOCK = threading.Lock()
 
 def validate_email_address(email: str) -> dict:
-    """Validate email format and MX record before sending."""
+    """Advanced validation: Syntax -> DNS MX -> SMTP Handshake (with fallback for blocked ports)."""
+    email = email.strip()
+    
+    # 1. Syntax Check
     pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     if not re.match(pattern, email):
-        return {'valid': False, 'reason': 'Invalid format'}
+        return {'valid': False, 'reason': 'Invalid syntax format'}
     
     domain = email.split('@')[1].lower()
     
-    if domain in MX_CACHE:
-        if not MX_CACHE[domain]:
-            return {'valid': False, 'reason': 'No MX record - domain cannot receive email'}
-        return {'valid': True, 'reason': 'OK'}
-        
-    try:
-        # Check MX record to ensure domain can receive email
-        records = dns.resolver.resolve(domain, 'MX')
-        if not records:
-            MX_CACHE[domain] = False
-            return {'valid': False, 'reason': 'No MX record found'}
-        MX_CACHE[domain] = True
-    except Exception:
-        MX_CACHE[domain] = False
-        return {'valid': False, 'reason': 'No MX record - domain cannot receive email'}
+    # Check cache first
+    with MX_CACHE_LOCK:
+        if email in MX_CACHE:
+            return MX_CACHE[email]
     
-    return {'valid': True, 'reason': 'OK'}
+    result = {'valid': True, 'reason': 'OK'}
+    mx_host = None
+    
+    try:
+        # 2. DNS/MX Check
+        resolver = dns.resolver.Resolver()
+        resolver.nameservers = ['8.8.8.8', '1.1.1.1']
+        resolver.timeout = 2
+        resolver.lifetime = 2
+        
+        try:
+            records = resolver.resolve(domain, 'MX')
+            mx_records = sorted(records, key=lambda r: r.preference)
+            if not mx_records:
+                result = {'valid': False, 'reason': 'Domain has no MX records'}
+            else:
+                mx_host = str(mx_records[0].exchange).rstrip('.')
+        except dns.resolver.NXDOMAIN:
+            result = {'valid': False, 'reason': 'Domain does not exist'}
+        except dns.resolver.NoAnswer:
+            result = {'valid': False, 'reason': 'Domain has no MX records'}
+        except Exception as dns_e:
+            # DNS lookup failed. On some VPS (like Cloud Hosting BD), this might be blocked.
+            # We return valid=True as a fallback so we don't break the app, but note the reason.
+            result = {'valid': True, 'reason': f'DNS check bypassed (VPS restriction?)'}
+            
+        # 3. SMTP Handshake (RCPT TO check)
+        if result['valid'] and mx_host:
+            try:
+                # Set a very short timeout. We don't want to hang the app if port 25 is blocked.
+                server = smtplib.SMTP(timeout=3)
+                server.connect(mx_host, 25)
+                server.ehlo_or_helo_if_needed()
+                
+                # Check if it's a catch-all domain first to avoid false positives
+                catch_all_test = f"random_fake_email_xyz123@{domain}"
+                code_catch_all, _ = server.docmd("MAIL FROM:", "<>")
+                code_catch_all, _ = server.docmd("RCPT TO:", f"<{catch_all_test}>")
+                
+                if code_catch_all == 250:
+                    # Domain is catch-all, we can't reliably verify mailbox existence
+                    result = {'valid': True, 'reason': 'Domain accepts all emails (Catch-all)'}
+                else:
+                    # Check actual email
+                    code, response = server.docmd("MAIL FROM:", "<>")
+                    code, response = server.docmd("RCPT TO:", f"<{email}>")
+                    
+                    if code == 250:
+                        result = {'valid': True, 'reason': 'Mailbox exists (SMTP Verified)'}
+                    elif code >= 500:
+                        resp_text = response.decode('utf-8', errors='ignore').lower() if isinstance(response, bytes) else str(response).lower()
+                        
+                        # Check if the rejection is specifically about the mailbox not existing
+                        not_found_keywords = ['does not exist', 'not found', 'invalid recipient', 'no such user', 'unknown user', 'mailbox unavailable', 'bad address']
+                        
+                        is_mailbox_error = any(kw in resp_text for kw in not_found_keywords)
+                        
+                        if is_mailbox_error:
+                            result = {'valid': False, 'reason': f'Mailbox does not exist (SMTP Rejected: {resp_text})'}
+                        else:
+                            # It might be a spam block, IP ban, or greylisting from the receiving server.
+                            # We must fallback to True to avoid deleting valid emails.
+                            result = {'valid': True, 'reason': f'Server rejected check, assuming valid (Code {code}: {resp_text})'}
+                    else:
+                        result = {'valid': True, 'reason': f'SMTP Unsure (Code {code})'}
+                
+                server.quit()
+            except Exception as smtp_e:
+                # SMTP connection failed (likely port 25 blocked by VPS).
+                # Return valid=True as fallback.
+                result = {'valid': True, 'reason': 'SMTP check bypassed (Port 25 blocked?)'}
+                
+    except Exception as e:
+        result = {'valid': True, 'reason': f'Validation error bypassed: {e}'}
+
+    with MX_CACHE_LOCK:
+        MX_CACHE[email] = result
+        
+    return result
 
 # ============================================================
 # SPAM SCORE CHECKER (enhanced)
@@ -406,12 +478,16 @@ def send_single_email(subject: str, body_html: str, recipient: str, account=None
         msg.attach(part2)
         
         server.send_message(msg)
-        server.quit()
         return True
     except Exception as e:
         print(f"Failed to send to {recipient}: {e}")
         return False
-
+    finally:
+        if 'server' in locals() and server is not None:
+            try:
+                server.quit()
+            except:
+                pass
 
 def _send_system_email(subject: str, body_html: str, recipient: str) -> bool:
     """Sends a system email (like auth/verification) using .env credentials."""
@@ -439,11 +515,16 @@ def _send_system_email(subject: str, body_html: str, recipient: str) -> bool:
         msg.attach(MIMEText(body_html, "html", "utf-8"))
         
         server.sendmail(SMTP_USERNAME, [recipient], msg.as_string())
-        server.quit()
         return True
     except Exception as e:
         print(f"System Email failed: {e}")
         return False
+    finally:
+        if 'server' in locals() and server is not None:
+            try:
+                server.quit()
+            except:
+                pass
 
 def send_verification_email(email: str, code: str):
     """
@@ -472,7 +553,7 @@ def send_password_reset_email(email: str, code: str):
     """
     Sends a 6-digit password reset code to the user.
     """
-    if not SMTP_PASSWORD:
+    if not SMTP_PASSWORD or not SMTP_USERNAME:
         print(f"*** MOCK EMAIL: Password reset code for {email} is {code} ***")
         return True
 

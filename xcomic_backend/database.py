@@ -164,11 +164,12 @@ class SendingAccount(Base):
     imap_server = Column(String, nullable=True)
     imap_port = Column(Integer, default=993)
     imap_password = Column(String, nullable=True)
-    health_score = Column(Integer, default=100)
+    health_score = Column(Integer, default=0)  # Starts at 0, builds gradually
     warmup_enabled = Column(Boolean, default=False)
     warmup_daily_limit = Column(Integer, default=5)
     warmup_increment_per_day = Column(Integer, default=2)
     warmup_sent_today = Column(Integer, default=0)
+    warmup_total_sent = Column(Integer, default=0)  # Cumulative warmup emails (for reputation score)
     is_active = Column(Boolean, default=True)
     smart_limit_enabled = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -312,6 +313,7 @@ def run_migrations():
         _safe_add_column("replies", "message_id", "VARCHAR", None)
         _safe_add_column("sending_accounts", "sent_today_date", "VARCHAR", None)
         _safe_add_column("campaign_leads", "sending_account_id", "VARCHAR", None)
+        _safe_add_column("sending_accounts", "warmup_total_sent", "INTEGER", 0)
         
         # --- Campaign Deliverability Options ---
         _safe_add_column("campaigns", "track_opens", "BOOLEAN", True)

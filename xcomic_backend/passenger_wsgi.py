@@ -1,56 +1,85 @@
+
 import os
 import sys
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, BASE_DIR)
+# Add current directory to path
+cwd = os.getcwd()
+sys.path.append(cwd)
 
-# Load .env
-from dotenv import load_dotenv
-load_dotenv(os.path.join(BASE_DIR, ".env"))
-
-# Set database path
-db_path = os.path.join(BASE_DIR, "sql_app.db")
-os.environ.setdefault("DATABASE_URL", f"sqlite:///{db_path}")
-
-# Auto-install missing dependencies on cPanel
-try:
-    import dns.resolver
-except ImportError:
-    import subprocess
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "dnspython"])
-
-# One-time fix: reset all accounts send_window to 0/24 (send 24/7)
-try:
-    import sqlite3
-    _fix_db = os.path.join(BASE_DIR, "sql_app.db")
-    if os.path.exists(_fix_db):
-        _conn = sqlite3.connect(_fix_db)
-        _cur = _conn.cursor()
-        _cur.execute("UPDATE sending_accounts SET send_window_start=0, send_window_end=24 WHERE send_window_start != 0 OR send_window_end != 24")
-        _conn.commit()
-        _conn.close()
-except Exception as _e:
-    pass
-
-_application = None
-
-def application(environ, start_response):
-    global _application
-    if _application is None:
-        from main import app as asgi_app
-        from a2wsgi import ASGIMiddleware
-        _application = ASGIMiddleware(asgi_app)
-        
-    # Fix for Passenger stripping /api prefix
-    path = environ.get('PATH_INFO', '')
+# Ensure Uvicorn runs in background
+def ensure_uvicorn_running():
+    # Removed pkill for speed
     
-    # If the path is missing /api, and it's not the root or unsubscribe route, prepend /api
-    if (path and 
-        not path.startswith('/api') and 
-        not path.startswith('/unsubscribe/') and 
-        not path.startswith('/assets') and 
-        not path.startswith('/pixel') and
-        path != '/'):
-        environ['PATH_INFO'] = '/api' + (path if path.startswith('/') else '/' + path)
+    # Check if uvicorn is running on the port
+    import socket
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        s.connect(('127.0.0.1', 47300))
+        s.close()
+        return  # Already running
+    except:
+        pass
+        
+    os.system('nohup python -m uvicorn main:app --host 127.0.0.1 --port 47300 --workers 1 > uvicorn.log 2>&1 &')
 
-    return _application(environ, start_response)
+# The actual WSGI application is just a proxy
+def application(environ, start_response):
+    ensure_uvicorn_running()
+    
+    import urllib.request
+    
+    # Extract path and query string
+    path = environ.get('PATH_INFO', '/')
+    qs = environ.get('QUERY_STRING', '')
+    if qs:
+        path += '?' + qs
+        
+    url = 'http://127.0.0.1:47300' + path
+    
+    method = environ.get('REQUEST_METHOD', 'GET')
+    
+    # Extract headers
+    headers = {}
+    for key, value in environ.items():
+        if key.startswith('HTTP_'):
+            header_name = key[5:].replace('_', '-').title()
+            headers[header_name] = value
+        elif key in ('CONTENT_TYPE', 'CONTENT_LENGTH') and value:
+            header_name = key.replace('_', '-').title()
+            headers[header_name] = value
+            
+    # Read body
+    try:
+        content_length = int(environ.get('CONTENT_LENGTH', 0))
+    except (ValueError, TypeError):
+        content_length = 0
+        
+    body = None
+    if content_length > 0:
+        body = environ['wsgi.input'].read(content_length)
+        
+    # Make request to Uvicorn
+    req = urllib.request.Request(url, data=body, headers=headers, method=method)
+    
+    try:
+        resp = urllib.request.urlopen(req, timeout=30)
+        status_code = resp.getcode()
+        # urllib doesn't give text descriptions easily, so map basic ones
+        status = f"{status_code} OK"
+        if status_code != 200:
+            status = f"{status_code} Status"
+            
+        resp_headers = [(k, v) for k, v in resp.info().items() if k.lower() != 'transfer-encoding']
+        
+        start_response(status, resp_headers)
+        return [resp.read()]
+        
+    except urllib.error.HTTPError as e:
+        status = f"{e.code} Error"
+        resp_headers = [(k, v) for k, v in e.info().items() if k.lower() != 'transfer-encoding']
+        start_response(status, resp_headers)
+        return [e.read()]
+        
+    except Exception as e:
+        start_response('502 Bad Gateway', [('Content-Type', 'text/plain')])
+        return [str(e).encode('utf-8')]

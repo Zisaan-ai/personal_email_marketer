@@ -21,39 +21,66 @@ import database
 def calculate_health_score(account) -> int:
     """
     Calculate health score (0-100) based on account metrics.
-    
-    Formula:
-    - Start at 100
-    - Subtract bounce rate penalty (up to 80 points)
-    - Subtract bounce streak penalty (up to 30 points)
-    - Add open rate bonus (up to 15 points)
-    - Add reply rate bonus (up to 10 points)
+
+    NEW Logic (Gradual Reputation Building):
+    - New accounts start at 0% and build reputation over time.
+    - Score builds from two sources:
+        1. Account Age bonus: up to 40 points over 30 days
+        2. Warmup bonus: up to 30 points based on total warmup emails sent
+    - Bounce/open/reply rates apply as multipliers on top:
+        - Heavy bounce rate penalty (up to -60 points)
+        - Bounce streak penalty (up to -20 points)
+        - Open rate bonus (up to +15 points)
+        - Reply rate bonus (up to +10 points)
     """
+    from datetime import datetime
+
     total_sent = account.total_sent or 0
     total_bounced = account.total_bounced or 0
     total_opened = account.total_opened or 0
     total_replied = account.total_replied or 0
     bounce_streak = account.bounce_streak or 0
 
-    if total_sent == 0:
-        return 100  # New account, no data yet
+    # --- Base score: Account Age (0 → 40 points over 30 days) ---
+    if account.created_at:
+        age_days = (datetime.utcnow() - account.created_at).days
+    else:
+        age_days = 0
+    age_bonus = min(age_days / 30.0, 1.0) * 40  # 0 to 40 pts
 
-    # Bounce rate penalty (heaviest weight - up to 80 points)
-    bounce_rate = total_bounced / total_sent
-    bounce_penalty = bounce_rate * 80
+    # --- Warmup bonus: total warmup emails sent (0 → 30 points) ---
+    # warmup_sent_today resets daily, but total_sent includes warmup too.
+    # Use a dedicated warmup_total field if present, else estimate from total_sent cap.
+    warmup_total = getattr(account, 'warmup_total_sent', None)
+    if warmup_total is None:
+        # Fallback: if no dedicated field, assume warmup contributes up to 200 emails
+        warmup_total = min(total_sent, 200)
+    warmup_bonus = min(warmup_total / 200.0, 1.0) * 30  # 0 to 30 pts
 
-    # Consecutive bounce streak penalty (up to 30 points)
-    streak_penalty = min(bounce_streak * 5, 30)
+    # --- Base score builds from 0 ---
+    base_score = age_bonus + warmup_bonus  # 0 to 70 pts
 
-    # Open rate bonus (up to 15 points)
-    open_rate = total_opened / total_sent
-    open_bonus = min(open_rate * 20, 15)
+    # --- Engagement layer (applied only once there's send data) ---
+    if total_sent > 0:
+        # Bounce rate penalty (heaviest weight - up to 60 points)
+        bounce_rate = total_bounced / total_sent
+        bounce_penalty = bounce_rate * 60
 
-    # Reply rate bonus (up to 10 points)
-    reply_rate = total_replied / total_sent
-    reply_bonus = min(reply_rate * 30, 10)
+        # Consecutive bounce streak penalty (up to 20 points)
+        streak_penalty = min(bounce_streak * 4, 20)
 
-    score = 100 - bounce_penalty - streak_penalty + open_bonus + reply_bonus
+        # Open rate bonus (up to 15 points)
+        open_rate = total_opened / total_sent
+        open_bonus = min(open_rate * 20, 15)
+
+        # Reply rate bonus (up to 10 points)
+        reply_rate = total_replied / total_sent
+        reply_bonus = min(reply_rate * 30, 10)
+
+        score = base_score - bounce_penalty - streak_penalty + open_bonus + reply_bonus
+    else:
+        score = base_score  # Pure age + warmup score for brand new accounts
+
     return max(0, min(100, int(round(score))))
 
 

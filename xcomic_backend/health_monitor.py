@@ -21,65 +21,31 @@ import database
 def calculate_health_score(account) -> int:
     """
     Calculate health score (0-100) based on account metrics.
-
-    NEW Logic (Gradual Reputation Building):
-    - New accounts start at 0% and build reputation over time.
-    - Score builds from two sources:
-        1. Account Age bonus: up to 40 points over 30 days
-        2. Warmup bonus: up to 30 points based on total warmup emails sent
-    - Bounce/open/reply rates apply as multipliers on top:
-        - Heavy bounce rate penalty (up to -60 points)
-        - Bounce streak penalty (up to -20 points)
-        - Open rate bonus (up to +15 points)
-        - Reply rate bonus (up to +10 points)
+    Starts at 100 and reduces based on bounces.
     """
-    from datetime import datetime
-
     total_sent = account.total_sent or 0
     total_bounced = account.total_bounced or 0
     total_opened = account.total_opened or 0
     total_replied = account.total_replied or 0
     bounce_streak = account.bounce_streak or 0
 
-    # --- Base score: Account Age (0 → 40 points over 30 days) ---
-    if account.created_at:
-        age_days = (datetime.utcnow() - account.created_at).days
-    else:
-        age_days = 0
-    age_bonus = min(age_days / 30.0, 1.0) * 40  # 0 to 40 pts
+    base_score = 100
 
-    # --- Warmup bonus: total warmup emails sent (0 → 30 points) ---
-    # warmup_sent_today resets daily, but total_sent includes warmup too.
-    # Use a dedicated warmup_total field if present, else estimate from total_sent cap.
-    warmup_total = getattr(account, 'warmup_total_sent', None)
-    if warmup_total is None:
-        # Fallback: if no dedicated field, assume warmup contributes up to 200 emails
-        warmup_total = min(total_sent, 200)
-    warmup_bonus = min(warmup_total / 200.0, 1.0) * 30  # 0 to 30 pts
-
-    # --- Base score builds from 0 ---
-    base_score = age_bonus + warmup_bonus  # 0 to 70 pts
-
-    # --- Engagement layer (applied only once there's send data) ---
     if total_sent > 0:
-        # Bounce rate penalty (heaviest weight - up to 60 points)
         bounce_rate = total_bounced / total_sent
-        bounce_penalty = bounce_rate * 60
+        bounce_penalty = bounce_rate * 100  # e.g., 20% bounce rate = -20 points
 
-        # Consecutive bounce streak penalty (up to 20 points)
-        streak_penalty = min(bounce_streak * 4, 20)
+        streak_penalty = min(bounce_streak * 5, 30)
 
-        # Open rate bonus (up to 15 points)
         open_rate = total_opened / total_sent
-        open_bonus = min(open_rate * 20, 15)
+        open_bonus = min(open_rate * 20, 10)
 
-        # Reply rate bonus (up to 10 points)
         reply_rate = total_replied / total_sent
-        reply_bonus = min(reply_rate * 30, 10)
+        reply_bonus = min(reply_rate * 50, 15)
 
         score = base_score - bounce_penalty - streak_penalty + open_bonus + reply_bonus
     else:
-        score = base_score  # Pure age + warmup score for brand new accounts
+        score = base_score
 
     return max(0, min(100, int(round(score))))
 
@@ -157,23 +123,17 @@ def update_health_after_click(db, account_id: str):
 def check_auto_pause(db, account) -> bool:
     """
     Check if an account should be auto-paused.
-    Returns True if account was paused.
-    
-    Auto-pause triggers:
-    1. Health score drops below 50
-    2. 5 or more consecutive bounces
     """
     if account.auto_paused:
         return False  # Already paused
-
+        
     reason = None
-
+    
     if (account.health_score or 100) < 50:
         reason = f"Health score critically low ({account.health_score}/100)"
-
     elif (account.bounce_streak or 0) >= 5:
         reason = f"5+ consecutive bounces (streak: {account.bounce_streak})"
-
+        
     if reason:
         account.auto_paused = True
         account.auto_paused_reason = reason
@@ -181,7 +141,7 @@ def check_auto_pause(db, account) -> bool:
         db.commit()
         print(f"[Health Monitor] ⚠️ Auto-paused account {account.email}: {reason}")
         return True
-
+        
     return False
 
 

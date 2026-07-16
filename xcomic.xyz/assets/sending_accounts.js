@@ -7,7 +7,7 @@ const ACCOUNTS = {
     
     fetchAccounts: async function() {
         try {
-            const res = await fetch(API_URL + '/sending-accounts', {
+            const res = await fetch(API_URL + '/sending-accounts?t=' + Date.now(), {
                 headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
             });
             if(res.ok) {
@@ -23,7 +23,7 @@ const ACCOUNTS = {
         const tbody = document.getElementById('accounts-table-body');
         tbody.innerHTML = '';
         if(this.list.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" style="padding:32px;text-align:center;color:var(--text-muted);">No accounts connected yet. Setup your first sending account to start delivering campaigns.</td></tr>`;
+            tbody.innerHTML = <tr><td colspan=\"7\" style=\"padding:32px;text-align:center;color:var(--text-muted);\">No accounts connected yet. Setup your first sending account to start delivering campaigns.</td></tr>;
             return;
         }
         
@@ -74,11 +74,24 @@ const ACCOUNTS = {
                 </div>
             `;
 
-            // Suggested limit badge - only show when smart limit is ON
+            // Smart limit display logic
             const suggestedLimit = acc.suggested_daily_limit || acc.daily_limit;
-            const limitBadge = acc.smart_limit_enabled && suggestedLimit < acc.daily_limit
-                ? `<span style="font-size:11px;color:#f59e0b;display:block;margin-top:2px;">📊 Suggested: ${suggestedLimit}/day</span>`
-                : '';
+            let displayLimitHtml = '';
+            
+            if (acc.smart_limit_enabled && suggestedLimit < acc.daily_limit) {
+                // Smart limit is active
+                displayLimitHtml = `
+                    <div style="text-decoration: line-through; color: var(--text-muted); font-size: 11px; margin-bottom:2px;">Max: ${acc.daily_limit}</div>
+                    <div style="font-weight: bold; color: #6366f1; font-size: 14px;">${suggestedLimit} <span style="font-size:10px; font-weight:normal; background:#e0e7ff; padding:2px 4px; border-radius:4px; margin-left:4px;">Smart Active</span></div>
+                `;
+            } else {
+                // Normal limit
+                displayLimitHtml = `<div style="font-size: 14px;">${acc.daily_limit}</div>`;
+                // Show suggestion if it's lower than max and smart is OFF
+                if (!acc.smart_limit_enabled && suggestedLimit < acc.daily_limit) {
+                    displayLimitHtml += `<span style="font-size:11px;color:#f59e0b;display:block;margin-top:2px;" title="Turn on Smart Limit to protect your sender reputation">⚠️ Suggested: ${suggestedLimit}</span>`;
+                }
+            }
 
             // Domain health badges
             let domainBadges = '';
@@ -113,12 +126,11 @@ const ACCOUNTS = {
                     ${statsLine}
                 </td>
                 <td style="padding:16px 24px;">
-                    <div>${acc.email}</div>
+                    <div style="font-size:14px;">${acc.email}</div>
                     ${domainBadges}
                 </td>
                 <td style="padding:16px 24px;">
-                    <div>${acc.daily_limit}</div>
-                    ${limitBadge}
+                    ${displayLimitHtml}
                     <div style="margin-top:6px;display:flex;flex-direction:column;gap:4px;">
                         <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:11px;color:var(--text-muted);" title="Smart Limit: System automatically reduces daily limit based on account age & health to protect deliverability">
                             <div onclick="ACCOUNTS.toggleSmartLimit('${acc.id}', ${!acc.smart_limit_enabled})" style="width:32px;height:18px;border-radius:9px;background:${acc.smart_limit_enabled ? '#6366f1' : 'var(--border)'};position:relative;cursor:pointer;transition:background 0.2s;">
@@ -130,7 +142,7 @@ const ACCOUNTS = {
                             <div onclick="ACCOUNTS.toggleWarmup('${acc.id}', ${!acc.warmup_enabled})" style="width:32px;height:18px;border-radius:9px;background:${acc.warmup_enabled ? '#f59e0b' : 'var(--border)'};position:relative;cursor:pointer;transition:background 0.2s;">
                                 <div style="width:14px;height:14px;background:#fff;border-radius:50%;position:absolute;top:2px;left:${acc.warmup_enabled ? '16px' : '2px'};transition:left 0.2s;"></div>
                             </div>
-                            Warmup ${acc.warmup_enabled ? `(${acc.warmup_sent_today || 0}/${acc.warmup_daily_limit || 5})` : ''}
+                            Warmup ${acc.warmup_enabled ? (acc.smart_warmup_enabled ? `(${acc.warmup_sent_today || 0}/${acc.suggested_warmup_limit || 5}) <span style="font-size:9px;background:#e0e7ff;color:#6366f1;padding:1px 3px;border-radius:3px;">Smart</span>` : `(${acc.warmup_sent_today || 0}/${acc.warmup_daily_limit || 5})`) : ''}
                         </label>
                     </div>
                 </td>
@@ -164,6 +176,8 @@ const ACCOUNTS = {
         document.getElementById('acc-daily-limit').value = '500';
         document.getElementById('acc-warmup-limit').value = '5';
         document.getElementById('acc-warmup-increment').value = '2';
+        document.getElementById('acc-smart-warmup-enabled').checked = false;
+        document.getElementById('manual-warmup-settings').style.display = 'grid';
         document.getElementById('add-account-modal').style.display = 'flex';
     },
 
@@ -181,6 +195,8 @@ const ACCOUNTS = {
         document.getElementById('acc-daily-limit').value = acc.daily_limit || 500;
         document.getElementById('acc-warmup-limit').value = acc.warmup_daily_limit || 5;
         document.getElementById('acc-warmup-increment').value = acc.warmup_increment_per_day || 2;
+        document.getElementById('acc-smart-warmup-enabled').checked = acc.smart_warmup_enabled || false;
+        document.getElementById('manual-warmup-settings').style.display = (acc.smart_warmup_enabled || false) ? 'none' : 'grid';
         
         document.getElementById('add-account-modal').style.display = 'flex';
     },
@@ -201,8 +217,18 @@ const ACCOUNTS = {
             imap_port: 993,
             imap_password: password,
             warmup_daily_limit: parseInt(document.getElementById('acc-warmup-limit')?.value) || 5,
-            warmup_increment_per_day: parseInt(document.getElementById('acc-warmup-increment')?.value) || 2
+            warmup_increment_per_day: parseInt(document.getElementById('acc-warmup-increment')?.value) || 2,
+            smart_warmup_enabled: document.getElementById('acc-smart-warmup-enabled')?.checked || false
         };
+        
+        // Preserve existing warmup_enabled status if editing
+        const accId = document.getElementById('acc-id').value;
+        if (accId) {
+            const existingAcc = ACCOUNTS.list.find(a => a.id === accId);
+            if (existingAcc) {
+                payload.warmup_enabled = existingAcc.warmup_enabled || false;
+            }
+        }
         
         if(!payload.email || (!payload.smtp_password && !document.getElementById('acc-id').value)) {
             alert("Email and App Password are required for new accounts!");
@@ -312,7 +338,7 @@ const ACCOUNTS = {
     },
     
     deleteAccount: async function(id) {
-        if(!confirm("Are you sure you want to delete this account?")) return;
+        if(!(await customConfirm('Delete Account', 'Are you sure you want to delete this account?', 'DELETE'))) return;
         try {
             const res = await fetch(API_URL + '/sending-accounts/' + id, {
                 method: 'DELETE',
@@ -330,7 +356,7 @@ const ACCOUNTS = {
     // NEW: Reactivate auto-paused account
     // ============================================================
     reactivateAccount: async function(id) {
-        if(!confirm("Reactivate this account? It was auto-paused due to poor health. Make sure to fix the underlying issue first.")) return;
+        if(!(await customConfirm('Reactivate Account', 'Reactivate this account? It was auto-paused due to poor health. Make sure to fix the underlying issue first.'))) return;
         try {
             const res = await fetch(API_URL + '/sending-accounts/' + id + '/reactivate', {
                 method: 'POST',

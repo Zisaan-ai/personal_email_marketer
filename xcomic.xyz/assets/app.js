@@ -5815,17 +5815,29 @@ function setupDragDrop(id) {
 
                     const text = evt.target.result;
 
-                    let lines = text.split('\n').filter(l => l.trim().length > 0);
+                    let rawLines = text.split('\n').filter(l => l.trim().length > 0);
 
                     
+
+                    let lines = rawLines.map(l => {
+
+                        let emailPart = l.split(',')[0].trim();
+
+                        emailPart = emailPart.replace(/^["']|["']$/g, '');
+
+                        return emailPart;
+
+                    }).filter(e => e.includes('@'));
+
+
 
                     showToast(`Validating ${lines.length} leads... please wait.`, 'success');
 
-                    el.value = text;
+                    el.value = lines.join('\n');
 
                     
 
-                    const emailsToCheck = lines.map(l => l.split(',')[0].trim()).filter(e => e);
+                    const emailsToCheck = lines;
 
                     
 
@@ -5839,15 +5851,7 @@ function setupDragDrop(id) {
 
                             const invalidEmails = new Set(data.results.filter(r => !r.valid).map(r => r.email.toLowerCase()));
 
-                            
-
-                            const validLines = lines.filter(l => {
-
-                                const e = l.split(',')[0].trim().toLowerCase();
-
-                                return !invalidEmails.has(e);
-
-                            });
+                            const validLines = lines.filter(e => !invalidEmails.has(e.toLowerCase()));
 
                             
 

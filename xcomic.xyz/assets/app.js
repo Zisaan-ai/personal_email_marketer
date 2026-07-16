@@ -4029,9 +4029,9 @@ function setupCampaignBuilder() {
 
         leadsText.split('\n').map(l => l.trim()).filter(l => l).forEach(line => {
 
-            let emailPart = line.split(',')[0].trim();
-            emailPart = emailPart.replace(/^["']|["']$/g, '');
-            leads.push({ email: emailPart, name: '', company: '' });
+            const parts = line.split(',').map(p => p.trim());
+
+            leads.push({ email: parts[0], name: parts[1] || '', company: parts[2] || '' });
 
         });
 
@@ -4178,9 +4178,9 @@ function setupCampaignBuilder() {
 
             leadsText.split('\n').map(l => l.trim()).filter(l => l).forEach(line => {
 
-                let emailPart = line.split(',')[0].trim();
-                emailPart = emailPart.replace(/^["']|["']$/g, '');
-                leads.push({ email: emailPart, name: '', company: '' });
+                const parts = line.split(',').map(p => p.trim());
+
+                leads.push({ email: parts[0], name: parts[1] || '', company: parts[2] || '' });
 
             });
 
@@ -4627,9 +4627,9 @@ function setupSequenceBuilder() {
 
         leadsText.split('\n').map(l => l.trim()).filter(l => l).forEach(line => {
 
-            let emailPart = line.split(',')[0].trim();
-            emailPart = emailPart.replace(/^["']|["']$/g, '');
-            leads.push({ email: emailPart, name: '', company: '' });
+            const parts = line.split(',').map(p => p.trim());
+
+            leads.push({ email: parts[0], name: parts[1] || '', company: parts[2] || '' });
 
         });
 
@@ -4766,9 +4766,9 @@ function setupSequenceBuilder() {
 
         leadsText.split('\n').map(l => l.trim()).filter(l => l).forEach(line => {
 
-            let emailPart = line.split(',')[0].trim();
-            emailPart = emailPart.replace(/^["']|["']$/g, '');
-            leads.push({ email: emailPart, name: '', company: '' });
+            const parts = line.split(',').map(p => p.trim());
+
+            leads.push({ email: parts[0], name: parts[1] || '', company: parts[2] || '' });
 
         });
 
@@ -5815,29 +5815,17 @@ function setupDragDrop(id) {
 
                     const text = evt.target.result;
 
-                    let rawLines = text.split('\n').filter(l => l.trim().length > 0);
+                    let lines = text.split('\n').filter(l => l.trim().length > 0);
 
                     
-
-                    let lines = rawLines.map(l => {
-
-                        let emailPart = l.split(',')[0].trim();
-
-                        emailPart = emailPart.replace(/^["']|["']$/g, '');
-
-                        return emailPart;
-
-                    }).filter(e => e.includes('@'));
-
-
 
                     showToast(`Validating ${lines.length} leads... please wait.`, 'success');
 
-                    el.value = lines.join('\n');
+                    el.value = text;
 
                     
 
-                    const emailsToCheck = lines;
+                    const emailsToCheck = lines.map(l => l.split(',')[0].trim()).filter(e => e);
 
                     
 
@@ -5851,7 +5839,15 @@ function setupDragDrop(id) {
 
                             const invalidEmails = new Set(data.results.filter(r => !r.valid).map(r => r.email.toLowerCase()));
 
-                            const validLines = lines.filter(e => !invalidEmails.has(e.toLowerCase()));
+                            
+
+                            const validLines = lines.filter(l => {
+
+                                const e = l.split(',')[0].trim().toLowerCase();
+
+                                return !invalidEmails.has(e);
+
+                            });
 
                             
 
@@ -6289,13 +6285,13 @@ window.renderLeadsList = function(id) {
 
     visibleLines.forEach((line, index) => {
 
-        let email = line.split(',')[0].trim();
+        const parts = line.split(',').map(p => p.trim());
 
-        email = email.replace(/^["']|["']$/g, '');
+        const email = parts[0] || '';
 
-        const name = 'Unknown';
+        const name = parts[1] || 'Unknown';
 
-        const company = '';
+        const company = parts[2] || '';
 
         
 

@@ -4029,9 +4029,9 @@ function setupCampaignBuilder() {
 
         leadsText.split('\n').map(l => l.trim()).filter(l => l).forEach(line => {
 
-            const parts = line.split(',').map(p => p.trim());
-
-            leads.push({ email: parts[0], name: parts[1] || '', company: parts[2] || '' });
+            let emailPart = line.split(',')[0].trim();
+            emailPart = emailPart.replace(/^["']|["']$/g, '');
+            leads.push({ email: emailPart, name: '', company: '' });
 
         });
 
@@ -4178,9 +4178,9 @@ function setupCampaignBuilder() {
 
             leadsText.split('\n').map(l => l.trim()).filter(l => l).forEach(line => {
 
-                const parts = line.split(',').map(p => p.trim());
-
-                leads.push({ email: parts[0], name: parts[1] || '', company: parts[2] || '' });
+                let emailPart = line.split(',')[0].trim();
+                emailPart = emailPart.replace(/^["']|["']$/g, '');
+                leads.push({ email: emailPart, name: '', company: '' });
 
             });
 
@@ -4627,9 +4627,9 @@ function setupSequenceBuilder() {
 
         leadsText.split('\n').map(l => l.trim()).filter(l => l).forEach(line => {
 
-            const parts = line.split(',').map(p => p.trim());
-
-            leads.push({ email: parts[0], name: parts[1] || '', company: parts[2] || '' });
+            let emailPart = line.split(',')[0].trim();
+            emailPart = emailPart.replace(/^["']|["']$/g, '');
+            leads.push({ email: emailPart, name: '', company: '' });
 
         });
 
@@ -4766,9 +4766,9 @@ function setupSequenceBuilder() {
 
         leadsText.split('\n').map(l => l.trim()).filter(l => l).forEach(line => {
 
-            const parts = line.split(',').map(p => p.trim());
-
-            leads.push({ email: parts[0], name: parts[1] || '', company: parts[2] || '' });
+            let emailPart = line.split(',')[0].trim();
+            emailPart = emailPart.replace(/^["']|["']$/g, '');
+            leads.push({ email: emailPart, name: '', company: '' });
 
         });
 
@@ -6289,13 +6289,13 @@ window.renderLeadsList = function(id) {
 
     visibleLines.forEach((line, index) => {
 
-        const parts = line.split(',').map(p => p.trim());
+        let email = line.split(',')[0].trim();
 
-        const email = parts[0] || '';
+        email = email.replace(/^["']|["']$/g, '');
 
-        const name = parts[1] || 'Unknown';
+        const name = 'Unknown';
 
-        const company = parts[2] || '';
+        const company = '';
 
         
 

@@ -754,8 +754,11 @@ def send_campaign(campaign: CampaignCreate, background_tasks: BackgroundTasks, c
         import health_monitor as hm
         all_exhausted = True
         for acc in active_accounts:
-            smart_limit = hm.suggest_daily_limit(acc)
-            effective_daily = min(acc.daily_limit or 500, smart_limit)
+            if getattr(acc, "smart_limit_enabled", False):
+                smart_limit = hm.suggest_daily_limit(acc)
+                effective_daily = min(acc.daily_limit or 500, smart_limit)
+            else:
+                effective_daily = acc.daily_limit or 500
             if acc.sent_today < effective_daily:
                 all_exhausted = False
                 break
@@ -1090,9 +1093,12 @@ def _run_campaign(db, campaign_id):
             # NOTE: Warmup limits are NOT checked here.
             # Warmup and Campaign are independent modules with separate counters.
             # Campaign only checks sent_today vs daily_limit below.
-            # Use smart suggested limit instead of raw daily_limit
-            smart_limit = health_monitor.suggest_daily_limit(acc_doc)
-            effective_daily = min(acc_doc.daily_limit or 500, smart_limit)
+            # Use smart suggested limit if enabled, otherwise use raw daily_limit
+            if getattr(acc_doc, "smart_limit_enabled", False):
+                smart_limit = health_monitor.suggest_daily_limit(acc_doc)
+                effective_daily = min(acc_doc.daily_limit or 500, smart_limit)
+            else:
+                effective_daily = acc_doc.daily_limit or 500
             if acc_doc.sent_today < effective_daily:
                 # Track domain for rotation
                 _last_domain_used[0] = acc_doc.email.split('@')[-1] if '@' in acc_doc.email else ''

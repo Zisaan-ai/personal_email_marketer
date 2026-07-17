@@ -1,0 +1,41 @@
+import ftplib
+import io
+import time
+import requests
+
+host = "167.235.11.154"
+user = "terapkco"
+password = "(3#JCk2Vyn94hY"
+
+# 1. Upload the diagnostic passenger_wsgi_diag.py
+try:
+    print("Connecting to FTP...")
+    ftp = ftplib.FTP(host, user, password, timeout=15)
+    ftp.set_pasv(True)
+    
+    print("Uploading passenger_wsgi_diag.py as passenger_wsgi.py...")
+    ftp.cwd('xcomic_backend')
+    with open("passenger_wsgi_diag.py", "rb") as f:
+        ftp.storbinary('STOR passenger_wsgi.py', f)
+        
+    print("Restarting Passenger...")
+    ftp.cwd('../tmp')
+    ftp.storbinary('STOR restart.txt', io.BytesIO(b''))
+    ftp.quit()
+    print("FTP upload and restart completed.")
+except Exception as e:
+    print(f"FTP Error: {e}")
+
+# 2. Wait and request
+print("Waiting for Passenger to load diagnostic app (10 seconds)...")
+time.sleep(10)
+
+url = "https://xcomic.xyz/api/ping"
+print(f"Sending GET request to {url}...")
+try:
+    r = requests.get(url, timeout=30)
+    print(f"Status Code: {r.status_code}")
+    print("Response Content:")
+    print(r.text)
+except Exception as e:
+    print(f"HTTP Request failed: {e}")

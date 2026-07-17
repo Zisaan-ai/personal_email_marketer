@@ -1,0 +1,2342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XComic Email Marketer — Elegant Email Marketing</title>
+    <meta name="description" content="AI-powered email marketing platform. Clean, elegant, powerful.">
+    <link rel="stylesheet" href="/assets/style.css?v=1783012228">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+    /* ============================================================
+       AUTH PAGE — FRESH REBUILD
+       ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; -webkit-font-smoothing: antialiased; }
+
+    /* WAKE OVERLAY */
+    #wake-overlay {
+        display: none; position: fixed; inset: 0;
+        background: rgba(255,255,255,0.97); z-index: 99999;
+        flex-direction: column; align-items: center; justify-content: center;
+        gap: 16px;
+    }
+    #wake-overlay.on { display: flex; }
+    #wake-overlay .spin {
+        width: 44px; height: 44px;
+        border: 4px solid #e2e8f0;
+        border-top-color: #4f46e5;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* AUTH PAGE (PREMIUM FULL SCREEN) */
+    #auth-page { 
+        flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; min-height: 100vh; 
+        background: #0f172a; /* Deep premium slate */
+        position: relative;
+        overflow: hidden;
+        padding: 24px; 
+    }
+    
+    /* Animated Premium Orbs */
+    #auth-page::before, #auth-page::after {
+        content: ''; position: absolute;
+        width: 700px; height: 700px;
+        filter: blur(100px); opacity: 0.4;
+        border-radius: 50%;
+        z-index: 0;
+        animation: floatBg 20s infinite alternate ease-in-out;
+    }
+    #auth-page::before {
+        background: #4f46e5; /* Indigo */
+        top: -150px; left: -150px;
+    }
+    #auth-page::after {
+        background: #c026d3; /* Fuchsia */
+        bottom: -150px; right: -150px;
+        animation-delay: -10s;
+    }
+    
+    @keyframes floatBg {
+        0% { transform: translate(0, 0) scale(1); }
+        33% { transform: translate(50px, -80px) scale(1.1); }
+        66% { transform: translate(-40px, 40px) scale(0.9); }
+        100% { transform: translate(0, 0) scale(1); }
+    }
+
+    #auth-page.hidden { display: none; }
+    
+    /* AUTH WRAPPER (GLASS CONTAINER) */
+    .auth-wrapper {
+        position: relative;
+        z-index: 10;
+        display: flex;
+        align-items: stretch;
+        background: rgba(15, 23, 42, 0.4);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 32px;
+        box-shadow: 0 40px 80px -20px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);
+        width: 100%;
+        max-width: 1000px;
+        overflow: hidden;
+        animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    /* LEFT SIDE (PREMIUM FEATURES) */
+    .auth-info {
+        flex: 1.1;
+        padding: 64px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
+        background: radial-gradient(circle at top left, rgba(255,255,255,0.03), transparent 70%);
+    }
+    
+    .ai-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; }
+    .ai-logo img { width: 32px; height: 32px; border-radius: 8px; }
+    .ai-logo span { font-size: 20px; font-weight: 800; color: #ffffff; letter-spacing: -0.02em; }
+
+    .auth-info h1 {
+        font-size: 42px; font-weight: 800; line-height: 1.15; margin-bottom: 20px;
+        background: linear-gradient(135deg, #ffffff, #a5b4fc);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -0.03em;
+    }
+    .auth-info > p { font-size: 16px; color: #94a3b8; line-height: 1.6; margin-bottom: 48px; }
+
+    .pf-list { display: flex; flex-direction: column; gap: 32px; }
+    .pf-item { display: flex; align-items: flex-start; gap: 16px; }
+    .pf-icon {
+        width: 44px; height: 44px; border-radius: 12px;
+        background: rgba(79, 70, 229, 0.15);
+        border: 1px solid rgba(79, 70, 229, 0.3);
+        display: flex; align-items: center; justify-content: center;
+        color: #818cf8; font-size: 18px; flex-shrink: 0;
+        box-shadow: 0 0 20px rgba(79, 70, 229, 0.2);
+    }
+    .pf-text h4 { font-size: 16px; font-weight: 700; color: #f1f5f9; margin-bottom: 6px; }
+    .pf-text p { font-size: 14px; color: #64748b; line-height: 1.5; font-weight: 500; }
+
+    /* RIGHT SIDE (AUTH FORM) */
+    .auth-box {
+        flex: 1;
+        background: #ffffff;
+        padding: 64px 48px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    @media (max-width: 900px) {
+        .auth-wrapper { flex-direction: column; max-width: 440px; border-radius: 24px; }
+        .auth-info { display: none; }
+        .auth-box { padding: 48px 40px; border-radius: 24px; }
+    }
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(16px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* LOGO */
+    .auth-logo {
+        display: flex; align-items: center; gap: 10px;
+        margin-bottom: 32px;
+        justify-content: center;
+    }
+    .auth-logo img { width: 40px; height: 40px; border-radius: 10px; object-fit: cover; }
+    .auth-logo span { font-size: 20px; font-weight: 800; color: #0f172a; letter-spacing: -0.03em; }
+
+    /* TABS */
+    .atabs {
+        display: flex; background: #f1f5f9;
+        border-radius: 12px; padding: 4px;
+        margin-bottom: 28px; gap: 4px;
+    }
+    .atab {
+        flex: 1; padding: 10px 0;
+        border: none; background: transparent;
+        font-size: 14px; font-weight: 600;
+        color: #64748b; cursor: pointer;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .atab.active {
+        background: #ffffff;
+        color: #0f172a;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    /* HEADING */
+    .auth-head { font-size: 24px; font-weight: 800; color: #0f172a; margin-bottom: 6px; letter-spacing: -0.02em; }
+    .auth-sub { font-size: 14px; color: #64748b; margin-bottom: 24px; font-weight: 500; }
+
+    /* FIELD */
+    .afield { margin-bottom: 16px; }
+    .afield label { display: block; font-size: 12px; font-weight: 700; color: #0f172a; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .afield input {
+        width: 100%; padding: 13px 16px;
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        border-radius: 10px;
+        font-size: 15px;
+        font-family: 'Inter', sans-serif;
+        color: #0f172a;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .afield input:focus {
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 3px rgba(79,70,229,0.12);
+        background: #ffffff;
+    }
+    .afield input::placeholder { color: #94a3b8; }
+
+    /* FORGOT LINK */
+    .aforgot { display: block; text-align: right; font-size: 13px; color: #4f46e5; font-weight: 600; cursor: pointer; margin-bottom: 20px; margin-top: -8px; }
+    .aforgot:hover { text-decoration: underline; }
+
+    /* BUTTON */
+    .abtn {
+        width: 100%; padding: 14px;
+        background: #0f172a;
+        border: none; border-radius: 10px;
+        font-size: 15px; font-weight: 700;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: #ffffff; cursor: pointer;
+        transition: background 0.2s, transform 0.15s;
+        margin-bottom: 12px;
+    }
+    .abtn:hover { background: #1e293b; transform: translateY(-1px); }
+    .abtn:active { transform: translateY(0); }
+    .abtn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .abtn.primary { background: #4f46e5; }
+    .abtn.primary:hover { background: #4338ca; }
+
+    /* ALERT */
+    .aalert {
+        display: none; padding: 12px 16px;
+        border-radius: 10px; font-size: 13px; font-weight: 600;
+        margin-bottom: 16px; align-items: center; gap: 8px;
+    }
+    .aalert.show { display: flex; }
+    .aalert.err { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+    .aalert.ok { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+
+    /* SWITCH TEXT */
+    .aswitch { text-align: center; font-size: 13px; color: #64748b; font-weight: 500; margin-top: 8px; }
+    .aswitch a { color: #0f172a; font-weight: 700; cursor: pointer; }
+    .aswitch a:hover { text-decoration: underline; }
+
+    /* PLAIN INPUT (for verify/forgot) */
+    .plain-inp {
+        width: 100%; padding: 13px 16px;
+        background: #f8fafc;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 15px;
+        font-family: 'Inter', sans-serif;
+        color: #0f172a;
+        outline: none;
+        margin-bottom: 12px;
+        transition: border-color 0.2s;
+    }
+    .plain-inp:focus { border-color: #4f46e5; background: #fff; }
+    .plain-inp::placeholder { color: #94a3b8; }
+
+    .back-link { display: inline-block; margin-top: 16px; font-size: 13px; color: #64748b; cursor: pointer; font-weight: 600; }
+    .back-link:hover { color: #0f172a; }
+
+    /* HIDDEN UTIL */
+    .hidden { display: none !important; }
+    </style>
+<style>
+    [data-theme="dark"] {
+        --bg: #0f172a;
+        --surface: #1e293b;
+        --border: #334155;
+        --text: #f8fafc;
+        --text-muted: #94a3b8;
+    }
+    [data-theme="dark"] .glass {
+        background: rgba(30, 41, 59, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    [data-theme="dark"] input, [data-theme="dark"] select, [data-theme="dark"] textarea {
+        background: #0f172a !important;
+        color: #f8fafc !important;
+        border-color: #334155 !important;
+    }
+    [data-theme="dark"] .stat-card {
+        background: #1e293b !important;
+        border-color: #334155 !important;
+    }
+</style>
+    <!-- Choices.js for searchable dropdowns -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+</head>
+<body>
+
+<!-- WAKE OVERLAY -->
+<div id="wake-overlay">
+    <div class="spin"></div>
+    <div style="font-size:15px;font-weight:600;color:#64748b;">Connecting to server...</div>
+</div>
+
+<!-- AUTH PAGE -->
+<div id="auth-page">
+    
+    <div class="auth-wrapper">
+        <!-- LEFT: PREMIUM INFO -->
+        <div class="auth-info">
+            <div class="ai-logo">
+                <img src="/assets/logo.jpg" alt="logo">
+                <span>XComic Email Marketer</span>
+            </div>
+            <h1>The smarter way to send cold emails.</h1>
+            <p>XComic Email Marketer helps you reach the inbox, scale your outreach, and drive real revenue with AI-powered tools.</p>
+            
+            <div class="pf-list">
+                <div class="pf-item">
+                    <div class="pf-icon"><i class="fa-solid fa-server"></i></div>
+                    <div class="pf-text">
+                        <h4>Round-Robin Sending</h4>
+                        <p>Rotate multiple email accounts automatically to ensure maximum deliverability and safety.</p>
+                    </div>
+                </div>
+                <div class="pf-item">
+                    <div class="pf-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                    <div class="pf-text">
+                        <h4>AI Reply Classification</h4>
+                        <p>Instantly categorize responses as Interested or Bounced using advanced AI models.</p>
+                    </div>
+                </div>
+                <div class="pf-item">
+                    <div class="pf-icon"><i class="fa-solid fa-chart-line"></i></div>
+                    <div class="pf-text">
+                        <h4>Real-time Analytics</h4>
+                        <p>Track opens, clicks, and conversions on a stunning, interactive dashboard.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: FORM -->
+        <div class="auth-box">
+
+            <!-- Tabs -->
+            <div class="atabs">
+                <button class="atab active" id="tab-login" onclick="AUTH.showLogin()">Sign In</button>
+                <button class="atab" id="tab-signup" onclick="AUTH.showSignup()">Sign Up</button>
+            </div>
+
+        <!-- LOGIN FORM -->
+        <div id="form-login">
+            <p class="auth-head">Welcome back 👋</p>
+            <p class="auth-sub">Enter your details to sign in.</p>
+            <div class="aalert" id="login-alert"></div>
+            <div class="afield">
+                <label>Email</label>
+                <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email">
+            </div>
+            <div class="afield">
+                <label>Password</label>
+                <input type="password" id="login-pass" placeholder="••••••••"
+                       autocomplete="current-password"
+                       onkeydown="if(event.key==='Enter') AUTH.doLogin()">
+            </div>
+            <a class="aforgot" onclick="AUTH.showForgot()">Forgot password?</a>
+            <button class="abtn" id="login-btn" onclick="AUTH.doLogin()">Sign In</button>
+            <p class="aswitch">Don't have an account? <a onclick="AUTH.showSignup()">Sign up</a></p>
+        </div>
+
+        <!-- SIGNUP FORM -->
+        <div id="form-signup" class="hidden">
+            <p class="auth-head">Create account ✨</p>
+            <p class="auth-sub">Start sending elegant emails today.</p>
+            <div class="aalert" id="signup-alert"></div>
+            <div class="afield">
+                <label>Email</label>
+                <input type="email" id="signup-email" placeholder="you@example.com" autocomplete="email">
+            </div>
+            <div class="afield">
+                <label>Password</label>
+                <input type="password" id="signup-pass" placeholder="••••••••" autocomplete="new-password">
+            </div>
+            <div class="afield">
+                <label>Confirm Password</label>
+                <input type="password" id="signup-pass2" placeholder="••••••••"
+                       autocomplete="new-password"
+                       onkeydown="if(event.key==='Enter') AUTH.doSignup()">
+            </div>
+            <button class="abtn primary" id="signup-btn" onclick="AUTH.doSignup()">Create Account</button>
+            <p class="aswitch">Already have an account? <a onclick="AUTH.showLogin()">Sign in</a></p>
+        </div>
+
+        <!-- VERIFY FORM -->
+        <div id="verify-box" class="hidden">
+            <p class="auth-head">Check your email 📧</p>
+            <p class="auth-sub">We sent a 6-digit verification code to your email address.</p>
+            <div class="aalert" id="verify-alert"></div>
+            <input type="text" id="verify-code" class="plain-inp" placeholder="Enter 6-digit code" style="text-align:center; font-size:24px; font-weight:800; letter-spacing:8px;" maxlength="6" onkeydown="if(event.key==='Enter') AUTH.doVerify()">
+            <button class="abtn primary" id="verify-btn" onclick="AUTH.doVerify()">Verify Account</button>
+            <a class="back-link" onclick="AUTH.showSignup()">← Back to sign up</a>
+        </div>
+
+        <!-- FORGOT PASSWORD FORM -->
+        <div id="forgot-box" class="hidden">
+            <div id="forgot-step1">
+                <p class="auth-head">Reset password 🔑</p>
+                <p class="auth-sub">Enter your email and we'll send a code to reset your password.</p>
+                <div class="aalert" id="forgot-alert"></div>
+                <div class="afield">
+                    <label>Email Address</label>
+                    <input type="email" id="forgot-email" placeholder="you@example.com">
+                </div>
+                <button class="abtn" id="forgot-btn" onclick="AUTH.sendReset()">Send Reset Code</button>
+                <a class="back-link" onclick="AUTH.showLogin()">← Back to sign in</a>
+            </div>
+            <div id="forgot-step2" class="hidden">
+                <p class="auth-head">Set new password 🔒</p>
+                <p class="auth-sub">Enter the code from your email and a new password.</p>
+                <div class="afield">
+                    <label>Reset Code</label>
+                    <input type="text" id="reset-code" placeholder="6-digit code">
+                </div>
+                <div class="afield">
+                    <label>New Password</label>
+                    <input type="password" id="new-pass" placeholder="••••••••">
+                </div>
+                <button class="abtn primary" id="reset-btn" onclick="AUTH.doReset()">Reset Password</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- ============================================================
+     MAIN APP
+     ============================================================ -->
+<div id="app-page">
+    <aside class="sidebar">
+        <div class="logo" style="gap:12px;">
+            <img src="/assets/logo.jpg" style="width:32px; height:32px; border-radius:8px; object-fit:cover; box-shadow:0 4px 6px -1px rgba(99,102,241,0.3);">
+            <h2>XComic Email Marketer</h2>
+        </div>
+        <nav>
+            <a class="nav-item active" data-target="dashboard" onclick="window.navTo('dashboard')">
+                <i class="fa-solid fa-chart-line"></i><span>Dashboard</span>
+            </a>
+            <a class="nav-item" data-target="campaigns-list" onclick="window.navTo('campaigns-list')">
+                <i class="fa-solid fa-wand-magic-sparkles"></i><span>Visual Builder</span>
+            </a>
+            <a class="nav-item" data-target="cold-mail-list" onclick="window.navTo('cold-mail-list')">
+                <i class="fa-solid fa-snowflake"></i><span>Cold Mail</span>
+            </a>
+            <a class="nav-item" data-target="sending-accounts-view" onclick="window.navTo('sending-accounts-view')">
+                <i class="fa-solid fa-at"></i><span>Sending Accounts</span>
+            </a>
+            <a class="nav-item" data-target="unsubscribes-view" onclick="window.navTo('unsubscribes-view')">
+                <i class="fa-solid fa-user-xmark"></i><span>Unsubscribes</span>
+            </a>
+            <a class="nav-item" data-target="audience-health" onclick="window.navTo('audience-health')">
+                <i class="fa-solid fa-heart-pulse"></i><span>Audience Health</span>
+            </a>
+            <a class="nav-item" data-target="replies-view" onclick="window.navTo('replies-view')">
+                <i class="fa-solid fa-inbox"></i><span>AI Replies</span>
+            </a>
+            <a class="nav-item" data-target="settings" onclick="window.navTo('settings')">
+                <i class="fa-solid fa-gear"></i><span>Settings</span>
+            </a>
+            <a class="nav-item" data-target="admin-view" id="nav-admin" style="display:none;" onclick="window.navTo('admin-view')">
+                <i class="fa-solid fa-shield-halved"></i><span>Admin</span>
+            </a>
+            <a class="nav-item" data-target="about-view" onclick="window.navTo('about-view')">
+                <i class="fa-solid fa-circle-info"></i><span>About</span>
+            </a>
+            <div style="border-top:1px solid var(--border); margin:12px 0;"></div>
+            <a class="nav-item" id="theme-toggle" onclick="window.toggleTheme()" style="cursor:pointer; justify-content:space-between;">
+                <div style="display:flex;align-items:center;gap:12px;"><i class="fa-solid fa-moon" id="theme-icon"></i><span>Dark Mode</span></div>
+                <div style="width:32px;height:18px;background:var(--border);border-radius:10px;position:relative;"><div id="theme-switch" style="width:14px;height:14px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:0.2s;"></div></div>
+            </a>
+        </nav>
+        <div style="margin-top:auto;">
+            <button id="logout-btn" class="btn" style="width:100%;color:#64748b;border-color:transparent;box-shadow:none;background:transparent;justify-content:flex-start;padding-left:16px;">
+                <i class="fa-solid fa-right-from-bracket"></i> Log out
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+
+        <!-- DASHBOARD -->
+        <div id="dashboard" class="view active">
+            <div class="page-header" style="margin-bottom: 32px; display:flex; justify-content:space-between; align-items:flex-end;">
+                <div>
+                    <h1 class="page-title" style="font-size: 28px; margin-bottom: 8px;">Overview</h1>
+                    <p class="page-subtitle" style="font-size: 15px;">Welcome back! Here is a summary of your recent campaign performance.</p>
+                </div>
+                
+            </div>
+            
+            
+            <h3 style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 16px; margin-top: 0px;">
+                <i class="fa-solid fa-bolt" style="color: #4f46e5; margin-right: 8px;"></i>
+                Cold Sequence Performance
+            </h3>
+            <div class="stats-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:24px;margin-bottom:32px;">
+                <div class="stat-card" style="background:#fff;padding:24px;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.03);border:1px solid rgba(0,0,0,0.04);display:flex;align-items:center;gap:20px;transition:transform 0.2s;">
+                    <div class="stat-icon" style="background:#f1f5f9;color:#475569;width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:22px;"><i class="fa-solid fa-paper-plane"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-label" style="font-size:14px;color:var(--text-muted);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">Emails Sent</div>
+                        <div class="stat-value" id="stat-cold-sent" style="font-size:28px;font-weight:800;color:var(--text);line-height:1;">0</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card" style="background:#fff;padding:24px;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.03);border:1px solid rgba(0,0,0,0.04);display:flex;align-items:center;gap:20px;transition:transform 0.2s;">
+                    <div class="stat-icon" style="background:#dcfce7;color:#059669;width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:22px;"><i class="fa-solid fa-envelope-open"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-label" style="font-size:14px;color:var(--text-muted);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">Open Rate</div>
+                        <div style="display:flex; align-items:baseline; gap:8px;">
+                            <div class="stat-value" id="stat-cold-opens" style="font-size:28px;font-weight:800;color:var(--text);line-height:1;">0%</div>
+                            <div style="font-size:12px; color:#059669; font-weight:700;"><i class="fa-solid fa-arrow-trend-up"></i></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card" style="background:#fff;padding:24px;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.03);border:1px solid rgba(0,0,0,0.04);display:flex;align-items:center;gap:20px;transition:transform 0.2s;">
+                    <div class="stat-icon" style="background:#fce7f3;color:#db2777;width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:22px;"><i class="fa-solid fa-mouse-pointer"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-label" style="font-size:14px;color:var(--text-muted);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">Click Rate</div>
+                        <div style="display:flex; align-items:baseline; gap:8px;">
+                            <div class="stat-value" id="stat-cold-clicks" style="font-size:28px;font-weight:800;color:var(--text);line-height:1;">0%</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card" style="background:#fff;padding:24px;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.03);border:1px solid rgba(0,0,0,0.04);display:flex;align-items:center;gap:20px;transition:transform 0.2s;">
+                    <div class="stat-icon" style="background:#e0e7ff;color:#4f46e5;width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:22px;"><i class="fa-solid fa-reply"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-label" style="font-size:14px;color:var(--text-muted);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">Replies</div>
+                        <div class="stat-value" id="stat-cold-replies" style="font-size:28px;font-weight:800;color:var(--text);line-height:1;">0</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card" style="background:#fff;padding:24px;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.03);border:1px solid rgba(0,0,0,0.04);display:flex;align-items:center;gap:20px;transition:transform 0.2s;">
+                    <div class="stat-icon" style="background:#fee2e2;color:#ef4444;width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:22px;"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-label" style="font-size:14px;color:var(--text-muted);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">Bounces</div>
+                        <div class="stat-value" id="stat-cold-bounces" style="font-size:28px;font-weight:800;color:var(--text);line-height:1;">0</div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <h3 style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 16px; margin-top: 32px;">
+                <i class="fa-solid fa-newspaper" style="color: #475569; margin-right: 8px;"></i>
+                Newsletter Performance
+            </h3>
+            <div class="stats-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:24px;margin-bottom:32px;">
+                <div class="stat-card" style="background:#fff;padding:24px;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.03);border:1px solid rgba(0,0,0,0.04);display:flex;align-items:center;gap:20px;transition:transform 0.2s;">
+                    <div class="stat-icon" style="background:#f1f5f9;color:#475569;width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:22px;"><i class="fa-solid fa-paper-plane"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-label" style="font-size:14px;color:var(--text-muted);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">Emails Sent</div>
+                        <div class="stat-value" id="stat-news-sent" style="font-size:28px;font-weight:800;color:var(--text);line-height:1;">0</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card" style="background:#fff;padding:24px;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.03);border:1px solid rgba(0,0,0,0.04);display:flex;align-items:center;gap:20px;transition:transform 0.2s;">
+                    <div class="stat-icon" style="background:#dcfce7;color:#059669;width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:22px;"><i class="fa-solid fa-envelope-open"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-label" style="font-size:14px;color:var(--text-muted);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">Open Rate</div>
+                        <div style="display:flex; align-items:baseline; gap:8px;">
+                            <div class="stat-value" id="stat-news-opens" style="font-size:28px;font-weight:800;color:var(--text);line-height:1;">0%</div>
+                            <div style="font-size:12px; color:#059669; font-weight:700;"><i class="fa-solid fa-arrow-trend-up"></i></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card" style="background:#fff;padding:24px;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.03);border:1px solid rgba(0,0,0,0.04);display:flex;align-items:center;gap:20px;transition:transform 0.2s;">
+                    <div class="stat-icon" style="background:#fce7f3;color:#db2777;width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:22px;"><i class="fa-solid fa-mouse-pointer"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-label" style="font-size:14px;color:var(--text-muted);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">Click Rate</div>
+                        <div style="display:flex; align-items:baseline; gap:8px;">
+                            <div class="stat-value" id="stat-news-clicks" style="font-size:28px;font-weight:800;color:var(--text);line-height:1;">0%</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card" style="background:#fff;padding:24px;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.03);border:1px solid rgba(0,0,0,0.04);display:flex;align-items:center;gap:20px;transition:transform 0.2s;">
+                    <div class="stat-icon" style="background:#e0e7ff;color:#4f46e5;width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:22px;"><i class="fa-solid fa-reply"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-label" style="font-size:14px;color:var(--text-muted);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">Replies</div>
+                        <div class="stat-value" id="stat-news-replies" style="font-size:28px;font-weight:800;color:var(--text);line-height:1;">0</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card" style="background:#fff;padding:24px;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.03);border:1px solid rgba(0,0,0,0.04);display:flex;align-items:center;gap:20px;transition:transform 0.2s;">
+                    <div class="stat-icon" style="background:#fee2e2;color:#ef4444;width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:22px;"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-label" style="font-size:14px;color:var(--text-muted);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">Bounces</div>
+                        <div class="stat-value" id="stat-news-bounces" style="font-size:28px;font-weight:800;color:var(--text);line-height:1;">0</div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Activity Chart Area -->
+            <div class="glass" style="margin-bottom:32px;padding:32px;border-radius:16px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+                    <h3 style="font-size:18px;font-weight:700;margin:0;">Activity Overview</h3>
+                    <select class="form-group" style="margin:0; width:auto; padding:6px 12px; font-size:13px; background:#f8fafc;">
+                        <option>Last 7 Days</option>
+                        <option>Last 30 Days</option>
+                    </select>
+                </div>
+                <div style="height:250px; position:relative; width:100%;">
+                    <canvas id="activityChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Unified Campaigns Table -->
+            <div class="glass" style="padding:0; overflow:hidden; border-radius:16px; margin-bottom: 40px;">
+                <div style="padding:24px 32px 0 32px; border-bottom:1px solid var(--border); background:#fff;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                        <h3 style="font-size:18px;font-weight:700;margin:0;">Recent Campaigns</h3>
+                    </div>
+                    
+                    <div class="clean-tabs-bar" style="margin-bottom:0; border-bottom:none; padding-bottom:0;">
+                        <div class="clean-tab active dash-tab" data-filter="all">All Campaigns</div>
+                        <div class="clean-tab dash-tab" data-filter="cold_mail">Cold Sequences</div>
+                        <div class="clean-tab dash-tab" data-filter="newsletter">Newsletters</div>
+                    </div>
+                </div>
+                <div style="background:#fff;">
+                    <table id="dashboard-unified-table">
+                        <thead>
+                            <tr>
+                                <th>Campaign Name</th>
+                                <th>Type</th>
+                                <th>Progress</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Populated dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ACCOUNT HEALTH SUMMARY -->
+            <div id="dashboard-health-summary" style="margin-bottom:32px;display:none;">
+                <h3 style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 16px;">
+                    <i class="fa-solid fa-heart-pulse" style="color: #059669; margin-right: 8px;"></i>
+                    Account Health Overview
+                </h3>
+                <div id="dashboard-health-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;"></div>
+            </div>
+        </div>
+
+        <!-- CAMPAIGN ANALYTICS (Instantly Clone) -->
+        <div id="view-campaign-details" class="view">
+            <div class="page-header" style="margin-bottom:24px;">
+                <button class="btn" style="margin-bottom:12px; font-size:13px; padding:6px 12px;" onclick="document.querySelector('.nav-item.active').click() || document.querySelector('.nav-item[data-target=\'dashboard\']').click()"><i class="fa-solid fa-arrow-left" style="margin-right:6px;"></i> Back to list</button>
+                <h1 class="page-title" style="font-size:24px;" id="analytics-title">Loading Campaign...</h1>
+            </div>
+            
+            <div class="clean-tabs-bar">
+                <div class="clean-tab active">Analytics</div>
+                <div class="clean-tab">Leads</div>
+                <div class="clean-tab">Sequences</div>
+                <div class="clean-tab">Schedule</div>
+                <div class="clean-tab">Options</div>
+                <div class="clean-tab">Subsequences</div>
+                <div style="flex:1;"></div>
+                <button class="btn primary" style="background:#059669;border-color:#059669;"><i class="fa-solid fa-play"></i> Resume campaign</button>
+                <button class="btn" style="padding:10px 14px;"><i class="fa-solid fa-ellipsis"></i></button>
+            </div>
+            
+            <div style="display:flex;align-items:center;margin-bottom:32px;">
+                <span style="font-size:14px;color:var(--text-muted);font-weight:600;margin-right:12px;">Status:</span>
+                <span class="status-pill" id="analytics-status">Loading</span>
+                <span style="font-size:14px;font-weight:700;margin-left:16px;margin-right:8px;" id="analytics-progress-text">0%</span>
+                <div class="progress-bar-container"><div class="progress-bar-fill" id="analytics-progress-bar"></div></div>
+                
+                <div style="flex:1;"></div>
+                
+                <div style="display:flex;gap:12px;">
+                    <button class="btn" style="padding:8px 16px;font-size:13px;"><i class="fa-solid fa-stethoscope"></i> Diagnose</button>
+                    <button class="btn" style="padding:8px 16px;font-size:13px;"><i class="fa-solid fa-share-nodes"></i> Share</button>
+                    <select class="form-group" style="margin:0;padding:8px 32px 8px 16px;width:auto;font-size:13px;font-weight:600;border-radius:8px;">
+                        <option>Last 4 weeks</option>
+                        <option>All time</option>
+                    </select>
+                    <button class="btn" style="padding:8px 14px;"><i class="fa-solid fa-gear"></i></button>
+                </div>
+            </div>
+
+            <div style="display:flex;gap:16px;flex-wrap:wrap;">
+                <div class="metric-card">
+                    <div class="metric-card-title">Sequence started <i class="fa-solid fa-circle-info"></i></div>
+                    <div class="metric-card-value" id="analytics-seq-started">0</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-card-title">Open rate <i class="fa-solid fa-circle-info"></i></div>
+                    <div class="metric-card-value"><span id="analytics-open-rate">0%</span> <span class="metric-card-sub" id="analytics-open-count">0</span></div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-card-title">Click rate <i class="fa-solid fa-circle-info"></i></div>
+                    <div class="metric-card-value"><span id="analytics-click-rate">0%</span> <span class="metric-card-sub" id="analytics-click-count">0</span></div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-card-title">Opportunities <i class="fa-solid fa-circle-info"></i></div>
+                    <div class="metric-card-value">0 <span class="metric-card-sub">$0</span></div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-card-title">Conversions <i class="fa-solid fa-circle-info"></i></div>
+                    <div class="metric-card-value">0 <span class="metric-card-sub">$0</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CAMPAIGNS LIST (Newsletters) -->
+        <div id="campaigns-list" class="view">
+            <div class="page-header" style="margin-bottom: 32px; display:flex; justify-content:space-between; align-items:flex-end;">
+                <div>
+                    <h1 class="page-title" style="font-size:28px;">Newsletters</h1>
+                    <p class="page-subtitle">Manage and track your beautiful visual email campaigns</p>
+                </div>
+                <div>
+                    <button class="btn primary" style="box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);" onclick="openNewsletterBuilder(null)"><i class="fa-solid fa-plus" style="margin-right:8px;"></i> Create Newsletter</button>
+                </div>
+            </div>
+            
+            <div class="glass" style="padding: 0; overflow: hidden; border-radius: 12px;">
+                <table class="table" style="margin:0;">
+                    <thead>
+                        <tr>
+                            <th style="padding:16px 24px; font-weight:600; color:var(--text-muted); font-size:12px; text-transform:uppercase; letter-spacing:0.05em;">Campaign Name</th>
+                            <th style="padding:16px 24px; font-weight:600; color:var(--text-muted); font-size:12px; text-transform:uppercase; letter-spacing:0.05em;">Status</th>
+                            <th style="padding:16px 24px; font-weight:600; color:var(--text-muted); font-size:12px; text-transform:uppercase; letter-spacing:0.05em;">Sent</th>
+                            <th style="padding:16px 24px; font-weight:600; color:var(--text-muted); font-size:12px; text-transform:uppercase; letter-spacing:0.05em; text-align:right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="newsletters-list-tbody">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- CAMPAIGNS (Visual Builder) -->
+        <div id="campaigns-builder" class="view">
+            <div class="page-header" style="padding-bottom: 24px;">
+                <button class="btn" style="margin-bottom:12px; font-size:13px; padding:6px 12px;" onclick="document.querySelector('.nav-item[data-target=\'campaigns-list\']').click()"><i class="fa-solid fa-arrow-left" style="margin-right:6px;"></i> Back to Newsletters</button>
+                <h1 class="page-title">Visual Builder</h1>
+                <p class="page-subtitle">Design, build, and launch your visually appealing newsletters</p>
+            </div>
+
+            <!-- VISUAL BUILDER TABS -->
+            <div class="clean-tabs-bar" style="margin-bottom:32px;border-bottom:2px solid var(--border);padding-bottom:0;display:flex;gap:32px;">
+                <div class="vb-tab" data-vbtab="analytics" style="padding-bottom:12px;font-weight:600;color:var(--text-muted);cursor:pointer;">Analytics</div>
+                <div class="vb-tab active" data-vbtab="audience" style="padding-bottom:12px;font-weight:700;color:var(--p);cursor:pointer;border-bottom:3px solid var(--p);">1. Select Audience</div>
+                <div class="vb-tab" data-vbtab="design" style="padding-bottom:12px;font-weight:600;color:var(--text-muted);cursor:pointer;">2. Design Editor</div>
+                <div class="vb-tab" data-vbtab="send" style="padding-bottom:12px;font-weight:600;color:var(--text-muted);cursor:pointer;">3. Send / Schedule</div>
+            </div>
+
+            <div id="tab-builder">
+
+            <!-- ANALYTICS TAB -->
+            <div id="vb-tab-analytics" class="vb-tab-content" style="display:none;">
+                <div style="display:flex;align-items:center;margin-bottom:32px;background:#f8fafc;padding:16px 24px;border-radius:12px;border:1px solid var(--border);">
+                    <span style="font-size:14px;color:var(--text-muted);font-weight:600;margin-right:12px;">Campaign Status:</span>
+                    <span class="status-pill" id="vb-analytics-status" style="font-size:13px;padding:4px 12px;">Loading</span>
+                    <div style="flex:1;"></div>
+                    <div id="vb-analytics-actions" style="display:flex;gap:12px;"></div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:24px;margin-bottom:32px;">
+                    <div class="stat-card" style="background:#fff;padding:24px;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.03);border:1px solid rgba(0,0,0,0.04);">
+                        <div style="font-size:14px;color:var(--text-muted);font-weight:600;margin-bottom:8px;">Leads Contacted</div>
+                        <div style="font-size:32px;font-weight:800;color:var(--text);" id="vb-analytics-seq-started">0</div>
+                    </div>
+                    <div class="stat-card" style="background:#fff;padding:24px;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.03);border:1px solid rgba(0,0,0,0.04);">
+                        <div style="font-size:14px;color:var(--text-muted);font-weight:600;margin-bottom:8px;">Open Rate</div>
+                        <div style="display:flex;align-items:baseline;gap:12px;">
+                            <div style="font-size:32px;font-weight:800;color:var(--text);" id="vb-analytics-open-rate">0%</div>
+                            <div style="font-size:14px;color:var(--text-muted);font-weight:600;" id="vb-analytics-open-count">(0 opens)</div>
+                        </div>
+                    </div>
+                    <div class="stat-card" style="background:#fff;padding:24px;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.03);border:1px solid rgba(0,0,0,0.04);">
+                        <div style="font-size:14px;color:var(--text-muted);font-weight:600;margin-bottom:8px;">Click Rate</div>
+                        <div style="display:flex;align-items:baseline;gap:12px;">
+                            <div style="font-size:32px;font-weight:800;color:var(--text);" id="vb-analytics-click-rate">0%</div>
+                            <div style="font-size:14px;color:var(--text-muted);font-weight:600;" id="vb-analytics-click-count">(0 clicks)</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="glass" style="padding:24px;border-radius:16px;">
+                    <h4 style="font-size:16px;font-weight:700;margin-bottom:16px;">Campaign Leads Analytics</h4>
+                    <div style="overflow-x:auto;">
+                        <table class="table" style="margin:0;">
+                            <thead>
+                                <tr>
+                                    <th style="padding:12px 16px; font-weight:600; color:var(--text-muted); font-size:12px;">Email</th>
+                                    <th style="padding:12px 16px; font-weight:600; color:var(--text-muted); font-size:12px;">Name</th>
+                                    <th style="padding:12px 16px; font-weight:600; color:var(--text-muted); font-size:12px;">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="vb-analytics-leads-tbody">
+                                <!-- Populated dynamically by JS -->
+                                <tr><td colspan="3" style="text-align:center;padding:24px;color:var(--text-muted);">Loading leads...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+                <!-- AUDIENCE TAB -->
+                <div id="vb-tab-audience" class="vb-tab-content" style="display:block;">
+                    <div class="glass" style="max-width:800px;">
+                        <h3 style="font-size:18px;font-weight:700;margin-bottom:24px;">Who are you sending this to?</h3>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:8px;">
+                                <label style="margin-bottom:0;">Campaign Audience (Leads)</label>
+                                <div style="display:flex; gap:8px;">
+                                    <button onclick="window.saveLeads('newsletter-leads')" style="padding:4px 12px; background:var(--surface); color:var(--text); border:1px solid var(--border); border-radius:6px; cursor:pointer; font-size:11px; font-weight:600; display:flex; align-items:center; gap:6px;"><i class="fa-solid fa-floppy-disk"></i> Save Leads</button>
+                                    <button onclick="window.clearLeads('newsletter-leads')" style="padding:4px 12px; background:#fef2f2; color:#ef4444; border:1px solid #fca5a5; border-radius:6px; cursor:pointer; font-size:11px; font-weight:600; display:flex; align-items:center; gap:6px;"><i class="fa-solid fa-trash"></i> Delete</button>
+                                </div>
+                            </div>
+                            <textarea id="newsletter-leads" rows="6" placeholder="john@example.com, John Doe, ACME Corp&#10;(One lead per line)" style="font-size:14px;padding:16px;"></textarea>
+                            <div id="newsletter-leads-list" style="margin-top:24px; display:flex; flex-direction:column; gap:8px;"></div>
+                        </div>
+                        <div style="display:flex;justify-content:flex-end;margin-top:24px;">
+                            <button class="btn primary" onclick="window.switchVbTab('design')">Next: Design Editor <i class="fa-solid fa-arrow-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DESIGN TAB -->
+                <div id="vb-tab-design" class="vb-tab-content" style="display:none;">
+                    <div class="builder-top-bar" style="display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-bottom:1px solid var(--border);background:var(--surface);">
+                        <div class="builder-top-left" style="flex:1;">
+                            <input type="text" id="campaign-subject" placeholder="Campaign Subject Line..." style="border:1px solid transparent;background:transparent;font-size:18px;font-weight:700;padding:8px;width:100%;max-width:500px;outline:none;border-radius:8px;transition:all 0.2s;" onfocus="this.style.background='#f1f5f9';this.style.borderColor='var(--border)'" onblur="this.style.background='transparent';this.style.borderColor='transparent'">
+                            
+                            <!-- Visual Builder Helper -->
+                            <div style="margin-left:8px; display:inline-flex; align-items:center; gap:8px;">
+                                <span style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;"><i class="fa-solid fa-copy"></i> Helpers:</span>
+                                <button type="button" onclick="navigator.clipboard.writeText('{{firstName}}'); showToast('Copied {{firstName}}')" style="background:#dbeafe; color:#1d4ed8; border:1px solid #bfdbfe; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:600; cursor:pointer; outline:none;">{{firstName}}</button>
+                                <button type="button" onclick="navigator.clipboard.writeText('{{company}}'); showToast('Copied {{company}}')" style="background:#dbeafe; color:#1d4ed8; border:1px solid #bfdbfe; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:600; cursor:pointer; outline:none;">{{company}}</button>
+                                <button type="button" onclick="navigator.clipboard.writeText('{Hello|Hi}'); showToast('Copied {Hello|Hi}')" style="background:#fce7f3; color:#be185d; border:1px solid #fbcfe8; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:600; cursor:pointer; outline:none;">{Hello|Hi}</button>
+                            </div>
+                        </div>
+                    <div class="builder-top-right" style="display:flex;gap:12px;">
+                        <button class="btn" style="background:#fff;" onclick="window.undo()"><i class="fa-solid fa-rotate-left"></i> Undo</button>
+                        <button class="btn" style="background:#fff;" onclick="window.redo()"><i class="fa-solid fa-rotate-right"></i> Redo</button>
+                        <button class="btn" style="background:#fff;" onclick="window.saveAsTemplate()"><i class="fa-solid fa-download"></i> Save Template</button>
+                        <button class="btn" style="background:#fff;" onclick="document.getElementById('save-newsletter-draft-btn').click()"><i class="fa-solid fa-save"></i> Save Draft</button>
+                        <button class="btn primary" onclick="window.switchVbTab('send')">Next: Review <i class="fa-solid fa-arrow-right"></i></button>
+                    </div>
+                </div>
+
+                <div class="builder-layout" style="display:flex;height:calc(100vh - 180px);">
+                    <!-- CANVAS (LEFT/CENTER) -->
+                    <div class="builder-canvas-wrapper" style="flex:1;background:#e9ecef;overflow-y:auto;padding:32px;display:flex;justify-content:center;">
+                        <div id="builder-canvas" class="email-canvas" style="width:100%;max-width:600px;background:#fff;min-height:500px;border-radius:8px;box-shadow:var(--shadow-sm);padding:24px;">
+                            <div class="canvas-placeholder" style="text-align:center;padding:60px 20px;color:var(--text-muted);border:2px dashed var(--border);border-radius:8px;">
+                                <i class="fa-solid fa-layer-group" style="font-size:32px;color:#cbd5e1;margin-bottom:16px;display:block;"></i>
+                                Drag blocks here to build your email
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SIDEBAR (RIGHT) -->
+                    <div class="builder-sidebar" style="width:320px;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;">
+                        
+                        <!-- DEFAULT MODE (Blocks & Styles) -->
+                        <div id="builder-sidebar-default" style="display:flex;flex-direction:column;flex:1;">
+                            <div class="mc-tabs" style="display:flex;border-bottom:1px solid var(--border);">
+                                <div class="mc-tab active" data-mctab="blocks" onclick="window.switchMcTab('blocks')" style="flex:1;text-align:center;padding:14px;font-weight:600;font-size:14px;cursor:pointer;border-bottom:2px solid var(--p);color:var(--p);">Content</div>
+                                <div class="mc-tab" data-mctab="styles" onclick="window.switchMcTab('styles')" style="flex:1;text-align:center;padding:14px;font-weight:600;font-size:14px;cursor:pointer;border-bottom:2px solid transparent;color:var(--text-muted);">Style</div>
+                            </div>
+                            
+                            <!-- BLOCKS TAB -->
+                            <div id="mc-tab-blocks" class="mc-tab-content active" style="padding:0;flex:1;display:block;overflow-y:auto;">
+                                <!-- Background Color -->
+                                <div style="padding:16px 20px;border-bottom:1px solid var(--border);">
+                                    <label style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:10px;">Page Background</label>
+                                    <input type="color" id="global-bg-color" value="#ffffff" style="height:40px;padding:4px;cursor:pointer;width:100%;border-radius:6px;border:1px solid var(--border);">
+                                </div>
+                                <div style="padding:16px 20px 24px;">
+                                    <label style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:10px;">Blocks</label>
+                                    <div id="block-palette" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                                    <div class="draggable-block mc-block" data-type="text" draggable="true" ondragstart="window.drag(event)" style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:24px 12px;text-align:center;cursor:grab;transition:all 0.2s;">
+                                        <i class="fa-solid fa-font" style="font-size:24px;color:#64748b;margin-bottom:8px;display:block;"></i> <span style="font-size:13px;font-weight:600;color:var(--text-muted);">Text</span>
+                                    </div>
+                                    <div class="draggable-block mc-block" data-type="image" draggable="true" ondragstart="window.drag(event)" style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:24px 12px;text-align:center;cursor:grab;transition:all 0.2s;">
+                                        <i class="fa-regular fa-image" style="font-size:24px;color:#64748b;margin-bottom:8px;display:block;"></i> <span style="font-size:13px;font-weight:600;color:var(--text-muted);">Image</span>
+                                    </div>
+                                    <div class="draggable-block mc-block" data-type="button" draggable="true" ondragstart="window.drag(event)" style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:24px 12px;text-align:center;cursor:grab;transition:all 0.2s;">
+                                        <i class="fa-solid fa-square-pointer" style="font-size:24px;color:#64748b;margin-bottom:8px;display:block;"></i> <span style="font-size:13px;font-weight:600;color:var(--text-muted);">Button</span>
+                                    </div>
+                                    <div class="draggable-block mc-block" data-type="divider" draggable="true" ondragstart="window.drag(event)" style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:24px 12px;text-align:center;cursor:grab;transition:all 0.2s;">
+                                        <i class="fa-solid fa-minus" style="font-size:24px;color:#64748b;margin-bottom:8px;display:block;"></i> <span style="font-size:13px;font-weight:600;color:var(--text-muted);">Divider</span>
+                                    </div>
+
+                                    <div class="draggable-block mc-block" data-type="socials" draggable="true" ondragstart="window.drag(event)" style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:24px 12px;text-align:center;cursor:grab;transition:all 0.2s;">
+                                        <i class="fa-solid fa-share-nodes" style="font-size:24px;color:#64748b;margin-bottom:8px;display:block;"></i> <span style="font-size:13px;font-weight:600;color:var(--text-muted);">Socials</span>
+                                    </div>
+                                    <div class="draggable-block mc-block" data-type="columns2" draggable="true" ondragstart="window.drag(event)" style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:24px 12px;text-align:center;cursor:grab;transition:all 0.2s;">
+                                        <i class="fa-solid fa-table-columns" style="font-size:24px;color:#64748b;margin-bottom:8px;display:block;"></i> <span style="font-size:13px;font-weight:600;color:var(--text-muted);">2 Columns</span>
+                                    </div>
+                                    <div class="draggable-block mc-block" data-type="video" draggable="true" ondragstart="window.drag(event)" style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:24px 12px;text-align:center;cursor:grab;transition:all 0.2s;">
+                                        <i class="fa-solid fa-circle-play" style="font-size:24px;color:#64748b;margin-bottom:8px;display:block;"></i> <span style="font-size:13px;font-weight:600;color:var(--text-muted);">Video</span>
+                                    </div>
+                                    <div class="draggable-block mc-block" data-type="custom_html" draggable="true" ondragstart="window.drag(event)" style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:24px 12px;text-align:center;cursor:grab;transition:all 0.2s;">
+                                        <i class="fa-solid fa-code" style="font-size:24px;color:#64748b;margin-bottom:8px;display:block;"></i> <span style="font-size:13px;font-weight:600;color:var(--text-muted);">Custom HTML</span>
+                                    </div>
+                                    <div class="draggable-block mc-block" data-type="header" draggable="true" ondragstart="window.drag(event)" style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:24px 12px;text-align:center;cursor:grab;transition:all 0.2s;">
+                                        <i class="fa-solid fa-heading" style="font-size:24px;color:#64748b;margin-bottom:8px;display:block;"></i> <span style="font-size:13px;font-weight:600;color:var(--text-muted);">Logo / Header</span>
+                                    </div>
+                                    <div class="draggable-block mc-block" data-type="footer" draggable="true" ondragstart="window.drag(event)" style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:24px 12px;text-align:center;cursor:grab;transition:all 0.2s;">
+                                        <i class="fa-solid fa-shoe-prints" style="font-size:24px;color:#64748b;margin-bottom:8px;display:block;"></i> <span style="font-size:13px;font-weight:600;color:var(--text-muted);">Footer</span>
+                                    </div>
+                                    <div class="draggable-block mc-block" data-type="product" draggable="true" ondragstart="window.drag(event)" style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:24px 12px;text-align:center;cursor:grab;transition:all 0.2s;">
+                                        <i class="fa-solid fa-box-open" style="font-size:24px;color:#64748b;margin-bottom:8px;display:block;"></i> <span style="font-size:13px;font-weight:600;color:var(--text-muted);">Product</span>
+                                    </div>
+                                    <div class="draggable-block mc-block" data-type="image_group" draggable="true" ondragstart="window.drag(event)" style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:24px 12px;text-align:center;cursor:grab;transition:all 0.2s;">
+                                        <i class="fa-solid fa-images" style="font-size:24px;color:#64748b;margin-bottom:8px;display:block;"></i> <span style="font-size:13px;font-weight:600;color:var(--text-muted);">Image Group</span>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- STYLES TAB -->
+                            <div id="mc-tab-styles" class="mc-tab-content" style="padding:0;flex:1;display:none;overflow-y:auto;">
+                                <!-- Template Selection -->
+                                <div style="padding:16px 20px;">
+                                    <label style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:10px;">Select a Template</label>
+                                    <div id="template-accordion-container" style="display:flex;flex-direction:column;gap:8px;">
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- EDIT MODE (Properties) -->
+                        <div id="builder-sidebar-edit" style="display:none;flex-direction:column;flex:1;">
+                            <div class="mc-edit-header" style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:#f8fafc;">
+                                <h3 id="mc-edit-title" style="font-size:15px;font-weight:700;margin:0;">Text</h3>
+                                <div style="display:flex;gap:8px;">
+                                    <button class="btn" id="cancel-block-btn" style="padding:6px 12px;font-size:12px;background:var(--surface-1);border:1px solid var(--border);color:var(--text-muted);">Cancel</button>
+                                    <button class="btn primary" id="save-block-btn" style="padding:6px 12px;font-size:12px;">Save & Close</button>
+                                </div>
+                            </div>
+                            <div id="property-fields" style="padding:20px;flex:1;">
+                                <p class="placeholder-text" style="text-align:center;margin-top:20px;">Select a block to edit</p>
+                            </div>
+                            <div style="padding:16px 20px;border-top:1px solid var(--border);background:#f8fafc;">
+                                <button id="delete-block-btn" class="btn danger" style="width:100%;"><i class="fa-solid fa-trash"></i> Delete Block</button>
+                            </div>
+                        </div>
+
+                        <div id="campaign-status" class="alert" style="margin:20px;display:none;"></div>
+                    </div>
+                </div>
+            </div>
+
+                <!-- SEND TAB -->
+                <div id="vb-tab-send" class="vb-tab-content" style="display:none;">
+                    <div class="glass" style="max-width:800px;">
+                        <h3 style="font-size:18px;font-weight:700;margin-bottom:24px;">Review & Launch</h3>
+                        <p style="color:var(--text-muted);margin-bottom:32px;">Make sure your subject line is set and you have selected an audience.</p>
+                        
+                        <div style="background:var(--surface-1); border:1px solid var(--border); border-radius:12px; padding:24px; margin-bottom:24px;">
+                            <h4 style="margin-top:0; margin-bottom:16px; font-size:15px;"><i class="fa-solid fa-clock" style="margin-right:8px; color:var(--text-muted);"></i>Sending Schedule</h4>
+                            <div class="form-group">
+                                <label>Timezone</label>
+                                <select id="vb-sch-timezone"></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Sending Days</label>
+                                <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                                    <label style="display:flex;align-items:center;gap:6px;font-weight:600;"><input type="checkbox" id="vb-sch-day-mon" checked> Mon</label>
+                                    <label style="display:flex;align-items:center;gap:6px;font-weight:600;"><input type="checkbox" id="vb-sch-day-tue" checked> Tue</label>
+                                    <label style="display:flex;align-items:center;gap:6px;font-weight:600;"><input type="checkbox" id="vb-sch-day-wed" checked> Wed</label>
+                                    <label style="display:flex;align-items:center;gap:6px;font-weight:600;"><input type="checkbox" id="vb-sch-day-thu" checked> Thu</label>
+                                    <label style="display:flex;align-items:center;gap:6px;font-weight:600;"><input type="checkbox" id="vb-sch-day-fri" checked> Fri</label>
+                                    <label style="display:flex;align-items:center;gap:6px;font-weight:600;"><input type="checkbox" id="vb-sch-day-sat" checked> Sat</label>
+                                    <label style="display:flex;align-items:center;gap:6px;font-weight:600;"><input type="checkbox" id="vb-sch-day-sun" checked> Sun</label>
+                                </div>
+                            </div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label>Start Time</label>
+                                    <input type="time" id="vb-sch-start-time" value="00:00">
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label>End Time</label>
+                                    <input type="time" id="vb-sch-end-time" value="00:00">
+                                </div>
+                            </div>
+                            
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px;">
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label>Min Delay (secs)</label>
+                                    <input type="number" id="vb-sch-delay-min" value="30" min="0">
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label>Max Delay (secs)</label>
+                                    <input type="number" id="vb-sch-delay-max" value="90" min="0">
+                                </div>
+                            </div>
+                            
+                            <p style="font-size:13px;color:var(--text-muted);margin-top:16px;">
+                                <i class="fa-solid fa-bolt" style="color:var(--primary);margin-right:4px;"></i> Campaign will only send emails on selected days and within the specified time window.
+                                <br>If no time is set (Start = 00:00, End = 00:00), emails will send 24/7.
+                            </p>
+                            <div style="display:flex;justify-content:flex-end;margin-top:16px;">
+                                <button class="btn primary" id="vb-sch-save-btn" style="padding:10px 24px;" onclick="saveNewsletterSchedule()">
+                                    <i class="fa-solid fa-floppy-disk" style="margin-right:6px;"></i>Save Schedule
+                                </button>
+                            </div>
+                        </div>
+
+                        <div style="display:flex; gap:10px; margin-bottom:24px;">
+                            <div style="display:flex; flex-direction:column; gap:5px; flex:1;">
+                                <label style="font-size:13px; color:var(--text-muted); font-weight:600;">Min Delay (sec)</label>
+                                <input type="number" id="vb-delay-min" value="30" style="padding:10px; border:1px solid var(--border); border-radius:8px; font-size:14px; outline:none;">
+                            </div>
+                            <div style="display:flex; flex-direction:column; gap:5px; flex:1;">
+                                <label style="font-size:13px; color:var(--text-muted); font-weight:600;">Max Delay (sec)</label>
+                                <input type="number" id="vb-delay-max" value="90" style="padding:10px; border:1px solid var(--border); border-radius:8px; font-size:14px; outline:none;">
+                            </div>
+                        </div>
+
+                        <div style="display:flex;gap:24px;">
+                            <button id="save-newsletter-draft-btn" class="btn" style="padding:16px 32px;font-size:15px;flex:1;background:var(--surface-1);border:1px solid var(--border);"><i class="fa-solid fa-save"></i> Save Draft</button>
+                            <button id="send-btn" class="btn primary" style="padding:16px 32px;font-size:15px;flex:1;"><i class="fa-solid fa-rocket"></i> Launch Newsletter</button>
+                            <div id="vb-status-actions" style="display:none; flex:1; gap:12px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- COLD MAIL LIST -->
+        <div id="cold-mail-list" class="view">
+            <div class="page-header" style="margin-bottom: 32px; display:flex; justify-content:space-between; align-items:flex-end;">
+                <div>
+                    <h1 class="page-title" style="font-size:28px;">Cold Mail Campaigns</h1>
+                    <p class="page-subtitle">Manage and track your automated cold email sequences</p>
+                </div>
+                <div>
+                    <button class="btn primary" style="box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);" onclick="openColdMailBuilder(null)"><i class="fa-solid fa-plus" style="margin-right:8px;"></i> Create Sequence</button>
+                </div>
+            </div>
+            
+            <div class="glass" style="padding: 0; overflow: hidden; border-radius: 12px;">
+                <table class="table" style="margin:0;">
+                    <thead>
+                        <tr>
+                            <th style="padding:16px 24px; font-weight:600; color:var(--text-muted); font-size:12px; text-transform:uppercase; letter-spacing:0.05em;">Campaign Name</th>
+                            <th style="padding:16px 24px; font-weight:600; color:var(--text-muted); font-size:12px; text-transform:uppercase; letter-spacing:0.05em;">Status</th>
+                            <th style="padding:16px 24px; font-weight:600; color:var(--text-muted); font-size:12px; text-transform:uppercase; letter-spacing:0.05em;">Open Rate</th>
+                            <th style="padding:16px 24px; font-weight:600; color:var(--text-muted); font-size:12px; text-transform:uppercase; letter-spacing:0.05em;">Click Rate</th>
+                            <th style="padding:16px 24px; font-weight:600; color:var(--text-muted); font-size:12px; text-transform:uppercase; letter-spacing:0.05em; text-align:right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cold-mail-list-tbody">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- COLD MAIL (Sequence Builder) -->
+        <div id="cold-mail-builder" class="view">
+            <div class="page-header" style="padding-bottom: 24px; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <button class="btn" style="margin-bottom:12px; font-size:13px; padding:6px 12px;" onclick="document.querySelector('.nav-item[data-target=\'cold-mail-list\']').click()"><i class="fa-solid fa-arrow-left" style="margin-right:6px;"></i> Back to Campaigns</button>
+                    <h1 class="page-title" style="font-size:28px;">Cold Mail Builder</h1>
+                    <p class="page-subtitle">Build and launch automated cold email sequences</p>
+                </div>
+            </div>
+            
+            <div class="clean-tabs-bar" style="margin-bottom:32px;border-bottom:2px solid var(--border);padding-bottom:0;display:flex;gap:32px;">
+                <div class="clean-tab" data-coldtab="analytics" style="padding-bottom:12px;font-weight:600;color:var(--text-muted);cursor:pointer;position:relative;">Analytics</div>
+                <div class="clean-tab" data-coldtab="leads" style="padding-bottom:12px;font-weight:600;color:var(--text-muted);cursor:pointer;position:relative;">Leads</div>
+                <div class="clean-tab active" data-coldtab="sequences" style="padding-bottom:12px;font-weight:700;color:var(--p);cursor:pointer;position:relative;border-bottom:3px solid var(--p);">Sequences</div>
+                <div class="clean-tab" data-coldtab="schedule" style="padding-bottom:12px;font-weight:600;color:var(--text-muted);cursor:pointer;position:relative;">Schedule</div>
+                <div class="clean-tab" data-coldtab="options" style="padding-bottom:12px;font-weight:600;color:var(--text-muted);cursor:pointer;position:relative;">Options</div>
+                <div class="clean-tab" data-coldtab="subsequences" style="padding-bottom:12px;font-weight:600;color:var(--text-muted);cursor:pointer;position:relative;">Subsequences</div>
+            </div>
+
+            <!-- ANALYTICS TAB -->
+            <div id="cold-tab-analytics" class="cold-tab-content" style="display:none;">
+                <div style="display:flex;align-items:center;margin-bottom:32px;background:#f8fafc;padding:16px 24px;border-radius:12px;border:1px solid var(--border);">
+                    <span style="font-size:14px;color:var(--text-muted);font-weight:600;margin-right:12px;">Campaign Status:</span>
+                    <span class="status-pill" id="cold-analytics-status" style="font-size:13px;padding:4px 12px;">Loading</span>
+                    
+                    <div style="flex:1;"></div>
+                    
+                    <div style="display:flex;gap:12px;">
+                        <div id="cold-analytics-actions" style="display:flex;gap:12px;"></div>
+                        <button class="btn" style="padding:8px 16px;font-size:13px;background:#fff;"><i class="fa-solid fa-share-nodes"></i> Share Report</button>
+                    </div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:24px;margin-bottom:32px;">
+                    <div class="stat-card" style="background:#fff;padding:24px;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.03);border:1px solid rgba(0,0,0,0.04);">
+                        <div style="font-size:14px;color:var(--text-muted);font-weight:600;margin-bottom:8px;">Leads Contacted</div>
+                        <div style="font-size:32px;font-weight:800;color:var(--text);" id="cold-analytics-seq-started">0</div>
+                    </div>
+                    <div class="stat-card" style="background:#fff;padding:24px;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.03);border:1px solid rgba(0,0,0,0.04);">
+                        <div style="font-size:14px;color:var(--text-muted);font-weight:600;margin-bottom:8px;">Open Rate</div>
+                        <div style="display:flex;align-items:baseline;gap:12px;">
+                            <div style="font-size:32px;font-weight:800;color:var(--text);" id="cold-analytics-open-rate">0%</div>
+                            <div style="font-size:14px;color:var(--text-muted);font-weight:600;" id="cold-analytics-open-count">(0 opens)</div>
+                        </div>
+                    </div>
+                    <div class="stat-card" style="background:#fff;padding:24px;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.03);border:1px solid rgba(0,0,0,0.04);">
+                        <div style="font-size:14px;color:var(--text-muted);font-weight:600;margin-bottom:8px;">Click Rate</div>
+                        <div style="display:flex;align-items:baseline;gap:12px;">
+                            <div style="font-size:32px;font-weight:800;color:var(--text);" id="cold-analytics-click-rate">0%</div>
+                            <div style="font-size:14px;color:var(--text-muted);font-weight:600;" id="cold-analytics-click-count">(0 clicks)</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="glass" style="padding:24px;border-radius:16px;">
+                    <h4 style="font-size:16px;font-weight:700;margin-bottom:16px;">Campaign Leads Analytics</h4>
+                    <div style="overflow-x:auto;">
+                        <table class="table" style="margin:0;">
+                            <thead>
+                                <tr>
+                                    <th style="padding:12px 16px; font-weight:600; color:var(--text-muted); font-size:12px;">Email</th>
+                                    <th style="padding:12px 16px; font-weight:600; color:var(--text-muted); font-size:12px;">Name</th>
+                                    <th style="padding:12px 16px; font-weight:600; color:var(--text-muted); font-size:12px;">Status</th>
+                                    <th style="padding:12px 16px; font-weight:600; color:var(--text-muted); font-size:12px;">Variant</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cold-analytics-leads-tbody">
+                                <!-- Populated dynamically by JS -->
+                                <tr><td colspan="4" style="text-align:center;padding:24px;color:var(--text-muted);">Loading leads...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LEADS TAB -->
+            <div id="cold-tab-leads" class="cold-tab-content" style="display:none;">
+                <div class="glass">
+                    <h4 style="font-size:15px;font-weight:700;margin-bottom:16px;">Campaign Audience</h4>
+                    <p style="color:var(--text-muted);margin-bottom:16px;font-size:14px;">Add your leads here. Include Email, Name, and Company separated by commas.</p>
+                    <div style="display:flex;flex-direction:column;gap:16px;">
+                        
+                        <div class="form-group" style="margin-bottom:0;">
+                            <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:8px;">
+                                <div style="display:flex; gap:8px;">
+                                    <button onclick="window.saveLeads('seq-leads')" style="padding:6px 12px; background:var(--surface); color:var(--text); border:1px solid var(--border); border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; display:flex; align-items:center; gap:6px;"><i class="fa-solid fa-floppy-disk"></i> Save Leads</button>
+                                    <button onclick="window.clearLeads('seq-leads')" style="padding:6px 12px; background:#fef2f2; color:#ef4444; border:1px solid #fca5a5; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; display:flex; align-items:center; gap:6px;"><i class="fa-solid fa-trash"></i> Delete</button>
+                                </div>
+                            </div>
+                            <textarea id="seq-leads" rows="10" placeholder="john@example.com, John Doe, ACME Corp&#10;(One lead per line)" style="font-size:14px;padding:16px;"></textarea>
+                            <div id="seq-leads-list" style="margin-top:24px; display:flex; flex-direction:column; gap:8px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEQUENCES TAB (The builder) -->
+            <div id="cold-tab-sequences" class="cold-tab-content" style="display:block;">
+                <div style="display:flex;justify-content:flex-end;align-items:center;gap:12px;margin-bottom:16px;">
+
+
+                    
+                    <button id="inst-save-draft-btn" class="btn" style="padding:12px 24px;background:#e2e8f0;color:#1e293b;border:1px solid #cbd5e1;font-size:15px;border-radius:8px;font-weight:600;margin-right:8px;"><i class="fa-solid fa-save" style="margin-right:6px;"></i>Save Draft</button>
+                    <button id="inst-send-seq-btn" class="btn" style="padding:12px 24px;background:#4f46e5;color:#ffffff;border:none;font-size:15px;border-radius:8px;font-weight:600;box-shadow:0 4px 12px rgba(99,102,241,0.3);"><i class="fa-solid fa-rocket" style="margin-right:6px;"></i>Launch Campaign</button>
+                    <div id="cold-status-actions" style="display:none; gap:8px;"></div>
+                </div>
+                <div id="inst-status" class="alert" style="margin-bottom:20px;display:none;"></div>
+                <div id="tab-instantly">
+                <div style="display:flex;gap:24px;min-height:600px;align-items:stretch;">
+                    <!-- LEFT: Steps list -->
+                    <div style="width:260px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:8px;">
+                        <h4 style="font-size:14px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px;">Steps</h4>
+                        <div id="inst-steps-bar" style="display:flex;flex-direction:column;gap:8px;flex:1;"></div>
+                        <button id="inst-add-step-btn" class="btn" style="width:100%;margin-top:16px;border-style:dashed;"><i class="fa-solid fa-plus"></i> Add Step</button>
+                    </div>
+                    
+                    <!-- RIGHT: Step Editor -->
+                    <div style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:12px;display:flex;flex-direction:column;overflow:hidden;">
+                        <div style="padding:24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:#f8fafc;">
+                            <h3 id="inst-step-title" style="font-size:18px;font-weight:700;margin:0;">Step 1</h3>
+                            <div style="display:flex;align-items:center;gap:12px;background:#fff;padding:4px 12px;border-radius:8px;border:1px solid var(--border);box-shadow:var(--shadow-sm);">
+                                <label style="margin:0;font-size:13px;font-weight:600;color:var(--text-muted);">Wait</label>
+                                <input type="number" id="inst-wait" value="1" min="0" max="365" style="width:50px;border:none;outline:none;font-size:14px;font-weight:700;text-align:center;">
+                                <label style="margin:0;font-size:13px;font-weight:600;color:var(--text-muted);">days</label>
+                            </div>
+                        </div>
+                        
+                        <div style="padding:32px;flex:1;display:flex;flex-direction:column;overflow-y:auto;">
+                            
+                        <!-- AUTO-PILOT SECTION -->
+                        <div style="background: linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(168,85,247,0.1) 100%); border: 1px solid rgba(139,92,246,0.3); padding:20px; border-radius:12px; margin-bottom:24px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                            <h3 style="margin-top:0; color:#4f46e5; display:flex; align-items:center; gap:8px;">
+                                🚀 One-Click Auto-Pilot Campaign Builder
+                            </h3>
+                            <p style="color:#6b7280; font-size:14px; margin-bottom:16px;">
+                                Paste any Website URL, or Product Description. AI will scrape it and write a highly optimized A/B Campaign for you!
+                            </p>
+                            <div style="display:flex; gap:12px;">
+                                <input type="text" id="autopilot-input" placeholder="e.g. https://fiverr.com/... or 'I sell web design services'" style="flex:1; padding:12px 16px; border:1px solid #d1d5db; border-radius:8px; font-size:14px; outline:none; transition:0.2s;">
+                                <button id="autopilot-btn" onclick="window.runAutopilot()" style="background: linear-gradient(to right, #4f46e5, #8b5cf6); color:white; border:none; padding:12px 24px; border-radius:8px; cursor:pointer; font-weight:600; font-size:14px; transition:0.2s; box-shadow:0 4px 10px rgba(79,70,229,0.3);">
+                                    ✨ Auto-Build Campaign
+                                </button>
+                            </div>
+                        </div>
+                        
+<div style="margin-bottom:24px; display:flex; align-items:center; gap:16px;">
+                                <label style="font-size:14px; font-weight:600; color:var(--text-muted);"><i class="fa-solid fa-wand-magic-sparkles"></i> Use Template:</label>
+                                <select id="template-selector" onchange="window.loadTemplate()" style="flex:1; padding:10px 16px; border-radius:8px; border:1px solid var(--border); background:#fff; font-size:14px; outline:none; cursor:pointer;">
+                                    <option value="">-- Blank Email --</option>
+                                    <option value="saas_outreach">SaaS Outreach (Intro)</option>
+                                    <option value="sales_followup">Sales Follow-up</option>
+                                    <option value="link_building">Link Building / PR</option>
+                                </select>
+                                
+                            </div>
+                            <div class="form-group" style="position:relative;margin-bottom:24px;display:flex;gap:12px;">
+                                <button onclick="window.optimizeSubject('inst-subject')" style="margin-left:8px; padding:4px 12px; background:linear-gradient(to right, #8b5cf6, #d946ef); color:white; border:none; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; display:flex; align-items:center; gap:4px; box-shadow:0 2px 5px rgba(217,70,239,0.3);">✨ Optimize</button>
+                                <input type="text" id="inst-subject" placeholder="Subject" style="font-size:16px;font-weight:600;padding:16px;flex:1;">
+                                
+                                <button onclick="window.toggleInstAB()" id="ab-toggle-btn" style="position:absolute;right:12px;top:12px;background:var(--surface-1);border:1px solid var(--border);border-radius:6px;width:32px;height:32px;color:var(--text-muted);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;" title="Add A/B Test Variant"><i class="fa-solid fa-flask"></i></button>
+                            </div>
+                            
+                            <div class="form-group" style="flex:1;display:flex;flex-direction:column;margin-bottom:0;position:relative;">
+                                <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
+                                    <button onclick="window.checkSpamScore()" style="margin-right:8px; background:linear-gradient(135deg, #10b981 0%, #059669 100%);color:#fff;border:none;padding:6px 16px;border-radius:6px;font-weight:600;font-size:12px;cursor:pointer;box-shadow:0 2px 5px rgba(16,185,129,0.3);display:flex;align-items:center;gap:6px;"><i class="fa-solid fa-shield-halved"></i> Check Spam Score</button>
+                                    <button onclick="window.previewInbox('inst-subject', 'inst-body')" style="margin-right:8px; padding:6px 16px; background:linear-gradient(to right, #f59e0b, #d97706); color:white; border:none; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; display:flex; align-items:center; gap:6px; box-shadow:0 2px 5px rgba(245,158,11,0.3);">👁️ Inbox Preview</button>
+                                    <button onclick="window.generateEmail('inst-body')" style="padding:6px 16px; background:linear-gradient(to right, #3b82f6, #8b5cf6); color:white; border:none; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; display:flex; align-items:center; gap:6px; box-shadow:0 2px 5px rgba(59,130,246,0.3);">🪄 Write with AI</button>
+                                </div>
+                                <textarea id="inst-body" style="flex:1;min-height:200px;font-family:sans-serif;font-size:14px;resize:none;padding:16px;border:1px solid var(--border);border-radius:12px;outline:none;" placeholder="Hey {{firstName}}, ..."></textarea>
+                                <div style="margin-top:12px; padding:12px; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px;">
+                                    <div style="font-size:11px; font-weight:700; color:var(--text-muted); margin-bottom:8px; text-transform:uppercase;"><i class="fa-solid fa-copy"></i> Click to copy Tags & Spintax</div>
+                                    <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                                        <button type="button" onclick="navigator.clipboard.writeText('{{firstName}}'); showToast('Copied {{firstName}}')" style="background:#dbeafe; color:#1d4ed8; border:1px solid #bfdbfe; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer; outline:none;" title="Inserts recipient's first name">{{firstName}}</button>
+                                        <button type="button" onclick="navigator.clipboard.writeText('{{lastName}}'); showToast('Copied {{lastName}}')" style="background:#dbeafe; color:#1d4ed8; border:1px solid #bfdbfe; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer; outline:none;" title="Inserts recipient's last name">{{lastName}}</button>
+                                        <button type="button" onclick="navigator.clipboard.writeText('{{company}}'); showToast('Copied {{company}}')" style="background:#dbeafe; color:#1d4ed8; border:1px solid #bfdbfe; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer; outline:none;" title="Inserts recipient's company">{{company}}</button>
+                                        <button type="button" onclick="navigator.clipboard.writeText('{Hello|Hi|Hey}'); showToast('Copied {Hello|Hi|Hey}')" style="background:#fce7f3; color:#be185d; border:1px solid #fbcfe8; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer; outline:none;" title="Randomizes greetings">{Hello|Hi|Hey}</button>
+                                        <button type="button" onclick="navigator.clipboard.writeText('{Thanks|Best|Cheers}'); showToast('Copied {Thanks|Best|Cheers}')" style="background:#fce7f3; color:#be185d; border:1px solid #fbcfe8; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer; outline:none;" title="Randomizes sign-offs">{Thanks|Best|Cheers}</button>
+                                        <button type="button" onclick="navigator.clipboard.writeText('{chat|talk|speak}'); showToast('Copied {chat|talk|speak}')" style="background:#fce7f3; color:#be185d; border:1px solid #fbcfe8; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer; outline:none;" title="Randomizes CTA verbs">{chat|talk|speak}</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="inst-ab-section" style="display:none;margin-top:32px;padding-top:32px;border-top:1px dashed var(--border);">
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                                    <h4 style="font-size:14px;font-weight:700;color:var(--p);text-transform:uppercase;letter-spacing:0.05em;display:flex;align-items:center;gap:8px;"><i class="fa-solid fa-flask"></i> Variant B</h4>
+                                    <button onclick="window.toggleInstAB()" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:13px;font-weight:600;"><i class="fa-solid fa-trash"></i> Remove Variant B</button>
+                                </div>
+                                <div class="form-group" style="margin-bottom:24px;">
+                                    <input type="text" id="inst-subject-b" placeholder="Variant B Subject" style="font-size:16px;font-weight:600;padding:16px;">
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;display:flex;flex-direction:column;position:relative;">
+                                    <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
+                                        <button onclick="window.previewInbox('inst-subject-b', 'inst-body-b')" style="margin-right:8px; padding:6px 16px; background:linear-gradient(to right, #f59e0b, #d97706); color:white; border:none; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; display:flex; align-items:center; gap:6px; box-shadow:0 2px 5px rgba(245,158,11,0.3);">👁️ Inbox Preview</button>
+                                        <button onclick="window.generateEmail('inst-body-b')" style="padding:6px 16px; background:linear-gradient(to right, #3b82f6, #8b5cf6); color:white; border:none; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; display:flex; align-items:center; gap:6px; box-shadow:0 2px 5px rgba(59,130,246,0.3);">🪄 Generate Follow-up</button>
+                                    </div>
+                                    <textarea id="inst-body-b" style="min-height:200px;font-family:sans-serif;font-size:14px;resize:none;padding:16px;border:1px solid var(--border);border-radius:12px;outline:none;background:#f8fafc;" placeholder="Variant B Body..."></textarea>
+                                    <div style="margin-top:12px; padding:12px; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px;">
+                                        <div style="font-size:11px; font-weight:700; color:var(--text-muted); margin-bottom:8px; text-transform:uppercase;"><i class="fa-solid fa-copy"></i> Click to copy Tags & Spintax</div>
+                                        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                                            <button type="button" onclick="navigator.clipboard.writeText('{{firstName}}'); showToast('Copied {{firstName}}')" style="background:#dbeafe; color:#1d4ed8; border:1px solid #bfdbfe; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer; outline:none;">{{firstName}}</button>
+                                            <button type="button" onclick="navigator.clipboard.writeText('{{lastName}}'); showToast('Copied {{lastName}}')" style="background:#dbeafe; color:#1d4ed8; border:1px solid #bfdbfe; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer; outline:none;">{{lastName}}</button>
+                                            <button type="button" onclick="navigator.clipboard.writeText('{{company}}'); showToast('Copied {{company}}')" style="background:#dbeafe; color:#1d4ed8; border:1px solid #bfdbfe; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer; outline:none;">{{company}}</button>
+                                            <button type="button" onclick="navigator.clipboard.writeText('{Hello|Hi|Hey}'); showToast('Copied {Hello|Hi|Hey}')" style="background:#fce7f3; color:#be185d; border:1px solid #fbcfe8; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer; outline:none;">{Hello|Hi|Hey}</button>
+                                            <button type="button" onclick="navigator.clipboard.writeText('{Thanks|Best|Cheers}'); showToast('Copied {Thanks|Best|Cheers}')" style="background:#fce7f3; color:#be185d; border:1px solid #fbcfe8; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer; outline:none;">{Thanks|Best|Cheers}</button>
+                                            <button type="button" onclick="navigator.clipboard.writeText('{chat|talk|speak}'); showToast('Copied {chat|talk|speak}')" style="background:#fce7f3; color:#be185d; border:1px solid #fbcfe8; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer; outline:none;">{chat|talk|speak}</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="padding:16px 24px;border-top:1px solid var(--border);background:#f8fafc;display:flex;justify-content:flex-end;">
+                            <button id="inst-save-step-btn" class="btn primary" style="padding:10px 24px;">Save Step</button>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <!-- SCHEDULE TAB -->
+            <div id="cold-tab-schedule" class="cold-tab-content" style="display:none;">
+                <div class="glass" style="max-width:800px;">
+                    <h3 style="font-size:18px;font-weight:700;margin-bottom:24px;">Sending Schedule</h3>
+                    <div class="form-group">
+                        <label>Timezone</label>
+                        <select id="sch-timezone"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Sending Days</label>
+                        <div style="display:flex;gap:16px;flex-wrap:wrap;background:var(--surface-1);padding:16px;border-radius:8px;border:1px solid var(--border);">
+                            <label style="display:flex;align-items:center;gap:8px;font-weight:600;"><input type="checkbox" id="sch-day-mon" checked> Mon</label>
+                            <label style="display:flex;align-items:center;gap:8px;font-weight:600;"><input type="checkbox" id="sch-day-tue" checked> Tue</label>
+                            <label style="display:flex;align-items:center;gap:8px;font-weight:600;"><input type="checkbox" id="sch-day-wed" checked> Wed</label>
+                            <label style="display:flex;align-items:center;gap:8px;font-weight:600;"><input type="checkbox" id="sch-day-thu" checked> Thu</label>
+                            <label style="display:flex;align-items:center;gap:8px;font-weight:600;"><input type="checkbox" id="sch-day-fri" checked> Fri</label>
+                            <label style="display:flex;align-items:center;gap:8px;font-weight:600;"><input type="checkbox" id="sch-day-sat" checked> Sat</label>
+                            <label style="display:flex;align-items:center;gap:8px;font-weight:600;"><input type="checkbox" id="sch-day-sun" checked> Sun</label>
+                        </div>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+                        <div class="form-group">
+                            <label>Start Time</label>
+                            <input type="time" id="sch-start-time" value="00:00">
+                        </div>
+                        <div class="form-group">
+                            <label>End Time</label>
+                            <input type="time" id="sch-end-time" value="00:00">
+                        </div>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px;">
+                        <div class="form-group">
+                            <label>Min Delay (secs)</label>
+                            <input type="number" id="sch-delay-min" value="30" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Max Delay (secs)</label>
+                            <input type="number" id="sch-delay-max" value="90" min="0">
+                        </div>
+                    </div>
+                    <p style="font-size:13px;color:var(--text-muted);margin-top:8px;margin-bottom:16px;">
+                        ⚡ Campaign will only send emails on selected days and within the specified time window.
+                        <br>If no time is set (Start = 00:00, End = 00:00), emails will send 24/7.
+                    </p>
+                    <div style="display:flex;justify-content:flex-end;margin-top:16px;">
+                        <button class="btn primary" id="sch-save-btn" style="padding:10px 24px;" onclick="saveSchedule()">
+                            <i class="fa-solid fa-floppy-disk" style="margin-right:6px;"></i>Save Schedule
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OPTIONS TAB -->
+            <div id="cold-tab-options" class="cold-tab-content" style="display:none;">
+                <div class="glass" style="max-width:800px;">
+                    <h3 style="font-size:18px;font-weight:700;margin-bottom:24px;">Campaign Options</h3>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+                        <div class="form-group">
+                            <label>Open Tracking</label>
+                            <select>
+                                <option value="1">Enabled (Invisible Pixel)</option>
+                                <option value="0">Disabled</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Link Tracking</label>
+                            <select>
+                                <option value="1">Enabled</option>
+                                <option value="0">Disabled</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Max Emails Per Day</label>
+                            <input id="cold-max-emails" type="number" value="50" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Daily Ramp Up</label>
+                            <input id="cold-ramp-up" type="number" value="5" min="0" title="Increase limit by this amount every day">
+                        </div>
+                    </div>
+                    <div style="display:flex;justify-content:flex-end;margin-top:16px;">
+                        <button class="btn primary" style="padding:10px 24px;">Save Options</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUBSEQUENCES TAB -->
+            <div id="cold-tab-subsequences" class="cold-tab-content" style="display:none;">
+                <div class="glass" style="max-width:800px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+                        <h3 style="font-size:18px;font-weight:700;margin:0;">Condition-based Subsequences</h3>
+                        <span style="background:var(--p-light);color:var(--p);padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;">Beta</span>
+                    </div>
+                    <p style="color:var(--text-muted);font-size:14px;margin-bottom:24px;">Create alternative email sequences based on recipient behavior.</p>
+                    <div class="form-group">
+                        <label>Trigger Condition</label>
+                        <select>
+                            <option>If link clicked in previous step</option>
+                            <option>If email opened multiple times (>3)</option>
+                            <option>If NO reply after sequence finishes</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom:24px;">
+                        <label>Message Body (Subsequence Step 1)</label>
+                        <textarea rows="6" style="padding:16px;font-family:sans-serif;" placeholder="Hey {{firstName}}, noticed you clicked the link. Let me know if you have questions!"></textarea>
+                    </div>
+                    <div style="display:flex;justify-content:flex-end;">
+                        <button class="btn primary" style="padding:10px 24px;"><i class="fa-solid fa-plus"></i> Add Subsequence</button>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        <!-- UNSUBSCRIBES -->
+        <div id="unsubscribes-view" class="view">
+            <div class="page-header" style="margin-bottom: 32px;">
+                <h1 class="page-title">Unsubscribes</h1>
+                <p class="page-subtitle">People who have opted out of your emails.</p>
+            </div>
+            
+            <div class="glass" style="padding:0; overflow:hidden; border-radius:16px;">
+                <table style="width:100%; border-collapse:collapse; text-align:left;">
+                    <thead>
+                        <tr style="background:#f8fafc; border-bottom:1px solid var(--border);">
+                            <th style="padding:16px 24px; font-weight:600; color:var(--text-muted); font-size:13px; text-transform:uppercase;">Email Address</th>
+                            <th style="padding:16px 24px; font-weight:600; color:var(--text-muted); font-size:13px; text-transform:uppercase;">Unsubscribed At</th>
+                        </tr>
+                    </thead>
+                    <tbody id="unsubscribes-table-body">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- REPLIES -->
+        <div id="replies-view" class="view">
+            <div class="page-header" style="margin-bottom: 32px;">
+                <h1 class="page-title">AI Reply Classification</h1>
+                <p class="page-subtitle">View incoming replies categorized by AI Sentiment.</p>
+            </div>
+            
+            <div class="glass" style="padding:0; overflow:hidden; border-radius:16px;">
+                <table style="width:100%; border-collapse:collapse; text-align:left;">
+                    <thead>
+                        <tr style="background:#f8fafc; border-bottom:1px solid var(--border);">
+                            <th style="padding:16px 24px; font-weight:600; color:var(--text-muted); font-size:13px; text-transform:uppercase;">From</th>
+                            <th style="padding:16px 24px; font-weight:600; color:var(--text-muted); font-size:13px; text-transform:uppercase;">Subject</th>
+                            <th style="padding:16px 24px; font-weight:600; color:var(--text-muted); font-size:13px; text-transform:uppercase;">Sentiment</th>
+                            <th style="padding:16px 24px; font-weight:600; color:var(--text-muted); font-size:13px; text-transform:uppercase;">Received At</th>
+                            <th style="padding:16px 24px; font-weight:600; color:var(--text-muted); font-size:13px; text-transform:uppercase;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="replies-table-body">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- AUDIENCE HEALTH -->
+        <div id="audience-health" class="view">
+            <h1 class="page-title">Audience Health</h1>
+            <p class="page-subtitle">Maintain 100% Inbox Rates by cleaning inactive leads from your sending queues.</p>
+            
+            <div class="card" style="margin-top:24px; padding:32px; text-align:center; max-width:600px; margin-left:auto; margin-right:auto;">
+                <div style="font-size:48px; color:var(--p); margin-bottom:16px;">
+                    <i class="fa-solid fa-heart-circle-check"></i>
+                </div>
+                <h2 style="font-size:24px; font-weight:700; margin-bottom:12px;">Keep your Sender Reputation High</h2>
+                <p style="color:var(--text-muted); margin-bottom:32px; line-height:1.6;">
+                    Sending emails to leads who haven't opened a message in the last 90 days can hurt your domain reputation. 
+                    Run the scanner to identify and tag inactive leads. They will be skipped in future campaigns automatically.
+                </p>
+                
+                <button class="btn primary" id="btn-scan-health" onclick="runAudienceHealthScan()" style="font-size:16px; padding:12px 32px; width:100%;">
+                    <i class="fa-solid fa-broom" style="margin-right:8px;"></i> Scan & Clean Inactive Leads
+                </button>
+                
+                <div id="health-scan-result" style="display:none; margin-top:24px; padding:16px; border-radius:12px; background:rgba(16, 185, 129, 0.1); color:#10b981; font-weight:600;">
+                    <!-- Result goes here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- SETTINGS -->
+        <div id="settings" class="view">
+            <div class="page-header">
+                <h1 class="page-title">Settings</h1>
+                <p class="page-subtitle">Manage your platform configuration</p>
+            </div>
+            <div style="max-width:720px;display:flex;flex-direction:column;gap:24px;">
+
+                <!-- EMAIL DELIVERY CARD -->
+                <div id="admin-email-delivery-card" class="glass" style="padding:28px; border-radius:16px; display: none;">
+                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:24px; padding-bottom:20px; border-bottom:1px solid var(--border);">
+                        <div style="width:42px;height:42px;border-radius:10px;background:#e0e7ff;display:flex;align-items:center;justify-content:center;">
+                            <i class="fa-solid fa-envelope" style="color:#4f46e5; font-size:18px;"></i>
+                        </div>
+                        <div>
+                            <h3 style="font-size:17px;font-weight:700;margin:0;">Email Delivery</h3>
+                            <p style="font-size:13px; color:var(--text-muted); margin:0;">Configure how your emails are sent</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Service Provider</label>
+                        <select id="smtp-provider">
+                            <option value="smtp">Custom SMTP Server</option>
+                            <option value="instantly">Instantly API</option>
+                        </select>
+                    </div>
+                    <div id="smtp-fields">
+                        <div style="display:grid;grid-template-columns:1fr 120px;gap:16px;">
+                            <div class="form-group">
+                                <label>SMTP Host</label>
+                                <input type="text" id="smtp-host" placeholder="smtp.mailgun.org">
+                            </div>
+                            <div class="form-group">
+                                <label>Port</label>
+                                <input type="number" id="smtp-port" value="587">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>SMTP Username</label>
+                            <input type="email" id="smtp-user" placeholder="postmaster@domain.com">
+                        </div>
+                        <div class="form-group">
+                            <label>SMTP Password</label>
+                            <div style="position:relative;">
+                                <input type="password" id="smtp-pass" placeholder="••••••••••••" style="padding-right:44px;">
+                                <button type="button" onclick="var el=document.getElementById('smtp-pass'); el.type=el.type==='password'?'text':'password'; this.innerHTML=el.type==='password'?'<i class=\'fa-regular fa-eye\'></i>':'<i class=\'fa-regular fa-eye-slash\'></i>'" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);">
+                                    <i class="fa-regular fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Sender Name</label>
+                            <input type="text" id="smtp-from-name" placeholder="Acme Inc">
+                        </div>
+                    </div>
+                    <div id="instantly-fields" style="display:none;">
+                        <div class="form-group">
+                            <label>Instantly API Key</label>
+                            <input type="text" id="instantly-api-key" placeholder="inst_...">
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:12px;margin-top:8px;">
+                        <button id="save-smtp-btn" class="btn primary"><i class="fa-solid fa-floppy-disk" style="margin-right:6px;"></i>Save Changes</button>
+                        <button id="test-smtp-btn" class="btn"><i class="fa-solid fa-plug" style="margin-right:6px;"></i>Test Connection</button>
+                    </div>
+                    <div id="smtp-status" class="alert" style="margin-top:20px;"></div>
+                </div>
+
+                <!-- AI SETTINGS CARD -->
+                <div class="glass" style="padding:28px; border-radius:16px;">
+                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:24px; padding-bottom:20px; border-bottom:1px solid var(--border);">
+                        <div style="width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#6366f1,#a855f7);display:flex;align-items:center;justify-content:center;">
+                            <i class="fa-solid fa-wand-magic-sparkles" style="color:#fff; font-size:18px;"></i>
+                        </div>
+                        <div>
+                            <h3 style="font-size:17px;font-weight:700;margin:0;">Artificial Intelligence</h3>
+                            <p style="font-size:13px; color:var(--text-muted); margin:0;">Connect AI models to power email generation</p>
+                        </div>
+                    </div>
+
+                    <!-- Gemini -->
+                    <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:16px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <div style="width:32px;height:32px;border-radius:8px;background:#fff;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Google_Gemini_logo.svg" style="width:18px;height:18px;" onerror="this.style.display='none'">
+                                </div>
+                                <div>
+                                    <div style="font-size:14px;font-weight:700;">Google Gemini</div>
+                                    <div style="font-size:12px;color:var(--text-muted);">Best for creative email writing</div>
+                                </div>
+                            </div>
+                            <a href="https://aistudio.google.com/app/apikey" target="_blank" style="font-size:12px;color:var(--p);font-weight:600;text-decoration:none;"><i class="fa-solid fa-arrow-up-right-from-square" style="margin-right:4px;"></i>Get Free Key</a>
+                        </div>
+                        <div style="position:relative;">
+                            <input type="password" id="gemini-api-key" placeholder="AIzaSy..." style="padding-right:44px;">
+                            <button type="button" onclick="var el=document.getElementById('gemini-api-key'); el.type=el.type==='password'?'text':'password'; this.innerHTML=el.type==='password'?'<i class=\'fa-regular fa-eye\'></i>':'<i class=\'fa-regular fa-eye-slash\'></i>'" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Groq -->
+                    <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:20px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <div style="width:32px;height:32px;border-radius:8px;background:#ff6c37;display:flex;align-items:center;justify-content:center;">
+                                    <span style="color:#fff;font-size:10px;font-weight:900;">G</span>
+                                </div>
+                                <div>
+                                    <div style="display:flex; align-items:center; gap:8px;">
+                                        <span style="font-size:14px;font-weight:700;">Groq</span>
+                                        <span style="background:#dcfce7;color:#059669;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;">⚡ Recommended</span>
+                                    </div>
+                                    <div style="font-size:12px;color:var(--text-muted);">Ultra-fast, free — best for cold email</div>
+                                </div>
+                            </div>
+                            <a href="https://console.groq.com" target="_blank" style="font-size:12px;color:var(--p);font-weight:600;text-decoration:none;"><i class="fa-solid fa-arrow-up-right-from-square" style="margin-right:4px;"></i>Get Free Key</a>
+                        </div>
+                        <div style="position:relative;">
+                            <input type="password" id="groq-api-key" placeholder="gsk_..." style="padding-right:44px;">
+                            <button type="button" onclick="var el=document.getElementById('groq-api-key'); el.type=el.type==='password'?'text':'password'; this.innerHTML=el.type==='password'?'<i class=\'fa-regular fa-eye\'></i>':'<i class=\'fa-regular fa-eye-slash\'></i>'" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button id="save-gemini-btn" class="btn primary" style="width:100%; justify-content:center; padding:14px;">
+                        <i class="fa-solid fa-floppy-disk" style="margin-right:8px;"></i>Save AI Keys
+                    </button>
+                    <div id="gemini-status" class="alert" style="margin-top:16px;"></div>
+                </div>
+                
+                <!-- WEBHOOK CONFIGURATION CARD -->
+                <div class="glass" style="padding:28px; border-radius:16px;">
+                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:24px; padding-bottom:20px; border-bottom:1px solid var(--border);">
+                        <div style="width:42px;height:42px;border-radius:10px;background:#fce7f3;display:flex;align-items:center;justify-content:center;">
+                            <i class="fa-solid fa-link" style="color:#db2777; font-size:18px;"></i>
+                        </div>
+                        <div>
+                            <h3 style="font-size:17px;font-weight:700;margin:0;">Webhook Configuration</h3>
+                            <p style="font-size:13px; color:var(--text-muted); margin:0;">Send events to your own server or Make/Zapier</p>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Webhook URL</label>
+                        <input type="url" id="webhook-url" placeholder="https://your-server.com/webhook" style="font-family:monospace;">
+                    </div>
+                    
+                    <button id="save-webhook-btn" class="btn primary" style="width:100%; justify-content:center; padding:14px;">
+                        <i class="fa-solid fa-floppy-disk" style="margin-right:8px;"></i>Save Webhook
+                    </button>
+                    <div id="webhook-status" class="alert" style="margin-top:16px;"></div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- SENDING ACCOUNTS -->
+        <!-- SENDING ACCOUNTS -->
+        <div id="sending-accounts-view" class="view">
+            <div class="page-header" style="margin-bottom: 32px; display:flex; justify-content:space-between; align-items:flex-end;">
+                <div>
+                    <h1 class="page-title" style="font-size: 28px; margin-bottom: 8px;">Sending Accounts</h1>
+                    <p class="page-subtitle" style="font-size: 15px;">Connect SMTP accounts to send emails (Round-Robin sending supported).</p>
+                </div>
+                <div>
+                    <button class="btn primary" onclick="ACCOUNTS.showAddModal()"><i class="fa-solid fa-plus" style="margin-right:8px;"></i> Add New Account</button>
+                </div>
+            </div>
+            
+            <div class="glass" style="padding:0; overflow:hidden; border-radius:16px;">
+                <table style="width:100%; border-collapse:collapse; text-align:left;">
+                    <thead>
+                        <tr style="background:#f8fafc; border-bottom:1px solid var(--border);">
+                            <th style="padding:16px 24px; font-weight:600; color:var(--text-muted); font-size:13px; text-transform:uppercase;">Name</th>
+                            <th style="padding:16px 24px; font-weight:600; color:var(--text-muted); font-size:13px; text-transform:uppercase;">Email Address</th>
+                            <th style="padding:16px 24px; font-weight:600; color:var(--text-muted); font-size:13px; text-transform:uppercase;">Daily Limit</th>
+                            <th style="padding:16px 24px; font-weight:600; color:var(--text-muted); font-size:13px; text-transform:uppercase;">Sent Today</th>
+                            <th style="padding:16px 24px; font-weight:600; color:var(--text-muted); font-size:13px; text-transform:uppercase;">Health</th>
+                            <th style="padding:16px 24px; font-weight:600; color:var(--text-muted); font-size:13px; text-transform:uppercase;">Status</th>
+                            <th style="padding:16px 24px; font-weight:600; color:var(--text-muted); font-size:13px; text-transform:uppercase; text-align:right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="accounts-table-body">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Add Account Modal -->
+            <div id="add-account-modal" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.6); z-index:9999; backdrop-filter:blur(4px); align-items:center; justify-content:center;">
+                <div style="background:var(--bg); padding:32px; border-radius:16px; width:100%; max-width:500px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1); border:1px solid rgba(255,255,255,0.2);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+                        <h2 id="acc-modal-title" style="font-size:20px; font-weight:700;">Add Sending Account</h2>
+                        <button onclick="document.getElementById('add-account-modal').style.display='none'" style="background:transparent; border:none; color:var(--text-muted); font-size:20px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    
+                    <div style="background:rgba(234, 179, 8, 0.1); border:1px solid rgba(234, 179, 8, 0.2); padding:12px; border-radius:8px; margin-bottom:20px; display:flex; gap:12px; align-items:flex-start;">
+                        <i class="fa-solid fa-triangle-exclamation" style="color:#eab308; margin-top:2px;"></i>
+                        <div style="font-size:13px; color:var(--text-muted); line-height:1.5;">
+                            <strong>Note on Passwords:</strong> If you are using Gmail or Microsoft/Outlook, you <strong>must</strong> use an <a href="https://support.google.com/mail/answer/185833?hl=en" target="_blank" style="color:var(--p);">App Password</a> instead of your regular account password.
+                        </div>
+                    </div>
+                    
+                    <input type="hidden" id="acc-id" value="">
+                    <div class="form-group">
+                        <label>Display Name (Sender Name)</label>
+                        <input type="text" id="acc-name" placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="acc-email" placeholder="john@example.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>App Password (16-digit Google App Password)</label>
+                        <input type="password" id="acc-password" placeholder="••••••••••••••••" style="font-family: 'Courier New', Courier, monospace; letter-spacing: 4px; font-size: 18px; padding: 14px 16px; border: 2px solid var(--p); background: rgba(79, 70, 229, 0.05); color: var(--p); font-weight: bold; border-radius: 8px; outline: none; transition: all 0.3s ease;">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Daily Sending Limit</label>
+                        <input type="number" id="acc-daily-limit" value="500">
+                    </div>
+                    
+                    <hr style="border:none; border-top:1px solid rgba(255,255,255,0.1); margin:24px 0;">
+                    
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:32px;">
+                        <div class="form-group">
+                            <label>Warmup Starting Limit</label>
+                            <input type="number" id="acc-warmup-limit" value="5">
+                        </div>
+                        <div class="form-group">
+                            <label>Daily Increment</label>
+                            <input type="number" id="acc-warmup-increment" value="2">
+                        </div>
+                    </div>
+                    
+                    <div style="display:flex; justify-content:flex-end; gap:12px;">
+                        <button class="btn" onclick="document.getElementById('add-account-modal').style.display='none'">Cancel</button>
+                        <button id="save-account-btn" class="btn primary" onclick="ACCOUNTS.saveAccount()">Connect Account</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADMIN -->
+        <div id="admin-view" class="view">
+            <div class="page-header">
+                <h1 class="page-title">Administration</h1>
+                <p class="page-subtitle">Manage users and access control</p>
+            </div>
+            <div class="glass" style="padding:0;overflow:hidden;">
+                <table>
+                    <thead><tr><th>ID</th><th>User Email</th><th>Role</th><th style="width:100px;">Actions</th></tr></thead>
+                    <tbody id="admin-users-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ABOUT -->
+        <div id="about-view" class="view" style="position: relative; overflow: hidden; padding-bottom: 40px; padding-top: 10px;">
+            <!-- Background blobs -->
+            <div style="position: absolute; top: -100px; left: -100px; width: 500px; height: 500px; background: rgba(79, 70, 229, 0.15); filter: blur(100px); border-radius: 50%; z-index: 0; pointer-events: none; animation: float-blob 15s ease-in-out infinite alternate;"></div>
+            <div style="position: absolute; top: 30%; right: -150px; width: 400px; height: 400px; background: rgba(236, 72, 153, 0.15); filter: blur(100px); border-radius: 50%; z-index: 0; pointer-events: none; animation: float-blob-reverse 18s ease-in-out infinite alternate;"></div>
+            <div style="position: absolute; bottom: -100px; left: 20%; width: 600px; height: 400px; background: rgba(16, 185, 129, 0.1); filter: blur(120px); border-radius: 50%; z-index: 0; pointer-events: none; animation: float-blob 20s ease-in-out infinite alternate;"></div>
+            
+            <div class="page-header" style="text-align: center; margin-bottom: 60px; padding-top: 50px; position: relative; z-index: 2;">
+                <div style="display:inline-flex; align-items:center; justify-content:center; width:64px; height:64px; border-radius:20px; background:linear-gradient(135deg, #4f46e5, #ec4899); color:white; font-size:28px; margin-bottom:24px; box-shadow:0 12px 24px -6px rgba(236,72,153,0.5);">
+                    <i class="fa-solid fa-rocket"></i>
+                </div>
+                <h1 class="page-title" style="font-size: 48px; font-weight: 900; letter-spacing: -1.5px; margin-bottom: 16px; background: linear-gradient(135deg, #4f46e5 0%, #ec4899 50%, #f59e0b 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.1));">XComic Email Marketer</h1>
+                <p class="page-subtitle" style="font-size: 19px; color: var(--text-muted); max-width: 650px; margin: 0 auto; line-height: 1.7; font-weight: 500;">The Complete Overview of Features and Capabilities <br><span style="font-size:16px; opacity: 0.7; font-weight: 400; margin-top: 8px; display: inline-block;">সিস্টেমের সকল ফিচারের বিস্তারিত বর্ণনা</span></p>
+            </div>
+            
+            <style>
+                @keyframes float-blob {
+                    0% { transform: translate(0, 0) scale(1); }
+                    100% { transform: translate(60px, 80px) scale(1.1); }
+                }
+                @keyframes float-blob-reverse {
+                    0% { transform: translate(0, 0) scale(1.1); }
+                    100% { transform: translate(-60px, -80px) scale(1); }
+                }
+                .about-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+                    gap: 32px;
+                    padding: 20px;
+                }
+                .about-card {
+                    background: var(--surface);
+                    border-radius: 20px;
+                    padding: 32px;
+                    position: relative;
+                    overflow: hidden;
+                    border: 1px solid rgba(0, 0, 0, 0.04);
+                    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.02);
+                    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+                    z-index: 1;
+                    display: flex;
+                    flex-direction: column;
+                }
+                .about-card::before {
+                    content: '';
+                    position: absolute;
+                    top: 0; left: 0; right: 0; height: 4px;
+                    background: linear-gradient(90deg, var(--icon-color-1), var(--icon-color-2));
+                    transition: all 0.3s ease;
+                }
+                .about-card::after {
+                    content: '';
+                    position: absolute;
+                    inset: 0;
+                    background: radial-gradient(circle at 80% 20%, rgba(var(--icon-color-rgb), 0.02) 0%, transparent 50%);
+                    z-index: -1;
+                    transition: all 0.3s ease;
+                }
+                .about-card:hover {
+                    transform: translateY(-6px);
+                    border-color: rgba(var(--icon-color-rgb), 0.25);
+                    box-shadow: 0 20px 40px -10px rgba(var(--icon-color-rgb), 0.12), 0 0 0 1px rgba(var(--icon-color-rgb), 0.05);
+                }
+                .about-card:hover::after {
+                    background: radial-gradient(circle at 80% 20%, rgba(var(--icon-color-rgb), 0.06) 0%, transparent 60%);
+                }
+                .about-icon-wrapper {
+                    width: 56px;
+                    height: 56px;
+                    border-radius: 14px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 24px;
+                    color: #fff;
+                    margin-bottom: 24px;
+                    box-shadow: 0 8px 16px -4px rgba(var(--icon-color-rgb), 0.3);
+                    background: linear-gradient(135deg, var(--icon-color-1), var(--icon-color-2));
+                    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+                }
+                .about-card:hover .about-icon-wrapper {
+                    transform: scale(1.08) rotate(4deg);
+                    box-shadow: 0 12px 20px -6px rgba(var(--icon-color-rgb), 0.4);
+                }
+                .about-title {
+                    font-size: 19px;
+                    font-weight: 800;
+                    color: var(--text);
+                    margin-bottom: 12px;
+                    line-height: 1.3;
+                    letter-spacing: -0.4px;
+                }
+                .about-text {
+                    font-size: 14.5px;
+                    color: var(--text-muted);
+                    line-height: 1.6;
+                    margin-bottom: 16px;
+                }
+                .about-text.bn {
+                    color: var(--text);
+                    font-weight: 500;
+                    font-size: 14px;
+                    opacity: 0.9;
+                    margin-bottom: 0;
+                    border-top: 1px dashed var(--border);
+                    padding-top: 14px;
+                    margin-top: auto;
+                }
+                /* Dark mode adjustments */
+                [data-theme="dark"] .about-card {
+                    background: rgba(30, 41, 59, 0.3);
+                    backdrop-filter: blur(16px);
+                    border: 1px solid rgba(255, 255, 255, 0.05);
+                }
+                [data-theme="dark"] .about-card:hover {
+                    border-color: rgba(var(--icon-color-rgb), 0.35);
+                    box-shadow: 0 25px 50px -15px rgba(0, 0, 0, 0.35), 0 0 25px rgba(var(--icon-color-rgb), 0.08);
+                }
+                [data-theme="dark"] .about-text.bn {
+                    border-top: 1px dashed rgba(255, 255, 255, 0.08);
+                }
+            </style>
+
+            <div class="about-grid">
+                
+                <div class="about-card" style="--icon-color-1:#3b82f6; --icon-color-2:#2563eb; --icon-color-rgb:59,130,246;">
+                    <div class="about-icon-wrapper"><i class="fa-solid fa-server"></i></div>
+                    <h3 class="about-title">1. Multi-Sender & Account Rotation</h3>
+                    <p class="about-text"><strong>English:</strong> Connect unlimited SMTP configurations or professional Google Workspace accounts using secure App Passwords. The system intelligently rotates outbound profiles to balance load, preventing rate limits and safeguarding inbox reputation.</p>
+                    <p class="about-text bn"><strong>Bangla:</strong> এখানে একাধিক SMTP বা প্রফেশনাল গুগল ওয়ার্কস্পেস অ্যাকাউন্ট যুক্ত করতে পারবেন। আমাদের স্মার্ট রাউটিং সিস্টেম প্রতিটি অ্যাকাউন্টের মধ্যে ইমেইল লোড ব্যালেন্স করে স্বয়ংক্রিয়ভাবে ইমেইল আদান-প্রদান পরিচালনা করে, যা স্প্যাম ফিল্টার এড়াতে অত্যন্ত কার্যকর।</p>
+                </div>
+
+                <div class="about-card" style="--icon-color-1:#f59e0b; --icon-color-2:#d97706; --icon-color-rgb:245,158,11;">
+                    <div class="about-icon-wrapper"><i class="fa-solid fa-temperature-arrow-up"></i></div>
+                    <h3 class="about-title">2. Auto-Warmup & Smart Limits</h3>
+                    <p class="about-text"><strong>English:</strong> Build domain authority progressively with automated daily limit ramping. The system actively tracks delivery status; in the event of high bounce rates, it auto-pauses individual profiles to protect domain health.</p>
+                    <p class="about-text bn"><strong>Bangla:</strong> অটো-ওয়ার্মআপ অ্যালগরিদম পর্যায়ক্রমে আপনার দৈনিক প্রেরণের সীমা বৃদ্ধি করে ডোমেইন রেপুটেশন উন্নত করে। তাছাড়া, 'স্মার্ট লিমিট' সিস্টেম বাউন্স রেট পর্যবেক্ষণ করে উচ্চ বাউন্সের ক্ষেত্রে ডোমেইন সুরক্ষায় অ্যাকাউন্ট সাময়িকভাবে স্থগিত (auto-pause) করে।</p>
+                </div>
+
+                <div class="about-card" style="--icon-color-1:#10b981; --icon-color-2:#059669; --icon-color-rgb:16,185,129;">
+                    <div class="about-icon-wrapper"><i class="fa-solid fa-shield-halved"></i></div>
+                    <h3 class="about-title">3. Advanced Deliverability Check</h3>
+                    <p class="about-text"><strong>English:</strong> Before campaigns launch, the diagnostic engine verifies critical DNS records (SPF, DKIM, DMARC), filters text copies for high-frequency spam triggers, and ensures compliance with mandatory unsubscribe headers.</p>
+                    <p class="about-text bn"><strong>Bangla:</strong> ক্যাম্পেইন চালুর পূর্বে এটি স্বয়ংক্রিয়ভাবে SPF, DKIM ও DMARC সহ প্রয়োজনীয় DNS রেকর্ডসমূহ পরীক্ষা করে। একই সাথে ইমেইলের কন্টেন্টে থাকা সংবেদনশীল স্প্যাম কিওয়ার্ড শনাক্ত করে এবং আনসাবস্ক্রাইব লিংক সংযুক্তির নিশ্চয়তা প্রদান করে।</p>
+                </div>
+
+                <div class="about-card" style="--icon-color-1:#8b5cf6; --icon-color-2:#6d28d9; --icon-color-rgb:139,92,246;">
+                    <div class="about-icon-wrapper"><i class="fa-solid fa-users-gear"></i></div>
+                    <h3 class="about-title">4. Audience & Auto-Cleaning</h3>
+                    <p class="about-text"><strong>English:</strong> Import large lead databases via CSV or TXT. Leverage the validation scanner to purge invalid or unresponsive mailboxes prior to execution, maintaining a near-zero hard-bounce rate.</p>
+                    <p class="about-text bn"><strong>Bangla:</strong> সহজেই CSV বা টেক্সট ফাইল ফরমেটে গ্রাহক তালিকা আপলোড করুন। ক্যাম্পেইন প্রেরণের পূর্বে আমাদের এডভান্সড ক্লিনিং টুলস ব্যবহার করে অকার্যকর ইমেইলগুলো যাচাইপূর্বক নিষ্কাশন করুন, যা বাউন্স রেট সর্বনিম্ন পর্যায়ে রাখতে সাহায্য করবে।</p>
+                </div>
+
+                <div class="about-card" style="--icon-color-1:#ec4899; --icon-color-2:#be185d; --icon-color-rgb:236,72,153;">
+                    <div class="about-icon-wrapper"><i class="fa-solid fa-envelope-open-text"></i></div>
+                    <h3 class="about-title">5. Cold Email & Spintax</h3>
+                    <p class="about-text"><strong>English:</strong> Personalize outreach at scale using dynamic merge variables and nested Spintax variations. Every email compiled is structurally distinct to bypass algorithmic spam detection, backed by A/B split testing.</p>
+                    <p class="about-text bn"><strong>Bangla:</strong> ডাইনামিক মার্জ ট্যাগ এবং স্পিনট্যাক্স (Spintax) ব্যবহারের মাধ্যমে প্রতিটি গ্রাহকের নিকট সম্পূর্ণ কাস্টমাইজড ইমেইল প্রেরণ নিশ্চিত করুন। ভিন্ন ভিন্ন ইমেইল সংস্করণ তৈরির মাধ্যমে স্প্যাম ফিল্টার ও প্রোমোশন ট্যাব এড়ানো সহজ হবে।</p>
+                </div>
+
+                <div class="about-card" style="--icon-color-1:#f43f5e; --icon-color-2:#e11d48; --icon-color-rgb:244,63,94;">
+                    <div class="about-icon-wrapper"><i class="fa-solid fa-paintbrush"></i></div>
+                    <h3 class="about-title">6. Visual Newsletter Builder</h3>
+                    <p class="about-text"><strong>English:</strong> Construct responsive HTML marketing materials using the built-in drag-and-drop designer. Embed structured text, media blocks, custom action links, and preserve customized layouts for reusable deployment.</p>
+                    <p class="about-text bn"><strong>Bangla:</strong> ভিজ্যুয়াল ড্র্যাগ অ্যান্ড ড্রপ নিউজলেটার এডিটরের মাধ্যমে প্রফেশনাল ডিজাইন সম্পন্ন রেসপন্সিভ HTML লেআউট তৈরি করুন। আপনার কাস্টম ডিজাইনগুলো পুনরায় ব্যবহারের সুবিধার্থে টেমপ্লেট লাইব্রেরিতে সংরক্ষণ করা যাবে।</p>
+                </div>
+
+                <div class="about-card" style="--icon-color-1:#0ea5e9; --icon-color-2:#0284c7; --icon-color-rgb:14,165,233;">
+                    <div class="about-icon-wrapper"><i class="fa-solid fa-robot"></i></div>
+                    <h3 class="about-title">7. Next-Gen AI Features</h3>
+                    <p class="about-text"><strong>English:</strong> Harness deep AI models to draft responsive copywriting, suggest high-performing subject lines, auto-generate personalized opening icebreakers based on company profiles, and handle automated lead replies.</p>
+                    <p class="about-text bn"><strong>Bangla:</strong> জেনারেটিভ এআই প্রযুক্তির মাধ্যমে সহজেই কনভার্টিং ইমেইল কপিরাইটিং, আকর্ষণীয় সাবজেক্ট লাইন এবং গ্রাহকের কোম্পানি প্রোফাইলের ওপর ভিত্তি করে পার্সোনালাইজড ওপেনিং লাইন তৈরি করুন।</p>
+                </div>
+
+                <div class="about-card" style="--icon-color-1:#14b8a6; --icon-color-2:#0f766e; --icon-color-rgb:20,184,166;">
+                    <div class="about-icon-wrapper"><i class="fa-solid fa-clock"></i></div>
+                    <h3 class="about-title">8. Campaign Scheduling</h3>
+                    <p class="about-text"><strong>English:</strong> Schedule outbound campaigns targeting specific operational days and define targeted sending windows to guarantee delivery during business hours when open rates are highest.</p>
+                    <p class="about-text bn"><strong>Bangla:</strong> লক্ষ্যবস্তু অনুযায়ী নির্দিষ্ট দিনে ক্যাম্পেইন নির্ধারণ করুন এবং 'সেন্ডিং উইন্ডো' (যেমন সকাল ৯টা থেকে বিকাল ৫টা) সেট করুন, যাতে ক্লায়েন্টরা কর্মব্যস্ততার সময়ে ইনবক্সে মেইলটি পেতে পারেন।</p>
+                </div>
+
+                <div class="about-card" style="--icon-color-1:#84cc16; --icon-color-2:#65a30d; --icon-color-rgb:132,204,22;">
+                    <div class="about-icon-wrapper"><i class="fa-solid fa-inbox"></i></div>
+                    <h3 class="about-title">9. IMAP Processing: Bounces & Replies</h3>
+                    <p class="about-text"><strong>English:</strong> Connect via secure IMAP configurations to automate inbox synchronization. The system separates standard bounce notifications from genuine human responses, sorting them cleanly for immediate response.</p>
+                    <p class="about-text bn"><strong>Bangla:</strong> সিকিউরড IMAP প্রোটোকলের মাধ্যমে সিস্টেমটি স্বয়ংক্রিয়ভাবে আপনার ইনবক্স সিঙ্ক করে। এটি বাউন্স ইমেইল ও আসল মানুষের কাছ থেকে আসা ইতিবাচক উত্তরগুলোকে আলাদা ফোল্ডারে সুবিন্যস্ত করে রাখে।</p>
+                </div>
+
+                <div class="about-card" style="--icon-color-1:#a855f7; --icon-color-2:#7e22ce; --icon-color-rgb:168,85,247;">
+                    <div class="about-icon-wrapper"><i class="fa-solid fa-chart-line"></i></div>
+                    <h3 class="about-title">10. Real-time Analytics</h3>
+                    <p class="about-text"><strong>English:</strong> Track accurate click-throughs and message openings in real-time. Link-redirection headers and secure tracking assets provide complete campaign performance visibility directly inside your dashboard.</p>
+                    <p class="about-text bn"><strong>Bangla:</strong> লাইভ ট্র্যাকিং পিক্সেল ও রিডাইরেকশন প্রযুক্তির সাহায্যে রিয়েল-টাইম ওপেন রেট ও সিটিআর (CTR) বিশ্লেষণ করুন, যা প্রচারণার সামগ্রিক রূপরেখা ও কার্যকারিতা ড্যাশবোর্ডে প্রদর্শন করে।</p>
+                </div>
+                
+                <div class="about-card" style="--icon-color-1:#f97316; --icon-color-2:#c2410c; --icon-color-rgb:249,115,22;">
+                    <div class="about-icon-wrapper"><i class="fa-solid fa-reply-all"></i></div>
+                    <h3 class="about-title">11. AI Reply Management</h3>
+                    <p class="about-text"><strong>English:</strong> Review prospect replies inline within the central control panel. Generate contextual response drafts leveraging specialized LLM models, or manage control histories with intuitive delete tools.</p>
+                    <p class="about-text bn"><strong>Bangla:</strong> সেন্ট্রাল ড্যাশবোর্ড থেকেই গ্রাহকের সকল প্রত্যুত্তর সরাসরি পর্যালোচনা করুন। এআই-এর সহায়তায় প্রাসঙ্গিক ড্রাফট তৈরি করুন অথবা ইনবক্সের কার্যকারিতা বজায় রাখতে অহেতুক মেইলগুলো তাৎক্ষণিক ডিলিট করুন।</p>
+                </div>
+
+                <div class="about-card" style="--icon-color-1:#10b981; --icon-color-2:#059669; --icon-color-rgb:16,185,129;">
+                    <div class="about-icon-wrapper"><i class="fa-solid fa-stopwatch"></i></div>
+                    <h3 class="about-title">12. Dynamic Human-like Delays</h3>
+                    <p class="about-text"><strong>English:</strong> Implement randomized delay intervals between messages to mirror human operational tempos, successfully bypassing pattern-detection firewalls on major mail service providers.</p>
+                    <p class="about-text bn"><strong>Bangla:</strong> প্রতিটি ইমেইল প্রেরণের মধ্যবর্তী সময়ে র‍্যান্ডম বিরতি নির্ধারণের মাধ্যমে মানবিক প্যাটার্ন তৈরি করুন, যা বড় বড় ইমেইল সেবা প্রদানকারীদের সিকিউরিটি ফায়ারওয়াল ও ডিটেকশন অ্যালগরিদম এড়াতে সাহায্য করে।</p>
+                </div>
+
+                <div class="about-card" style="--icon-color-1:#f43f5e; --icon-color-2:#e11d48; --icon-color-rgb:244,63,94;">
+                    <div class="about-icon-wrapper"><i class="fa-solid fa-layer-group"></i></div>
+                    <h3 class="about-title">13. 100+ Responsive Layouts</h3>
+                    <p class="about-text"><strong>English:</strong> Instantly utilize a comprehensive suite of pre-configured responsive layouts tailored for newsletters, SaaS platforms, corporate communications, and direct marketing events.</p>
+                    <p class="about-text bn"><strong>Bangla:</strong> আমাদের ভিজ্যুয়াল বিল্ডারে যুক্ত ১০০টিরও বেশি উচ্চ মানের প্রফেশনাল ও রেডিমেড লেআউট অ্যাক্সেস করুন। নিউজলেটার, স্টার্টআপ বা সার্ভিস প্রমোশন এক ক্লিকে টেমপ্লেট লোড করে শুরু করতে পারবেন।</p>
+                </div>
+
+                <div class="about-card" style="--icon-color-1:#06b6d4; --icon-color-2:#0891b2; --icon-color-rgb:6,182,212;">
+                    <div class="about-icon-wrapper"><i class="fa-solid fa-rotate"></i></div>
+                    <h3 class="about-title">14. Timezone-Aware Auto Reset</h3>
+                    <p class="about-text"><strong>English:</strong> Ensure systematic count resets exactly at Bangladesh Midnight (UTC+6) directly via UI initiation, providing maximum service reliability regardless of server status or hosting environments.</p>
+                    <p class="about-text bn"><strong>Bangla:</strong> ড্যাশবোর্ড লোড হওয়ার সাথে সাথে সিস্টেমটি বাংলাদেশ সময় মধ্যরাত ১২টায় (UTC+6) স্বয়ংক্রিয়ভাবে দৈনিক ইমেইল প্রেরণের সীমা রিসেট করে দেয়, যা যেকোনো হোস্টিং সার্ভারে নিখুঁত স্থায়িত্ব প্রদান করে।</p>
+                </div>
+
+                <div class="about-card" style="--icon-color-1:#f59e0b; --icon-color-2:#d97706; --icon-color-rgb:245,158,11;">
+                    <div class="about-icon-wrapper"><i class="fa-solid fa-chart-line"></i></div>
+                    <h3 class="about-title">15. Campaign Limits & Organic Ramp Up</h3>
+                    <p class="about-text"><strong>English:</strong> Set precise daily limits per campaign alongside automated ramp-up increments. The system gradually scales your sending volume, successfully bypassing spam triggers for maximum inbox deliverability.</p>
+                    <p class="about-text bn"><strong>Bangla:</strong> প্রতিটি ক্যাম্পেইনের জন্য নির্দিষ্ট দৈনিক লিমিট এবং অটোমেটিক র‍্যাম্প-আপ (ধাপে ধাপে বৃদ্ধি) সেট করুন। সিস্টেমটি মানুষের মত ধীরগতিতে ভলিউম বাড়িয়ে আপনার মেইল সরাসরি ইনবক্সে ল্যান্ডিং নিশ্চিত করে।</p>
+                </div>
+
+                <div class="about-card" style="--icon-color-1:#64748b; --icon-color-2:#475569; --icon-color-rgb:100,116,139;">
+                    <div class="about-icon-wrapper"><i class="fa-solid fa-code"></i></div>
+                    <h3 class="about-title">16. Engineered by Monem Rahman Zisan</h3>
+                    <p class="about-text"><strong>English:</strong> Designed and engineered by Monem Rahman Zisan to deliver a robust, highly optimized, and completely self-hosted email automation ecosystem that reduces overhead and scales outreach.</p>
+                    <p class="about-text bn"><strong>Bangla:</strong> সফটওয়্যারটি সম্পূর্ণ স্বয়ংক্রিয় এবং ক্লাউড-অপ্টিমাইজড আর্কিটেকচারে ডেভেলপ করেছেন মোনেম রহমান জিসান, যা আপনার ব্যবসার প্রমোশনাল ব্যয় উল্লেখযোগ্য হারে কমিয়ে আনতে সাহায্য করবে।</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- INBOX PREVIEW MODAL -->
+
+        <div id="inbox-preview-modal" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.8); z-index:10000; backdrop-filter:blur(4px); align-items:center; justify-content:center;">
+            <div style="background:var(--surface); width:100%; max-width:700px; border-radius:12px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.5); border:1px solid var(--border); overflow:hidden; display:flex; flex-direction:column;">
+                <!-- Browser-like header -->
+                <div style="background:#f1f5f9; padding:12px 16px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border);">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <div style="width:12px; height:12px; border-radius:50%; background:#ef4444;"></div>
+                        <div style="width:12px; height:12px; border-radius:50%; background:#eab308;"></div>
+                        <div style="width:12px; height:12px; border-radius:50%; background:#22c55e;"></div>
+                        <span style="font-size:13px; font-weight:600; color:var(--text-muted); margin-left:12px;">Inbox Preview</span>
+                    </div>
+                    <button onclick="document.getElementById('inbox-preview-modal').style.display='none'" style="background:transparent; border:none; color:var(--text-muted); font-size:16px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <!-- Gmail-like layout -->
+                <div style="display:flex; flex:1; min-height:400px;">
+                    <!-- Left menu mockup -->
+                    <div style="width:200px; padding:16px; border-right:1px solid var(--border); background:#f8fafc; display:flex; flex-direction:column; gap:12px;">
+                        <div style="padding:10px 16px; background:#e0e7ff; color:#4f46e5; border-radius:0 20px 20px 0; margin-left:-16px; font-size:13px; font-weight:700;"><i class="fa-solid fa-inbox" style="margin-right:12px;"></i> Inbox</div>
+                        <div style="padding:10px 16px; color:var(--text-muted); font-size:13px; font-weight:600;"><i class="fa-regular fa-star" style="margin-right:12px;"></i> Starred</div>
+                        <div style="padding:10px 16px; color:var(--text-muted); font-size:13px; font-weight:600;"><i class="fa-regular fa-paper-plane" style="margin-right:12px;"></i> Sent</div>
+                    </div>
+                    <!-- Email Content -->
+                    <div style="flex:1; padding:24px; background:#fff; overflow-y:auto;">
+                        <h2 id="preview-subject" style="font-size:22px; font-weight:400; margin-bottom:20px; color:#202124;">Subject Here</h2>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <div style="width:40px; height:40px; border-radius:50%; background:#4f46e5; color:#fff; display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:700;">Y</div>
+                                <div>
+                                    <div style="font-size:14px; font-weight:700; color:#202124;">You (XComic User) <span style="font-weight:400; color:#5f6368; font-size:12px;">&lt;you@yourdomain.com&gt;</span></div>
+                                    <div style="font-size:12px; color:#5f6368;">to Client</div>
+                                </div>
+                            </div>
+                            <div style="font-size:12px; color:#5f6368;">Just now</div>
+                        </div>
+                        <iframe id="preview-body-frame" style="width:100%; height:400px; border:none; background:#fff;"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<!-- Toast -->
+<div id="toast"><span id="toast-msg"></span></div>
+
+<!-- AI Chat -->
+<button id="ai-chat-btn" onclick="const p = document.getElementById('ai-chat-panel'); p.style.display = p.style.display === 'flex' ? 'none' : 'flex'; p.style.flexDirection='column';" style="display:none;position:fixed;bottom:32px;right:32px;width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg, #6366f1 0%, #a855f7 100%);border:none;color:#fff;font-size:24px;cursor:pointer;box-shadow:0 10px 25px -5px rgba(99,102,241,0.5);z-index:1000;align-items:center;justify-content:center;transition:transform 0.2s ease, box-shadow 0.2s ease;">
+    <i class="fa-solid fa-wand-magic-sparkles"></i>
+</button>
+<div id="ai-chat-panel" style="display:none;position:fixed;bottom:110px;right:32px;width:400px;height:600px;background:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:24px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);z-index:1001;flex-direction:column;overflow:hidden;">
+    <div style="background:linear-gradient(135deg, #6366f1 0%, #a855f7 100%);padding:24px;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;align-items:center;">
+        <div>
+            <div style="font-weight:700;font-size:18px;color:#fff;display:flex;align-items:center;gap:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Copilot</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.8);font-weight:500;margin-top:4px;">Powered by Groq</div>
+        </div>
+        <button id="ai-chat-close" onclick="document.getElementById('ai-chat-panel').style.display = 'none';" style="background:rgba(255,255,255,0.2);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:14px;cursor:pointer;transition:background 0.2s;display:flex;align-items:center;justify-content:center;"><i class="fa-solid fa-times"></i></button>
+    </div>
+    <div id="ai-chat-messages" style="flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:16px;background:#fff;"></div>
+    <div style="padding:16px;border-top:1px solid var(--border);background:#f8fafc;display:flex;gap:12px;">
+        <input type="text" id="ai-chat-input" placeholder="Ask AI to write a high-converting email..."
+               style="flex:1;padding:14px 16px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;font-size:14px;color:var(--text);outline:none;box-shadow:0 2px 6px rgba(0,0,0,0.02);transition:border-color 0.2s;">
+        <button id="ai-chat-send" style="background:linear-gradient(135deg, #6366f1 0%, #a855f7 100%);border:none;color:#fff;width:48px;height:48px;border-radius:12px;cursor:pointer;font-size:16px;flex-shrink:0;box-shadow:0 4px 12px rgba(99,102,241,0.3);transition:transform 0.2s ease;">
+            <i class="fa-solid fa-paper-plane"></i>
+        </button>
+    </div>
+</div>
+
+<script>
+    const API = '/api';
+    let _token = null;
+    try { _token = localStorage.getItem('token'); } catch(e) {}
+
+    // Server ping
+    (function() {
+        var overlay = document.getElementById('wake-overlay');
+        function tryPing() {
+            fetch(API + '/ping').then(function(r) {
+                if (r.ok) { overlay.classList.remove('on'); }
+                else { overlay.classList.add('on'); setTimeout(tryPing, 2000); }
+            }).catch(function() {
+                overlay.classList.add('on');
+                setTimeout(tryPing, 2000);
+            });
+        }
+        tryPing();
+    })();
+
+    // Auth module
+    var AUTH = (function() {
+
+        function setAlert(id, msg, type) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            el.className = 'aalert show ' + (type === 'err' ? 'err' : 'ok');
+            el.innerHTML = (type === 'err' ? '⚠️ ' : '✅ ') + msg;
+        }
+        function clearAlert(id) {
+            var el = document.getElementById(id);
+            if (el) { el.className = 'aalert'; el.textContent = ''; }
+        }
+        function show(id) { var el = document.getElementById(id); if (el) el.classList.remove('hidden'); }
+        function hide(id) { var el = document.getElementById(id); if (el) el.classList.add('hidden'); }
+
+        function showLogin() {
+            show('form-login'); hide('form-signup'); hide('verify-box'); hide('forgot-box');
+            document.getElementById('tab-login').classList.add('active');
+            document.getElementById('tab-signup').classList.remove('active');
+        }
+        function showSignup() {
+            hide('form-login'); show('form-signup'); hide('verify-box'); hide('forgot-box');
+            document.getElementById('tab-login').classList.remove('active');
+            document.getElementById('tab-signup').classList.add('active');
+        }
+        function showForgot() {
+            hide('form-login'); hide('form-signup'); hide('verify-box'); show('forgot-box');
+        }
+
+        function onLoginSuccess(data) {
+            _token = data.access_token;
+            try {
+                localStorage.setItem('token', _token);
+                localStorage.setItem('is_admin', data.is_admin ? 'true' : 'false');
+            } catch(e) {}
+            document.getElementById('auth-page').classList.add('hidden');
+            document.getElementById('app-page').classList.add('on');
+            if (data.is_admin) { 
+                var n = document.getElementById('nav-admin'); if (n) n.style.display = 'flex'; 
+                var edc = document.getElementById('admin-email-delivery-card'); if (edc) edc.style.display = 'block';
+            }
+            if (typeof window.APP_INIT === 'function') window.APP_INIT();
+        }
+
+        async function doLogin() {
+            var email = (document.getElementById('login-email') || {}).value || '';
+            var pass = (document.getElementById('login-pass') || {}).value || '';
+            clearAlert('login-alert');
+            if (!email.trim() || !pass) { setAlert('login-alert', 'Please fill in all fields.', 'err'); return; }
+            var btn = document.getElementById('login-btn');
+            btn.disabled = true; btn.textContent = 'Signing in...';
+            try {
+                var body = new URLSearchParams();
+                body.append('username', email.trim());
+                body.append('password', pass);
+                var res = await fetch(API + '/auth/token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: body
+                });
+                var data = await res.json();
+                if (res.ok) { onLoginSuccess(data); }
+                else { setAlert('login-alert', data.detail || 'Wrong email or password.', 'err'); }
+            } catch(e) { setAlert('login-alert', 'Connection error. Try again.', 'err'); }
+            btn.disabled = false; btn.textContent = 'Sign In';
+        }
+
+        async function doSignup() {
+            var email = (document.getElementById('signup-email') || {}).value || '';
+            var pass = (document.getElementById('signup-pass') || {}).value || '';
+            var pass2 = (document.getElementById('signup-pass2') || {}).value || '';
+            clearAlert('signup-alert');
+            if (!email.trim() || !pass) { setAlert('signup-alert', 'Please fill in all fields.', 'err'); return; }
+            if (pass !== pass2) { setAlert('signup-alert', 'Passwords do not match.', 'err'); return; }
+            if (pass.length < 6) { setAlert('signup-alert', 'Password must be at least 6 characters.', 'err'); return; }
+            var btn = document.getElementById('signup-btn');
+            btn.disabled = true; btn.textContent = 'Creating...';
+            try {
+                var res = await fetch(API + '/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email.trim(), password: pass })
+                });
+                var data = await res.json();
+                if (res.ok) {
+                    if (data.status === 'needs_verification') {
+                        window._verifyEmail = email.trim();
+                        hide('form-signup'); show('verify-box');
+                    } else if (data.status === 'needs_approval') {
+                        setAlert('signup-alert', data.message || 'Account created! Waiting for admin approval.', 'ok');
+                        setTimeout(function(){ showLogin(); }, 2500);
+                    } else { onLoginSuccess(data); }
+                } else { setAlert('signup-alert', data.detail || 'Registration failed.', 'err'); }
+            } catch(e) { setAlert('signup-alert', 'Connection error. Please try again.', 'err'); }
+            btn.disabled = false; btn.textContent = 'Create Account';
+        }
+
+        async function doVerify() {
+            var code = (document.getElementById('verify-code') || {}).value || '';
+            var email = window._verifyEmail || '';
+            if (!code || code.length < 6) { setAlert('verify-alert', 'Enter the 6-digit code.', 'err'); return; }
+            var btn = document.getElementById('verify-btn');
+            btn.disabled = true; btn.textContent = 'Verifying...';
+            try {
+                var res = await fetch(API + '/auth/verify', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, code: code })
+                });
+                var data = await res.json();
+                if (res.ok) { onLoginSuccess(data); }
+                else { setAlert('verify-alert', data.detail || 'Invalid code.', 'err'); }
+            } catch(e) { setAlert('verify-alert', 'Connection error.', 'err'); }
+            btn.disabled = false; btn.textContent = 'Verify Account';
+        }
+
+        async function sendReset() {
+            var email = (document.getElementById('forgot-email') || {}).value || '';
+            clearAlert('forgot-alert');
+            if (!email) { setAlert('forgot-alert', 'Enter your email address.', 'err'); return; }
+            var btn = document.getElementById('forgot-btn');
+            btn.disabled = true; btn.textContent = 'Sending...';
+            try {
+                var res = await fetch(API + '/auth/forgot-password', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email })
+                });
+                var data = await res.json();
+                if (res.ok) {
+                    document.getElementById('forgot-step1').classList.add('hidden');
+                    document.getElementById('forgot-step2').classList.remove('hidden');
+                    setAlert('forgot-alert', 'Code sent! Check your inbox.', 'ok');
+                    window._resetEmail = email;
+                } else { setAlert('forgot-alert', data.detail || 'Error sending code.', 'err'); }
+            } catch(e) { setAlert('forgot-alert', 'Connection error.', 'err'); }
+            btn.disabled = false; btn.textContent = 'Send Reset Code';
+        }
+
+        async function doReset() {
+            var code = (document.getElementById('reset-code') || {}).value || '';
+            var newPass = (document.getElementById('new-pass') || {}).value || '';
+            clearAlert('forgot-alert');
+            if (!code || !newPass) { setAlert('forgot-alert', 'Fill in all fields.', 'err'); return; }
+            if (newPass.length < 6) { setAlert('forgot-alert', 'Password must be 6+ characters.', 'err'); return; }
+            var btn = document.getElementById('reset-btn');
+            btn.disabled = true; btn.textContent = 'Resetting...';
+            try {
+                var res = await fetch(API + '/auth/reset-password', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: window._resetEmail, code: code, new_password: newPass })
+                });
+                var data = await res.json();
+                if (res.ok) {
+                    setAlert('forgot-alert', 'Password reset! Please log in.', 'ok');
+                    setTimeout(function(){ showLogin(); }, 2000);
+                } else { setAlert('forgot-alert', data.detail || 'Reset failed.', 'err'); }
+            } catch(e) { setAlert('forgot-alert', 'Connection error.', 'err'); }
+            btn.disabled = false; btn.textContent = 'Reset Password';
+        }
+
+        return { showLogin: showLogin, showSignup: showSignup, showForgot: showForgot, doLogin: doLogin, doSignup: doSignup, doVerify: doVerify, sendReset: sendReset, doReset: doReset };
+    })();
+
+    // Auto-login if token exists
+    document.addEventListener('DOMContentLoaded', function() {
+        if (_token) {
+            document.getElementById('auth-page').classList.add('hidden');
+            document.getElementById('app-page').classList.add('on');
+            var isAdmin = false;
+            try { isAdmin = localStorage.getItem('is_admin') === 'true'; } catch(e) {}
+            if (isAdmin) { 
+                var n = document.getElementById('nav-admin'); if (n) n.style.display = 'flex'; 
+                var edc = document.getElementById('admin-email-delivery-card'); if (edc) edc.style.display = 'block';
+            }
+            if (typeof window.APP_INIT === 'function') window.APP_INIT();
+        }
+    });
+</script>
+
+    <script src="assets/templates.js?v=3007"></script>
+    <script src="assets/app.js?v=1784218568"></script>
+    <script src="assets/sending_accounts.js?v=1784217595"></script>
+    <script src="assets/ai_features.js?v=1783084988"></script>
+    <script src="assets/deliverability_v2.js?v=1783096001"></script>
+
+
+
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" id="mobile-menu-btn" onclick="window.toggleMobileMenu()" aria-label="Open menu">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="window.toggleMobileMenu()"></div>
+    <!-- Preflight Modal -->
+    <div id="preflight-modal" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.7); z-index:99999; flex-direction:column; align-items:center; justify-content:center; padding:24px; backdrop-filter: blur(8px);">
+        <div class="card" style="width:100%; max-width:550px; padding:32px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px;">
+                <h2 style="font-size:22px; font-weight:800; background: linear-gradient(135deg, #4f46e5 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Deliverability Optimizer <i class="fa-solid fa-plane-departure" style="color:var(--p); margin-left:8px;"></i></h2>
+                <span style="background:rgba(16,185,129,0.1); color:#10b981; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:700;"><i class="fa-solid fa-bullseye"></i> 99% Inbox Target</span>
+            </div>
+            <p style="color:var(--text-muted); margin-bottom:24px; font-size:14px; line-height:1.6;">We are performing a deep scan of your email content (Spam words, HTML ratio, broken links) and checking MX records to ensure maximum inbox placement.</p>
+            
+            <div id="preflight-loading" style="display:flex; flex-direction:column; align-items:center; gap:16px; margin-bottom:24px; padding: 32px; background:var(--surface); border-radius:12px; border: 1px dashed var(--border);">
+                <div class="spin" style="width:40px; height:40px; border:4px solid #e2e8f0; border-top-color:#4f46e5; border-radius:50%; animation:spin 0.8s linear infinite;"></div>
+                <span style="font-size:15px; font-weight:600; color:var(--text);">Analyzing content & verifying leads...</span>
+            </div>
+            
+            <div id="preflight-results" style="display:none; background:var(--surface); border-radius:12px; padding:20px; border:1px solid var(--border); margin-bottom:24px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid var(--border);">
+                    <span style="font-weight:700; color:var(--text);">Spam Score</span>
+                    <span id="preflight-score" style="font-weight:800; font-size:22px; color:var(--p);">10/10</span>
+                </div>
+                
+                <div id="preflight-warnings" style="margin-bottom:24px; font-size:14px; color:#ef4444;">
+                    <!-- Warnings go here -->
+                </div>
+                
+                <div style="display:flex; gap:12px; justify-content:flex-end;">
+                    <button class="btn" onclick="document.getElementById('preflight-modal').style.display='none'">Cancel</button>
+                    <button class="btn primary" id="btn-preflight-confirm" onclick="confirmPreflightSend()">Confirm & Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Gallery Modal -->
+    <div id="gallery-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.6);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(4px);">
+        <div style="background:#fff;width:800px;max-width:90%;height:600px;max-height:90vh;border-radius:12px;display:flex;flex-direction:column;box-shadow:0 10px 25px rgba(0,0,0,0.15);">
+            <div style="padding:20px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;">
+                <h3 style="margin:0;font-size:18px;color:#1e293b;"><i class="fa-solid fa-images"></i> Image Gallery</h3>
+                <button onclick="closeGalleryModal()" style="background:none;border:none;font-size:20px;color:#64748b;cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div style="padding:20px;border-bottom:1px solid #e2e8f0;display:flex;gap:10px;">
+                <input type="file" id="gallery-upload-input" accept="image/*" style="display:none;" onchange="handleGalleryUpload(event)">
+                <button onclick="document.getElementById('gallery-upload-input').click()" class="primary-btn" style="padding:8px 16px;"><i class="fa-solid fa-upload"></i> Upload Image</button>
+                <span id="gallery-upload-status" style="align-self:center;font-size:14px;color:#64748b;display:none;"><i class="fa-solid fa-spinner fa-spin"></i> Uploading...</span>
+            </div>
+            <div id="gallery-grid" style="flex:1;overflow-y:auto;padding:20px;display:grid;grid-template-columns:repeat(auto-fill, minmax(150px, 1fr));gap:15px;align-content:start;">
+                <!-- Images will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Reply Modal -->
+    <div id="reply-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.6);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(4px);">
+        <div style="background:#fff;width:700px;max-width:90%;border-radius:12px;display:flex;flex-direction:column;box-shadow:0 10px 25px rgba(0,0,0,0.15);">
+            <div style="padding:20px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;">
+                <h3 style="margin:0;font-size:18px;color:#1e293b;"><i class="fa-solid fa-reply"></i> View & Reply</h3>
+                <button onclick="document.getElementById('reply-modal').style.display='none'" style="background:none;border:none;font-size:20px;color:#64748b;cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div style="padding:24px; overflow-y:auto; max-height:70vh; display:flex; flex-direction:column; gap:16px;">
+                
+                <input type="hidden" id="active-reply-id" value="">
+                
+                <div>
+                    <label style="font-size:12px; font-weight:600; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px; display:block;">Client's Original Message</label>
+                    <div id="client-original-message" style="background:#f1f5f9; padding:16px; border-radius:8px; font-size:14px; color:var(--text); white-space:pre-wrap; border:1px solid #cbd5e1;"></div>
+                </div>
+
+                <div style="text-align:center; margin:8px 0;">
+                    <button class="btn" style="background:#8b5cf6; color:#fff;" onclick="generateAiReplyDraft(this)"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate AI Reply</button>
+                </div>
+
+                <div>
+                    <label style="font-size:12px; font-weight:600; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px; display:block;">Your Reply (Type manually or Generate via AI)</label>
+                    <textarea id="ai-reply-draft" rows="8" placeholder="Type your manual reply here, or click the Generate button above..." style="width:100%; padding:12px; border:1px solid var(--border); border-radius:8px; font-family:var(--font); font-size:14px; resize:vertical;"></textarea>
+                </div>
+            </div>
+            
+            <div style="padding:20px;border-top:1px solid #e2e8f0;display:flex;justify-content:flex-end; gap:12px; background:#f8fafc; border-bottom-left-radius:12px; border-bottom-right-radius:12px;">
+                <button class="btn" onclick="document.getElementById('reply-modal').style.display='none'">Cancel</button>
+                <button class="btn primary" onclick="sendAiReply(this)"><i class="fa-solid fa-paper-plane"></i> Send Reply</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

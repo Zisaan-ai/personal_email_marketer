@@ -1,9 +1,10 @@
-import codecs
+﻿with open('xcomic.xyz/index.html', 'r', encoding='utf-8') as f:
+    content = f.read()
+
 import re
+new_content = re.sub(r'assets/app\.js(\?v=\d+)?', 'assets/app.js?v=3', content)
 
-html = codecs.open('frontend/index.html', 'r', 'utf-8').read()
+with open('xcomic.xyz/index.html', 'w', encoding='utf-8') as f:
+    f.write(new_content)
 
-html = re.sub(r'assets/app\.js\?v=\d+', 'assets/app.js?v=4018', html)
-
-codecs.open('frontend/index.html', 'w', 'utf-8').write(html)
-print('Updated app.js version to bust cache.')
+print('Updated index.html cache buster')

@@ -1,10 +1,27 @@
-import requests, urllib.parse
+﻿import ftplib
 
-base64 = "dGVyYXBrY286KDMjSkNrMlZ5bjk0aFk="
-headers = {"Authorization": f"Basic {base64}"}
+FTP_HOST = '167.235.11.154'
+FTP_USER = 'terapkco'
+FTP_PASS = '(3#JCk2Vyn94hY'
 
-url = "https://167.235.11.154:2083/execute/Fileman/get_file_content?dir=" + urllib.parse.quote("/home/terapkco/xcomic_backend") + "&file=stderr.log"
-r = requests.get(url, headers=headers, verify=False)
-data = r.json()
-print("Keys:", data.keys())
-print("Data block:", data.get('data'))
+ftp = ftplib.FTP(timeout=30)
+ftp.connect(FTP_HOST, 21)
+ftp.login(FTP_USER, FTP_PASS)
+ftp.cwd('/xcomic_backend')
+
+# get list of files
+files = []
+ftp.retrlines('LIST', files.append)
+print('--- FILES ---')
+for line in files:
+    print(line)
+
+print('--- CHECKING LOGS ---')
+try:
+    with open('stderr.log', 'wb') as f:
+        ftp.retrbinary('RETR stderr.log', f.write)
+    print('stderr.log downloaded')
+except Exception as e:
+    print('No stderr.log found:', e)
+
+ftp.quit()

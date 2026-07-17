@@ -1243,7 +1243,16 @@ def _run_campaign(db, campaign_id):
                 db_session.rollback()
             # HEALTH TRACKING: Update on exception
             try:
-                health_monitor.update_health_after_send(db_session, str(acc.id), False)
+                error_str = str(e).lower()
+                if '535' in error_str or 'authentication' in error_str or 'password' in error_str:
+                    db_session.query(database.SendingAccount).filter(database.SendingAccount.id == acc.id).update({
+                        'auto_paused': True,
+                        'auto_paused_reason': 'App Password Expired / Invalid',
+                        'is_active': False
+                    })
+                    db_session.commit()
+                else:
+                    health_monitor.update_health_after_send(db_session, str(acc.id), False)
             except Exception:
                 pass
         db_session.commit()

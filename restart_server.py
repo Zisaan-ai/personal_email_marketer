@@ -1,16 +1,36 @@
 import ftplib
+import io
 
-ftp = ftplib.FTP('terapk.com')
-ftp.login('terapkco', '(3#JCk2Vyn94hY')
+FTP_HOST = "167.235.11.154"
+FTP_USER = "terapkco"
+FTP_PASS = "(3#JCk2Vyn94hY"
 
-with open('passenger_wsgi.py', 'wb') as f:
-    ftp.retrbinary('RETR xcomic_backend/passenger_wsgi.py', f.write)
+print("Connecting...")
+ftp = ftplib.FTP(timeout=30)
+ftp.connect(FTP_HOST, 21)
+ftp.login(FTP_USER, FTP_PASS)
+ftp.set_pasv(True)
 
-with open('passenger_wsgi.py', 'a') as f:
-    f.write('\n# touch to restart\n')
+ftp.cwd('xcomic_backend')
 
-with open('passenger_wsgi.py', 'rb') as f:
-    ftp.storbinary('STOR xcomic_backend/passenger_wsgi.py', f)
+# Touch tmp/restart.txt to restart Passenger app
+try:
+    ftp.cwd('tmp')
+    print("In tmp dir, creating restart.txt...")
+    empty = io.BytesIO(b'')
+    ftp.storbinary('STOR restart.txt', empty)
+    print("restart.txt created - server will restart!")
+except Exception as e:
+    print(f"tmp dir error: {e}")
+    # Try creating tmp first
+    try:
+        ftp.cwd('/xcomic_backend')
+        ftp.mkd('tmp')
+        ftp.cwd('tmp')
+        empty = io.BytesIO(b'')
+        ftp.storbinary('STOR restart.txt', empty)
+        print("Created tmp/restart.txt - server will restart!")
+    except Exception as e2:
+        print(f"Failed: {e2}")
 
 ftp.quit()
-print('Restarted passenger app by touching passenger_wsgi.py!')

@@ -481,7 +481,7 @@ def send_single_email(subject: str, body_html: str, recipient: str, account=None
         return True
     except Exception as e:
         print(f"Failed to send to {recipient}: {e}")
-        return False
+        raise e
     finally:
         if 'server' in locals() and server is not None:
             try:

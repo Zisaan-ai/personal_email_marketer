@@ -5342,8 +5342,6 @@ function setupSettings() {
                 }
                 verifyAllAIKeys();
 
-
-
             } catch(e) { showToast('Error saving keys', 'error'); }
 
 

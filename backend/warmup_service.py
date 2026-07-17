@@ -159,13 +159,40 @@ def _get_warmup_message():
     return random.choice(WARMUP_MESSAGES)
 
 
+def _get_provider_name(email: str) -> str:
+    email = email.lower()
+    if "@gmail.com" in email or "google" in email:
+        return "gmail"
+    elif "@outlook.com" in email or "@hotmail.com" in email:
+        return "outlook"
+    elif "@yahoo.com" in email:
+        return "yahoo"
+    return "other"
+
 def send_warmup_email(db, sender_acc, all_warmup_accounts):
-    """Sends a conversational email from sender to a random target in the network."""
+    """Sends a conversational email from sender to a target in the network. Uses Smart Provider Targeting."""
     targets = [a for a in all_warmup_accounts if a.id != sender_acc.id]
     if not targets:
         return
 
-    target_acc = random.choice(targets)
+    # --- SMART TARGETING ---
+    target_acc = None
+    # Check if there are any providers with low reputation that need heavy warmup
+    bad_reps = db.query(database.ProviderReputation).filter(
+        database.ProviderReputation.account_id == sender_acc.id,
+        database.ProviderReputation.reputation_score < 70
+    ).order_by(database.ProviderReputation.reputation_score.asc()).all()
+    
+    if bad_reps:
+        for rep in bad_reps:
+            # Find a target that matches this bad provider
+            matching_targets = [t for t in targets if _get_provider_name(t.email) == rep.provider_name]
+            if matching_targets:
+                target_acc = random.choice(matching_targets)
+                break
+                
+    if not target_acc:
+        target_acc = random.choice(targets)
     
     # Pick a random message from the large built-in bank
     msg_data = _get_warmup_message()
@@ -195,14 +222,19 @@ def send_warmup_email(db, sender_acc, all_warmup_accounts):
         
         sender_acc.warmup_sent_today += 1
         
-        # Warmup successfully sent and organically opened/replied to in network
         # This grows the health score!
         sender_acc.total_sent = (sender_acc.total_sent or 0) + 1
         sender_acc.total_opened = (sender_acc.total_opened or 0) + 1
         
+        provider = _get_provider_name(target_acc.email)
+        import health_monitor
+        health_monitor._record_daily_stat(db, sender_acc.id, "sent", provider)
+        health_monitor._record_daily_stat(db, sender_acc.id, "opened", provider)
+        
         # Add 30% chance of a reply to boost reply rate natively
         if random.random() < 0.3:
             sender_acc.total_replied = (sender_acc.total_replied or 0) + 1
+            health_monitor._record_daily_stat(db, sender_acc.id, "replied", provider)
             
         db.commit()
         print(f"Warmup: Sent from {sender_acc.email} to {target_acc.email} | Subject: {subject}")

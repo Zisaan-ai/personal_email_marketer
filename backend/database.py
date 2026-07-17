@@ -251,18 +251,31 @@ class DomainHealthCache(Base):
     is_catch_all = Column(Boolean, default=False)
     last_checked = Column(DateTime, default=datetime.utcnow)
 
-# --- Per-Account Daily Stats (Analytics) ---
 class AccountDailyStats(Base):
     __tablename__ = "account_daily_stats"
 
     id = Column(String, primary_key=True, default=generate_uuid)
     account_id = Column(String, ForeignKey("sending_accounts.id"), index=True)
     date = Column(String, index=True)   # "2026-07-11"
+    provider_name = Column(String, nullable=True, index=True) # "gmail", "outlook", etc.
     sent = Column(Integer, default=0)
     bounced = Column(Integer, default=0)
     opened = Column(Integer, default=0)
     clicked = Column(Integer, default=0)
     replied = Column(Integer, default=0)
+
+# --- Provider Specific Reputation ---
+class ProviderReputation(Base):
+    __tablename__ = "provider_reputations"
+    
+    id = Column(String, primary_key=True, default=generate_uuid)
+    account_id = Column(String, ForeignKey("sending_accounts.id"), index=True)
+    provider_name = Column(String, index=True) # e.g. "gmail", "outlook"
+    reputation_score = Column(Integer, default=100)
+    daily_limit = Column(Integer, default=50)
+    warmup_percent = Column(Integer, default=50)
+    campaign_percent = Column(Integer, default=50)
+    updated_at = Column(DateTime, default=datetime.utcnow)
 
 # Dependency for FastAPI
 def get_db():
@@ -350,6 +363,8 @@ def run_migrations():
         _safe_add_column("campaign_leads", "current_step", "INTEGER", 0)
         _safe_add_column("campaign_leads", "next_send_at", "DATETIME", None)
         _safe_add_column("campaign_leads", "replied", "BOOLEAN", False)
+
+        _safe_add_column("account_daily_stats", "provider_name", "VARCHAR", None)
 
         print("[Migration] All migrations completed successfully.")
     except Exception as e:

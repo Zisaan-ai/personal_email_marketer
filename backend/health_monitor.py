@@ -60,6 +60,64 @@ def calculate_health_score(account) -> int:
     score = base_score - bounce_penalty - streak_penalty + open_bonus + reply_bonus
     return max(0, min(100, int(score)))
 
+def calculate_provider_reputation(db, account_id: str, provider_name: str) -> dict:
+    """
+    Calculates the provider-specific reputation score based on strict penalties.
+    Updates the ProviderReputation table.
+    """
+    stats = db.query(database.AccountDailyStats).filter(
+        database.AccountDailyStats.account_id == account_id,
+        database.AccountDailyStats.provider_name == provider_name
+    ).all()
+    
+    total_sent = sum(s.sent for s in stats)
+    if total_sent < 10:
+        return None # Not enough data
+        
+    total_bounced = sum(s.bounced for s in stats)
+    total_complaints = 0 # Future proofing
+    total_replied = sum(s.replied for s in stats)
+    
+    bounce_rate = total_bounced / total_sent
+    complaint_rate = total_complaints / total_sent
+    reply_rate = total_replied / total_sent
+    
+    base = 100.0
+    penalty_bounce = (bounce_rate / 0.5) * 5.0
+    penalty_complaint = (complaint_rate / 0.1) * 10.0
+    bonus_reply = min((reply_rate / 1.0) * 2.0, 15.0)
+    
+    reputation = base - penalty_bounce - penalty_complaint + bonus_reply
+    reputation = max(0.0, min(100.0, reputation))
+    
+    # Strategy
+    if reputation >= 85:
+        warmup_pct, camp_pct = 30, 70
+    elif reputation >= 70:
+        warmup_pct, camp_pct = 50, 50
+    else:
+        warmup_pct, camp_pct = 80, 20
+        
+    rep_record = db.query(database.ProviderReputation).filter(
+        database.ProviderReputation.account_id == account_id,
+        database.ProviderReputation.provider_name == provider_name
+    ).first()
+    
+    if not rep_record:
+        rep_record = database.ProviderReputation(
+            account_id=account_id,
+            provider_name=provider_name
+        )
+        db.add(rep_record)
+        
+    rep_record.reputation_score = int(reputation)
+    rep_record.warmup_percent = warmup_pct
+    rep_record.campaign_percent = camp_pct
+    rep_record.updated_at = datetime.utcnow()
+    db.commit()
+    
+    return {"reputation": int(reputation), "warmup_percent": warmup_pct}
+
 
 # ============================================================
 # HEALTH UPDATE FUNCTIONS
@@ -295,19 +353,21 @@ def suggest_daily_limit(account) -> int:
 # ============================================================
 # DAILY STATS TRACKING
 # ============================================================
-def _record_daily_stat(db, account_id: str, event_type: str):
+def _record_daily_stat(db, account_id: str, event_type: str, provider_name: str = None):
     """Record a daily stat event for analytics."""
     today = datetime.utcnow().strftime("%Y-%m-%d")
 
     stat = db.query(database.AccountDailyStats).filter(
         database.AccountDailyStats.account_id == account_id,
-        database.AccountDailyStats.date == today
+        database.AccountDailyStats.date == today,
+        database.AccountDailyStats.provider_name == provider_name
     ).first()
 
     if not stat:
         stat = database.AccountDailyStats(
             account_id=account_id,
-            date=today
+            date=today,
+            provider_name=provider_name
         )
         db.add(stat)
         db.flush()

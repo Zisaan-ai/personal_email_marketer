@@ -11,4 +11,5 @@ PassengerPython "/home/yourusername/virtualenv/personal_email_marketer/3.10/bin/
     # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 </IfModule>
 
+
 # restart

@@ -1,6 +1,16 @@
 import os
 import sys
 
+# Set up the path to your FastAPI app directory
+sys.path.insert(0, os.path.dirname(__file__))
+
+# Import the FastAPI app
+from main import app as fastapi_app
+from a2wsgi import ASGIMiddleware
+
+# Initialize middleware globally so it only creates ONE thread pool per worker
+wsgi_app = ASGIMiddleware(fastapi_app)
+
 def application(environ, start_response):
     try:
         # LiteSpeed strips '/api' from PATH_INFO. We need to add it back for FastAPI.
@@ -8,14 +18,7 @@ def application(environ, start_response):
         if not path.startswith('/api'):
             environ['PATH_INFO'] = '/api' + path
             
-        # Set up the path to your FastAPI app directory
-        sys.path.insert(0, os.path.dirname(__file__))
-        
-        # Import the FastAPI app
-        from main import app as fastapi_app
-        
-        from a2wsgi import ASGIMiddleware
-        return ASGIMiddleware(fastapi_app)(environ, start_response)
+        return wsgi_app(environ, start_response)
         
     except Exception as e:
         import traceback

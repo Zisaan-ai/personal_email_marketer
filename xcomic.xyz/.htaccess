@@ -14,3 +14,10 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ index.html [L]
 
 # Purge cache 1783802101.25864
+
+# FORCE NO-CACHE FOR HTML AND JS SO THE AI FIXES DON'T REVERT!
+<FilesMatch "\.(html|js|css)$">
+    Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+</FilesMatch>

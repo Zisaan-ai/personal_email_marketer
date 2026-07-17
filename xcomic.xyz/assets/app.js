@@ -1,3 +1,19 @@
+
+window.updateInputState = (id, hasKey) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.value = ''; // Never show the key in the input box
+    if (hasKey) {
+        el.placeholder = 'Key is active! Enter a new key to replace...';
+        el.style.backgroundColor = 'var(--bg-light)';
+        el.style.borderStyle = 'dashed';
+    } else {
+        el.placeholder = id === 'gemini-api-key' ? 'AIzaSy...' : 'sk-...';
+        el.style.backgroundColor = 'var(--bg)';
+        el.style.borderStyle = 'solid';
+    }
+};
+
 // ============================================================
 
 
@@ -392,6 +408,10 @@ async function apiCall(endpoint, method = 'GET', body = null) {
 
 
 
+    const ct = res.headers.get('content-type');
+    if (ct && ct.includes('text/html') && res.status === 200 && (endpoint.includes('/api/settings') || endpoint.includes('/verify_key'))) {
+        throw new Error('Cloudflare blocked the request');
+    }
     if (res.status === 401) {
 
 
@@ -5305,54 +5325,21 @@ function setupSettings() {
 
 
 
-                const savePromises = [];
-                if (geminiKey) savePromises.push(apiCall('/settings/gemini', 'POST', { gemini_api_key: geminiKey }));
-                if (groqKey) savePromises.push(apiCall('/settings/groq', 'POST', { groq_api_key: groqKey }));
-                if (openaiKey) savePromises.push(apiCall('/settings/openai', 'POST', { openai_api_key: openaiKey }));
-                if (anthropicKey) savePromises.push(apiCall('/settings/anthropic', 'POST', { anthropic_api_key: anthropicKey }));
-                if (deepseekKey) savePromises.push(apiCall('/settings/deepseek', 'POST', { deepseek_api_key: deepseekKey }));
-
-                await Promise.all(savePromises);
-                
-                if (geminiKey) { window.loadedAIKeys['gemini'] = geminiKey; document.getElementById('gemini-api-key').value = ''; window.updateInputState('gemini-api-key', true); }
-                if (groqKey) { window.loadedAIKeys['groq'] = groqKey; document.getElementById('groq-api-key').value = ''; window.updateInputState('groq-api-key', true); }
-                if (openaiKey) { window.loadedAIKeys['openai'] = openaiKey; document.getElementById('openai-api-key').value = ''; window.updateInputState('openai-api-key', true); }
-                if (anthropicKey) { window.loadedAIKeys['anthropic'] = anthropicKey; document.getElementById('anthropic-api-key').value = ''; window.updateInputState('anthropic-api-key', true); }
-                if (deepseekKey) { window.loadedAIKeys['deepseek'] = deepseekKey; document.getElementById('deepseek-api-key').value = ''; window.updateInputState('deepseek-api-key', true); }
-
-
-
-
-                const geminiStatus = document.getElementById('gemini-status');
-
-                if (geminiStatus) {
-
-                    if (!geminiKey && !groqKey && !openaiKey && !anthropicKey && !deepseekKey) {
-
-                        geminiStatus.innerHTML = '<span style="color:#ef4444;">⚠️ All keys cleared. Please add at least one key to use AI features.</span>';
-
-                    } else {
-
-                        geminiStatus.textContent = '✅ AI Keys saved successfully!';
-
-                    }
-
-                    geminiStatus.className = 'alert success';
-
-                    geminiStatus.style.display = 'block';
-
-                    setTimeout(() => { 
-
-                        geminiStatus.style.display = 'none'; 
-
-                        geminiStatus.textContent = '';
-
-                    }, 3000);
-
+                if (geminiKey) {
+                    try { const r = await apiCall('/settings/gemini', 'POST', { gemini_api_key: geminiKey }); window.loadedAIKeys['gemini'] = geminiKey; document.getElementById('gemini-api-key').value = ''; window.updateInputState('gemini-api-key', true); alert('Gemini key saved!'); } catch(e) { alert('Failed to save Gemini key: ' + e.message); }
                 }
-
-                
-
+                if (groqKey) {
+                    try { const r = await apiCall('/settings/groq', 'POST', { groq_api_key: groqKey }); window.loadedAIKeys['groq'] = groqKey; document.getElementById('groq-api-key').value = ''; window.updateInputState('groq-api-key', true); alert('Groq key saved!'); } catch(e) { alert('Failed to save Groq key: ' + e.message); }
+                }
+                if (openaiKey) {
+                    try { const r = await apiCall('/settings/openai', 'POST', { openai_api_key: openaiKey }); window.loadedAIKeys['openai'] = openaiKey; document.getElementById('openai-api-key').value = ''; window.updateInputState('openai-api-key', true); alert('OpenAI key saved!'); } catch(e) { alert('Failed to save OpenAI key: ' + e.message); }
+                }
+                if (anthropicKey) {
+                    try { const r = await apiCall('/settings/anthropic', 'POST', { anthropic_api_key: anthropicKey }); window.loadedAIKeys['anthropic'] = anthropicKey; document.getElementById('anthropic-api-key').value = ''; window.updateInputState('anthropic-api-key', true); alert('Anthropic key saved!'); } catch(e) { alert('Failed to save Anthropic key: ' + e.message); }
+                }
+                if (deepseekKey) {
+                    try { const r = await apiCall('/settings/deepseek', 'POST', { deepseek_api_key: deepseekKey }); window.loadedAIKeys['deepseek'] = deepseekKey; document.getElementById('deepseek-api-key').value = ''; window.updateInputState('deepseek-api-key', true); alert('DeepSeek key saved!'); } catch(e) { alert('Failed to save DeepSeek key: ' + e.message); }
+                }
                 verifyAllAIKeys();
 
 
@@ -5462,7 +5449,7 @@ function setupSettings() {
 
 
 
-    apiCall('/settings').then(async res => {
+    apiCall('/settings/all').then(async res => {
 
 
 
@@ -5477,23 +5464,6 @@ function setupSettings() {
         window.loadedAIKeys['anthropic'] = !!s.has_anthropic_api_key;
         window.loadedAIKeys['deepseek'] = !!s.has_deepseek_api_key;
 
-
-
-
-        window.updateInputState = (id, hasKey) => {
-            const el = document.getElementById(id);
-            if (!el) return;
-            el.value = ''; // Never show the key in the input box
-            if (hasKey) {
-                el.placeholder = 'Key is active! Enter a new key to replace...';
-                el.style.backgroundColor = 'var(--bg-light)';
-                el.style.borderStyle = 'dashed';
-            } else {
-                el.placeholder = id === 'gemini-api-key' ? 'AIzaSy...' : 'sk-...';
-                el.style.backgroundColor = 'var(--bg)';
-                el.style.borderStyle = 'solid';
-            }
-        };
 
 
 

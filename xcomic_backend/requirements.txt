@@ -1,0 +1,15 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+pydantic
+python-multipart
+python-jose[cryptography]
+passlib[bcrypt]
+python-dotenv
+beautifulsoup4
+bcrypt
+google-generativeai
+apscheduler
+pytz
+requests
+a2wsgi

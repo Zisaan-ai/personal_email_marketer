@@ -18,59 +18,105 @@ import database
 # ============================================================
 # HEALTH SCORE CALCULATION
 # ============================================================
-def calculate_health_score(account, db=None) -> int:
+def calculate_health_score(account) -> int:
     """
     Calculate health score (0-100) based on account metrics.
-    Starts at 0 and increases based on age, domain health, and sending/warmup activity.
-    """
-    score = 0
     
-    # 1. Account Age (Max 20 points)
-    if account.created_at:
-        age_days = (datetime.utcnow() - account.created_at).days
-        score += min(max(age_days, 0), 20)  # 1 point per day, max 20
-        
-    # 2. Domain Reputation (Max 30 points)
-    if db and account.email:
-        try:
-            domain = account.email.split('@')[-1]
-            domain_cache = db.query(database.DomainHealthCache).filter(
-                database.DomainHealthCache.domain == domain
-            ).first()
-            if domain_cache:
-                if domain_cache.has_spf:
-                    score += 10
-                if getattr(domain_cache, 'has_dkim', False):
-                    score += 10
-                if getattr(domain_cache, 'has_dmarc', False):
-                    score += 10
-        except Exception:
-            pass # ignore parsing or DB errors
-            
-    # 3. Sending & Warmup Activity (Max 50 points)
+    Formula:
+    - Start at 100
+    - Subtract bounce rate penalty (up to 80 points)
+    - Subtract bounce streak penalty (up to 30 points)
+    - Add open rate bonus (up to 15 points)
+    - Add reply rate bonus (up to 10 points)
+    """
     total_sent = account.total_sent or 0
+    total_bounced = account.total_bounced or 0
     total_opened = account.total_opened or 0
     total_replied = account.total_replied or 0
-    total_bounced = account.total_bounced or 0
-    
-    # Volume: 1 point per 10 emails, max 20 points
-    volume_score = min(total_sent // 10, 20)
-    score += volume_score
-    
-    # Engagement: Open (Max 15 points) -> 2 points per open
-    open_score = min(total_opened * 2, 15)
-    score += open_score
-    
-    # Engagement: Reply (Max 15 points) -> 5 points per reply
-    reply_score = min(total_replied * 5, 15)
-    score += reply_score
-    
-    # 4. Penalties
-    # Bounces: -10 points per bounce
-    bounce_penalty = total_bounced * 10
-    score -= bounce_penalty
-    
+    bounce_streak = account.bounce_streak or 0
+
+    if total_sent == 0:
+        return 0  # New account, no data yet
+
+    # Base score grows with total_sent up to 100 (reaches 100 after 100 emails)
+    base_score = min(100, total_sent)
+
+    # Bounce rate penalty (heaviest weight - up to 80 points)
+    bounce_rate = total_bounced / total_sent
+    bounce_penalty = bounce_rate * 80
+
+    # Consecutive bounce streak penalty (up to 30 points)
+    streak_penalty = min(bounce_streak * 5, 30)
+
+    # Open rate bonus (up to 15 points)
+    open_rate = total_opened / total_sent
+    open_bonus = min(open_rate * 20, 15)
+
+    # Reply rate bonus (up to 10 points)
+    reply_rate = total_replied / total_sent
+    reply_bonus = min(reply_rate * 40, 10)
+
+    # Calculate final score
+    score = base_score - bounce_penalty - streak_penalty + open_bonus + reply_bonus
     return max(0, min(100, int(score)))
+
+def calculate_provider_reputation(db, account_id: str, provider_name: str) -> dict:
+    """
+    Calculates the provider-specific reputation score based on strict penalties.
+    Updates the ProviderReputation table.
+    """
+    stats = db.query(database.AccountDailyStats).filter(
+        database.AccountDailyStats.account_id == account_id,
+        database.AccountDailyStats.provider_name == provider_name
+    ).all()
+    
+    total_sent = sum(s.sent for s in stats)
+    if total_sent < 10:
+        return None # Not enough data
+        
+    total_bounced = sum(s.bounced for s in stats)
+    total_complaints = 0 # Future proofing
+    total_replied = sum(s.replied for s in stats)
+    
+    bounce_rate = total_bounced / total_sent
+    complaint_rate = total_complaints / total_sent
+    reply_rate = total_replied / total_sent
+    
+    base = 100.0
+    penalty_bounce = (bounce_rate / 0.5) * 5.0
+    penalty_complaint = (complaint_rate / 0.1) * 10.0
+    bonus_reply = min((reply_rate / 1.0) * 2.0, 15.0)
+    
+    reputation = base - penalty_bounce - penalty_complaint + bonus_reply
+    reputation = max(0.0, min(100.0, reputation))
+    
+    # Strategy
+    if reputation >= 85:
+        warmup_pct, camp_pct = 30, 70
+    elif reputation >= 70:
+        warmup_pct, camp_pct = 50, 50
+    else:
+        warmup_pct, camp_pct = 80, 20
+        
+    rep_record = db.query(database.ProviderReputation).filter(
+        database.ProviderReputation.account_id == account_id,
+        database.ProviderReputation.provider_name == provider_name
+    ).first()
+    
+    if not rep_record:
+        rep_record = database.ProviderReputation(
+            account_id=account_id,
+            provider_name=provider_name
+        )
+        db.add(rep_record)
+        
+    rep_record.reputation_score = int(reputation)
+    rep_record.warmup_percent = warmup_pct
+    rep_record.campaign_percent = camp_pct
+    rep_record.updated_at = datetime.utcnow()
+    db.commit()
+    
+    return {"reputation": int(reputation), "warmup_percent": warmup_pct}
 
 
 # ============================================================
@@ -93,9 +139,9 @@ def update_health_after_send(db, account_id: str, success: bool):
         account.bounce_streak = (account.bounce_streak or 0) + 1
 
     # Recalculate health score
-    account.health_score = calculate_health_score(account, db)
+    account.health_score = calculate_health_score(account)
     account.last_health_check = datetime.utcnow()
-    db.commit()
+    db.flush()
 
     # Record daily stats
     _record_daily_stat(db, account_id, "sent" if success else "bounced")
@@ -114,8 +160,8 @@ def update_health_after_open(db, account_id: str):
         return
 
     account.total_opened = (account.total_opened or 0) + 1
-    account.health_score = calculate_health_score(account, db)
-    db.commit()
+    account.health_score = calculate_health_score(account)
+    db.flush()
 
     _record_daily_stat(db, account_id, "opened")
 
@@ -129,8 +175,8 @@ def update_health_after_reply(db, account_id: str):
         return
 
     account.total_replied = (account.total_replied or 0) + 1
-    account.health_score = calculate_health_score(account, db)
-    db.commit()
+    account.health_score = calculate_health_score(account)
+    db.flush()
 
     _record_daily_stat(db, account_id, "replied")
 
@@ -146,17 +192,26 @@ def update_health_after_click(db, account_id: str):
 def check_auto_pause(db, account) -> bool:
     """
     Check if an account should be auto-paused.
+    Returns True if account was paused.
+    
+    Auto-pause triggers:
+    1. Health score drops below 50
+    2. 5 or more consecutive bounces
     """
     if account.auto_paused:
         return False  # Already paused
-        
+
     reason = None
-    
-    if (account.health_score or 100) < 50:
-        reason = f"Health score critically low ({account.health_score}/100)"
+
+    # Only auto-pause for low health if the account has sent at least 50 emails
+    # Since health grows from 0, early health is naturally low
+    current_health = account.health_score if account.health_score is not None else 0
+    if (account.total_sent or 0) >= 50 and current_health < 50:
+        reason = f"Health score critically low ({current_health}/100)"
+
     elif (account.bounce_streak or 0) >= 5:
         reason = f"5+ consecutive bounces (streak: {account.bounce_streak})"
-        
+
     if reason:
         account.auto_paused = True
         account.auto_paused_reason = reason
@@ -164,7 +219,7 @@ def check_auto_pause(db, account) -> bool:
         db.commit()
         print(f"[Health Monitor] ⚠️ Auto-paused account {account.email}: {reason}")
         return True
-        
+
     return False
 
 
@@ -191,6 +246,47 @@ def reactivate_account(db, account_id: str) -> dict:
     print(f"[Health Monitor] ✅ Reactivated account {account.email}")
     return {"status": "success", "health_score": account.health_score}
 
+
+# ============================================================
+# SMART WARMUP LIMIT SUGGESTION
+# ============================================================
+def suggest_warmup_limit(account) -> int:
+    """
+    Suggest a safe daily warmup limit based on account health and age.
+    
+    Rules:
+    - New account (< 3 days): 5/day
+    - Account age < 7 days: 10/day
+    - Account age < 14 days: 20/day
+    - Account age < 30 days: 30/day
+    - Account age >= 30 days: 40/day
+    
+    If health is poor, reduce warmup limits appropriately.
+    """
+    # Check account age
+    if account.created_at:
+        age_days = (datetime.utcnow() - account.created_at).days
+    else:
+        age_days = 999
+        
+    limit = 5
+    if age_days >= 14:
+        limit = 20
+    elif age_days >= 7:
+        limit = 15
+    elif age_days >= 3:
+        limit = 10
+        
+    # Adjust for health
+    health = account.health_score if account.health_score is not None else 0
+    if health < 70:
+        # If health is low, keep warmup very safe
+        limit = min(limit, 15)
+    elif health < 85:
+        # Medium health
+        limit = min(limit, 25)
+        
+    return limit
 
 # ============================================================
 # SMART DAILY LIMIT SUGGESTION
@@ -225,7 +321,7 @@ def suggest_daily_limit(account) -> int:
     
     # If user explicitly turned off smart limit, just use their limit (with a minor check for critical health)
     if not getattr(account, 'smart_limit_enabled', False):
-        if account.health_score and account.health_score < 50:
+        if account.health_score is not None and account.health_score < 50:
             return min(user_limit, 20)
         return user_limit
     
@@ -240,7 +336,7 @@ def suggest_daily_limit(account) -> int:
         return min(user_limit, 100)
 
     # Health-based limits (for established accounts) when Smart Limit is ON
-    health = account.health_score or 100
+    health = account.health_score if account.health_score is not None else 0
 
     if health < 50:
         return min(user_limit, 20)  # Critical - minimal sending
@@ -254,62 +350,27 @@ def suggest_daily_limit(account) -> int:
         return user_limit
 
 
-def suggest_warmup_limit(account) -> int:
-    """
-    Suggest a safe daily warmup limit based on account health and age.
-    """
-    user_limit = account.warmup_daily_limit or 5
-    if not getattr(account, 'smart_warmup_enabled', False):
-        return user_limit
-    
-    # Age-based limits
-    if account.created_at:
-        age_days = (datetime.utcnow() - account.created_at).days
-    else:
-        age_days = 999
-        
-    health = account.health_score or 100
-    
-    # Critical or low health restricts warmup to a minimum to avoid triggering filters
-    if health < 50:
-        return min(user_limit, 2)
-    elif health < 70:
-        return min(user_limit, 5)
-    elif health < 85:
-        return min(user_limit, 15)
-    
-    # Base on age for healthy accounts
-    if age_days < 3:
-        return min(user_limit, 3)
-    elif age_days < 7:
-        return min(user_limit, 10)
-    elif age_days < 14:
-        return min(user_limit, 20)
-    elif age_days < 30:
-        return min(user_limit, 35)
-        
-    return user_limit
-
-
 # ============================================================
 # DAILY STATS TRACKING
 # ============================================================
-def _record_daily_stat(db, account_id: str, event_type: str):
+def _record_daily_stat(db, account_id: str, event_type: str, provider_name: str = None):
     """Record a daily stat event for analytics."""
     today = datetime.utcnow().strftime("%Y-%m-%d")
 
     stat = db.query(database.AccountDailyStats).filter(
         database.AccountDailyStats.account_id == account_id,
-        database.AccountDailyStats.date == today
+        database.AccountDailyStats.date == today,
+        database.AccountDailyStats.provider_name == provider_name
     ).first()
 
     if not stat:
         stat = database.AccountDailyStats(
             account_id=account_id,
-            date=today
+            date=today,
+            provider_name=provider_name
         )
         db.add(stat)
-        db.commit()
+        db.flush()
 
     if event_type == "sent":
         stat.sent = (stat.sent or 0) + 1
@@ -361,7 +422,7 @@ def run_health_audit():
         paused_count = 0
         for acc in accounts:
             # Recalculate health
-            acc.health_score = calculate_health_score(acc, db)
+            acc.health_score = calculate_health_score(acc)
             acc.last_health_check = datetime.utcnow()
 
             # Check auto-pause
@@ -385,13 +446,6 @@ def get_health_report(db, account_id: str) -> dict:
     if not account:
         return {"error": "Account not found"}
 
-    # --- FIX: Recalculate health on the fly to ensure accuracy on cPanel ---
-    real_health = calculate_health_score(account, db)
-    if account.health_score != real_health:
-        account.health_score = real_health
-        db.commit()
-    # -----------------------------------------------------------------------
-
     total_sent = account.total_sent or 0
     total_bounced = account.total_bounced or 0
     total_opened = account.total_opened or 0
@@ -402,7 +456,7 @@ def get_health_report(db, account_id: str) -> dict:
     reply_rate = (total_replied / total_sent * 100) if total_sent > 0 else 0
 
     # Determine health status
-    health = account.health_score or 100
+    health = account.health_score if account.health_score is not None else 0
     if health >= 95:
         status = "excellent"
         status_label = "Excellent 🟢"

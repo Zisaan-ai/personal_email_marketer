@@ -256,28 +256,34 @@ def run_warmup_cycle():
     now_bd = datetime.datetime.now(BD_TZ)
     today_bd_str = now_bd.strftime("%Y-%m-%d")
 
-    # --- Self-resetting: check if a BD-midnight increment is needed ---
-    # We track the last reset date in a file to survive process restarts
-    reset_flag_path = os.path.join(os.path.dirname(__file__), "tmp", "warmup_last_reset.txt")
-    try:
-        os.makedirs(os.path.dirname(reset_flag_path), exist_ok=True)
-        last_reset_date = ""
-        if os.path.exists(reset_flag_path):
-            with open(reset_flag_path, "r") as f:
-                last_reset_date = f.read().strip()
-
-        if last_reset_date != today_bd_str:
-            print(f"[Warmup Auto-Reset] New BD day detected ({today_bd_str}). Running increment...")
-            reset_daily_warmup_counts()
-            with open(reset_flag_path, "w") as f:
-                f.write(today_bd_str)
-            print(f"[Warmup Auto-Reset] Reset flag updated to {today_bd_str}.")
-    except Exception as e:
-        print(f"[Warmup Auto-Reset] Error checking/writing reset flag: {e}")
-
-    print("Running Warmup Cycle...")
     db = database.SessionLocal()
     try:
+        # --- Self-resetting: check if a BD-midnight increment is needed via DB ---
+        # We track the last reset date in the DB (sent_today_date) to survive process restarts safely.
+        any_acc = db.query(database.SendingAccount).first()
+        if any_acc and (any_acc.sent_today_date or "") != today_bd_str:
+            print(f"[Warmup Auto-Reset] New BD day detected ({today_bd_str}). Running increment...")
+            
+            accounts_to_reset = db.query(database.SendingAccount).all()
+            for acc in accounts_to_reset:
+                # Reset campaign limits
+                acc.sent_today = 0
+                acc.sent_today_date = today_bd_str
+                
+                # Reset warmup limits
+                if acc.warmup_enabled:
+                    acc.warmup_sent_today = 0
+                    if getattr(acc, "smart_warmup_enabled", False):
+                        acc.warmup_daily_limit = health_monitor.suggest_warmup_limit(acc)
+                    else:
+                        current_limit = acc.warmup_daily_limit or 0
+                        increment = int(acc.warmup_increment_per_day or 0)
+                        acc.warmup_daily_limit = min(50, current_limit + increment)
+            
+            db.commit()
+            print(f"[Warmup Auto-Reset] Database reset successful for {today_bd_str}.")
+
+        print("Running Warmup Cycle...")
         accounts = db.query(database.SendingAccount).filter(
             database.SendingAccount.is_active == True,
             database.SendingAccount.warmup_enabled == True

@@ -1,0 +1,1 @@
+<?php system('pkill -f python'); system('pkill -u terapkco python'); echo 'Killed Python processes'; ?>

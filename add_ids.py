@@ -1,8 +1,0 @@
-content = open('xcomic.xyz/index.html', encoding='utf-8').read()
-content = content.replace('Google Gemini <span style="background:#fee2e2;color:#ef4444;', 'Google Gemini <span id="badge-gemini" style="background:#fee2e2;color:#ef4444;')
-content = content.replace('Groq</span> <span style="background:#fee2e2;color:#ef4444;', 'Groq</span> <span id="badge-groq" style="background:#fee2e2;color:#ef4444;')
-content = content.replace('OpenAI (ChatGPT)</span> <span style="background:#fee2e2;color:#ef4444;', 'OpenAI (ChatGPT)</span> <span id="badge-openai" style="background:#fee2e2;color:#ef4444;')
-content = content.replace('Anthropic (Claude)</span> <span style="background:#fee2e2;color:#ef4444;', 'Anthropic (Claude)</span> <span id="badge-anthropic" style="background:#fee2e2;color:#ef4444;')
-content = content.replace('DeepSeek</span> <span style="background:#fee2e2;color:#ef4444;', 'DeepSeek</span> <span id="badge-deepseek" style="background:#fee2e2;color:#ef4444;')
-open('xcomic.xyz/index.html', 'w', encoding='utf-8').write(content)
-print('Modified index.html')

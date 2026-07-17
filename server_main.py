@@ -30,9 +30,9 @@ import health_monitor
 import domain_checker
 scheduler = BackgroundScheduler()
 from datetime import datetime
-scheduler.add_job(warmup_service.run_warmup_cycle, 'interval', minutes=30, id='warmup_job', next_run_time=datetime.now())
-scheduler.add_job(warmup_service.reset_daily_warmup_counts, 'cron', hour=0, minute=0, id='warmup_reset')
-scheduler.add_job(health_monitor.run_health_audit, 'interval', hours=2, id='health_audit_job')
+scheduler.add_job(warmup_service.run_warmup_cycle, 'interval', minutes=1, id='warmup_job', coalesce=True, max_instances=1, misfire_grace_time=60)
+scheduler.add_job(warmup_service.reset_daily_warmup_counts, 'cron', hour=18, minute=0, id='warmup_reset', timezone='UTC', coalesce=True, max_instances=1)
+scheduler.add_job(health_monitor.run_health_audit, 'interval', hours=2, id='health_audit_job', coalesce=True, max_instances=1)
 
 
 # Reset sent_today at midnight Bangladesh time (UTC+6 = UTC 18:00)
@@ -61,6 +61,8 @@ _BD_TZ = pytz.timezone("Asia/Dhaka")
 def auto_reset_daily_counts(db):
     """Check if Bangladesh date changed; if so, reset sent_today for all accounts."""
     try:
+        import warmup_service
+        warmup_service.reset_daily_warmup_counts()
         today_bd = datetime.now(_BD_TZ).strftime("%Y-%m-%d")
         accounts = db.query(database.SendingAccount).all()
         needs_reset = [a for a in accounts if (a.sent_today_date or "") != today_bd]
@@ -68,6 +70,16 @@ def auto_reset_daily_counts(db):
             for acc in needs_reset:
                 acc.sent_today = 0
                 acc.sent_today_date = today_bd
+                # Reset warmup limits as well
+                if acc.warmup_enabled:
+                    acc.warmup_sent_today = 0
+                    if getattr(acc, "smart_warmup_enabled", False):
+                        import health_monitor
+                        acc.warmup_daily_limit = health_monitor.suggest_warmup_limit(acc)
+                    else:
+                        current_limit = acc.warmup_daily_limit or 0
+                        increment = int(acc.warmup_increment_per_day or 0)
+                        acc.warmup_daily_limit = min(50, current_limit + increment)
             db.commit()
             print(f"[Daily Reset] Reset sent_today for {len(needs_reset)} accounts (BD date: {today_bd})")
     except Exception as e:
@@ -131,16 +143,20 @@ def _scheduler_start_scheduled_campaigns():
     try:
         from datetime import datetime
         now = datetime.utcnow()
-        campaigns = db.query(database.Campaign).filter(database.Campaign.status == "scheduled").all()
+        campaigns = db.query(database.Campaign).filter(database.Campaign.status.in_(["scheduled", "processing"])).all()
         for c in campaigns:
             if c.scheduled_at and now < c.scheduled_at:
                 continue
             if is_campaign_within_schedule(c):
                 from sqlalchemy import text
-                res = db.execute(text("UPDATE campaigns SET status='processing' WHERE id=:id AND status='scheduled'"), {"id": str(c.id)})
-                db.commit()
-                if res.rowcount > 0:
-                    print(f"Scheduler starting campaign {c.id}")
+                if c.status == "scheduled":
+                    res = db.execute(text("UPDATE campaigns SET status='processing' WHERE id=:id AND status='scheduled'"), {"id": str(c.id)})
+                    db.commit()
+                    if res.rowcount > 0:
+                        print(f"Scheduler starting campaign {c.id}")
+                        import threading
+                        threading.Thread(target=process_isolated_campaign, args=(str(c.id),)).start()
+                elif c.status == "processing":
                     import threading
                     threading.Thread(target=process_isolated_campaign, args=(str(c.id),)).start()
     finally:
@@ -177,6 +193,11 @@ from bounce_processor import check_bounces
 def trigger_cron():
     _scheduler_start_scheduled_campaigns()
     return {"status": "success", "message": "Cron executed"}
+
+@app.get("/api/cron/warmup_reset")
+def trigger_warmup_reset():
+    warmup_service.reset_daily_warmup_counts()
+    return {"status": "success", "message": "Warmup counts reset"}
 
 
 
@@ -280,6 +301,7 @@ class CampaignCreate(BaseModel):
     steps_json: Optional[str] = None
     max_emails_per_day: Optional[int] = 50
     daily_ramp_up: Optional[int] = 0
+    selected_sender_ids: Optional[str] = None
 
 class CampaignResponse(BaseModel):
     id: str  # BUG-24 fix: MongoDB IDs are strings not ints
@@ -298,6 +320,7 @@ class CampaignResponse(BaseModel):
     opens_b: Optional[int] = 0
     sending_days: Optional[str] = None
     start_hour: Optional[int] = None
+    selected_sender_ids: Optional[str] = None
     end_hour: Optional[int] = None
     timezone: Optional[str] = None
     delay_min: Optional[int] = 30
@@ -340,13 +363,13 @@ class AutopilotRequest(BaseModel):
 def ai_chat(req: ChatRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     import ai_core
     history_dict = [msg.dict() for msg in req.history] if req.history else []
-    response = ai_core.chat_with_assistant(req.message, history_dict, current_user.groq_api_key)
+    response = ai_core.chat_with_assistant(req.message, history_dict, current_user)
     return {"reply": response}
 
 @app.post("/api/ai/generate")
 def ai_generate_email(req: EmailGenerateRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     import ai_core
-    result = ai_core.generate_email_content(req.prompt, current_user.groq_api_key)
+    result = ai_core.generate_email_content(req.prompt, current_user)
     if isinstance(result, dict) and "error" in result:
         raise HTTPException(status_code=500, detail=result["error"])
     return result  # returns {"html": "..."}
@@ -354,7 +377,7 @@ def ai_generate_email(req: EmailGenerateRequest, current_user: database.User = D
 @app.post("/api/ai/optimize-subject")
 def ai_optimize_subject(req: SubjectOptimizeRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     import ai_core
-    result = ai_core.optimize_subject(req.subject, current_user.groq_api_key)
+    result = ai_core.optimize_subject(req.subject, current_user)
     if isinstance(result, dict) and "error" in result:
         raise HTTPException(status_code=500, detail=result["error"])
     return result  # returns {"subject": "..."}
@@ -362,7 +385,7 @@ def ai_optimize_subject(req: SubjectOptimizeRequest, current_user: database.User
 @app.post("/api/ai/generate-icebreakers")
 def ai_generate_icebreakers(req: IcebreakerRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     import ai_core
-    result = ai_core.generate_icebreakers(req.leads_csv, current_user.groq_api_key)
+    result = ai_core.generate_icebreakers(req.leads_csv, current_user)
     if isinstance(result, dict) and "error" in result:
         raise HTTPException(status_code=500, detail=result["error"])
     return result  # returns {"csv": "..."}
@@ -370,7 +393,7 @@ def ai_generate_icebreakers(req: IcebreakerRequest, current_user: database.User 
 @app.post("/api/ai/autopilot")
 def ai_autopilot(req: AutopilotRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     import ai_core
-    result = ai_core.generate_autopilot_campaign(req.prompt, current_user.groq_api_key)
+    result = ai_core.generate_autopilot_campaign(req.prompt, current_user)
     if isinstance(result, dict) and "error" in result:
         raise HTTPException(status_code=500, detail=result["error"])
     return result  # returns {"subject_a", "body_a", "subject_b", "body_b"}
@@ -604,36 +627,6 @@ def clean_inactive_leads(current_user: database.User = Depends(auth.get_current_
         print(f"Error cleaning inactive leads: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error during scan")
 
-class LeadsValidateRequest(BaseModel):
-    emails: List[str]
-
-@app.post("/api/validate-leads")
-def validate_leads(req: LeadsValidateRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    results = []
-    # To prevent huge payloads from timing out the request, we limit to 500 max
-    emails_to_check = req.emails[:500]
-    
-    # Pre-fetch inactive leads to check them
-    inactive = db.query(database.InactiveLeadList.email).filter(database.InactiveLeadList.email.in_(emails_to_check)).all()
-    inactive_emails = set(e[0] for e in inactive)
-    
-    import concurrent.futures
-    
-    def check_single(email):
-        if email in inactive_emails:
-            return {"email": email, "valid": False, "reason": "Inactive Lead (No open > 90 days)"}
-        val = email_service.validate_email_address(email)
-        return {
-            "email": email,
-            "valid": val["valid"],
-            "reason": val.get("reason", "")
-        }
-
-    with concurrent.futures.ThreadPoolExecutor(max_workers=50) as executor:
-        results = list(executor.map(check_single, emails_to_check))
-        
-    return {"results": results}
-
 
 class ScheduleUpdate(BaseModel):
     sending_days: Optional[str] = None
@@ -667,6 +660,7 @@ class CampaignOptionsUpdate(BaseModel):
     use_unsubscribe: Optional[bool] = None
     max_emails_per_day: Optional[int] = None
     daily_ramp_up: Optional[int] = None
+    selected_sender_ids: Optional[str] = None
 
 @app.post("/api/campaigns/{campaign_id}/save-options")
 def save_campaign_options(campaign_id: str, options: CampaignOptionsUpdate, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
@@ -684,6 +678,8 @@ def save_campaign_options(campaign_id: str, options: CampaignOptionsUpdate, curr
         camp.max_emails_per_day = options.max_emails_per_day
     if options.daily_ramp_up is not None:
         camp.daily_ramp_up = options.daily_ramp_up
+    if options.selected_sender_ids is not None:
+        camp.selected_sender_ids = options.selected_sender_ids
     
     db.commit()
     return {"status": "success"}
@@ -720,6 +716,7 @@ def get_campaigns(current_user: database.User = Depends(auth.get_current_user), 
         "max_emails_per_day": c.max_emails_per_day,
         "daily_ramp_up": c.daily_ramp_up,
         "steps_json": c.steps_json,
+        "selected_sender_ids": c.selected_sender_ids,
     } for c in campaigns]
 
 class PreflightRequest(BaseModel):
@@ -799,6 +796,7 @@ def send_campaign(campaign: CampaignCreate, background_tasks: BackgroundTasks, c
         target_campaign.max_emails_per_day = campaign.max_emails_per_day
         target_campaign.daily_ramp_up = campaign.daily_ramp_up
         target_campaign.current_daily_limit = min(campaign.daily_ramp_up, campaign.max_emails_per_day) if (campaign.daily_ramp_up and campaign.daily_ramp_up > 0) else campaign.max_emails_per_day
+        target_campaign.selected_sender_ids = campaign.selected_sender_ids
         
         db.commit()
         db.query(database.CampaignLead).filter(database.CampaignLead.campaign_id == str(target_campaign.id)).delete()
@@ -827,7 +825,8 @@ def send_campaign(campaign: CampaignCreate, background_tasks: BackgroundTasks, c
             steps_json=campaign.steps_json,
             max_emails_per_day=campaign.max_emails_per_day,
             daily_ramp_up=campaign.daily_ramp_up,
-            current_daily_limit=min(campaign.daily_ramp_up, campaign.max_emails_per_day) if (campaign.daily_ramp_up and campaign.daily_ramp_up > 0) else campaign.max_emails_per_day
+            current_daily_limit=min(campaign.daily_ramp_up, campaign.max_emails_per_day) if (campaign.daily_ramp_up and campaign.daily_ramp_up > 0) else campaign.max_emails_per_day,
+            selected_sender_ids=campaign.selected_sender_ids
         )
         db.add(new_campaign)
         db.commit()
@@ -1062,6 +1061,15 @@ def _run_campaign(db, campaign_id):
             database.SendingAccount.user_id == campaign.user_id
         ).order_by(database.SendingAccount.health_score.desc()).all()
 
+        import json
+        if campaign.selected_sender_ids:
+            try:
+                selected_ids = json.loads(campaign.selected_sender_ids)
+                if selected_ids and isinstance(selected_ids, list) and len(selected_ids) > 0:
+                    all_accounts = [acc for acc in all_accounts if acc.id in selected_ids]
+            except Exception:
+                pass
+
         # Multi-domain rotation: prefer accounts from a different domain
         last_domain = _last_domain_used[0]
         preferred = []
@@ -1259,7 +1267,6 @@ def _run_campaign(db, campaign_id):
             if (time.time() - start_time + delay > 50) or (delay > 45):
                 c = db.query(database.Campaign).filter(database.Campaign.id == campaign_id).first()
                 if c:
-                    from datetime import datetime, timedelta
                     c.scheduled_at = datetime.utcnow() + timedelta(seconds=delay)
                     db.commit()
                 break
@@ -1278,7 +1285,6 @@ def _run_campaign(db, campaign_id):
             if (time.time() - start_time + delay > 50) or (delay > 45):
                 c = db.query(database.Campaign).filter(database.Campaign.id == campaign_id).first()
                 if c:
-                    from datetime import datetime, timedelta
                     c.scheduled_at = datetime.utcnow() + timedelta(seconds=delay)
                     db.commit()
                 break
@@ -1370,6 +1376,21 @@ if os.path.exists(frontend_path):
     
 
 # --- Sending Accounts Schema ---
+@app.get("/api/debug-accounts")
+def debug_accounts(db: Session = Depends(database.get_db)):
+    accounts = db.query(database.SendingAccount).all()
+    res = []
+    for acc in accounts:
+        res.append({
+            "id": acc.id,
+            "email": acc.email,
+            "warmup_enabled": acc.warmup_enabled,
+            "smart_warmup_enabled": acc.smart_warmup_enabled,
+            "smart_limit_enabled": acc.smart_limit_enabled,
+            "daily_limit": acc.daily_limit
+        })
+    return res
+
 class SendingAccountCreate(BaseModel):
     name: Optional[str] = None
     email: str
@@ -1384,18 +1405,39 @@ class SendingAccountCreate(BaseModel):
     warmup_enabled: bool = False
     warmup_daily_limit: int = 5
     warmup_increment_per_day: int = 2
+    smart_warmup_enabled: bool = False
 
 class SendingAccountUpdate(BaseModel):
     is_active: Optional[bool] = None
     smart_limit_enabled: Optional[bool] = None
+    smart_warmup_enabled: Optional[bool] = None
     warmup_enabled: Optional[bool] = None
 
 # --- Sending Accounts API Endpoints ---
+
+@app.get("/api/test-accounts")
+def test_accounts(db: Session = Depends(database.get_db)):
+    admin = db.query(database.User).filter(database.User.email == "zmonemrahman@gmail.com").first()
+    accounts = db.query(database.SendingAccount).filter(database.SendingAccount.user_id == str(admin.id)).all()
+    
+    result = []
+    for acc in accounts:
+        try:
+            result.append({"id": str(acc.id), "email": acc.email, "health": acc.health_score})
+        except Exception as e:
+            result.append({"id": str(acc.id), "error": str(e)})
+            
+    return {"admin_id": str(admin.id), "length": len(accounts), "accounts": result}
+
 @app.get("/api/sending-accounts")
+
 def get_sending_accounts(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     # Auto-reset sent_today based on Bangladesh timezone date
     auto_reset_daily_counts(db)
+    
     accounts = db.query(database.SendingAccount).filter(database.SendingAccount.user_id == str(current_user.id)).all()
+    print("DEBUG: Fetched", len(accounts), "accounts for user", current_user.email, flush=True)
+
     # Mask passwords for safety
     result = []
     for acc in accounts:
@@ -1420,7 +1462,8 @@ def get_sending_accounts(current_user: database.User = Depends(auth.get_current_
             "warmup_increment_per_day": acc.warmup_increment_per_day,
             "warmup_sent_today": acc.warmup_sent_today,
             "smart_limit_enabled": getattr(acc, "smart_limit_enabled", False),
-            "health_score": acc.health_score or 100,
+            "smart_warmup_enabled": getattr(acc, "smart_warmup_enabled", False),
+            "health_score": health_monitor.calculate_health_score(acc),
             "created_at": acc.created_at,
             # --- New health fields ---
             "total_sent": acc.total_sent or 0,
@@ -1431,6 +1474,7 @@ def get_sending_accounts(current_user: database.User = Depends(auth.get_current_
             "auto_paused": acc.auto_paused or False,
             "auto_paused_reason": acc.auto_paused_reason,
             "suggested_daily_limit": health_monitor.suggest_daily_limit(acc),
+            "suggested_warmup_limit": health_monitor.suggest_warmup_limit(acc),
             # --- Sending window ---
             "send_window_start": acc.send_window_start if acc.send_window_start is not None else 9,
             "send_window_end": acc.send_window_end if acc.send_window_end is not None else 17,
@@ -1486,7 +1530,8 @@ def create_sending_account(acc: SendingAccountCreate, current_user: database.Use
             imap_password=acc.imap_password,
             warmup_enabled=acc.warmup_enabled,
             warmup_daily_limit=acc.warmup_daily_limit,
-            warmup_increment_per_day=acc.warmup_increment_per_day
+            warmup_increment_per_day=acc.warmup_increment_per_day,
+            smart_warmup_enabled=acc.smart_warmup_enabled
         )
         db.add(new_acc)
         db.commit()
@@ -1537,6 +1582,7 @@ def edit_sending_account(acc_id: str, acc: SendingAccountCreate, current_user: d
         existing_acc.warmup_enabled = acc.warmup_enabled
         existing_acc.warmup_daily_limit = acc.warmup_daily_limit
         existing_acc.warmup_increment_per_day = acc.warmup_increment_per_day
+        existing_acc.smart_warmup_enabled = acc.smart_warmup_enabled
         db.commit()
         return {"status": "success"}
     except Exception as e:
@@ -1560,6 +1606,8 @@ def update_sending_account_status(acc_id: str, update_data: SendingAccountUpdate
         acc.is_active = update_data.is_active
     if update_data.smart_limit_enabled is not None:
         acc.smart_limit_enabled = update_data.smart_limit_enabled
+    if update_data.smart_warmup_enabled is not None:
+        acc.smart_warmup_enabled = update_data.smart_warmup_enabled
     if update_data.warmup_enabled is not None:
         acc.warmup_enabled = update_data.warmup_enabled
     db.commit()
@@ -1590,7 +1638,10 @@ def get_account_health(acc_id: str, current_user: database.User = Depends(auth.g
 @app.get("/api/account-health-all")
 def get_all_account_health(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     """Get health reports and suggested limits for all accounts."""
+    
     accounts = db.query(database.SendingAccount).filter(database.SendingAccount.user_id == str(current_user.id)).all()
+    print("DEBUG: Fetched", len(accounts), "accounts for user", current_user.email, flush=True)
+
     return [health_monitor.get_health_report(db, str(acc.id)) for acc in accounts]
 
 @app.post("/api/sending-accounts/{acc_id}/reactivate")
@@ -1625,7 +1676,10 @@ def get_domain_health(domain: str, current_user: database.User = Depends(auth.ge
 @app.get("/api/domain-health-all")
 def get_all_domains_health(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     """Get cached domain health for all sending account domains."""
+    
     accounts = db.query(database.SendingAccount).filter(database.SendingAccount.user_id == str(current_user.id)).all()
+    print("DEBUG: Fetched", len(accounts), "accounts for user", current_user.email, flush=True)
+
     domains = set()
     for acc in accounts:
         if '@' in acc.email:
@@ -1804,11 +1858,23 @@ class GeminiKeyRequest(BaseModel):
 class GroqKeyRequest(BaseModel):
     groq_api_key: str
 
+class OpenAIKeyRequest(BaseModel):
+    openai_api_key: str
+
+class AnthropicKeyRequest(BaseModel):
+    anthropic_api_key: str
+
+class DeepSeekKeyRequest(BaseModel):
+    deepseek_api_key: str
+
 @app.get("/api/settings")
 def get_settings(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     return {
-        "gemini_api_key": current_user.gemini_api_key or "",
-        "groq_api_key": current_user.groq_api_key or "",
+        "has_gemini_api_key": bool(current_user.gemini_api_key),
+        "has_groq_api_key": bool(current_user.groq_api_key),
+        "has_openai_api_key": bool(current_user.openai_api_key),
+        "has_anthropic_api_key": bool(current_user.anthropic_api_key),
+        "has_deepseek_api_key": bool(current_user.deepseek_api_key),
     }
 
 @app.post("/api/settings/gemini")
@@ -1824,6 +1890,28 @@ def save_groq_key(req: GroqKeyRequest, current_user: database.User = Depends(aut
     db.commit()
     os.environ["GROQ_API_KEY"] = req.groq_api_key
     return {"ok": True, "message": "Groq API key saved"}
+
+@app.post("/api/settings/openai")
+def save_openai_key(req: OpenAIKeyRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    current_user.openai_api_key = req.openai_api_key
+    db.commit()
+    os.environ["OPENAI_API_KEY"] = req.openai_api_key
+    return {"ok": True, "message": "OpenAI API key saved"}
+
+@app.post("/api/settings/anthropic")
+def save_anthropic_key(req: AnthropicKeyRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    current_user.anthropic_api_key = req.anthropic_api_key
+    db.commit()
+    os.environ["ANTHROPIC_API_KEY"] = req.anthropic_api_key
+    return {"ok": True, "message": "Anthropic API key saved"}
+
+@app.post("/api/settings/deepseek")
+def save_deepseek_key(req: DeepSeekKeyRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    current_user.deepseek_api_key = req.deepseek_api_key
+    db.commit()
+    os.environ["DEEPSEEK_API_KEY"] = req.deepseek_api_key
+    return {"ok": True, "message": "DeepSeek API key saved"}
+
 
 
 # --- UNSUBSCRIBE ENDPOINTS ---
@@ -1852,9 +1940,11 @@ def get_unsubscribes(current_user: database.User = Depends(auth.get_current_user
 @app.get('/api/bounces')
 def get_bounces(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     # BUG FIX: return serializable dicts
-    bounces = db.query(database.CampaignLead).filter(database.CampaignLead.status == 'bounced').all()
+    bounces = db.query(database.CampaignLead).join(database.Campaign).filter(
+        database.CampaignLead.status == 'bounced',
+        database.Campaign.user_id == str(current_user.id)
+    ).all()
     return [{"email": l.email, "campaign_id": l.campaign_id, "name": l.name} for l in bounces]
-
 
 
 
@@ -1892,7 +1982,7 @@ def draft_reply(reply_id: str, current_user: database.User = Depends(auth.get_cu
         raise HTTPException(status_code=404, detail="Reply not found or unauthorized")
         
     import ai_core
-    draft = ai_core.draft_reply_to_email(reply.body or "", current_user.groq_api_key)
+    draft = ai_core.draft_reply_to_email(reply.body or "", current_user)
     return {"draft": draft}
 
 @app.post("/api/replies/{reply_id}/send")
@@ -2107,6 +2197,65 @@ def debug_imap(current_user: database.User = Depends(auth.get_current_user), db:
 # ============================================================
 # CATCH-ALL: Serve Frontend (MUST be LAST route)
 # ============================================================
+@app.get("/api/migrate-sql-app2")
+def run_mig_3():
+    import sqlite3
+    try:
+        conn = sqlite3.connect("sql_app.db")
+        conn.execute("ALTER TABLE campaigns ADD COLUMN selected_sender_ids TEXT")
+        conn.commit()
+        conn.close()
+        return "Migration applied successfully to sql_app.db!"
+    except Exception as e:
+        return f"Migration error: {str(e)}"
+
+@app.get("/api/debug-health")
+def debug_health(db: Session = Depends(database.get_db)):
+    accounts = db.query(database.SendingAccount).all()
+    out = []
+    for acc in accounts:
+        # Trigger health calculation
+        health = health_monitor.calculate_health_score(acc)
+        out.append({
+            "email": acc.email,
+            "total_sent": acc.total_sent,
+            "total_opened": acc.total_opened,
+            "total_replied": acc.total_replied,
+            "health_score": health
+        })
+    return out
+
+@app.get("/api/trigger-warmup")
+def trigger_warmup():
+    warmup_service.run_warmup_cycle()
+    return {"status": "success", "msg": "Warmup cycle triggered manually"}
+
+@app.get("/api/reset-my-stats")
+def reset_my_stats(db: Session = Depends(database.get_db)):
+    accounts = db.query(database.SendingAccount).all()
+    for acc in accounts:
+        acc.sent_today = 0
+        acc.warmup_sent_today = 0
+        acc.total_sent = 0
+        acc.total_bounced = 0
+        acc.total_opened = 0
+        acc.total_replied = 0
+        acc.bounce_streak = 0
+        acc.health_score = 0
+    db.commit()
+    return {"status": "success", "msg": "Stats reset to 0 for all accounts"}
+
+@app.get("/api/admin/clean-leads")
+def clean_invalid_leads(db: Session = Depends(database.get_db)):
+    try:
+        updated_invalid = db.query(database.CampaignLead).filter(database.CampaignLead.status == 'invalid').update({'status': 'pending'})
+        updated_bounced = db.query(database.CampaignLead).filter(database.CampaignLead.status.like('bounced: cannot access free variable%')).update({'status': 'pending'})
+        updated_bounced += db.query(database.CampaignLead).filter(database.CampaignLead.status.like('bounced: cannot access local variable%')).update({'status': 'pending'})
+        db.commit()
+        return {'message': f'Fixed {updated_invalid} invalid leads and {updated_bounced} bounced leads'}
+    except Exception as e:
+        return {'error': str(e)}
+
 @app.get("/{full_path:path}")
 def serve_frontend(full_path: str, db: Session = Depends(database.get_db)):
     if full_path.startswith("api/"):
@@ -2136,14 +2285,26 @@ def serve_frontend(full_path: str, db: Session = Depends(database.get_db)):
     )
 
 
+
 @app.get("/api/run-migration-now")
 def run_mig():
+    import sqlite3
+    try:
+        conn = sqlite3.connect("email_marketer.db")
+        conn.execute("ALTER TABLE campaigns ADD COLUMN selected_sender_ids TEXT")
+        conn.commit()
+        conn.close()
+        return "Migration applied successfully!"
+    except Exception as e:
+        return f"Migration error: {str(e)}"
+@app.get("/api/migrate-sql-app")
+def run_mig_2():
     import sqlite3
     try:
         conn = sqlite3.connect("sql_app.db")
         conn.execute("ALTER TABLE campaigns ADD COLUMN selected_sender_ids TEXT")
         conn.commit()
         conn.close()
-        return "Migration applied successfully!"
+        return "Migration applied successfully to sql_app.db!"
     except Exception as e:
         return f"Migration error: {str(e)}"

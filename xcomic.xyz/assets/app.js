@@ -5363,33 +5363,18 @@ function setupSettings() {
     
 
     async function verifyAllAIKeys() {
-
         const providers = ['gemini', 'groq', 'openai', 'anthropic', 'deepseek'];
-
-        for (const provider of providers) {
-
+        const verifyPromises = providers.map(async (provider) => {
             const keyEl = document.getElementById(provider + '-api-key');
-
-            const key = (keyEl && keyEl.value) ? keyEl.value : (window.loadedAIKeys[provider] || '');
-
+            let key = (keyEl && keyEl.value) ? keyEl.value : window.loadedAIKeys[provider];
             const badge = document.getElementById('badge-' + provider);
-
-            if (!badge) continue;
-
-
+            if (!badge) return;
 
             if (!key) {
                 badge.innerHTML = `<span style="display:inline-block;width:4px;height:4px;background:#ef4444;border-radius:50%;margin-right:4px;vertical-align:middle;margin-bottom:1px;"></span>No Key`;
                 badge.style.background = '#fee2e2';
                 badge.style.color = '#ef4444';
-                continue;
-            }
-            if (key === true) {
-                // Key exists on backend, just show Active
-                badge.innerHTML = `<span style="display:inline-block;width:4px;height:4px;background:#10b981;border-radius:50%;margin-right:4px;vertical-align:middle;margin-bottom:1px;"></span>Key Active`;
-                badge.style.background = '#dcfce7';
-                badge.style.color = '#059669';
-                continue;
+                return;
             }
             
             badge.innerHTML = `<i class="fa-solid fa-spinner fa-spin" style="margin-right:4px;font-size:9px;"></i>Checking`;
@@ -5397,50 +5382,30 @@ function setupSettings() {
             badge.style.color = '#4338ca';
 
             try {
-                const res = await apiCall('/settings/verify_key', 'POST', { provider, api_key: key });
-
+                // If key is boolean true from backend, convert to string so backend knows to fetch from DB
+                const res = await apiCall('/settings/verify_key', 'POST', { provider, api_key: String(key) });
                 const data = await res.json();
-
                 
-
                 if (data.status === 'valid') {
-
                     badge.innerHTML = `<span style="display:inline-block;width:4px;height:4px;background:#10b981;border-radius:50%;margin-right:4px;vertical-align:middle;margin-bottom:1px;"></span>Key Active`;
-
                     badge.style.background = '#dcfce7';
-
                     badge.style.color = '#059669';
-
                 } else if (data.status === 'invalid') {
-
                     badge.innerHTML = `<span style="display:inline-block;width:4px;height:4px;background:#ca8a04;border-radius:50%;margin-right:4px;vertical-align:middle;margin-bottom:1px;"></span>Invalid Key`;
-
                     badge.style.background = '#fef08a';
-
                     badge.style.color = '#ca8a04';
-
                 } else {
-
                     badge.innerHTML = `<span style="display:inline-block;width:4px;height:4px;background:#ef4444;border-radius:50%;margin-right:4px;vertical-align:middle;margin-bottom:1px;"></span>No Key`;
-
                     badge.style.background = '#fee2e2';
-
                     badge.style.color = '#ef4444';
-
                 }
-
             } catch (e) {
-
                 badge.innerHTML = `<span style="display:inline-block;width:4px;height:4px;background:#ca8a04;border-radius:50%;margin-right:4px;vertical-align:middle;margin-bottom:1px;"></span>Error`;
-
                 badge.style.background = '#fef08a';
-
                 badge.style.color = '#ca8a04';
-
             }
-
-        }
-
+        });
+        await Promise.all(verifyPromises);
     }
 
 

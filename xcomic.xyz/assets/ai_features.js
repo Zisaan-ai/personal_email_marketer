@@ -145,6 +145,32 @@ window.setupAICopilot = function() {
     const chatInput = document.getElementById('ai-chat-input') || document.getElementById('copilot-input');
     const sendBtn = document.getElementById('ai-chat-send') || document.getElementById('copilot-send-btn');
 
+    function formatMarkdown(rawText) {
+        if (!rawText) return '';
+        // Escape HTML to prevent XSS
+        let html = rawText
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+
+        // Code Block: ```code``` -> <pre><code>code</code></pre>
+        html = html.replace(/```([^`]+)```/g, '<pre style="background:rgba(0,0,0,0.05);padding:10px;border-radius:8px;overflow-x:auto;font-family:monospace;font-size:13px;margin:8px 0;"><code>$1</code></pre>');
+
+        // Inline Code: `code` -> <code>code</code>
+        html = html.replace(/`([^`]+)`/g, '<code style="background:rgba(0,0,0,0.05);padding:2px 4px;border-radius:4px;font-family:monospace;font-size:13px;">$1</code>');
+
+        // Bold: **text** -> <strong>text</strong>
+        html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+
+        // Italic: *text* -> <em>text</em>
+        html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+
+        // Newlines to <br>
+        html = html.replace(/\n/g, '<br>');
+
+        return html;
+    }
+
     function appendMsg(role, text) {
         if (!chatMessages) return;
         const isUser = role === 'user';
@@ -155,7 +181,7 @@ window.setupAICopilot = function() {
                 ${isUser ? '👤' : '🤖'}
             </div>
             <div style="background:${isUser ? '#ede9fe' : '#f0fdf4'};padding:10px 14px;border-radius:12px;max-width:85%;font-size:14px;line-height:1.6;color:#0f172a;">
-                ${text.replace(/\n/g, '<br>')}
+                ${formatMarkdown(text)}
             </div>
         `;
         chatMessages.appendChild(div);

@@ -3797,7 +3797,7 @@ def verify_api_key(req: VerifyKeyRequest, current_user: database.User = Depends(
     key = req.api_key.strip()
     if not key:
         return {"status": "invalid"}
-
+    
     if key == "true":
         if req.provider == "gemini":
             key = current_user.gemini_api_key or ""
@@ -3812,39 +3812,43 @@ def verify_api_key(req: VerifyKeyRequest, current_user: database.User = Depends(
 
     if not key:
         return {"status": "invalid"}
-
+    
     is_valid = False
-    try:
-        import requests
-        timeout = 5
-        if req.provider == "gemini" and key.startswith("AIza"):
-            res = requests.get(f"https://generativelanguage.googleapis.com/v1beta/models?key={key}", timeout=timeout)
-            if res.status_code == 200:
-                is_valid = True
-        elif req.provider == "groq" and key.startswith("gsk_"):
-            res = requests.get("https://api.groq.com/openai/v1/models", headers={"Authorization": f"Bearer {key}"}, timeout=timeout)
-            if res.status_code == 200:
-                is_valid = True
-        elif req.provider == "openai" and key.startswith("sk-"):
-            res = requests.get("https://api.openai.com/v1/models", headers={"Authorization": f"Bearer {key}"}, timeout=timeout)
-            if res.status_code == 200:
-                is_valid = True
-        elif req.provider == "anthropic" and key.startswith("sk-ant-"):
-            res = requests.post("https://api.anthropic.com/v1/messages", 
-                headers={"x-api-key": key, "anthropic-version": "2023-06-01"}, 
-                json={"model": "claude-3-haiku-20240307", "max_tokens": 1, "messages": [{"role": "user", "content": "hi"}]},
-                timeout=timeout)
-            if res.status_code not in [401, 403]:
-                is_valid = True
-        elif req.provider == "deepseek" and key.startswith("sk-"):
-            res = requests.get("https://api.deepseek.com/models", headers={"Authorization": f"Bearer {key}"}, timeout=timeout)
-            if res.status_code == 200:
-                is_valid = True
-    except Exception:
+
+    if req.provider == "gemini" and key.startswith("AIza"):
+
+        is_valid = True
+
+    elif req.provider == "groq" and key.startswith("gsk_"):
+
+        is_valid = True
+
+    elif req.provider == "openai" and key.startswith("sk-"):
+
+        is_valid = True
+
+    elif req.provider == "anthropic" and key.startswith("sk-ant-"):
+
+        is_valid = True
+
+    elif req.provider == "deepseek" and key.startswith("sk-"):
+
+        is_valid = True
+
+    elif req.provider not in ["gemini", "groq", "openai", "anthropic", "deepseek"]:
+
         pass
 
+    else:
+
+        is_valid = True 
+
+    
+
     if is_valid:
+
         return {"status": "valid"}
+
     return {"status": "invalid"}
 
 

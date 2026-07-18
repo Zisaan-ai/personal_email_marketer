@@ -409,9 +409,6 @@ async function apiCall(endpoint, method = 'GET', body = null) {
 
 
     const ct = res.headers.get('content-type');
-    if (ct && ct.includes('text/html') && res.status === 200 && (endpoint.includes('/api/settings') || endpoint.includes('/verify_key'))) {
-        throw new Error('Cloudflare blocked the request');
-    }
     if (res.status === 401) {
 
 
@@ -5398,9 +5395,9 @@ function setupSettings() {
                     badge.style.color = '#ef4444';
                 }
             } catch (e) {
-                badge.innerHTML = `<span style="display:inline-block;width:4px;height:4px;background:#ca8a04;border-radius:50%;margin-right:4px;vertical-align:middle;margin-bottom:1px;"></span>Error`;
-                badge.style.background = '#fef08a';
-                badge.style.color = '#ca8a04';
+                badge.innerHTML = `<span style="display:inline-block;width:4px;height:4px;background:#ef4444;border-radius:50%;margin-right:4px;vertical-align:middle;margin-bottom:1px;"></span>API Error`;
+                badge.style.background = '#fee2e2';
+                badge.style.color = '#ef4444';
             }
         });
         await Promise.all(verifyPromises);
@@ -5444,7 +5441,17 @@ function setupSettings() {
 
 
 
-    }).catch(() => {});
+    }).catch((e) => {
+        console.error("Settings fetch failed:", e);
+        document.querySelectorAll('[id^=badge-]').forEach(b => {
+            if(b) {
+                b.innerHTML = `<span style="display:inline-block;width:4px;height:4px;background:#ef4444;border-radius:50%;margin-right:4px;vertical-align:middle;margin-bottom:1px;"></span>Server Down`;
+                b.style.background = '#fee2e2';
+                b.style.color = '#ef4444';
+            }
+        });
+        alert('Server is failing to load API keys! Error: ' + e.message + '\nPlease check cPanel Error Logs!');
+    });
 
 
 

@@ -3195,11 +3195,15 @@ def delete_sending_account(acc_id: str, current_user: database.User = Depends(au
     acc = db.query(database.SendingAccount).filter(database.SendingAccount.id == acc_id, database.SendingAccount.user_id == str(current_user.id)).first()
 
     if not acc:
-
         raise HTTPException(status_code=404, detail="Account not found")
 
-    db.delete(acc)
+    # Delete child records first to avoid foreign key constraints failing
+    db.query(database.AccountDailyStats).filter(database.AccountDailyStats.account_id == acc_id).delete(synchronize_session=False)
+    db.query(database.Reply).filter(database.Reply.account_id == acc_id).delete(synchronize_session=False)
+    db.query(database.SeedTestResult).filter(database.SeedTestResult.account_id == acc_id).delete(synchronize_session=False)
+    db.query(database.ProviderReputation).filter(database.ProviderReputation.account_id == acc_id).delete(synchronize_session=False)
 
+    db.delete(acc)
     db.commit()
 
     return {"status": "success"}

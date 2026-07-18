@@ -5068,39 +5068,15 @@ function setupSettings() {
 
     const providerSelect = document.getElementById('smtp-provider');
 
-
-
     if (providerSelect) {
-
-
 
         providerSelect.addEventListener('change', () => {
 
-
-
-            const isInstantly = providerSelect.value === 'instantly';
-
-
-
             const smtpFields = document.getElementById('smtp-fields');
 
-
-
-            const instFields = document.getElementById('instantly-fields');
-
-
-
-            if (smtpFields) smtpFields.style.display = isInstantly ? 'none' : 'block';
-
-
-
-            if (instFields) instFields.style.display = isInstantly ? 'block' : 'none';
-
-
+            if (smtpFields) smtpFields.style.display = 'block';
 
         });
-
-
 
     }
 
@@ -5132,35 +5108,15 @@ function setupSettings() {
 
             if (provider === 'smtp') {
 
-
-
                 body.smtp_host = document.getElementById('smtp-host').value;
-
-
 
                 body.smtp_user = document.getElementById('smtp-user').value;
 
-
-
                 body.smtp_pass = document.getElementById('smtp-pass').value;
-
-
 
                 body.smtp_port = parseInt(document.getElementById('smtp-port').value);
 
-
-
                 body.from_name = document.getElementById('smtp-from-name').value;
-
-
-
-            } else {
-
-
-
-                body.instantly_api_key = document.getElementById('instantly-api-key').value;
-
-
 
             }
 

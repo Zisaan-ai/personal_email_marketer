@@ -220,7 +220,13 @@ def send_warmup_email(db, sender_acc, all_warmup_accounts):
         server.send_message(msg)
         server.quit()
         
+        import datetime
+        import pytz
+        BD_TZ = pytz.timezone("Asia/Dhaka")
+        today_bd = datetime.datetime.now(BD_TZ).strftime("%Y-%m-%d")
+        
         sender_acc.warmup_sent_today = (sender_acc.warmup_sent_today or 0) + 1
+        sender_acc.sent_today_date = today_bd
         
         # This grows the health score!
         sender_acc.total_sent = (sender_acc.total_sent or 0) + 1

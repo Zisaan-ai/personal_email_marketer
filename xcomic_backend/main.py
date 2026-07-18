@@ -330,18 +330,18 @@ scheduler.add_job(_auto_resume_stuck_campaigns, 'interval', minutes=30, id='auto
 
 scheduler.add_job(_scheduler_start_scheduled_campaigns, 'interval', minutes=1, id='scheduled_campaigns_job')
 
-import socket as _socket_mod
-import fcntl
-import errno
-
 _SCHEDULER_IS_PRIMARY = False
 _scheduler_lock_fd = None
 try:
+    import fcntl
     _lock_file = '/tmp/xcomic_scheduler.lock'
     _scheduler_lock_fd = open(_lock_file, 'w')
     fcntl.flock(_scheduler_lock_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
     _SCHEDULER_IS_PRIMARY = True
     print("[Scheduler] This process is PRIMARY scheduler.")
+except ImportError:
+    _SCHEDULER_IS_PRIMARY = True
+    print("[Scheduler] fcntl not found. Running as PRIMARY scheduler (Windows/Local Dev).")
 except (IOError, OSError) as _e:
     if _scheduler_lock_fd:
         try:

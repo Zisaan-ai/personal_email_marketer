@@ -857,6 +857,197 @@
     .orb-2 { width: 700px; height: 700px; background: #c026d3; top: 10%; right: -200px; animation-delay: -5s; }
     .orb-3 { width: 800px; height: 800px; background: #0ea5e9; bottom: -300px; left: 10%; animation-delay: -10s; }
 
+    /* Hero Dashboard Mockup */
+    .hero-dashboard {
+        margin: 60px auto 0;
+        max-width: 900px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 40px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(99,102,241,0.1);
+    }
+    .hd-topbar {
+        display: flex;
+        align-items: center;
+        padding: 12px 20px;
+        background: rgba(255,255,255,0.03);
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        gap: 6px;
+    }
+    .hd-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+    .hd-body { display: flex; min-height: 280px; }
+    .hd-sidebar {
+        width: 150px;
+        padding: 16px;
+        border-right: 1px solid rgba(255,255,255,0.06);
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        flex-shrink: 0;
+    }
+    .hd-sitem {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 8px;
+        font-size: 13px;
+        color: #475569;
+        cursor: default;
+        transition: all 0.2s;
+    }
+    .hd-sitem.active { background: rgba(99,102,241,0.15); color: #a5b4fc; }
+    .hd-sitem i { font-size: 13px; }
+    .hd-main { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+    .hd-stat-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+    .hd-stat { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; padding: 12px 16px; }
+    .hd-sval { font-size: 22px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
+    .hd-slabel { font-size: 11px; color: #475569; font-weight: 600; }
+    .hd-inbox { display: flex; flex-direction: column; gap: 8px; }
+    .hd-inbox-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        border-radius: 10px;
+        border: 1px solid rgba(255,255,255,0.04);
+    }
+    .hd-inbox-row.hot { background: rgba(239,68,68,0.05); }
+    .hd-inbox-row.warm { background: rgba(249,115,22,0.05); }
+    .hd-inbox-row.meeting { background: rgba(16,185,129,0.05); }
+    .hd-inbox-row.cold { background: rgba(59,130,246,0.03); }
+    .hd-badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; flex-shrink: 0; white-space: nowrap; }
+    .hd-email-line { font-size: 12px; color: #94a3b8; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .hd-ai-btn {
+        font-size: 11px;
+        font-weight: 700;
+        color: #818cf8;
+        background: rgba(99,102,241,0.1);
+        border: 1px solid rgba(99,102,241,0.2);
+        border-radius: 8px;
+        padding: 4px 10px;
+        flex-shrink: 0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    /* Problem Section */
+    .problem-section {
+        padding: 100px 24px;
+        text-align: center;
+        position: relative;
+        z-index: 10;
+    }
+    .problem-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(239,68,68,0.1);
+        border: 1px solid rgba(239,68,68,0.2);
+        border-radius: 100px;
+        padding: 6px 16px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #f87171;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 24px;
+    }
+    .problem-title {
+        font-size: 42px;
+        font-weight: 800;
+        color: #fff;
+        line-height: 1.2;
+        margin-bottom: 56px;
+        letter-spacing: -0.03em;
+    }
+    .problem-grid {
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        gap: 24px;
+        max-width: 1000px;
+        margin: 0 auto 48px;
+    }
+    .problem-card {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 20px;
+        padding: 36px 28px;
+        text-align: left;
+    }
+    .problem-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+    .problem-cname { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 10px; }
+    .problem-cdesc { font-size: 14px; color: #64748b; line-height: 1.7; }
+    .problem-arrow { margin-top: 16px; }
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(8px); }
+    }
+
+    /* Bento Grid */
+    .bento-grid {
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        grid-template-rows: auto auto;
+        gap: 16px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    .bento-card {
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 20px;
+        padding: 32px;
+        transition: transform 0.3s, box-shadow 0.3s;
+        cursor: default;
+    }
+    .bento-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+    .bento-big { grid-column: span 1; grid-row: span 2; }
+    .bento-med { grid-column: span 1; }
+    .bento-sm { grid-column: span 1; }
+    .bento-preview { display: flex; flex-direction: column; gap: 8px; }
+
+    /* Testimonials */
+    .testimonials-section {
+        padding: 100px 24px;
+        position: relative;
+        z-index: 10;
+        background: rgba(0,0,0,0.2);
+        border-top: 1px solid rgba(255,255,255,0.04);
+    }
+    .testimonials-grid {
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        gap: 24px;
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+    .testi-card {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: 20px;
+        padding: 32px;
+        transition: transform 0.3s;
+    }
+    .testi-card:hover { transform: translateY(-4px); }
+    .testi-stars { color: #facc15; font-size: 16px; margin-bottom: 16px; letter-spacing: 2px; }
+    .testi-text { font-size: 14px; color: #94a3b8; line-height: 1.8; margin-bottom: 24px; font-style: italic; }
+    .testi-author { display: flex; align-items: center; gap: 12px; }
+    .testi-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: #fff; flex-shrink: 0; }
+    .testi-name { font-size: 14px; font-weight: 700; color: #fff; }
+    .testi-role { font-size: 12px; color: #475569; margin-top: 2px; }
+
     /* Footer bar in landing */
     .landing-footer {
         padding: 32px 64px;
@@ -943,18 +1134,67 @@
         </div>
     </nav>
 
+    <!-- ====== HERO ====== -->
     <div class="landing-hero">
         <div class="section-badge" style="margin-bottom:20px;"><i class="fa-solid fa-bolt"></i> AI-Powered Cold Email Platform</div>
-        <h1>Send Cold Emails That<br><span style="background:linear-gradient(135deg,#818cf8,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Actually Get Replies.</span></h1>
-        <p>The premium email marketing platform built for modern outreach. Automate your sequences, use AI categorization, and scale your revenue effortlessly.</p>
+        <h1>Stop Sending Emails.<br><span style="background:linear-gradient(135deg,#818cf8,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Start Booking Meetings.</span></h1>
+        <p>XComic automates your entire cold email workflow — from sending to replying — with AI that works 24/7 so you don't have to.</p>
         <div class="hero-ctas">
             <button class="hero-cta-primary" onclick="LANDING.goToSignup()">Start for Free &rarr;</button>
             <button class="landing-login-btn" style="padding:16px 36px; font-size:16px;" onclick="document.getElementById('pricing').scrollIntoView({behavior: 'smooth'})">View Pricing</button>
         </div>
         <p style="font-size:13px;color:#334155;margin-top:24px;"><i class="fa-solid fa-lock" style="color:#475569;"></i> &nbsp;No credit card required &nbsp;&bull;&nbsp; Cancel anytime</p>
+
+        <!-- Inline hero visual: mock dashboard preview -->
+        <div class="hero-dashboard">
+            <div class="hd-topbar">
+                <span class="hd-dot" style="background:#f87171"></span>
+                <span class="hd-dot" style="background:#facc15"></span>
+                <span class="hd-dot" style="background:#34d399"></span>
+                <span style="font-size:12px;color:#475569;margin-left:12px;">XComic Dashboard</span>
+            </div>
+            <div class="hd-body">
+                <div class="hd-sidebar">
+                    <div class="hd-sitem active"><i class="fa-solid fa-inbox"></i> Inbox</div>
+                    <div class="hd-sitem"><i class="fa-solid fa-paper-plane"></i> Campaigns</div>
+                    <div class="hd-sitem"><i class="fa-solid fa-chart-bar"></i> Analytics</div>
+                    <div class="hd-sitem"><i class="fa-solid fa-gear"></i> Settings</div>
+                </div>
+                <div class="hd-main">
+                    <div class="hd-stat-row">
+                        <div class="hd-stat"><div class="hd-sval" style="color:#34d399;">247</div><div class="hd-slabel">Replies This Week</div></div>
+                        <div class="hd-stat"><div class="hd-sval" style="color:#818cf8;">89%</div><div class="hd-slabel">Inbox Rate</div></div>
+                        <div class="hd-stat"><div class="hd-sval" style="color:#fb923c;">38</div><div class="hd-slabel">Hot Leads</div></div>
+                        <div class="hd-stat"><div class="hd-sval" style="color:#f472b6;">12</div><div class="hd-slabel">Meetings Booked</div></div>
+                    </div>
+                    <div class="hd-inbox">
+                        <div class="hd-inbox-row hot">
+                            <span class="hd-badge badge-hot">&#128525; Hot</span>
+                            <span class="hd-email-line">Sarah M. — "Yes, let's schedule a call this week!"</span>
+                            <span class="hd-ai-btn"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Reply</span>
+                        </div>
+                        <div class="hd-inbox-row warm">
+                            <span class="hd-badge badge-warm">&#128293; Warm</span>
+                            <span class="hd-email-line">James K. — "Interesting, can you send more info?"</span>
+                            <span class="hd-ai-btn"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Reply</span>
+                        </div>
+                        <div class="hd-inbox-row meeting">
+                            <span class="hd-badge badge-meeting">&#128197; Meeting</span>
+                            <span class="hd-email-line">Emily R. — "Booked! See you Thursday at 2pm."</span>
+                            <span class="hd-ai-btn"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Reply</span>
+                        </div>
+                        <div class="hd-inbox-row cold">
+                            <span class="hd-badge badge-cold">&#10052; Cold</span>
+                            <span class="hd-email-line">Tom B. — "Not interested at this time."</span>
+                            <span class="hd-ai-btn"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Reply</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- STATS STRIP -->
+    <!-- ====== STATS STRIP ====== -->
     <div class="stats-strip">
         <div class="stat-item">
             <div class="stat-num">98%</div>
@@ -974,7 +1214,34 @@
         </div>
     </div>
 
-    <!-- FEATURES SECTION -->
+    <!-- ====== PROBLEM SECTION ====== -->
+    <div class="problem-section">
+        <div class="problem-badge"><i class="fa-solid fa-triangle-exclamation"></i> The Problem</div>
+        <h2 class="problem-title">Cold email is broken.<br>Here's why yours isn't working.</h2>
+        <div class="problem-grid">
+            <div class="problem-card">
+                <div class="problem-icon" style="color:#f87171;background:rgba(239,68,68,0.1)"><i class="fa-solid fa-inbox"></i></div>
+                <div class="problem-cname">Landing in Spam</div>
+                <div class="problem-cdesc">Your emails never reach the inbox. Deliverability is broken before you even start.</div>
+            </div>
+            <div class="problem-card">
+                <div class="problem-icon" style="color:#fb923c;background:rgba(249,115,22,0.1)"><i class="fa-solid fa-hourglass-half"></i></div>
+                <div class="problem-cname">Hours Wasted Sorting</div>
+                <div class="problem-cdesc">You spend half your day figuring out which reply is worth following up on. Time wasted = money lost.</div>
+            </div>
+            <div class="problem-card">
+                <div class="problem-icon" style="color:#facc15;background:rgba(234,179,8,0.1)"><i class="fa-solid fa-pen-to-square"></i></div>
+                <div class="problem-cname">Generic Follow-Ups</div>
+                <div class="problem-cdesc">Your follow-ups sound robotic. Leads can tell they're getting a template. They stop replying.</div>
+            </div>
+        </div>
+        <div class="problem-arrow">
+            <i class="fa-solid fa-arrow-down" style="font-size:24px;color:#4f46e5;animation:bounce 1.5s infinite;"></i>
+            <p style="font-size:15px;color:#64748b;margin-top:8px;">XComic solves all of this.</p>
+        </div>
+    </div>
+
+    <!-- ====== FEATURES SECTION ====== -->
     <section id="features">
         <div class="features-header">
             <div class="section-badge"><i class="fa-solid fa-sparkles"></i> Features</div>
@@ -982,36 +1249,48 @@
             <p class="section-sub">Built by cold email experts. Designed for teams that take outreach seriously.</p>
         </div>
 
-        <div class="features-grid">
-            <div class="feat-card">
+        <!-- BENTO GRID -->
+        <div class="bento-grid">
+            <div class="bento-card bento-big" style="background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(99,102,241,0.03));">
                 <div class="feat-icon purple"><i class="fa-solid fa-robot"></i></div>
                 <div class="feat-title">AI Reply Categorization</div>
-                <div class="feat-desc">Every inbound reply is automatically tagged as Hot, Warm, Cold, or Meeting Booked. Know exactly what to focus on first.</div>
+                <div class="feat-desc">Every inbound reply is automatically tagged — Hot, Warm, Cold, or Meeting Booked — so you always know where to focus.</div>
+                <div class="bento-preview" style="margin-top:24px;">
+                    <div class="mock-row"><div class="mock-dot" style="background:#f87171"></div><div class="mock-line"></div><span class="mock-badge badge-hot">&#128525; Hot</span></div>
+                    <div class="mock-row"><div class="mock-dot" style="background:#fb923c"></div><div class="mock-line"></div><span class="mock-badge badge-warm">&#128293; Warm</span></div>
+                    <div class="mock-row"><div class="mock-dot" style="background:#34d399"></div><div class="mock-line"></div><span class="mock-badge badge-meeting">&#128197; Meeting</span></div>
+                </div>
             </div>
-            <div class="feat-card">
+            <div class="bento-card bento-med" style="background:linear-gradient(135deg,rgba(14,165,233,0.08),rgba(14,165,233,0.02));">
                 <div class="feat-icon blue"><i class="fa-solid fa-rotate"></i></div>
                 <div class="feat-title">Round-Robin Sending</div>
-                <div class="feat-desc">Distribute sends across multiple accounts automatically. Protect deliverability and scale volume without limits.</div>
+                <div class="feat-desc">Distribute sends across multiple accounts. Scale without hitting daily limits.</div>
+                <div style="display:flex;gap:8px;margin-top:20px;flex-wrap:wrap;">
+                    <span style="background:rgba(14,165,233,0.1);border:1px solid rgba(14,165,233,0.2);color:#38bdf8;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;">account1@gmail.com</span>
+                    <span style="background:rgba(14,165,233,0.1);border:1px solid rgba(14,165,233,0.2);color:#38bdf8;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;">account2@outlook.com</span>
+                    <span style="background:rgba(14,165,233,0.1);border:1px solid rgba(14,165,233,0.2);color:#38bdf8;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;">account3@smtp.io</span>
+                </div>
             </div>
-            <div class="feat-card">
-                <div class="feat-icon green"><i class="fa-solid fa-fire"></i></div>
-                <div class="feat-title">Email Warm-Up Engine</div>
-                <div class="feat-desc">Auto-warm your sending accounts with realistic traffic. Build a perfect sender reputation before launching campaigns.</div>
-            </div>
-            <div class="feat-card">
+            <div class="bento-card bento-med" style="background:linear-gradient(135deg,rgba(192,38,211,0.08),rgba(192,38,211,0.02));">
                 <div class="feat-icon pink"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
                 <div class="feat-title">AI Reply Writer</div>
-                <div class="feat-desc">Generate human-like, context-aware replies in one click. Your AI writes the follow-up, you just hit send.</div>
+                <div class="feat-desc">One click. A perfect, human-like reply draft. You just hit send.</div>
+                <div class="ai-msg ai" style="margin-top:20px;font-size:12px;">"That's a great question! Here's why XComic is different from what you're using today..."</div>
             </div>
-            <div class="feat-card">
+            <div class="bento-card bento-sm" style="background:linear-gradient(135deg,rgba(249,115,22,0.08),rgba(249,115,22,0.02));">
                 <div class="feat-icon orange"><i class="fa-solid fa-chart-line"></i></div>
                 <div class="feat-title">Real-Time Analytics</div>
-                <div class="feat-desc">Track opens, clicks, replies, and bounce rates per campaign and per sender. Actionable insights in one dashboard.</div>
+                <div class="feat-desc">Opens, clicks, replies, bounces — all in one dashboard.</div>
             </div>
-            <div class="feat-card">
+            <div class="bento-card bento-sm" style="background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(16,185,129,0.02));">
+                <div class="feat-icon green"><i class="fa-solid fa-fire"></i></div>
+                <div class="feat-title">Email Warm-Up</div>
+                <div class="feat-desc">Auto-warm your sender accounts. Build reputation before launching.</div>
+            </div>
+            <div class="bento-card bento-sm" style="background:linear-gradient(135deg,rgba(234,179,8,0.08),rgba(234,179,8,0.02));">
                 <div class="feat-icon yellow"><i class="fa-solid fa-shield-halved"></i></div>
                 <div class="feat-title">Deliverability Optimizer</div>
-                <div class="feat-desc">Preflight checks scan for spam words, broken links, and HTML ratio before you send. Hit the inbox every time.</div>
+                <div class="feat-desc">Preflight checks catch spam triggers before you send.</div>
             </div>
         </div>
 
@@ -1030,31 +1309,11 @@
             </div>
             <div class="fh-visual">
                 <div class="fh-visual-inner">
-                    <div class="mock-row">
-                        <div class="mock-dot" style="background:#f87171"></div>
-                        <div class="mock-line" style="width:60%"></div>
-                        <span class="mock-badge badge-hot">&#128525; Hot</span>
-                    </div>
-                    <div class="mock-row">
-                        <div class="mock-dot" style="background:#fb923c"></div>
-                        <div class="mock-line" style="width:75%"></div>
-                        <span class="mock-badge badge-warm">&#128293; Warm</span>
-                    </div>
-                    <div class="mock-row">
-                        <div class="mock-dot" style="background:#34d399"></div>
-                        <div class="mock-line" style="width:50%"></div>
-                        <span class="mock-badge badge-meeting">&#128197; Meeting</span>
-                    </div>
-                    <div class="mock-row">
-                        <div class="mock-dot" style="background:#60a5fa"></div>
-                        <div class="mock-line" style="width:80%"></div>
-                        <span class="mock-badge badge-cold">&#10052; Cold</span>
-                    </div>
-                    <div class="mock-row">
-                        <div class="mock-dot" style="background:#94a3b8"></div>
-                        <div class="mock-line" style="width:45%"></div>
-                        <span class="mock-badge badge-bounce">&#10060; Bounce</span>
-                    </div>
+                    <div class="mock-row"><div class="mock-dot" style="background:#f87171"></div><div class="mock-line" style="width:60%"></div><span class="mock-badge badge-hot">&#128525; Hot</span></div>
+                    <div class="mock-row"><div class="mock-dot" style="background:#fb923c"></div><div class="mock-line" style="width:75%"></div><span class="mock-badge badge-warm">&#128293; Warm</span></div>
+                    <div class="mock-row"><div class="mock-dot" style="background:#34d399"></div><div class="mock-line" style="width:50%"></div><span class="mock-badge badge-meeting">&#128197; Meeting</span></div>
+                    <div class="mock-row"><div class="mock-dot" style="background:#60a5fa"></div><div class="mock-line" style="width:80%"></div><span class="mock-badge badge-cold">&#10052; Cold</span></div>
+                    <div class="mock-row"><div class="mock-dot" style="background:#94a3b8"></div><div class="mock-line" style="width:45%"></div><span class="mock-badge badge-bounce">&#10060; Bounce</span></div>
                 </div>
             </div>
         </div>
@@ -1090,18 +1349,40 @@
         </div>
     </section>
 
-    <!-- FINAL CTA -->
-    <div class="landing-cta-final">
-        <h2 class="cta-final-title">Ready to 10x your<br>cold email results?</h2>
-        <p class="cta-final-sub">Join hundreds of sales teams using XComic to book more meetings, faster.</p>
-        <div class="cta-btns">
-            <button class="cta-primary" onclick="LANDING.goToSignup()">Get Started Free &rarr;</button>
-            <button class="cta-secondary" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">See Pricing</button>
+    <!-- ====== SOCIAL PROOF / TESTIMONIALS ====== -->
+    <div class="testimonials-section">
+        <div class="section-badge" style="margin:0 auto 40px;display:table;"><i class="fa-solid fa-star"></i> Loved By Sales Teams</div>
+        <div class="testimonials-grid">
+            <div class="testi-card">
+                <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="testi-text">"XComic literally changed the game for us. Our reply rate went from 3% to over 9% in the first month. The AI categorization alone saves us 2 hours per day."</p>
+                <div class="testi-author">
+                    <div class="testi-avatar" style="background:linear-gradient(135deg,#818cf8,#c084fc);">JS</div>
+                    <div><div class="testi-name">Jordan S.</div><div class="testi-role">Head of Sales, TechStartup</div></div>
+                </div>
+            </div>
+            <div class="testi-card">
+                <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="testi-text">"Setup took 5 minutes. By day 3 we had booked 4 meetings. The AI reply writer is insane — it sounds exactly like how I'd write but 10x faster."</p>
+                <div class="testi-author">
+                    <div class="testi-avatar" style="background:linear-gradient(135deg,#34d399,#0ea5e9);">MR</div>
+                    <div><div class="testi-name">Maria R.</div><div class="testi-role">Founder, Agency X</div></div>
+                </div>
+            </div>
+            <div class="testi-card">
+                <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="testi-text">"We run 10 sending accounts through XComic with round-robin. Deliverability is at 97%. I don't touch spam anymore. Best tool we've ever bought."</p>
+                <div class="testi-author">
+                    <div class="testi-avatar" style="background:linear-gradient(135deg,#fb923c,#f43f5e);">AK</div>
+                    <div><div class="testi-name">Alex K.</div><div class="testi-role">Outreach Lead, SalesForce</div></div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- PRICING SECTION -->
+    <!-- ====== PRICING ====== -->
     <div id="pricing" class="landing-pricing">
+        <div class="section-badge" style="margin:0 auto 20px;display:table;"><i class="fa-solid fa-tag"></i> Pricing</div>
         <h2 class="pricing-title">Simple, transparent pricing</h2>
         <p class="pricing-subtitle">Choose the perfect plan for your outreach needs.</p>
         

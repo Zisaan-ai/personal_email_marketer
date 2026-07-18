@@ -399,9 +399,14 @@ const ACCOUNTS = {
             });
             if(res.ok) {
                 this.fetchAccounts();
+                if (window.showToast) showToast('Account deleted successfully', 'success');
+            } else {
+                const err = await res.json();
+                alert('Error deleting account: ' + (err.detail || 'Unknown error'));
             }
         } catch(e) {
             console.error("Delete account error", e);
+            alert('Failed to delete account');
         }
     },
 

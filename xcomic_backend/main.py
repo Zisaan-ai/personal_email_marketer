@@ -1097,13 +1097,33 @@ def delete_user(user_id: str, current_user: database.User = Depends(auth.get_cur
         raise HTTPException(status_code=404, detail="User not found")
 
     # Protect the owner account â€” can NEVER be deleted
-
     if target_user.email == "zmonemrahman@gmail.com":
-
         raise HTTPException(status_code=403, detail="Owner account cannot be deleted")
 
-    db.delete(target_user)
+    # Delete Media
+    db.query(database.Media).filter(database.Media.user_id == user_id).delete()
+    
+    # Delete User Settings
+    db.query(database.UserSettings).filter(database.UserSettings.user_id == user_id).delete()
+    
+    # Delete campaigns and associated tracking
+    user_campaigns = db.query(database.Campaign).filter(database.Campaign.user_id == user_id).all()
+    for camp in user_campaigns:
+        db.query(database.CampaignLead).filter(database.CampaignLead.campaign_id == str(camp.id)).delete()
+        db.query(database.TrackingLog).filter(database.TrackingLog.campaign_id == str(camp.id)).delete()
+        db.query(database.BounceRecord).filter(database.BounceRecord.campaign_id == str(camp.id)).delete()
+        db.delete(camp)
+        
+    # Delete sending accounts and associated stats
+    user_accounts = db.query(database.SendingAccount).filter(database.SendingAccount.user_id == user_id).all()
+    for acc in user_accounts:
+        db.query(database.AccountDailyStats).filter(database.AccountDailyStats.account_id == str(acc.id)).delete()
+        db.query(database.ProviderReputation).filter(database.ProviderReputation.account_id == str(acc.id)).delete()
+        db.query(database.Reply).filter(database.Reply.account_id == str(acc.id)).delete()
+        db.query(database.SeedTestResult).filter(database.SeedTestResult.account_id == str(acc.id)).delete()
+        db.delete(acc)
 
+    db.delete(target_user)
     db.commit()
 
     return {"message": "User deleted"}
@@ -1797,13 +1817,14 @@ def delete_campaign(campaign_id: str, current_user: database.User = Depends(auth
     
 
     # Delete associated leads
-
     db.query(database.CampaignLead).filter(database.CampaignLead.campaign_id == str(campaign.id)).delete()
-
+    # Delete associated tracking logs
+    db.query(database.TrackingLog).filter(database.TrackingLog.campaign_id == str(campaign.id)).delete()
+    # Delete associated bounce records
+    db.query(database.BounceRecord).filter(database.BounceRecord.campaign_id == str(campaign.id)).delete()
     db.commit()
 
     db.delete(campaign)
-
     db.commit()
 
     return {"status": "success"}

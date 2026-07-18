@@ -13778,6 +13778,15 @@ const LANDING = {
         if (window.AUTH && window.AUTH.showSignup) window.AUTH.showSignup();
     },
     
+    backToFeatures: () => {
+        document.getElementById('auth-page').classList.add('hidden');
+        document.getElementById('landing-page').classList.remove('hidden');
+        const featEl = document.getElementById('features');
+        if (featEl) {
+            featEl.scrollIntoView({ behavior: 'smooth' });
+        }
+    },
+    
     openPayment: function(planName, price) {
         document.getElementById('pm-plan-name').innerText = planName;
         document.getElementById('pm-plan-price').innerText = '$' + price;
@@ -13786,6 +13795,10 @@ const LANDING = {
     
     closePayment: function() {
         document.getElementById('payment-modal').classList.remove('active');
+        const featEl = document.getElementById('features');
+        if (featEl) {
+            featEl.scrollIntoView({ behavior: 'smooth' });
+        }
     },
     
     selectMethod: function(method) {

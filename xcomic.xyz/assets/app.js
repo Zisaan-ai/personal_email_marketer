@@ -13830,3 +13830,35 @@ const LANDING = {
 // Override the initial boot logic slightly so landing page is shown if not logged in.
 // Actually, since index.html has landing-page visible and auth-page hidden, it will work natively, 
 // EXCEPT window.onload checks token and might redirect to dashboard.
+
+// ====== FEAT: Features Tab Toggle ======
+const FEAT = {
+    switchTab: function(tab) {
+        // Update tab buttons
+        document.querySelectorAll('.feat-tab').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('tab-' + tab).classList.add('active');
+
+        // Update panels with smooth fade
+        document.querySelectorAll('.feat-panel').forEach(panel => {
+            panel.classList.remove('active');
+            panel.style.opacity = '0';
+        });
+
+        const target = document.getElementById('feat-' + tab);
+        if (target) {
+            target.classList.add('active');
+            // Small delay for CSS display:block to kick in, then fade in
+            setTimeout(() => {
+                target.style.transition = 'opacity 0.35s ease';
+                target.style.opacity = '1';
+            }, 20);
+        }
+    }
+};
+
+// Initialize panel opacity on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const activePanel = document.querySelector('.feat-panel.active');
+    if (activePanel) activePanel.style.opacity = '1';
+});
+

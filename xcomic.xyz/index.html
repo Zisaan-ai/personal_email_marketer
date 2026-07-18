@@ -1402,100 +1402,140 @@
         <div id="feat-bulk" class="feat-panel">
             <!-- BENTO GRID -->
             <div class="bento-grid">
+
+                <!-- BIG: Drag & Drop Builder -->
                 <div class="bento-card bento-big" style="background:linear-gradient(135deg,rgba(16,185,129,0.1),rgba(16,185,129,0.03));">
                     <div class="feat-icon green"><i class="fa-solid fa-palette"></i></div>
-                    <div class="feat-title">Drag & Drop Email Builder</div>
-                    <div class="feat-desc">Design beautiful HTML email templates visually — no coding needed. Like Mailchimp, but smarter.</div>
-                    <div class="bento-preview" style="margin-top:20px;">
-                        <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.15);border-radius:10px;padding:12px;display:flex;align-items:center;gap:10px;font-size:13px;color:#6ee7b7;">
-                            <i class="fa-solid fa-image"></i> Header Image Block
+                    <div class="feat-title">Drag &amp; Drop Email Builder</div>
+                    <div class="feat-desc">Design beautiful HTML email templates visually &mdash; no coding needed. 50+ ready-made blocks.</div>
+                    <div class="bento-preview" style="margin-top:20px;display:flex;flex-direction:column;gap:8px;">
+                        <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.15);border-radius:10px;padding:11px;display:flex;align-items:center;gap:10px;font-size:13px;color:#6ee7b7;"><i class="fa-solid fa-image"></i> Header Image Block</div>
+                        <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.15);border-radius:10px;padding:11px;display:flex;align-items:center;gap:10px;font-size:13px;color:#6ee7b7;"><i class="fa-solid fa-align-left"></i> Text + CTA Button Block</div>
+                        <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.15);border-radius:10px;padding:11px;display:flex;align-items:center;gap:10px;font-size:13px;color:#6ee7b7;"><i class="fa-solid fa-grip"></i> Product Grid Block</div>
+                    </div>
+                </div>
+
+                <!-- BIG: A/B Testing - prominent -->
+                <div class="bento-card bento-big" style="background:linear-gradient(135deg,rgba(192,38,211,0.12),rgba(192,38,211,0.03));border-color:rgba(192,38,211,0.25);">
+                    <div class="feat-icon pink"><i class="fa-solid fa-flask-vial"></i></div>
+                    <div class="feat-title">A/B Testing</div>
+                    <div class="feat-desc">Test subject lines, send times, CTA buttons &amp; content variants. Let data auto-pick the winner.</div>
+                    <div style="margin-top:18px;display:flex;flex-direction:column;gap:8px;">
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div style="background:rgba(192,38,211,0.15);border:1px solid rgba(192,38,211,0.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#e879f9;font-weight:700;flex:1;text-align:center;">Version A</div>
+                            <span style="font-size:11px;color:#64748b;font-weight:600;">VS</span>
+                            <div style="background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#a5b4fc;font-weight:700;flex:1;text-align:center;">Version B</div>
                         </div>
-                        <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.15);border-radius:10px;padding:12px;display:flex;align-items:center;gap:10px;font-size:13px;color:#6ee7b7;">
-                            <i class="fa-solid fa-align-left"></i> Text + CTA Button Block
-                        </div>
-                        <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.15);border-radius:10px;padding:12px;display:flex;align-items:center;gap:10px;font-size:13px;color:#6ee7b7;">
-                            <i class="fa-solid fa-grip"></i> Product Grid Block
+                        <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;">
+                            <span style="font-size:12px;color:#6ee7b7;font-weight:600;"><i class="fa-solid fa-trophy"></i> Winner: Version A</span>
+                            <span style="font-size:12px;color:#34d399;font-weight:800;">+34% Open Rate</span>
                         </div>
                     </div>
                 </div>
+
+                <!-- MED: Contact List & Segments -->
                 <div class="bento-card bento-med" style="background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(99,102,241,0.02));">
                     <div class="feat-icon purple"><i class="fa-solid fa-users"></i></div>
-                    <div class="feat-title">Contact List & Segments</div>
-                    <div class="feat-desc">Import CSV, manage subscriber lists, create segments by behavior, location, or tags.</div>
-                    <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;">
+                    <div class="feat-title">Contact List &amp; Segments</div>
+                    <div class="feat-desc">Import CSV, tag subscribers, create smart segments by behavior, location, or engagement.</div>
+                    <div style="display:flex;gap:6px;margin-top:14px;flex-wrap:wrap;">
                         <span style="background:rgba(99,102,241,0.12);color:#a5b4fc;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid rgba(99,102,241,0.2);">VIP Customers</span>
                         <span style="background:rgba(99,102,241,0.12);color:#a5b4fc;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid rgba(99,102,241,0.2);">New Subscribers</span>
                         <span style="background:rgba(99,102,241,0.12);color:#a5b4fc;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid rgba(99,102,241,0.2);">Inactive 30d</span>
                     </div>
                 </div>
+
+                <!-- MED: Campaign Scheduler -->
                 <div class="bento-card bento-med" style="background:linear-gradient(135deg,rgba(14,165,233,0.08),rgba(14,165,233,0.02));">
                     <div class="feat-icon blue"><i class="fa-solid fa-clock"></i></div>
                     <div class="feat-title">Campaign Scheduler</div>
                     <div class="feat-desc">Schedule campaigns to send at the perfect time for any timezone. Set it and forget it.</div>
                     <div style="background:rgba(14,165,233,0.08);border:1px solid rgba(14,165,233,0.15);border-radius:10px;padding:12px;margin-top:16px;font-size:13px;color:#7dd3fc;">
-                        <i class="fa-solid fa-calendar-check"></i>&nbsp; Next send: <strong>Jul 22 · 10:00 AM EST</strong>
+                        <i class="fa-solid fa-calendar-check"></i>&nbsp; Next send: <strong>Jul 22 &middot; 10:00 AM EST</strong>
                     </div>
                 </div>
+
+                <!-- SM: Open & Click Tracking -->
                 <div class="bento-card bento-sm" style="background:linear-gradient(135deg,rgba(249,115,22,0.08),rgba(249,115,22,0.02));">
                     <div class="feat-icon orange"><i class="fa-solid fa-chart-bar"></i></div>
-                    <div class="feat-title">Open & Click Tracking</div>
-                    <div class="feat-desc">Real-time stats on who opened, clicked, and unsubscribed.</div>
+                    <div class="feat-title">Open &amp; Click Tracking</div>
+                    <div class="feat-desc">Real-time stats on opens, clicks, bounces &amp; unsubscribes per campaign.</div>
                 </div>
+
+                <!-- SM: Auto Unsubscribe -->
                 <div class="bento-card bento-sm" style="background:linear-gradient(135deg,rgba(234,179,8,0.08),rgba(234,179,8,0.02));">
                     <div class="feat-icon yellow"><i class="fa-solid fa-user-minus"></i></div>
                     <div class="feat-title">Auto Unsubscribe</div>
-                    <div class="feat-desc">One-click unsubscribe links added automatically. Stay CAN-SPAM & GDPR compliant.</div>
+                    <div class="feat-desc">One-click unsubscribe auto-added. Stay CAN-SPAM &amp; GDPR compliant effortlessly.</div>
                 </div>
-                <div class="bento-card bento-sm" style="background:linear-gradient(135deg,rgba(192,38,211,0.08),rgba(192,38,211,0.02));">
-                    <div class="feat-icon pink"><i class="fa-solid fa-flask"></i></div>
-                    <div class="feat-title">A/B Testing</div>
-                    <div class="feat-desc">Test subject lines, content, and send times. Win with data.</div>
+
+                <!-- SM: Smart Personalization -->
+                <div class="bento-card bento-sm" style="background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(16,185,129,0.02));">
+                    <div class="feat-icon green"><i class="fa-solid fa-person-chalkboard"></i></div>
+                    <div class="feat-title">Smart Personalization</div>
+                    <div class="feat-desc">Dynamic tags like {{first_name}}, {{company}} &mdash; bulk emails that feel 1-on-1.</div>
                 </div>
+
             </div>
 
-            <!-- Feature Highlight 3: Email Builder -->
+            <!-- Feature Highlight: A/B Testing Full Section -->
             <div class="feature-highlight" style="margin-top:100px;">
                 <div class="fh-content">
-                    <div class="fh-badge" style="background:rgba(16,185,129,0.12);color:#34d399;border-color:rgba(16,185,129,0.2);"><i class="fa-solid fa-palette"></i> Visual Builder</div>
-                    <h3 class="fh-title">Build stunning campaigns in minutes, not hours.</h3>
-                    <p class="fh-desc">Our drag-and-drop email builder lets you create professional, mobile-responsive email templates without touching a single line of code.</p>
+                    <div class="fh-badge" style="background:rgba(192,38,211,0.12);color:#e879f9;border-color:rgba(192,38,211,0.25);"><i class="fa-solid fa-flask-vial"></i> A/B Testing</div>
+                    <h3 class="fh-title">Stop guessing. Let your data pick the winner.</h3>
+                    <p class="fh-desc">Run simultaneous A/B tests on subject lines, sender names, CTA buttons, and full content variants. XComic automatically sends the winning version to the rest of your list.</p>
                     <ul class="fh-bullets">
-                        <li><i class="fa-solid fa-check-circle"></i> 50+ pre-built responsive email templates</li>
-                        <li><i class="fa-solid fa-check-circle"></i> Drag & drop image, text, button, and divider blocks</li>
-                        <li><i class="fa-solid fa-check-circle"></i> Live preview on desktop & mobile</li>
-                        <li><i class="fa-solid fa-check-circle"></i> Personalization tags like {{first_name}}, {{company}}</li>
+                        <li><i class="fa-solid fa-check-circle"></i> Test up to 4 variants at once</li>
+                        <li><i class="fa-solid fa-check-circle"></i> Auto-pick winner based on opens or clicks</li>
+                        <li><i class="fa-solid fa-check-circle"></i> Statistical confidence reporting</li>
+                        <li><i class="fa-solid fa-check-circle"></i> Works with any list size &mdash; even 100 subscribers</li>
                     </ul>
                 </div>
                 <div class="fh-visual">
-                    <div class="fh-visual-inner" style="gap:10px;">
-                        <div style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px;">
-                            <div style="width:40px;height:40px;background:rgba(16,185,129,0.2);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#34d399;font-size:18px;"><i class="fa-solid fa-image"></i></div>
-                            <div style="flex:1;"><div style="height:8px;background:rgba(255,255,255,0.15);border-radius:4px;margin-bottom:6px;"></div><div style="height:8px;background:rgba(255,255,255,0.08);border-radius:4px;width:70%;"></div></div>
+                    <div class="fh-visual-inner" style="gap:12px;padding:20px;">
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+                            <div style="background:rgba(192,38,211,0.1);border:1px solid rgba(192,38,211,0.25);border-radius:12px;padding:14px;">
+                                <div style="font-size:10px;font-weight:700;color:#e879f9;letter-spacing:1px;margin-bottom:8px;">VERSION A</div>
+                                <div style="font-size:12px;color:#cbd5e1;line-height:1.4;">"Don't miss our biggest sale of the year &#128293;"</div>
+                                <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center;">
+                                    <span style="font-size:11px;color:#64748b;">Open Rate</span>
+                                    <span style="font-size:16px;font-weight:800;color:#e879f9;">38.4%</span>
+                                </div>
+                                <div style="height:4px;background:rgba(192,38,211,0.15);border-radius:2px;margin-top:6px;"><div style="height:4px;background:#e879f9;border-radius:2px;width:38%;"></div></div>
+                            </div>
+                            <div style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);border-radius:12px;padding:14px;">
+                                <div style="font-size:10px;font-weight:700;color:#a5b4fc;letter-spacing:1px;margin-bottom:8px;">VERSION B</div>
+                                <div style="font-size:12px;color:#cbd5e1;line-height:1.4;">"Your exclusive deal expires in 24 hours &#9200;"</div>
+                                <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center;">
+                                    <span style="font-size:11px;color:#64748b;">Open Rate</span>
+                                    <span style="font-size:16px;font-weight:800;color:#a5b4fc;">27.1%</span>
+                                </div>
+                                <div style="height:4px;background:rgba(99,102,241,0.15);border-radius:2px;margin-top:6px;"><div style="height:4px;background:#818cf8;border-radius:2px;width:27%;"></div></div>
+                            </div>
                         </div>
-                        <div style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px;">
-                            <div style="width:40px;height:40px;background:rgba(99,102,241,0.2);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#818cf8;font-size:18px;"><i class="fa-solid fa-align-left"></i></div>
-                            <div style="flex:1;"><div style="height:8px;background:rgba(255,255,255,0.15);border-radius:4px;margin-bottom:6px;"></div><div style="height:8px;background:rgba(255,255,255,0.08);border-radius:4px;width:55%;"></div></div>
-                        </div>
-                        <div style="background:rgba(14,165,233,0.1);border:1px solid rgba(14,165,233,0.2);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px;">
-                            <div style="width:40px;height:40px;background:rgba(14,165,233,0.2);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#38bdf8;font-size:18px;"><i class="fa-solid fa-rectangle-ad"></i></div>
-                            <div style="flex:1;"><div style="height:8px;background:rgba(255,255,255,0.15);border-radius:4px;margin-bottom:6px;"></div><div style="height:8px;background:rgba(255,255,255,0.08);border-radius:4px;width:80%;"></div></div>
-                        </div>
-                        <div style="text-align:center;margin-top:8px;">
-                            <span style="background:linear-gradient(135deg,#10b981,#059669);color:#fff;padding:10px 28px;border-radius:20px;font-size:13px;font-weight:700;display:inline-block;">Send Campaign &rarr;</span>
+                        <div style="background:linear-gradient(135deg,rgba(16,185,129,0.12),rgba(16,185,129,0.05));border:1px solid rgba(16,185,129,0.25);border-radius:12px;padding:14px;display:flex;align-items:center;justify-content:space-between;">
+                            <div style="display:flex;align-items:center;gap:10px;">
+                                <div style="width:32px;height:32px;background:rgba(16,185,129,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#34d399;font-size:16px;"><i class="fa-solid fa-trophy"></i></div>
+                                <div>
+                                    <div style="font-size:12px;font-weight:700;color:#34d399;">Winner: Version A</div>
+                                    <div style="font-size:11px;color:#64748b;">Sending to remaining 8,400 subscribers</div>
+                                </div>
+                            </div>
+                            <span style="background:rgba(16,185,129,0.2);color:#34d399;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700;">+41% &#128640;</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Feature Highlight 4: Analytics -->
+            <!-- Feature Highlight: Campaign Analytics -->
             <div class="feature-highlight reverse" style="margin-top:100px;">
                 <div class="fh-content">
                     <div class="fh-badge" style="background:rgba(249,115,22,0.12);color:#fb923c;border-color:rgba(249,115,22,0.2);"><i class="fa-solid fa-chart-bar"></i> Campaign Analytics</div>
                     <h3 class="fh-title">See exactly how your campaigns perform.</h3>
-                    <p class="fh-desc">Track every open, click, bounce, and unsubscribe in real time. Make data-driven decisions that grow your audience and revenue.</p>
+                    <p class="fh-desc">Track every open, click, bounce, and unsubscribe in real time. Make data-driven decisions that grow your audience and revenue &mdash; campaign after campaign.</p>
                     <ul class="fh-bullets">
                         <li><i class="fa-solid fa-check-circle"></i> Real-time open and click rate tracking</li>
-                        <li><i class="fa-solid fa-check-circle"></i> Bounce & unsubscribe monitoring</li>
+                        <li><i class="fa-solid fa-check-circle"></i> Bounce &amp; unsubscribe monitoring</li>
                         <li><i class="fa-solid fa-check-circle"></i> A/B test winner detection</li>
                         <li><i class="fa-solid fa-check-circle"></i> Per-subscriber engagement history</li>
                     </ul>
@@ -1523,6 +1563,41 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Feature Highlight: Email Builder -->
+            <div class="feature-highlight" style="margin-top:100px;">
+                <div class="fh-content">
+                    <div class="fh-badge" style="background:rgba(16,185,129,0.12);color:#34d399;border-color:rgba(16,185,129,0.2);"><i class="fa-solid fa-palette"></i> Visual Builder</div>
+                    <h3 class="fh-title">Build stunning campaigns in minutes, not hours.</h3>
+                    <p class="fh-desc">Our drag-and-drop email builder lets you create professional, mobile-responsive templates without touching a single line of code. Pick a template, customize, send.</p>
+                    <ul class="fh-bullets">
+                        <li><i class="fa-solid fa-check-circle"></i> 50+ pre-built responsive email templates</li>
+                        <li><i class="fa-solid fa-check-circle"></i> Drag &amp; drop image, text, button, and divider blocks</li>
+                        <li><i class="fa-solid fa-check-circle"></i> Live preview on desktop &amp; mobile</li>
+                        <li><i class="fa-solid fa-check-circle"></i> Personalization tags like {{first_name}}, {{company}}</li>
+                    </ul>
+                </div>
+                <div class="fh-visual">
+                    <div class="fh-visual-inner" style="gap:10px;">
+                        <div style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px;">
+                            <div style="width:40px;height:40px;background:rgba(16,185,129,0.2);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#34d399;font-size:18px;"><i class="fa-solid fa-image"></i></div>
+                            <div style="flex:1;"><div style="height:8px;background:rgba(255,255,255,0.15);border-radius:4px;margin-bottom:6px;"></div><div style="height:8px;background:rgba(255,255,255,0.08);border-radius:4px;width:70%;"></div></div>
+                        </div>
+                        <div style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px;">
+                            <div style="width:40px;height:40px;background:rgba(99,102,241,0.2);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#818cf8;font-size:18px;"><i class="fa-solid fa-align-left"></i></div>
+                            <div style="flex:1;"><div style="height:8px;background:rgba(255,255,255,0.15);border-radius:4px;margin-bottom:6px;"></div><div style="height:8px;background:rgba(255,255,255,0.08);border-radius:4px;width:55%;"></div></div>
+                        </div>
+                        <div style="background:rgba(14,165,233,0.1);border:1px solid rgba(14,165,233,0.2);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px;">
+                            <div style="width:40px;height:40px;background:rgba(14,165,233,0.2);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#38bdf8;font-size:18px;"><i class="fa-solid fa-rectangle-ad"></i></div>
+                            <div style="flex:1;"><div style="height:8px;background:rgba(255,255,255,0.15);border-radius:4px;margin-bottom:6px;"></div><div style="height:8px;background:rgba(255,255,255,0.08);border-radius:4px;width:80%;"></div></div>
+                        </div>
+                        <div style="text-align:center;margin-top:8px;">
+                            <span style="background:linear-gradient(135deg,#10b981,#059669);color:#fff;padding:10px 28px;border-radius:20px;font-size:13px;font-weight:700;display:inline-block;">Send Campaign &rarr;</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
     </section>

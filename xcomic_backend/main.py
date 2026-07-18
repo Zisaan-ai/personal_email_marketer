@@ -4721,6 +4721,86 @@ def clean_invalid_leads(db: Session = Depends(database.get_db)):
 
 
 
+# ============================================================
+# SUPPORT TICKET API ENDPOINTS
+# ============================================================
+import json
+from pydantic import BaseModel
+
+class TicketCreateRequest(BaseModel):
+    subject: str
+    message: str
+
+class TicketReplyRequest(BaseModel):
+    message: str
+
+@app.post("/api/tickets")
+def create_ticket(req: TicketCreateRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    replies = [{"sender": "user", "message": req.message, "timestamp": datetime.utcnow().isoformat()}]
+    new_ticket = database.SupportTicket(
+        user_id=str(current_user.id),
+        subject=req.subject,
+        status="Open",
+        replies_json=json.dumps(replies)
+    )
+    db.add(new_ticket)
+    db.commit()
+    db.refresh(new_ticket)
+    
+    # Notify Admin
+    import email_service
+    email_service.send_new_ticket_notification(current_user.email, req.subject, req.message)
+    
+    return {"status": "success", "ticket_id": new_ticket.id}
+
+@app.get("/api/tickets")
+def get_user_tickets(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    tickets = db.query(database.SupportTicket).filter(database.SupportTicket.user_id == str(current_user.id)).order_by(database.SupportTicket.created_at.desc()).all()
+    return [{
+        "id": t.id,
+        "subject": t.subject,
+        "status": t.status,
+        "created_at": t.created_at.isoformat(),
+        "updated_at": t.updated_at.isoformat(),
+        "replies": json.loads(t.replies_json) if t.replies_json else []
+    } for t in tickets]
+
+@app.post("/api/tickets/{ticket_id}/reply")
+def reply_to_ticket(ticket_id: str, req: TicketReplyRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    ticket = db.query(database.SupportTicket).filter(database.SupportTicket.id == ticket_id).first()
+    if not ticket:
+        raise HTTPException(status_code=404, detail="Ticket not found")
+        
+    is_admin = (current_user.email == "zmonemrahman@gmail.com")
+    if not is_admin and ticket.user_id != str(current_user.id):
+        raise HTTPException(status_code=403, detail="Not authorized")
+        
+    replies = json.loads(ticket.replies_json) if ticket.replies_json else []
+    sender = "admin" if is_admin else "user"
+    replies.append({"sender": sender, "message": req.message, "timestamp": datetime.utcnow().isoformat()})
+    
+    ticket.replies_json = json.dumps(replies)
+    if is_admin:
+        ticket.status = "Replied"
+    else:
+        ticket.status = "Open"
+        
+    db.commit()
+    
+    # Send Notifications
+    import email_service
+    if is_admin:
+        # Admin replied, notify user
+        user = db.query(database.User).filter(database.User.id == ticket.user_id).first()
+        if user:
+            email_service.send_ticket_reply_notification(user.email, ticket.subject, req.message)
+    else:
+        # User replied, notify admin
+        email_service.send_new_ticket_notification(current_user.email, f"Re: {ticket.subject}", req.message)
+        
+    return {"status": "success"}
+
+
 @app.get("/{full_path:path}")
 
 def serve_frontend(full_path: str, db: Session = Depends(database.get_db)):
@@ -4825,84 +4905,6 @@ def run_mig_2():
 
         return f"Migration error: {str(e)}"
 
-# ============================================================
-# SUPPORT TICKET API ENDPOINTS
-# ============================================================
-import json
-from pydantic import BaseModel
-
-class TicketCreateRequest(BaseModel):
-    subject: str
-    message: str
-
-class TicketReplyRequest(BaseModel):
-    message: str
-
-@app.post("/api/tickets")
-def create_ticket(req: TicketCreateRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    replies = [{"sender": "user", "message": req.message, "timestamp": datetime.utcnow().isoformat()}]
-    new_ticket = database.SupportTicket(
-        user_id=str(current_user.id),
-        subject=req.subject,
-        status="Open",
-        replies_json=json.dumps(replies)
-    )
-    db.add(new_ticket)
-    db.commit()
-    db.refresh(new_ticket)
-    
-    # Notify Admin
-    import email_service
-    email_service.send_new_ticket_notification(current_user.email, req.subject, req.message)
-    
-    return {"status": "success", "ticket_id": new_ticket.id}
-
-@app.get("/api/tickets")
-def get_user_tickets(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    tickets = db.query(database.SupportTicket).filter(database.SupportTicket.user_id == str(current_user.id)).order_by(database.SupportTicket.created_at.desc()).all()
-    return [{
-        "id": t.id,
-        "subject": t.subject,
-        "status": t.status,
-        "created_at": t.created_at.isoformat(),
-        "updated_at": t.updated_at.isoformat(),
-        "replies": json.loads(t.replies_json) if t.replies_json else []
-    } for t in tickets]
-
-@app.post("/api/tickets/{ticket_id}/reply")
-def reply_to_ticket(ticket_id: str, req: TicketReplyRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    ticket = db.query(database.SupportTicket).filter(database.SupportTicket.id == ticket_id).first()
-    if not ticket:
-        raise HTTPException(status_code=404, detail="Ticket not found")
-        
-    is_admin = (current_user.email == "zmonemrahman@gmail.com")
-    if not is_admin and ticket.user_id != str(current_user.id):
-        raise HTTPException(status_code=403, detail="Not authorized")
-        
-    replies = json.loads(ticket.replies_json) if ticket.replies_json else []
-    sender = "admin" if is_admin else "user"
-    replies.append({"sender": sender, "message": req.message, "timestamp": datetime.utcnow().isoformat()})
-    
-    ticket.replies_json = json.dumps(replies)
-    if is_admin:
-        ticket.status = "Replied"
-    else:
-        ticket.status = "Open"
-        
-    db.commit()
-    
-    # Send Notifications
-    import email_service
-    if is_admin:
-        # Admin replied, notify user
-        user = db.query(database.User).filter(database.User.id == ticket.user_id).first()
-        if user:
-            email_service.send_ticket_reply_notification(user.email, ticket.subject, req.message)
-    else:
-        # User replied, notify admin
-        email_service.send_new_ticket_notification(current_user.email, f"Re: {ticket.subject}", req.message)
-        
-    return {"status": "success"}
 
 @app.get("/api/admin/tickets")
 def get_all_tickets(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):

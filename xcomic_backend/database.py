@@ -294,6 +294,21 @@ class InactiveLeadList(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     tagged_at = Column(DateTime, default=datetime.utcnow)
 
+class SupportTicket(Base):
+    __tablename__ = "support_tickets"
+
+    id = Column(String, primary_key=True, default=generate_uuid)
+    user_id = Column(String, ForeignKey("users.id"), nullable=False)
+    subject = Column(String, nullable=False)
+    status = Column(String, default="Open")
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Store replies as a JSON string: [{"sender": "user/admin", "message": "...", "timestamp": "..."}]
+    replies_json = Column(Text, default="[]")
+
+    user = relationship("User")
+
 # Base.metadata.create_all(bind=engine)
 
 # --- Safe Migration for existing SQLite databases ---

@@ -3958,23 +3958,41 @@ def save_smtp_settings(req: SMTPSettingsRequest, current_user: database.User = D
     # Write to .env
     import os
     env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
-    env_dict = {}
-    lines = []
+    env_lines = []
     if os.path.exists(env_path):
         with open(env_path, 'r', encoding='utf-8') as f:
-            lines = f.readlines()
+            env_lines = f.readlines()
             
-    for i, line in enumerate(lines):
-        if line.startswith("SMTP_SERVER="): lines[i] = f"SMTP_SERVER={req.smtp_host}\n"
-        elif line.startswith("SMTP_PORT="): lines[i] = f"SMTP_PORT={req.smtp_port}\n"
-        elif line.startswith("SMTP_USERNAME="): lines[i] = f"SMTP_USERNAME={req.smtp_user}\n"
-        elif line.startswith("SMTP_PASSWORD="): lines[i] = f"SMTP_PASSWORD={req.smtp_pass}\n"
-        
+    keys_updated = {
+        "SMTP_SERVER": False,
+        "SMTP_PORT": False,
+        "SMTP_USERNAME": False,
+        "SMTP_PASSWORD": False,
+        "SMTP_FROM_NAME": False
+    }
+
+    new_values = {
+        "SMTP_SERVER": req.smtp_host,
+        "SMTP_PORT": str(req.smtp_port),
+        "SMTP_USERNAME": req.smtp_user,
+        "SMTP_PASSWORD": req.smtp_pass,
+        "SMTP_FROM_NAME": req.from_name
+    }
+
+    for i, line in enumerate(env_lines):
+        for key in keys_updated:
+            if line.startswith(f"{key}="):
+                env_lines[i] = f"{key}={new_values[key]}\n"
+                keys_updated[key] = True
+
+    for key, updated in keys_updated.items():
+        if not updated:
+            env_lines.append(f"{key}={new_values[key]}\n")
+
     with open(env_path, 'w', encoding='utf-8') as f:
-        f.writelines(lines)
+        f.writelines(env_lines)
         
     return {"ok": True, "message": "System SMTP settings updated successfully."}
-
 
 
 @app.get("/api/settings/smtp")
@@ -3988,25 +4006,16 @@ def get_smtp_settings(current_user: database.User = Depends(auth.get_current_use
             for line in f:
                 if '=' in line and not line.startswith('#'):
                     k, v = line.strip().split('=', 1)
-                    env_dict[k] = v
+                    env_dict[k.strip()] = v.strip()
     
     return {
         "has_account": bool(env_dict.get("SMTP_USERNAME")),
         "email": env_dict.get("SMTP_USERNAME", ""),
         "smtp_host": env_dict.get("SMTP_SERVER", ""),
         "smtp_port": env_dict.get("SMTP_PORT", "587"),
-        "from_name": "System Admin",
+        "from_name": env_dict.get("SMTP_FROM_NAME", "System Admin"),
         "is_active": True
     }
-    return {
-        "has_account": True,
-        "email": acc.email,
-        "smtp_host": acc.smtp_server,
-        "smtp_port": acc.smtp_port,
-        "from_name": acc.name,
-        "is_active": acc.is_active,
-    }
-
 
 @app.post("/api/settings/test-smtp")
 def test_smtp_settings(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
@@ -4815,3 +4824,122 @@ def run_mig_2():
     except Exception as e:
 
         return f"Migration error: {str(e)}"
+
+# ============================================================
+# SUPPORT TICKET API ENDPOINTS
+# ============================================================
+import json
+from pydantic import BaseModel
+
+class TicketCreateRequest(BaseModel):
+    subject: str
+    message: str
+
+class TicketReplyRequest(BaseModel):
+    message: str
+
+@app.post("/api/tickets")
+def create_ticket(req: TicketCreateRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    replies = [{"sender": "user", "message": req.message, "timestamp": datetime.utcnow().isoformat()}]
+    new_ticket = database.SupportTicket(
+        user_id=str(current_user.id),
+        subject=req.subject,
+        status="Open",
+        replies_json=json.dumps(replies)
+    )
+    db.add(new_ticket)
+    db.commit()
+    db.refresh(new_ticket)
+    
+    # Notify Admin
+    import email_service
+    email_service.send_new_ticket_notification(current_user.email, req.subject, req.message)
+    
+    return {"status": "success", "ticket_id": new_ticket.id}
+
+@app.get("/api/tickets")
+def get_user_tickets(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    tickets = db.query(database.SupportTicket).filter(database.SupportTicket.user_id == str(current_user.id)).order_by(database.SupportTicket.created_at.desc()).all()
+    return [{
+        "id": t.id,
+        "subject": t.subject,
+        "status": t.status,
+        "created_at": t.created_at.isoformat(),
+        "updated_at": t.updated_at.isoformat(),
+        "replies": json.loads(t.replies_json) if t.replies_json else []
+    } for t in tickets]
+
+@app.post("/api/tickets/{ticket_id}/reply")
+def reply_to_ticket(ticket_id: str, req: TicketReplyRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    ticket = db.query(database.SupportTicket).filter(database.SupportTicket.id == ticket_id).first()
+    if not ticket:
+        raise HTTPException(status_code=404, detail="Ticket not found")
+        
+    is_admin = (current_user.email == "zmonemrahman@gmail.com")
+    if not is_admin and ticket.user_id != str(current_user.id):
+        raise HTTPException(status_code=403, detail="Not authorized")
+        
+    replies = json.loads(ticket.replies_json) if ticket.replies_json else []
+    sender = "admin" if is_admin else "user"
+    replies.append({"sender": sender, "message": req.message, "timestamp": datetime.utcnow().isoformat()})
+    
+    ticket.replies_json = json.dumps(replies)
+    if is_admin:
+        ticket.status = "Replied"
+    else:
+        ticket.status = "Open"
+        
+    db.commit()
+    
+    # Send Notifications
+    import email_service
+    if is_admin:
+        # Admin replied, notify user
+        user = db.query(database.User).filter(database.User.id == ticket.user_id).first()
+        if user:
+            email_service.send_ticket_reply_notification(user.email, ticket.subject, req.message)
+    else:
+        # User replied, notify admin
+        email_service.send_new_ticket_notification(current_user.email, f"Re: {ticket.subject}", req.message)
+        
+    return {"status": "success"}
+
+@app.get("/api/admin/tickets")
+def get_all_tickets(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    if current_user.email != "zmonemrahman@gmail.com":
+        raise HTTPException(status_code=403, detail="Admin only")
+        
+    tickets = db.query(database.SupportTicket).order_by(
+        (database.SupportTicket.status == 'Open').desc(),
+        database.SupportTicket.updated_at.desc()
+    ).all()
+    
+    result = []
+    for t in tickets:
+        user = db.query(database.User).filter(database.User.id == t.user_id).first()
+        result.append({
+            "id": t.id,
+            "user_email": user.email if user else "Unknown",
+            "subject": t.subject,
+            "status": t.status,
+            "created_at": t.created_at.isoformat(),
+            "updated_at": t.updated_at.isoformat(),
+            "replies": json.loads(t.replies_json) if t.replies_json else []
+        })
+    return result
+
+class TicketStatusUpdate(BaseModel):
+    status: str
+
+@app.put("/api/admin/tickets/{ticket_id}/status")
+def update_ticket_status(ticket_id: str, req: TicketStatusUpdate, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    if current_user.email != "zmonemrahman@gmail.com":
+        raise HTTPException(status_code=403, detail="Admin only")
+        
+    ticket = db.query(database.SupportTicket).filter(database.SupportTicket.id == ticket_id).first()
+    if not ticket:
+        raise HTTPException(status_code=404, detail="Ticket not found")
+        
+    ticket.status = req.status
+    db.commit()
+    return {"status": "success"}

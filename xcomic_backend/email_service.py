@@ -489,32 +489,56 @@ def send_single_email(subject: str, body_html: str, recipient: str, account=None
             except:
                 pass
 
+def get_system_smtp_config():
+    """Reads system SMTP settings dynamically from .env so no restart is needed."""
+    env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+    config = {
+        "SMTP_SERVER": "smtp.gmail.com",
+        "SMTP_PORT": 587,
+        "SMTP_USERNAME": "",
+        "SMTP_PASSWORD": "",
+        "SMTP_FROM_NAME": "System Admin"
+    }
+    if os.path.exists(env_path):
+        with open(env_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                if '=' in line and not line.startswith('#'):
+                    k, v = line.strip().split('=', 1)
+                    config[k.strip()] = v.strip()
+    return config
+
 def _send_system_email(subject: str, body_html: str, recipient: str) -> bool:
     """Sends a system email (like auth/verification) using .env credentials."""
-    if not SMTP_PASSWORD:
+    config = get_system_smtp_config()
+    smtp_user = config.get("SMTP_USERNAME")
+    smtp_pass = config.get("SMTP_PASSWORD")
+    
+    if not smtp_pass or smtp_pass == "your_app_password_here":
         return False
         
     try:
-        if int(SMTP_PORT) == 465:
-            server = smtplib.SMTP_SSL(SMTP_SERVER, int(SMTP_PORT), timeout=5)
+        smtp_port = int(config.get("SMTP_PORT", 587))
+        if smtp_port == 465:
+            server = smtplib.SMTP_SSL(config.get("SMTP_SERVER"), smtp_port, timeout=5)
         else:
-            server = smtplib.SMTP(SMTP_SERVER, int(SMTP_PORT), timeout=5)
+            server = smtplib.SMTP(config.get("SMTP_SERVER"), smtp_port, timeout=5)
             server.starttls()
             
-        server.login(SMTP_USERNAME, SMTP_PASSWORD)
+        server.login(smtp_user, smtp_pass)
         
         msg = MIMEMultipart("alternative")
         msg["Subject"] = subject
-        msg["From"] = f"Admin <{SMTP_USERNAME}>"
+        from_name = config.get("SMTP_FROM_NAME", "System Admin")
+        msg["From"] = f"{from_name} <{smtp_user}>"
         msg["To"] = recipient
-        msg["Reply-To"] = SMTP_USERNAME
+        msg["Reply-To"] = smtp_user
         msg["MIME-Version"] = "1.0"
         
         body_text = generate_clean_plaintext(body_html)
         msg.attach(MIMEText(body_text, "plain", "utf-8"))
         msg.attach(MIMEText(body_html, "html", "utf-8"))
         
-        server.sendmail(SMTP_USERNAME, [recipient], msg.as_string())
+        server.sendmail(smtp_user, [recipient], msg.as_string())
         return True
     except Exception as e:
         print(f"System Email failed: {e}")
@@ -531,7 +555,8 @@ def send_verification_email(email: str, code: str):
     Sends a 6-digit verification code to the user.
     If SMTP credentials are not configured, it just prints it to the console.
     """
-    if not SMTP_USERNAME or not SMTP_PASSWORD:
+    config = get_system_smtp_config()
+    if not config.get("SMTP_USERNAME") or not config.get("SMTP_PASSWORD") or config.get("SMTP_PASSWORD") == "your_app_password_here":
         print(f"*** MOCK EMAIL: Verification code for {email} is {code} ***")
         return True
 
@@ -546,14 +571,53 @@ def send_verification_email(email: str, code: str):
         <p>If you did not request this, please ignore this email.</p>
     </div>
     """
-    # Since it's a single email, we can reuse our bulk send logic or write a simpler one
     return _send_system_email(subject, body_html, email)
+
+def send_new_ticket_notification(user_email: str, subject: str, message: str):
+    """Sends a notification to the admin (system SMTP email) that a new ticket was created."""
+    config = get_system_smtp_config()
+    admin_email = config.get("SMTP_USERNAME")
+    if not admin_email:
+        return False
+        
+    email_subject = f"New Support Ticket: {subject}"
+    body_html = f"""
+    <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 8px;">
+        <h2 style="color: #4F46E5;">New Support Ticket</h2>
+        <p><strong>From:</strong> {user_email}</p>
+        <p><strong>Subject:</strong> {subject}</p>
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
+        <p style="white-space: pre-wrap; color: #333;">{message}</p>
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
+        <p style="font-size: 12px; color: #777;">You can reply to this ticket from your Admin Dashboard.</p>
+    </div>
+    """
+    return _send_system_email(email_subject, body_html, admin_email)
+
+def send_ticket_reply_notification(recipient_email: str, subject: str, reply_message: str):
+    """Sends a notification to the client user that the admin has replied to their ticket."""
+    email_subject = f"Re: {subject} (Support Ticket Update)"
+    body_html = f"""
+    <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 8px;">
+        <h2 style="color: #4F46E5;">Support Ticket Update</h2>
+        <p>Hi there,</p>
+        <p>Our support team has replied to your ticket: <strong>{subject}</strong></p>
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
+        <div style="background-color: #f9fafb; padding: 15px; border-radius: 6px; border-left: 4px solid #4F46E5;">
+            <p style="white-space: pre-wrap; margin: 0; color: #374151;">{reply_message}</p>
+        </div>
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
+        <p style="font-size: 13px; color: #6b7280;">You can view the full history and reply from your dashboard.</p>
+    </div>
+    """
+    return _send_system_email(email_subject, body_html, recipient_email)
 
 def send_password_reset_email(email: str, code: str):
     """
     Sends a 6-digit password reset code to the user.
     """
-    if not SMTP_PASSWORD or not SMTP_USERNAME:
+    config = get_system_smtp_config()
+    if not config.get("SMTP_USERNAME") or not config.get("SMTP_PASSWORD") or config.get("SMTP_PASSWORD") == "your_app_password_here":
         print(f"*** MOCK EMAIL: Password reset code for {email} is {code} ***")
         return True
 

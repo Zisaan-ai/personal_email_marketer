@@ -13475,3 +13475,215 @@ window.filterAccounts = function(input, containerId) {
 
 };
 
+
+
+// ============================================================
+// SUPPORT TICKETS (CLIENT & ADMIN)
+// ============================================================
+const SUPPORT = {
+    tickets: [],
+    adminTickets: [],
+    
+    // -- Client Side --
+    async loadUserTickets() {
+        try {
+            const res = await apiCall('/tickets', 'GET');
+            if (res.ok) {
+                this.tickets = await res.json();
+                this.renderUserTickets();
+            }
+        } catch(e) {
+            console.error(e);
+        }
+    },
+    
+    renderUserTickets() {
+        const tbody = document.getElementById('user-tickets-body');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        if (this.tickets.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#64748b;">No support tickets found.</td></tr>';
+            return;
+        }
+        
+        this.tickets.forEach(t => {
+            const statusColor = t.status === 'Open' ? '#f59e0b' : (t.status === 'Replied' ? '#10b981' : '#64748b');
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${t.subject}</strong></td>
+                <td><span style="background:${statusColor}22;color:${statusColor};padding:4px 8px;border-radius:12px;font-size:12px;font-weight:600;">${t.status}</span></td>
+                <td>${new Date(t.updated_at).toLocaleString()}</td>
+                <td><button class="btn" style="padding:4px 12px;font-size:12px;" onclick="SUPPORT.viewTicket('${t.id}')">View</button></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    },
+    
+    showCreateModal() {
+        document.getElementById('support-subject').value = '';
+        document.getElementById('support-message').value = '';
+        document.getElementById('support-create-modal').style.display = 'flex';
+    },
+    
+    async createTicket(btn) {
+        const subject = document.getElementById('support-subject').value.trim();
+        const message = document.getElementById('support-message').value.trim();
+        if (!subject || !message) return alert("Please fill in both fields.");
+        
+        btn.disabled = true;
+        btn.innerText = "Submitting...";
+        
+        try {
+            const res = await apiCall('/tickets', 'POST', { subject, message });
+            if (res.ok) {
+                document.getElementById('support-create-modal').style.display = 'none';
+                this.loadUserTickets();
+                if (window.adminMode) this.loadAdminTickets();
+                alert("Ticket submitted successfully! You will receive an email when we reply.");
+            } else {
+                const data = await res.json();
+                alert(data.detail || "Failed to submit ticket.");
+            }
+        } catch(e) {
+            alert("Network error.");
+        }
+        btn.disabled = false;
+        btn.innerText = "Submit Ticket";
+    },
+    
+    viewTicket(id, isAdmin = false) {
+        const ticketList = isAdmin ? this.adminTickets : this.tickets;
+        const ticket = ticketList.find(t => t.id === id);
+        if (!ticket) return;
+        
+        document.getElementById('support-active-ticket-id').value = id;
+        document.getElementById('support-view-title').innerText = ticket.subject;
+        document.getElementById('support-reply-message').value = '';
+        
+        const container = document.getElementById('support-replies-container');
+        container.innerHTML = '';
+        
+        ticket.replies.forEach(r => {
+            const isUser = r.sender === 'user';
+            const align = isUser ? 'flex-end' : 'flex-start';
+            const bg = isUser ? '#4f46e5' : '#fff';
+            const color = isUser ? '#fff' : '#1e293b';
+            const border = isUser ? 'none' : '1px solid #e2e8f0';
+            const author = isUser ? 'You' : 'Support Team';
+            
+            // For admin view, flip the perspective
+            const displayAuthor = isAdmin ? (isUser ? 'Client' : 'You (Admin)') : author;
+            const displayAlign = isAdmin ? (isUser ? 'flex-start' : 'flex-end') : align;
+            const displayBg = isAdmin ? (isUser ? '#fff' : '#4f46e5') : bg;
+            const displayColor = isAdmin ? (isUser ? '#1e293b' : '#fff') : color;
+            const displayBorder = isAdmin ? (isUser ? '1px solid #e2e8f0' : 'none') : border;
+            
+            const div = document.createElement('div');
+            div.style.cssText = `display:flex; flex-direction:column; align-items:${displayAlign}; width:100%;`;
+            div.innerHTML = `
+                <span style="font-size:11px; color:#64748b; margin-bottom:4px; padding:0 4px;">${displayAuthor} &bull; ${new Date(r.timestamp).toLocaleString()}</span>
+                <div style="background:${displayBg}; color:${displayColor}; border:${displayBorder}; padding:12px 16px; border-radius:12px; max-width:80%; box-shadow:0 1px 2px rgba(0,0,0,0.05);">
+                    <p style="margin:0; white-space:pre-wrap; font-size:14px; line-height:1.5;">${r.message}</p>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+        
+        document.getElementById('support-view-modal').style.display = 'flex';
+        // Scroll to bottom
+        setTimeout(() => container.scrollTop = container.scrollHeight, 50);
+    },
+    
+    async replyToTicket(btn) {
+        const id = document.getElementById('support-active-ticket-id').value;
+        const message = document.getElementById('support-reply-message').value.trim();
+        if (!message) return;
+        
+        btn.disabled = true;
+        btn.innerText = "Sending...";
+        
+        try {
+            const res = await apiCall(`/tickets/${id}/reply`, 'POST', { message });
+            if (res.ok) {
+                if (window.adminMode) {
+                    await this.loadAdminTickets();
+                    this.viewTicket(id, true);
+                } else {
+                    await this.loadUserTickets();
+                    this.viewTicket(id, false);
+                }
+            } else {
+                alert("Failed to send reply.");
+            }
+        } catch(e) {
+            alert("Network error.");
+        }
+        btn.disabled = false;
+        btn.innerText = "Send Reply";
+    },
+    
+    // -- Admin Side --
+    async loadAdminTickets() {
+        try {
+            const res = await apiCall('/admin/tickets', 'GET');
+            if (res.ok) {
+                this.adminTickets = await res.json();
+                this.renderAdminTickets();
+            }
+        } catch(e) {
+            console.error(e);
+        }
+    },
+    
+    renderAdminTickets() {
+        const tbody = document.getElementById('admin-all-tickets-body');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        if (this.adminTickets.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#64748b;">No support tickets.</td></tr>';
+            return;
+        }
+        
+        this.adminTickets.forEach(t => {
+            const statusColor = t.status === 'Open' ? '#ef4444' : (t.status === 'Replied' ? '#10b981' : '#64748b');
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="padding:12px;border-bottom:1px solid var(--border);">
+                    <div style="font-size:14px;font-weight:500;color:var(--text);">${t.user_email}</div>
+                    <div style="font-size:12px;color:var(--text-muted);">${new Date(t.updated_at).toLocaleString()}</div>
+                </td>
+                <td style="padding:12px;border-bottom:1px solid var(--border);"><strong>${t.subject}</strong></td>
+                <td style="padding:12px;border-bottom:1px solid var(--border);">
+                    <span style="background:${statusColor}22;color:${statusColor};padding:4px 8px;border-radius:12px;font-size:12px;font-weight:600;">${t.status}</span>
+                </td>
+                <td style="padding:12px;border-bottom:1px solid var(--border);">
+                    <button class="btn primary" style="padding:4px 12px;font-size:12px;" onclick="SUPPORT.viewTicket('${t.id}', true)">Reply</button>
+                    <button class="btn" style="padding:4px 12px;font-size:12px;margin-left:4px;" onclick="SUPPORT.closeTicket('${t.id}')" title="Mark Resolved"><i class="fa-solid fa-check"></i></button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    },
+    
+    async closeTicket(id) {
+        if(!confirm("Mark this ticket as Resolved?")) return;
+        try {
+            const res = await apiCall(`/admin/tickets/${id}/status`, 'PUT', { status: 'Resolved' });
+            if(res.ok) {
+                this.loadAdminTickets();
+            }
+        } catch(e) {}
+    }
+};
+
+// Hook into navigation
+const originalNavTo = window.navTo;
+window.navTo = function(viewId) {
+    if(originalNavTo) originalNavTo(viewId);
+    if(viewId === 'support-view') {
+        SUPPORT.loadUserTickets();
+    }
+    if(viewId === 'admin-view') {
+        SUPPORT.loadAdminTickets();
+    }
+};

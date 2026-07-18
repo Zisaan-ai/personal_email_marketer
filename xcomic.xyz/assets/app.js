@@ -13832,29 +13832,24 @@ const LANDING = {
 // EXCEPT window.onload checks token and might redirect to dashboard.
 
 // ====== FEAT: Features Tab Toggle ======
-const FEAT = {
-    switchTab: function(tab) {
-        // Update tab buttons
-        document.querySelectorAll('.feat-tab').forEach(btn => btn.classList.remove('active'));
-        document.getElementById('tab-' + tab).classList.add('active');
-
-        // Update panels with smooth fade
-        document.querySelectorAll('.feat-panel').forEach(panel => {
-            panel.classList.remove('active');
-            panel.style.opacity = '0';
+// Workflow section scroll animation
+document.addEventListener('DOMContentLoaded', function() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
         });
+    }, { threshold: 0.1 });
 
-        const target = document.getElementById('feat-' + tab);
-        if (target) {
-            target.classList.add('active');
-            // Small delay for CSS display:block to kick in, then fade in
-            setTimeout(() => {
-                target.style.transition = 'opacity 0.35s ease';
-                target.style.opacity = '1';
-            }, 20);
-        }
-    }
-};
+    document.querySelectorAll('.workflow-divider').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(el);
+    });
+});
 
 // Initialize panel opacity on page load
 document.addEventListener('DOMContentLoaded', function() {

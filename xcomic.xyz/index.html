@@ -1018,43 +1018,55 @@
     .bento-sm { grid-column: span 1; }
     .bento-preview { display: flex; flex-direction: column; gap: 8px; }
 
-    /* Feature Tab Toggle */
-    .feat-tabs {
-        display: flex;
-        gap: 10px;
-        justify-content: center;
-        margin: 40px auto 48px;
-        background: rgba(255,255,255,0.04);
-        border: 1px solid rgba(255,255,255,0.08);
-        border-radius: 50px;
-        padding: 6px;
-        width: fit-content;
-    }
-    .feat-tab {
+    /* Feature Panels - both always visible */
+    .feat-panel { display: block; }
+
+    /* Workflow Divider */
+    .workflow-divider {
         display: flex;
         align-items: center;
-        gap: 8px;
-        padding: 12px 28px;
-        border: none;
-        border-radius: 40px;
-        font-size: 14px;
-        font-weight: 700;
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        cursor: pointer;
-        color: #64748b;
-        background: transparent;
-        transition: all 0.25s ease;
-        letter-spacing: -0.01em;
+        gap: 20px;
+        margin: 100px 0 64px;
+        position: relative;
     }
-    .feat-tab:hover { color: #cbd5e1; }
-    .feat-tab.active {
-        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-        color: #ffffff;
-        box-shadow: 0 4px 16px rgba(79,70,229,0.35);
+    .workflow-divider::before,
+    .workflow-divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: rgba(255,255,255,0.07);
     }
-    /* Feature Panels */
-    .feat-panel { display: none; }
-    .feat-panel.active { display: block; }
+    .workflow-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 32px;
+        border-radius: 50px;
+        font-size: 15px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        white-space: nowrap;
+        border: 1px solid;
+    }
+    .workflow-label.cold {
+        background: linear-gradient(135deg, rgba(79,70,229,0.15), rgba(124,58,237,0.08));
+        border-color: rgba(99,102,241,0.35);
+        color: #a5b4fc;
+    }
+    .workflow-label.bulk {
+        background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(14,165,233,0.08));
+        border-color: rgba(16,185,129,0.35);
+        color: #6ee7b7;
+    }
+    .workflow-badge-new {
+        background: linear-gradient(135deg,#f59e0b,#f97316);
+        color:#fff;
+        font-size:10px;
+        padding:2px 8px;
+        border-radius:20px;
+        font-weight:800;
+        letter-spacing:0.05em;
+    }
 
     /* Testimonials */
     .testimonials-section {
@@ -1283,22 +1295,20 @@
     <section id="features">
         <div class="features-header">
             <div class="section-badge"><i class="fa-solid fa-sparkles"></i> Features</div>
-            <h2 class="section-title">One platform.<br><span>Two powerful workflows.</span></h2>
-            <p class="section-sub">Whether you're closing B2B deals with cold outreach or running Mailchimp-style campaigns — XComic handles both, beautifully.</p>
+            <h2 class="section-title">Everything you need.<br><span>One platform. Two workflows.</span></h2>
+            <p class="section-sub">Cold email for B2B outreach with AI reply management. Bulk campaigns for newsletters &amp; marketing blasts. Both, beautifully built into XComic.</p>
         </div>
 
-        <!-- FEATURE TAB TOGGLE -->
-        <div class="feat-tabs" id="feat-tabs">
-            <button class="feat-tab active" id="tab-cold" onclick="FEAT.switchTab('cold')">
-                <i class="fa-solid fa-crosshairs"></i> Cold Outreach
-            </button>
-            <button class="feat-tab" id="tab-bulk" onclick="FEAT.switchTab('bulk')">
-                <i class="fa-solid fa-envelope-open-text"></i> Bulk Email Campaigns
-            </button>
+        <!-- ===== COLD OUTREACH WORKFLOW ===== -->
+        <div class="workflow-divider">
+            <div class="workflow-label cold">
+                <i class="fa-solid fa-crosshairs"></i>
+                Cold Outreach
+                <span style="font-size:12px;color:#818cf8;font-weight:600;">B2B &amp; Sales Prospecting</span>
+            </div>
         </div>
 
-        <!-- ===== COLD OUTREACH FEATURES ===== -->
-        <div id="feat-cold" class="feat-panel active">
+        <div id="feat-cold" class="feat-panel">
             <!-- BENTO GRID -->
             <div class="bento-grid">
                 <div class="bento-card bento-big" style="background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(99,102,241,0.03));">
@@ -1340,6 +1350,23 @@
                     <div class="feat-icon yellow"><i class="fa-solid fa-shield-halved"></i></div>
                     <div class="feat-title">Deliverability Optimizer</div>
                     <div class="feat-desc">Preflight checks catch spam triggers before you send.</div>
+                </div>
+                <!-- NEW: Sequence Automation -->
+                <div class="bento-card bento-med" style="background:linear-gradient(135deg,rgba(16,185,129,0.09),rgba(16,185,129,0.02));">
+                    <div class="feat-icon green"><i class="fa-solid fa-diagram-next"></i></div>
+                    <div class="feat-title">Sequence Automation</div>
+                    <div class="feat-desc">Build multi-step drip sequences. Auto follow-up on day 2, 5, 10 — stops when they reply.</div>
+                    <div style="display:flex;flex-direction:column;gap:6px;margin-top:16px;">
+                        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#6ee7b7;"><span style="background:rgba(16,185,129,0.15);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0;">1</span> Day 0 — Initial Email</div>
+                        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#6ee7b7;opacity:0.8;"><span style="background:rgba(16,185,129,0.12);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0;">2</span> Day 3 — Follow-up #1</div>
+                        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#6ee7b7;opacity:0.6;"><span style="background:rgba(16,185,129,0.10);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0;">3</span> Day 7 — Break-up Email</div>
+                    </div>
+                </div>
+                <!-- NEW: Lead Scoring -->
+                <div class="bento-card bento-sm" style="background:linear-gradient(135deg,rgba(239,68,68,0.08),rgba(239,68,68,0.02));">
+                    <div class="feat-icon" style="background:rgba(239,68,68,0.15);color:#f87171;"><i class="fa-solid fa-star-half-stroke"></i></div>
+                    <div class="feat-title">Lead Scoring</div>
+                    <div class="feat-desc">AI scores each lead 1-100 based on reply intent, job title &amp; engagement.</div>
                 </div>
             </div>
 
@@ -1396,9 +1423,67 @@
                     </div>
                 </div>
             </div>
+            <!-- Feature Highlight 3: Sequence Automation -->
+            <div class="feature-highlight" style="margin-top:100px;">
+                <div class="fh-content">
+                    <div class="fh-badge" style="background:rgba(16,185,129,0.12);color:#34d399;border-color:rgba(16,185,129,0.2);"><i class="fa-solid fa-diagram-next"></i> Sequence Automation</div>
+                    <h3 class="fh-title">Set it up once. Follow up forever — automatically.</h3>
+                    <p class="fh-desc">Build multi-step cold email sequences that run on autopilot. Emails stop automatically the moment a prospect replies — no awkward double-sends.</p>
+                    <ul class="fh-bullets">
+                        <li><i class="fa-solid fa-check-circle"></i> Unlimited follow-up steps with custom delays</li>
+                        <li><i class="fa-solid fa-check-circle"></i> Auto-stop on reply, click, or meeting booked</li>
+                        <li><i class="fa-solid fa-check-circle"></i> Personalized variables in every step</li>
+                        <li><i class="fa-solid fa-check-circle"></i> A/B test subject lines across sequence steps</li>
+                    </ul>
+                </div>
+                <div class="fh-visual">
+                    <div class="fh-visual-inner" style="gap:10px;">
+                        <div style="display:flex;flex-direction:column;gap:8px;">
+                            <div style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px;">
+                                <div style="width:32px;height:32px;background:rgba(16,185,129,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#34d399;flex-shrink:0;">1</div>
+                                <div>
+                                    <div style="font-size:12px;font-weight:700;color:#6ee7b7;">Day 0 — Initial Outreach</div>
+                                    <div style="font-size:11px;color:#475569;margin-top:2px;">Sent to 1,200 leads</div>
+                                </div>
+                                <span style="margin-left:auto;font-size:11px;color:#34d399;font-weight:700;background:rgba(16,185,129,0.12);padding:3px 8px;border-radius:10px;">&#10003; Sent</span>
+                            </div>
+                            <div style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px;">
+                                <div style="width:32px;height:32px;background:rgba(99,102,241,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#a5b4fc;flex-shrink:0;">2</div>
+                                <div>
+                                    <div style="font-size:12px;font-weight:700;color:#a5b4fc;">Day 3 — Follow-up #1</div>
+                                    <div style="font-size:11px;color:#475569;margin-top:2px;">Sent to 940 non-openers</div>
+                                </div>
+                                <span style="margin-left:auto;font-size:11px;color:#818cf8;font-weight:700;background:rgba(99,102,241,0.12);padding:3px 8px;border-radius:10px;">&#10003; Sent</span>
+                            </div>
+                            <div style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.2);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px;opacity:0.75;">
+                                <div style="width:32px;height:32px;background:rgba(249,115,22,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fb923c;flex-shrink:0;">3</div>
+                                <div>
+                                    <div style="font-size:12px;font-weight:700;color:#fb923c;">Day 7 — Break-up Email</div>
+                                    <div style="font-size:11px;color:#475569;margin-top:2px;">Scheduled for Jul 25</div>
+                                </div>
+                                <span style="margin-left:auto;font-size:11px;color:#64748b;font-weight:700;background:rgba(100,116,139,0.1);padding:3px 8px;border-radius:10px;">Pending</span>
+                            </div>
+                        </div>
+                        <div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15);border-radius:10px;padding:12px;display:flex;align-items:center;justify-content:space-between;">
+                            <span style="font-size:12px;color:#64748b;"><i class="fa-solid fa-circle-stop" style="color:#f87171;margin-right:6px;"></i> Auto-stopped for 47 replies</span>
+                            <span style="font-size:12px;color:#34d399;font-weight:700;">No double-sends &#10003;</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
-        <!-- ===== BULK EMAIL CAMPAIGNS FEATURES ===== -->
+        <!-- ===== BULK EMAIL CAMPAIGNS WORKFLOW ===== -->
+        <div class="workflow-divider">
+            <div class="workflow-label bulk">
+                <i class="fa-solid fa-envelope-open-text"></i>
+                Bulk Email Campaigns
+                <span style="font-size:12px;color:#34d399;font-weight:600;">Newsletter &amp; Marketing</span>
+                <span class="workflow-badge-new">NEW</span>
+            </div>
+        </div>
+
         <div id="feat-bulk" class="feat-panel">
             <!-- BENTO GRID -->
             <div class="bento-grid">

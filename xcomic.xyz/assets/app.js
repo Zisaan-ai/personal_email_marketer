@@ -421,11 +421,11 @@ async function apiCall(endpoint, method = 'GET', body = null) {
 
 
 
-        var authPage = document.getElementById('auth-page');
+        var appPage = document.getElementById('app-page');
 
 
 
-        if (authPage && authPage.classList.contains('hidden')) {
+        if (appPage && appPage.classList.contains('on')) {
 
 
 
@@ -13484,6 +13484,74 @@ const SUPPORT = {
     tickets: [],
     adminTickets: [],
     
+    async updateBadges() {
+        if (!localStorage.getItem('token')) return;
+        try {
+            const isAdmin = localStorage.getItem('is_admin') === 'true';
+            let hasUnread = false;
+            
+            if (isAdmin) {
+                const res = await apiCall('/admin/tickets', 'GET');
+                if (res.ok) {
+                    const tickets = await res.json();
+                    hasUnread = tickets.some(t => t.status === 'Open');
+                    
+                    const adminNav = document.querySelector('a[data-target="admin-view"]');
+                    if (adminNav) {
+                        let badge = adminNav.querySelector('.support-badge');
+                        if (hasUnread) {
+                            if (!badge) adminNav.innerHTML += '<span class="support-badge" style="background:#ef4444; border-radius:50%; width:8px; height:8px; margin-left:auto; display:inline-block; box-shadow: 0 0 6px #ef4444;"></span>';
+                        } else {
+                            if (badge) badge.remove();
+                        }
+                    }
+                    const tabBtn = document.getElementById('tab-btn-tickets');
+                    if (tabBtn) {
+                        let badge = tabBtn.querySelector('.support-badge');
+                        if (hasUnread) {
+                            if (!badge) tabBtn.innerHTML += '<span class="support-badge" style="background:#ef4444; border-radius:50%; width:8px; height:8px; margin-left:8px; display:inline-block; vertical-align:middle; box-shadow: 0 0 6px #ef4444;"></span>';
+                        } else {
+                            if (badge) badge.remove();
+                        }
+                    }
+                }
+            } else {
+                const res = await apiCall('/tickets', 'GET');
+                if (res.ok) {
+                    const tickets = await res.json();
+                    hasUnread = tickets.some(t => t.status === 'Replied');
+                    
+                    const supportNav = document.querySelector('a[data-target="support-view"]');
+                    if (supportNav) {
+                        let badge = supportNav.querySelector('.support-badge');
+                        if (hasUnread) {
+                            if (!badge) supportNav.innerHTML += '<span class="support-badge" style="background:#ef4444; border-radius:50%; width:8px; height:8px; margin-left:auto; display:inline-block; box-shadow: 0 0 6px #ef4444;"></span>';
+                        } else {
+                            if (badge) badge.remove();
+                        }
+                    }
+                }
+            }
+        } catch(e) {}
+    },
+    
+    switchAdminTab(tab) {
+        document.querySelectorAll('.admin-tab').forEach(b => {
+            b.classList.remove('active');
+            b.style.color = 'var(--text-muted)';
+            b.style.borderBottomColor = 'transparent';
+        });
+        const btn = document.getElementById('tab-btn-' + tab);
+        if (btn) {
+            btn.classList.add('active');
+            btn.style.color = 'var(--primary)';
+            btn.style.borderBottomColor = 'var(--primary)';
+        }
+        document.querySelectorAll('.admin-section').forEach(s => s.style.display = 'none');
+        const sec = document.getElementById('admin-section-' + tab);
+        if (sec) sec.style.display = 'block';
+    },
+    
     // -- Client Side --
     async loadUserTickets() {
         try {
@@ -13687,3 +13755,65 @@ window.navTo = function(viewId) {
         SUPPORT.loadAdminTickets();
     }
 };
+
+setTimeout(() => {
+    SUPPORT.updateBadges();
+    setInterval(() => SUPPORT.updateBadges(), 30000);
+}, 2000);
+
+
+// --- LANDING PAGE LOGIC ---
+const LANDING = {
+    selectedMethod: 'stripe',
+    
+    goToLogin: () => {
+        document.getElementById('landing-page').classList.add('hidden');
+        document.getElementById('auth-page').classList.remove('hidden');
+        if (window.AUTH && window.AUTH.showLogin) window.AUTH.showLogin();
+    },
+    
+    goToSignup: () => {
+        document.getElementById('landing-page').classList.add('hidden');
+        document.getElementById('auth-page').classList.remove('hidden');
+        if (window.AUTH && window.AUTH.showSignup) window.AUTH.showSignup();
+    },
+    
+    openPayment: function(planName, price) {
+        document.getElementById('pm-plan-name').innerText = planName;
+        document.getElementById('pm-plan-price').innerText = '$' + price;
+        document.getElementById('payment-modal').classList.add('active');
+    },
+    
+    closePayment: function() {
+        document.getElementById('payment-modal').classList.remove('active');
+    },
+    
+    selectMethod: function(method) {
+        this.selectedMethod = method;
+        const methods = document.querySelectorAll('.pm-method');
+        methods.forEach(m => m.classList.remove('selected'));
+        event.currentTarget.classList.add('selected');
+    },
+    
+    processPayment: function() {
+        const btn = document.querySelector('.pm-btn');
+        const originalText = btn.innerText;
+        btn.innerText = "Processing...";
+        btn.disabled = true;
+        
+        // Mock processing time, then go to auth
+        setTimeout(() => {
+            btn.innerText = originalText;
+            btn.disabled = false;
+            this.closePayment();
+            // Assuming after payment they should sign up
+            this.goToSignup();
+            document.getElementById('signup-alert').className = 'aalert show ok';
+            document.getElementById('signup-alert').innerHTML = '<i class="fa-solid fa-circle-check"></i> Payment successful! Create your account to start.';
+        }, 1500);
+    }
+};
+
+// Override the initial boot logic slightly so landing page is shown if not logged in.
+// Actually, since index.html has landing-page visible and auth-page hidden, it will work natively, 
+// EXCEPT window.onload checks token and might redirect to dashboard.

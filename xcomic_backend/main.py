@@ -800,7 +800,7 @@ def register(user: UserCreate, db: Session = Depends(database.get_db)):
 
     is_admin = (user_count == 0) or (email_lower == "zmonemrahman@gmail.com")
 
-    is_approved = is_admin
+    is_approved = True
 
     
 
@@ -836,7 +836,7 @@ def register(user: UserCreate, db: Session = Depends(database.get_db)):
 
         is_admin=is_admin,
 
-        is_approved=is_admin,  # Require admin approval for non-admins
+        is_approved=True,  # No longer require admin approval
 
         verification_code=verification_code,
 
@@ -850,17 +850,9 @@ def register(user: UserCreate, db: Session = Depends(database.get_db)):
 
     
 
-    if is_admin:
-
-        access_token_expires = timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES)
-
-        access_token = auth.create_access_token(data={"sub": new_user.email}, expires_delta=access_token_expires)
-
-        return {"access_token": access_token, "token_type": "bearer", "is_admin": True}
-
-    
-
-    return {"status": "needs_approval", "message": "Account created! Please wait for admin approval to log in."}
+    access_token_expires = timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = auth.create_access_token(data={"sub": new_user.email}, expires_delta=access_token_expires)
+    return {"access_token": access_token, "token_type": "bearer", "is_admin": is_admin}
 
 
 
@@ -974,9 +966,9 @@ def verify_email(payload: VerifyEmail, db: Session = Depends(database.get_db)):
 
         
 
-    if not user.is_approved:
+    # if not user.is_approved:
 
-        raise HTTPException(status_code=403, detail="Wait for admin approve")
+    #     raise HTTPException(status_code=403, detail="Wait for admin approve")
 
         
 
@@ -1020,9 +1012,9 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
 
         
 
-    if not user.is_approved:
+    # if not user.is_approved:
 
-        raise HTTPException(status_code=403, detail="Wait for admin approve")
+    #     raise HTTPException(status_code=403, detail="Wait for admin approve")
 
     
 
@@ -4598,6 +4590,90 @@ def debug_imap(current_user: database.User = Depends(auth.get_current_user), db:
 
 
 # ============================================================
+@app.get("/api/run-migration-now")
+
+def run_mig():
+
+    import sqlite3
+
+    try:
+
+        conn = sqlite3.connect("email_marketer.db")
+
+        conn.execute("ALTER TABLE campaigns ADD COLUMN selected_sender_ids TEXT")
+
+        conn.commit()
+
+        conn.close()
+
+        return "Migration applied successfully!"
+
+    except Exception as e:
+
+        return f"Migration error: {str(e)}"
+
+@app.get("/api/migrate-sql-app")
+
+def run_mig_2():
+
+    import sqlite3
+
+    try:
+
+        conn = sqlite3.connect("sql_app.db")
+
+        conn.execute("ALTER TABLE campaigns ADD COLUMN selected_sender_ids TEXT")
+
+        conn.commit()
+
+        conn.close()
+
+        return "Migration applied successfully to sql_app.db!"
+
+    except Exception as e:
+
+        return f"Migration error: {str(e)}"
+
+
+@app.get("/api/admin/tickets")
+def get_all_tickets(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin only")
+        
+    tickets = db.query(database.SupportTicket).order_by(
+        (database.SupportTicket.status == 'Open').desc(),
+        database.SupportTicket.updated_at.desc()
+    ).all()
+    
+    result = []
+    for t in tickets:
+        user = db.query(database.User).filter(database.User.id == t.user_id).first()
+        result.append({
+            "id": t.id,
+            "user_email": user.email if user else "Unknown",
+            "subject": t.subject,
+            "status": t.status,
+            "created_at": t.created_at.isoformat(),
+            "updated_at": t.updated_at.isoformat(),
+            "replies": json.loads(t.replies_json) if t.replies_json else []
+        })
+    return result
+
+class TicketStatusUpdate(BaseModel):
+    status: str
+
+@app.put("/api/admin/tickets/{ticket_id}/status")
+def update_ticket_status(ticket_id: str, req: TicketStatusUpdate, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin only")
+        
+    ticket = db.query(database.SupportTicket).filter(database.SupportTicket.id == ticket_id).first()
+    if not ticket:
+        raise HTTPException(status_code=404, detail="Ticket not found")
+        
+    ticket.status = req.status
+    db.commit()
+    return {"status": "success"}
 
 # CATCH-ALL: Serve Frontend (MUST be LAST route)
 
@@ -4861,87 +4937,3 @@ def serve_frontend(full_path: str, db: Session = Depends(database.get_db)):
 
 
 
-@app.get("/api/run-migration-now")
-
-def run_mig():
-
-    import sqlite3
-
-    try:
-
-        conn = sqlite3.connect("email_marketer.db")
-
-        conn.execute("ALTER TABLE campaigns ADD COLUMN selected_sender_ids TEXT")
-
-        conn.commit()
-
-        conn.close()
-
-        return "Migration applied successfully!"
-
-    except Exception as e:
-
-        return f"Migration error: {str(e)}"
-
-@app.get("/api/migrate-sql-app")
-
-def run_mig_2():
-
-    import sqlite3
-
-    try:
-
-        conn = sqlite3.connect("sql_app.db")
-
-        conn.execute("ALTER TABLE campaigns ADD COLUMN selected_sender_ids TEXT")
-
-        conn.commit()
-
-        conn.close()
-
-        return "Migration applied successfully to sql_app.db!"
-
-    except Exception as e:
-
-        return f"Migration error: {str(e)}"
-
-
-@app.get("/api/admin/tickets")
-def get_all_tickets(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    if not current_user.is_admin:
-        raise HTTPException(status_code=403, detail="Admin only")
-        
-    tickets = db.query(database.SupportTicket).order_by(
-        (database.SupportTicket.status == 'Open').desc(),
-        database.SupportTicket.updated_at.desc()
-    ).all()
-    
-    result = []
-    for t in tickets:
-        user = db.query(database.User).filter(database.User.id == t.user_id).first()
-        result.append({
-            "id": t.id,
-            "user_email": user.email if user else "Unknown",
-            "subject": t.subject,
-            "status": t.status,
-            "created_at": t.created_at.isoformat(),
-            "updated_at": t.updated_at.isoformat(),
-            "replies": json.loads(t.replies_json) if t.replies_json else []
-        })
-    return result
-
-class TicketStatusUpdate(BaseModel):
-    status: str
-
-@app.put("/api/admin/tickets/{ticket_id}/status")
-def update_ticket_status(ticket_id: str, req: TicketStatusUpdate, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    if not current_user.is_admin:
-        raise HTTPException(status_code=403, detail="Admin only")
-        
-    ticket = db.query(database.SupportTicket).filter(database.SupportTicket.id == ticket_id).first()
-    if not ticket:
-        raise HTTPException(status_code=404, detail="Ticket not found")
-        
-    ticket.status = req.status
-    db.commit()
-    return {"status": "success"}

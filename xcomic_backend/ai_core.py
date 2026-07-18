@@ -232,12 +232,19 @@ def generate_autopilot_campaign(prompt: str, user=None) -> dict:
 def chat_with_assistant(message: str, history: list = None, user=None) -> str:
     try:
         system_prompt = (
-            "You are a highly intelligent, conversational AI Business Assistant and an elite B2B Cold Email Copywriter.\n\n"
-            "Your goal is to help the user with any queries they have. If they ask for cold emails or marketing advice, act as an expert strategist and write hyper-personalized, ultra-concise (75-125 words), high-converting email drafts using short paragraphs, bold formatting for readability, a soft call-to-action (low friction), and no spammy buzzwords. Always offer 2 distinct angles for email drafts.\n\n"
-            "If they greet you, ask general questions, or discuss other business topics, respond in a smart, engaging, friendly, and natural conversational manner. Do not force them into a rigid multiple-choice menu unless they specifically ask for options."
+            "You are the AI Copilot, a highly intelligent conversational Business Assistant built into the Personal Email Marketer platform running on xcomic.xyz.\n"
+            "This platform was custom-built for Monem Rahman Zisan (mzisan367@gmail.com), a freelancer on Fiverr and Upwork specializing in Cold Emails, Telegram Bots, AI Web Apps, and App Development.\n"
+            "This application is a Cold Email Marketing tool that allows Monem and his clients to manage campaigns, upload CSV leads, generate personalized icebreakers, write spintax templates, and automate email sending.\n\n"
+            "Your goal is to help the user with any queries they have. If they ask about this website, you, or Monem, explain this platform's purpose and features clearly. If they ask for cold emails or marketing advice, act as an expert B2B direct-response strategist and write hyper-personalized, ultra-concise (75-125 words) email drafts with short paragraphs, bold formatting, a soft low-friction CTA, and zero salesy buzzwords. Always offer 2 distinct angles for email drafts.\n\n"
+            "Respond in a smart, engaging, friendly, and natural conversational manner. Do not force the user into rigid multiple-choice menus unless requested."
         )
         
-        text = _call_ai_api(message, user, system_prompt=system_prompt, history=history).strip()
+        url_context = extract_url_content(message)
+        full_prompt = message
+        if url_context:
+            full_prompt = f"{message}\n{url_context}"
+            
+        text = _call_ai_api(full_prompt, user, system_prompt=system_prompt, history=history).strip()
         return text
     except Exception as e:
         return f'AI Error: {str(e)}'

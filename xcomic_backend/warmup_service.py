@@ -220,7 +220,7 @@ def send_warmup_email(db, sender_acc, all_warmup_accounts):
         server.send_message(msg)
         server.quit()
         
-        sender_acc.warmup_sent_today += 1
+        sender_acc.warmup_sent_today = (sender_acc.warmup_sent_today or 0) + 1
         
         # This grows the health score!
         sender_acc.total_sent = (sender_acc.total_sent or 0) + 1
@@ -357,8 +357,15 @@ def reset_daily_warmup_counts():
         accounts = db.query(database.SendingAccount).filter(
             database.SendingAccount.warmup_enabled == True
         ).all()
+        import datetime
+        import pytz
+        BD_TZ = pytz.timezone("Asia/Dhaka")
+        today_bd = datetime.datetime.now(BD_TZ).strftime("%Y-%m-%d")
+        
         for acc in accounts:
             acc.warmup_sent_today = 0
+            acc.sent_today = 0
+            acc.sent_today_date = today_bd
 
             if getattr(acc, "smart_warmup_enabled", False):
                 new_limit = health_monitor.suggest_warmup_limit(acc)

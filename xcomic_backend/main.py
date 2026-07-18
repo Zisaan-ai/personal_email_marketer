@@ -3918,51 +3918,69 @@ class SMTPSettingsRequest(BaseModel):
     from_name: str = ""
 
 @app.post("/api/settings/smtp")
-def save_smtp_settings(req: SMTPSettingsRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+def save_smtp_settings(req: SMTPSettingsRequest, current_user: database.User = Depends(auth.get_current_user)):
     if req.provider != "smtp":
         raise HTTPException(status_code=400, detail="Only SMTP provider is supported.")
-
     if not req.smtp_host or not req.smtp_user or not req.smtp_pass:
         raise HTTPException(status_code=400, detail="SMTP Host, Username and Password are required.")
 
-    # Verify SMTP credentials first
+    # Verify credentials
     import email_service
     smtp_check = email_service.verify_smtp_credentials(req.smtp_host, req.smtp_port, req.smtp_user, req.smtp_pass)
     if smtp_check['status'] != 'success':
         raise HTTPException(status_code=400, detail=smtp_check['detail'])
 
-    # Check if sending account already exists for this email
-    existing = db.query(database.SendingAccount).filter(
-        database.SendingAccount.smtp_username == req.smtp_user,
-        database.SendingAccount.user_id == str(current_user.id)
-    ).first()
+    # Write to .env
+    import os
+    env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+    env_dict = {}
+    lines = []
+    if os.path.exists(env_path):
+        with open(env_path, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+            
+    for i, line in enumerate(lines):
+        if line.startswith("SMTP_SERVER="): lines[i] = f"SMTP_SERVER={req.smtp_host}\n"
+        elif line.startswith("SMTP_PORT="): lines[i] = f"SMTP_PORT={req.smtp_port}\n"
+        elif line.startswith("SMTP_USERNAME="): lines[i] = f"SMTP_USERNAME={req.smtp_user}\n"
+        elif line.startswith("SMTP_PASSWORD="): lines[i] = f"SMTP_PASSWORD={req.smtp_pass}\n"
+        
+    with open(env_path, 'w', encoding='utf-8') as f:
+        f.writelines(lines)
+        
+    return {"ok": True, "message": "System SMTP settings updated successfully."}
 
-    if existing:
-        # Update existing account
-        existing.smtp_server = req.smtp_host
-        existing.smtp_port = req.smtp_port
-        existing.smtp_username = req.smtp_user
-        existing.smtp_password = req.smtp_pass
-        existing.name = req.from_name or req.smtp_user
-        existing.email = req.smtp_user
-        db.commit()
-        return {"ok": True, "message": "SMTP settings updated successfully."}
-    else:
-        # Create new sending account
-        new_acc = database.SendingAccount(
-            user_id=str(current_user.id),
-            name=req.from_name or req.smtp_user,
-            email=req.smtp_user,
-            smtp_server=req.smtp_host,
-            smtp_port=req.smtp_port,
-            smtp_username=req.smtp_user,
-            smtp_password=req.smtp_pass,
-            daily_limit=50,
-            is_active=True,
-        )
-        db.add(new_acc)
-        db.commit()
-        return {"ok": True, "message": "SMTP account added successfully."}
+
+
+@app.get("/api/settings/smtp")
+def get_smtp_settings(current_user: database.User = Depends(auth.get_current_user)):
+    # Read from .env
+    import os
+    env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+    env_dict = {}
+    if os.path.exists(env_path):
+        with open(env_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                if '=' in line and not line.startswith('#'):
+                    k, v = line.strip().split('=', 1)
+                    env_dict[k] = v
+    
+    return {
+        "has_account": bool(env_dict.get("SMTP_USERNAME")),
+        "email": env_dict.get("SMTP_USERNAME", ""),
+        "smtp_host": env_dict.get("SMTP_SERVER", ""),
+        "smtp_port": env_dict.get("SMTP_PORT", "587"),
+        "from_name": "System Admin",
+        "is_active": True
+    }
+    return {
+        "has_account": True,
+        "email": acc.email,
+        "smtp_host": acc.smtp_server,
+        "smtp_port": acc.smtp_port,
+        "from_name": acc.name,
+        "is_active": acc.is_active,
+    }
 
 
 @app.post("/api/settings/test-smtp")

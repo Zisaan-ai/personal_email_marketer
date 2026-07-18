@@ -803,9 +803,9 @@ window.navTo = function(targetId) {
 
         if (targetId === 'unsubscribes-view') loadUnsubscribes();
 
-
-
         if (targetId === 'replies-view') loadReplies();
+
+        if (targetId === 'settings') loadSmtpStatus();
 
 
 
@@ -5062,9 +5062,47 @@ function setupVisualBuilderTabs() {
 
 
 window.loadedAIKeys = {};
+
+async function loadSmtpStatus() {
+    const statusEl = document.getElementById('smtp-status');
+    if (!statusEl) return;
+    try {
+        const res = await apiCall('/settings/smtp', 'GET');
+        if (res.ok) {
+            const data = await res.json();
+            if (data.has_account) {
+                statusEl.innerHTML = `✅ <strong>Saved Account:</strong> ${data.email} &nbsp;|&nbsp; Host: ${data.smtp_host}:${data.smtp_port} &nbsp;|&nbsp; Name: ${data.from_name || '-'}`;
+                statusEl.style.cssText = 'display:block; margin-top:20px; padding:14px 18px; border-radius:10px; background:#f0fdf4; color:#16a34a; border:1px solid #bbf7d0; font-size:14px;';
+            } else {
+                statusEl.textContent = '⚠️ No email account saved yet. Fill the form below and click Save Changes.';
+                statusEl.style.cssText = 'display:block; margin-top:20px; padding:14px 18px; border-radius:10px; background:#fffbeb; color:#b45309; border:1px solid #fcd34d; font-size:14px;';
+            }
+        }
+    } catch(e) {}
+}
+
 function setupSettings() {
 
-
+    // --- Load existing SMTP account status on page open ---
+    (async () => {
+        const statusEl = document.getElementById('smtp-status');
+        if (!statusEl) return;
+        try {
+            const res = await apiCall('/settings/smtp', 'GET');
+            if (res.ok) {
+                const data = await res.json();
+                if (data.has_account) {
+                    statusEl.innerHTML = `✅ <strong>Saved Account:</strong> ${data.email} &nbsp;|&nbsp; Host: ${data.smtp_host}:${data.smtp_port} &nbsp;|&nbsp; Name: ${data.from_name || '-'}`;
+                    statusEl.className = 'alert success';
+                    statusEl.style.display = 'block';
+                } else {
+                    statusEl.textContent = '⚠️ No email account saved yet. Fill the form below and click Save Changes.';
+                    statusEl.className = 'alert warning';
+                    statusEl.style.display = 'block';
+                }
+            }
+        } catch(e) {}
+    })();
 
     const providerSelect = document.getElementById('smtp-provider');
 
@@ -5196,21 +5234,17 @@ function setupSettings() {
 
             try {
 
-
-
                 const res = await apiCall('/settings/test-smtp', 'POST');
-
-
-
                 const data = await res.json();
 
+                if (res.ok) {
+                    showToast(data.message || 'SMTP Connection Successful!', 'success');
+                } else {
+                    const errMsg = data.detail || data.message || 'Connection failed';
+                    showToast(errMsg, 'error');
+                }
 
-
-                showToast(data.message || (res.ok ? 'Connection OK!' : 'Failed'), res.ok ? 'success' : 'error');
-
-
-
-            } catch(e) { showToast('Error testing connection', 'error'); }
+            } catch(e) { showToast('Error testing connection: ' + (e.message || e), 'error'); }
 
 
 

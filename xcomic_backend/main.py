@@ -4771,7 +4771,7 @@ def reply_to_ticket(ticket_id: str, req: TicketReplyRequest, current_user: datab
     if not ticket:
         raise HTTPException(status_code=404, detail="Ticket not found")
         
-    is_admin = (current_user.email == "zmonemrahman@gmail.com")
+    is_admin = current_user.is_admin
     if not is_admin and ticket.user_id != str(current_user.id):
         raise HTTPException(status_code=403, detail="Not authorized")
         
@@ -4908,7 +4908,7 @@ def run_mig_2():
 
 @app.get("/api/admin/tickets")
 def get_all_tickets(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    if current_user.email != "zmonemrahman@gmail.com":
+    if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admin only")
         
     tickets = db.query(database.SupportTicket).order_by(
@@ -4935,7 +4935,7 @@ class TicketStatusUpdate(BaseModel):
 
 @app.put("/api/admin/tickets/{ticket_id}/status")
 def update_ticket_status(ticket_id: str, req: TicketStatusUpdate, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    if current_user.email != "zmonemrahman@gmail.com":
+    if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admin only")
         
     ticket = db.query(database.SupportTicket).filter(database.SupportTicket.id == ticket_id).first()

@@ -3128,114 +3128,6 @@
 
 
 
-                <!-- EMAIL DELIVERY CARD -->
-
-                <div id="admin-email-delivery-card" class="glass" style="padding:28px; border-radius:16px; display: none;">
-
-                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:24px; padding-bottom:20px; border-bottom:1px solid var(--border);">
-
-                        <div style="width:42px;height:42px;border-radius:10px;background:#e0e7ff;display:flex;align-items:center;justify-content:center;">
-
-                            <i class="fa-solid fa-envelope" style="color:#4f46e5; font-size:18px;"></i>
-
-                        </div>
-
-                        <div>
-
-                            <h3 style="font-size:17px;font-weight:700;margin:0;">Email Delivery</h3>
-
-                            <p style="font-size:13px; color:var(--text-muted); margin:0;">Configure how your emails are sent</p>
-
-                        </div>
-
-                    </div>
-
-                    <div class="form-group" style="display: none;">
-
-                        <label>Service Provider</label>
-
-                        <select id="smtp-provider">
-
-                            <option value="smtp" selected>Custom SMTP Server</option>
-
-                        </select>
-
-                    </div>
-
-                    <div id="smtp-fields">
-
-                        <div style="display:grid;grid-template-columns:1fr 120px;gap:16px;">
-
-                            <div class="form-group">
-
-                                <label>SMTP Host</label>
-
-                                <input type="text" id="smtp-host" placeholder="smtp.mailgun.org">
-
-                            </div>
-
-                            <div class="form-group">
-
-                                <label>Port</label>
-
-                                <input type="number" id="smtp-port" value="587">
-
-                            </div>
-
-                        </div>
-
-                        <div class="form-group">
-
-                            <label>SMTP Username</label>
-
-                            <input type="email" id="smtp-user" placeholder="postmaster@domain.com">
-
-                        </div>
-
-                        <div class="form-group">
-
-                            <label>SMTP Password</label>
-
-                            <div style="position:relative;">
-
-                                <input type="password" id="smtp-pass" placeholder="••••••••••••" style="padding-right:44px;">
-
-                                <button type="button" onclick="var el=document.getElementById('smtp-pass'); el.type=el.type==='password'?'text':'password'; this.innerHTML=el.type==='password'?'<i class=\'fa-regular fa-eye\'></i>':'<i class=\'fa-regular fa-eye-slash\'></i>'" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);">
-
-                                    <i class="fa-regular fa-eye"></i>
-
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                        <div class="form-group">
-
-                            <label>Sender Name</label>
-
-                            <input type="text" id="smtp-from-name" placeholder="Acme Inc">
-
-                        </div>
-
-                    </div>
-
-
-
-                    <div style="display:flex;gap:12px;margin-top:8px;">
-
-                        <button id="save-smtp-btn" class="btn primary"><i class="fa-solid fa-floppy-disk" style="margin-right:6px;"></i>Save Changes</button>
-
-                        <button id="test-smtp-btn" class="btn"><i class="fa-solid fa-plug" style="margin-right:6px;"></i>Test Connection</button>
-
-                    </div>
-
-                    <div id="smtp-status" class="alert" style="margin-top:20px;"></div>
-
-                </div>
-
-
-
                 <!-- AI SETTINGS CARD -->
 
                 <div class="glass" style="padding:28px; border-radius:16px;">
@@ -3809,6 +3701,116 @@
                 </table>
 
             </div>
+
+            <div style="margin-top: 32px;">
+                <!-- EMAIL DELIVERY CARD -->
+
+                <div id="admin-email-delivery-card" class="glass" style="padding:28px; border-radius:16px; display: block;">
+
+                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:24px; padding-bottom:20px; border-bottom:1px solid var(--border);">
+
+                        <div style="width:42px;height:42px;border-radius:10px;background:#e0e7ff;display:flex;align-items:center;justify-content:center;">
+
+                            <i class="fa-solid fa-envelope" style="color:#4f46e5; font-size:18px;"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h3 style="font-size:17px;font-weight:700;margin:0;">Email Delivery</h3>
+
+                            <p style="font-size:13px; color:var(--text-muted); margin:0;">Configure how your emails are sent</p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-group" style="display: none;">
+
+                        <label>Service Provider</label>
+
+                        <select id="smtp-provider">
+
+                            <option value="smtp" selected>Custom SMTP Server</option>
+
+                        </select>
+
+                    </div>
+
+                    <div id="smtp-fields">
+
+                        <div style="display:grid;grid-template-columns:1fr 120px;gap:16px;">
+
+                            <div class="form-group">
+
+                                <label>SMTP Host</label>
+
+                                <input type="text" id="smtp-host" placeholder="smtp.mailgun.org">
+
+                            </div>
+
+                            <div class="form-group">
+
+                                <label>Port</label>
+
+                                <input type="number" id="smtp-port" value="587">
+
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label>SMTP Username</label>
+
+                            <input type="email" id="smtp-user" placeholder="postmaster@domain.com">
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label>SMTP Password</label>
+
+                            <div style="position:relative;">
+
+                                <input type="password" id="smtp-pass" placeholder="••••••••••••" style="padding-right:44px;">
+
+                                <button type="button" onclick="var el=document.getElementById('smtp-pass'); el.type=el.type==='password'?'text':'password'; this.innerHTML=el.type==='password'?'<i class=\'fa-regular fa-eye\'></i>':'<i class=\'fa-regular fa-eye-slash\'></i>'" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);">
+
+                                    <i class="fa-regular fa-eye"></i>
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label>Sender Name</label>
+
+                            <input type="text" id="smtp-from-name" placeholder="Acme Inc">
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div style="display:flex;gap:12px;margin-top:8px;">
+
+                        <button id="save-smtp-btn" class="btn primary"><i class="fa-solid fa-floppy-disk" style="margin-right:6px;"></i>Save Changes</button>
+
+                        <button id="test-smtp-btn" class="btn"><i class="fa-solid fa-plug" style="margin-right:6px;"></i>Test Connection</button>
+
+                    </div>
+
+                    <div id="smtp-status" class="alert" style="margin-top:20px;"></div>
+
+                </div>
+            </div>
+
+
 
         </div>
 

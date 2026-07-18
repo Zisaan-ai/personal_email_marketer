@@ -3907,7 +3907,81 @@ def save_deepseek_key(req: DeepSeekKeyRequest, current_user: database.User = Dep
 
 
 
+# --- SETTINGS SMTP ENDPOINT ---
 
+class SMTPSettingsRequest(BaseModel):
+    provider: str = "smtp"
+    smtp_host: str = ""
+    smtp_user: str = ""
+    smtp_pass: str = ""
+    smtp_port: int = 587
+    from_name: str = ""
+
+@app.post("/api/settings/smtp")
+def save_smtp_settings(req: SMTPSettingsRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    if req.provider != "smtp":
+        raise HTTPException(status_code=400, detail="Only SMTP provider is supported.")
+
+    if not req.smtp_host or not req.smtp_user or not req.smtp_pass:
+        raise HTTPException(status_code=400, detail="SMTP Host, Username and Password are required.")
+
+    # Verify SMTP credentials first
+    import email_service
+    smtp_check = email_service.verify_smtp_credentials(req.smtp_host, req.smtp_port, req.smtp_user, req.smtp_pass)
+    if smtp_check['status'] != 'success':
+        raise HTTPException(status_code=400, detail=smtp_check['detail'])
+
+    # Check if sending account already exists for this email
+    existing = db.query(database.SendingAccount).filter(
+        database.SendingAccount.smtp_username == req.smtp_user,
+        database.SendingAccount.user_id == str(current_user.id)
+    ).first()
+
+    if existing:
+        # Update existing account
+        existing.smtp_server = req.smtp_host
+        existing.smtp_port = req.smtp_port
+        existing.smtp_username = req.smtp_user
+        existing.smtp_password = req.smtp_pass
+        existing.name = req.from_name or req.smtp_user
+        existing.email = req.smtp_user
+        db.commit()
+        return {"ok": True, "message": "SMTP settings updated successfully."}
+    else:
+        # Create new sending account
+        new_acc = database.SendingAccount(
+            user_id=str(current_user.id),
+            name=req.from_name or req.smtp_user,
+            email=req.smtp_user,
+            smtp_server=req.smtp_host,
+            smtp_port=req.smtp_port,
+            smtp_username=req.smtp_user,
+            smtp_password=req.smtp_pass,
+            daily_limit=50,
+            is_active=True,
+        )
+        db.add(new_acc)
+        db.commit()
+        return {"ok": True, "message": "SMTP account added successfully."}
+
+
+@app.post("/api/settings/test-smtp")
+def test_smtp_settings(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    # Test the first active sending account for this user
+    acc = db.query(database.SendingAccount).filter(
+        database.SendingAccount.user_id == str(current_user.id),
+        database.SendingAccount.is_active == True
+    ).first()
+
+    if not acc:
+        raise HTTPException(status_code=404, detail="No active sending account found. Please save SMTP settings first.")
+
+    import email_service
+    result = email_service.verify_smtp_credentials(acc.smtp_server, acc.smtp_port, acc.smtp_username, acc.smtp_password)
+    if result['status'] == 'success':
+        return {"ok": True, "message": "SMTP connection successful!"}
+    else:
+        raise HTTPException(status_code=400, detail=result.get('detail', 'SMTP connection failed.'))
 
 
 

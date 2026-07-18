@@ -330,21 +330,26 @@ scheduler.add_job(_auto_resume_stuck_campaigns, 'interval', minutes=30, id='auto
 
 scheduler.add_job(_scheduler_start_scheduled_campaigns, 'interval', minutes=1, id='scheduled_campaigns_job')
 
-import socket
+import socket as _socket_mod
+import fcntl
+import errno
 
+_SCHEDULER_IS_PRIMARY = False
+_scheduler_lock_fd = None
 try:
-
-    _scheduler_lock_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-    _scheduler_lock_socket.bind(("127.0.0.1", 47200))
-
-    # scheduler.start()
-
-    print("Scheduler started in this process.")
-
-except socket.error:
-
-    print("Scheduler already running in another process.")
+    _lock_file = '/tmp/xcomic_scheduler.lock'
+    _scheduler_lock_fd = open(_lock_file, 'w')
+    fcntl.flock(_scheduler_lock_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    _SCHEDULER_IS_PRIMARY = True
+    print("[Scheduler] This process is PRIMARY scheduler.")
+except (IOError, OSError) as _e:
+    if _scheduler_lock_fd:
+        try:
+            _scheduler_lock_fd.close()
+        except Exception:
+            pass
+        _scheduler_lock_fd = None
+    print("[Scheduler] Another process holds the scheduler lock.")
 
 
 
@@ -386,6 +391,18 @@ def trigger_cron():
 
 
 
+def trace(msg):
+    try:
+        import sys
+        if 'passenger_wsgi' in sys.modules:
+            sys.modules['passenger_wsgi'].trace(f"[main.py] {msg}")
+        else:
+            import time, os
+            with open('/home/terapkco/xcomic_backend/trace.log', 'a') as f:
+                f.write(f"[{time.time():.4f}] [PID {os.getpid()}] [main.py] {msg}\n")
+    except Exception:
+        pass
+
 @app.get("/api/cron/warmup_reset")
 
 def trigger_warmup_reset():
@@ -401,83 +418,50 @@ def trigger_warmup_reset():
 
 
 @app.on_event("startup")
-
 async def startup_event():
+    global _SCHEDULER_IS_PRIMARY
 
+    # Start scheduler only in the primary process (file-lock winner)
+    if _SCHEDULER_IS_PRIMARY and not scheduler.running:
+        try:
+            scheduler.start()
+            print("[Startup] APScheduler started (PRIMARY process).")
+        except Exception as e:
+            print(f"[Startup] Failed to start APScheduler: {e}")
+
+    # Add bounce checker job if needed
+    if not scheduler.get_job('check_bounces_job'):
+        scheduler.add_job(check_bounces, 'interval', hours=1, id='check_bounces_job')
+
+    # Resume any campaigns that were mid-send when server restarted
     db = database.SessionLocal()
-
     try:
-
-        # Warmup is handled by APScheduler in main.py
-
-        if not scheduler.get_job('check_bounces_job'):
-
-            scheduler.add_job(check_bounces, 'interval', hours=1, id='check_bounces_job')
-
-            # Trigger immediately on startup
-
-            import threading
-
-            # threading.Thread(target=check_bounces).start()
-
-            # threading.Thread(target=warmup_service.run_warmup_cycle).start()
-
-        processing_campaigns = db.query(database.Campaign).filter(database.Campaign.status == "processing").all()
-
-
-
-        
-
-        # We can't inject background_tasks into startup event, so we'll start them in a thread/asyncio loop
+        processing_campaigns = db.query(database.Campaign).filter(
+            database.Campaign.status == "processing"
+        ).all()
 
         def resume_task(cid):
-
             process_isolated_campaign(cid)
 
-        
-
         for c in processing_campaigns:
-
-            print(f"Resuming campaign {c.id}")
-
+            print(f"[Startup] Resuming campaign {c.id}")
             asyncio.get_running_loop().run_in_executor(None, resume_task, str(c.id))
 
-
-
         # Load API keys from DB into env (survives server restarts)
-
         # Priority: HF Space secrets (already in os.environ) > DB saved keys
-
         admin = db.query(database.User).filter(database.User.is_admin == True).first()
-
         if admin:
-
             if not os.getenv("GROQ_API_KEY") and admin.groq_api_key:
-
                 os.environ["GROQ_API_KEY"] = admin.groq_api_key
-
                 print("[Startup] Loaded GROQ_API_KEY from DB")
-
             if not os.getenv("GEMINI_API_KEY") and admin.gemini_api_key:
-
                 os.environ["GEMINI_API_KEY"] = admin.gemini_api_key
-
                 print("[Startup] Loaded GEMINI_API_KEY from DB")
-
-            if os.getenv("GROQ_API_KEY"):
-
-                print("[Startup] GROQ_API_KEY is available")
-
-            else:
-
-                print("[Startup] WARNING: GROQ_API_KEY not found. Set it in Settings or HF Secrets.")
-
+            if not os.getenv("GROQ_API_KEY"):
+                print("[Startup] WARNING: GROQ_API_KEY not found.")
     except Exception as e:
-
         print(f"[Startup] Error in startup_event: {e}")
-
     finally:
-
         db.close()
 
 
@@ -3773,7 +3757,7 @@ class DeepSeekKeyRequest(BaseModel):
 @app.get("/api/settings/all")
 
 def get_settings(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-
+    print(f"[DEBUG_USER] get_settings called by user: {current_user.email}", flush=True)
     return {
 
         "has_gemini_api_key": bool(current_user.gemini_api_key),

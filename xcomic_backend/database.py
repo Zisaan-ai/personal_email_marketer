@@ -22,17 +22,16 @@ if DATABASE_URL.startswith("sqlite"):
         DATABASE_URL, 
         connect_args={
             "check_same_thread": False,
-            "timeout": 15
+            "timeout": 30
         }, 
         poolclass=NullPool
     )
-    from sqlalchemy import text
-    try:
-        with engine.connect() as conn:
-            conn.execute(text("PRAGMA journal_mode=WAL;"))
-            conn.execute(text("PRAGMA synchronous=NORMAL;"))
-    except Exception as e:
-        print(f"Failed to enable WAL: {e}")
+    from sqlalchemy import event
+    @event.listens_for(engine, "connect")
+    def set_sqlite_pragma(dbapi_connection, connection_record):
+        cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA synchronous=NORMAL")
+        cursor.close()
 else:
     engine = create_engine(DATABASE_URL)
 
@@ -295,7 +294,7 @@ class InactiveLeadList(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     tagged_at = Column(DateTime, default=datetime.utcnow)
 
-Base.metadata.create_all(bind=engine)
+# Base.metadata.create_all(bind=engine)
 
 # --- Safe Migration for existing SQLite databases ---
 def _safe_add_column(table_name: str, column_name: str, column_type: str, default=None):
@@ -370,5 +369,5 @@ def run_migrations():
     except Exception as e:
         print(f"[Migration] Error: {e}")
 
-run_migrations()
+# run_migrations()
 

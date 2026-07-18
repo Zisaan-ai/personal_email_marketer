@@ -309,7 +309,7 @@ class SupportTicket(Base):
 
     user = relationship("User")
 
-# Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
 
 # --- Safe Migration for existing SQLite databases ---
 def _safe_add_column(table_name: str, column_name: str, column_type: str, default=None):

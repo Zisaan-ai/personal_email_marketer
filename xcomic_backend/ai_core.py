@@ -44,111 +44,123 @@ def extract_url_content(text: str) -> str:
             context += f"\nURL: {url}\n(Could not read content)\n"
     return context
 
-def _get_active_provider(user) -> dict:
-    """Returns the priority API provider details based on user's saved keys."""
-    # Priority: Anthropic > OpenAI > DeepSeek > Groq > Gemini
-    if user:
-        if getattr(user, 'anthropic_api_key', None):
-            return {"provider": "anthropic", "key": user.anthropic_api_key, "url": API_URL_ANTHROPIC, "model": MODEL_NAME_ANTHROPIC}
-        if getattr(user, 'openai_api_key', None):
-            return {"provider": "openai", "key": user.openai_api_key, "url": API_URL_OPENAI, "model": MODEL_NAME_OPENAI}
-        if getattr(user, 'deepseek_api_key', None):
-            return {"provider": "deepseek", "key": user.deepseek_api_key, "url": API_URL_DEEPSEEK, "model": MODEL_NAME_DEEPSEEK}
-        if getattr(user, 'groq_api_key', None):
-            return {"provider": "groq", "key": user.groq_api_key, "url": API_URL_GROQ, "model": MODEL_NAME_GROQ}
-        if getattr(user, 'gemini_api_key', None):
-            return {"provider": "gemini", "key": user.gemini_api_key, "url": API_URL_GEMINI, "model": MODEL_NAME_GEMINI}
-        # Fallback to env vars if no user keys found (e.g., admin usage)
+def _get_active_providers_list(user) -> list:
+    """Returns a list of all active API providers based on user's saved keys or env vars, ordered by priority."""
+    providers = []
     
-    # Check env vars with same priority
-    if os.getenv("ANTHROPIC_API_KEY"):
-        return {"provider": "anthropic", "key": os.getenv("ANTHROPIC_API_KEY"), "url": API_URL_ANTHROPIC, "model": MODEL_NAME_ANTHROPIC}
-    if os.getenv("OPENAI_API_KEY"):
-        return {"provider": "openai", "key": os.getenv("OPENAI_API_KEY"), "url": API_URL_OPENAI, "model": MODEL_NAME_OPENAI}
-    if os.getenv("DEEPSEEK_API_KEY"):
-        return {"provider": "deepseek", "key": os.getenv("DEEPSEEK_API_KEY"), "url": API_URL_DEEPSEEK, "model": MODEL_NAME_DEEPSEEK}
-    if os.getenv("GROQ_API_KEY"):
-        return {"provider": "groq", "key": os.getenv("GROQ_API_KEY"), "url": API_URL_GROQ, "model": MODEL_NAME_GROQ}
-    if os.getenv("GEMINI_API_KEY"):
-        return {"provider": "gemini", "key": os.getenv("GEMINI_API_KEY"), "url": API_URL_GEMINI, "model": MODEL_NAME_GEMINI}
-        
-    raise ValueError("No AI API Keys found. Please go to Settings → AI Configuration and add an API key.")
+    # Priority: Anthropic > OpenAI > DeepSeek > Groq > Gemini
+    order = [
+        ("anthropic", "anthropic_api_key", "ANTHROPIC_API_KEY", API_URL_ANTHROPIC, MODEL_NAME_ANTHROPIC),
+        ("openai", "openai_api_key", "OPENAI_API_KEY", API_URL_OPENAI, MODEL_NAME_OPENAI),
+        ("deepseek", "deepseek_api_key", "DEEPSEEK_API_KEY", API_URL_DEEPSEEK, MODEL_NAME_DEEPSEEK),
+        ("groq", "groq_api_key", "GROQ_API_KEY", API_URL_GROQ, MODEL_NAME_GROQ),
+        ("gemini", "gemini_api_key", "GEMINI_API_KEY", API_URL_GEMINI, MODEL_NAME_GEMINI),
+    ]
+    
+    for name, user_attr, env_var, url, model in order:
+        key = None
+        if user and getattr(user, user_attr, None):
+            key = getattr(user, user_attr)
+        elif os.getenv(env_var):
+            key = os.getenv(env_var)
+            
+        if key and key.strip():
+            providers.append({
+                "provider": name,
+                "key": key.strip(),
+                "url": url,
+                "model": model
+            })
+            
+    return providers
 
 def _call_ai_api(prompt: str, user=None, system_prompt: str = None, history: list = None) -> str:
-    """Universal AI API caller."""
-    provider_info = _get_active_provider(user)
-    provider = provider_info["provider"]
-    api_key = provider_info["key"]
-    url = provider_info["url"]
-    model = provider_info["model"]
-    
-    if provider == "anthropic":
-        headers = {
-            "x-api-key": api_key.strip(),
-            "anthropic-version": "2023-06-01",
-            "content-type": "application/json"
-        }
+    """Universal AI API caller with automatic fallback."""
+    providers = _get_active_providers_list(user)
+    if not providers:
+        raise ValueError("No AI API Keys found. Please go to Settings → AI Configuration and add an API key.")
         
-        # Format messages for Anthropic
-        messages = []
-        if history:
-            for msg in history:
-                role = 'user' if msg.get('role') == 'user' else 'assistant'
-                # Anthropic doesn't allow 'system' in messages, it's a top-level param
-                if msg.get('role') != 'system':
-                    messages.append({'role': role, 'content': msg.get('content', '')})
+    errors = []
+    for provider_info in providers:
+        provider = provider_info["provider"]
+        api_key = provider_info["key"]
+        url = provider_info["url"]
+        model = provider_info["model"]
         
-        messages.append({"role": "user", "content": prompt})
-        
-        payload = {
-            "model": model,
-            "max_tokens": 1024,
-            "messages": messages,
-            "temperature": 0.7
-        }
-        if system_prompt:
-            payload["system"] = system_prompt
-            
-        res = requests.post(url, headers=headers, json=payload, timeout=30)
-        
-        if res.status_code != 200:
-            raise ValueError(f"Anthropic API Error: {res.text}")
-            
-        return res.json()["content"][0]["text"]
-        
-    else:
-        # OpenAI compatible (OpenAI, DeepSeek, Groq)
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {api_key.strip()}"
-        }
-        
-        messages = []
-        if system_prompt:
-            messages.append({"role": "system", "content": system_prompt})
-            
-        if history:
-            for msg in history:
-                role = 'user' if msg.get('role') == 'user' else 'assistant'
-                if msg.get('role') == 'system' and not system_prompt: # Use history system prompt if provided
-                    messages.insert(0, {'role': 'system', 'content': msg.get('content', '')})
-                elif msg.get('role') != 'system':
-                    messages.append({'role': role, 'content': msg.get('content', '')})
+        try:
+            if provider == "anthropic":
+                headers = {
+                    "x-api-key": api_key.strip(),
+                    "anthropic-version": "2023-06-01",
+                    "content-type": "application/json"
+                }
+                
+                # Format messages for Anthropic
+                messages = []
+                if history:
+                    for msg in history:
+                        role = 'user' if msg.get('role') == 'user' else 'assistant'
+                        # Anthropic doesn't allow 'system' in messages, it's a top-level param
+                        if msg.get('role') != 'system':
+                            messages.append({'role': role, 'content': msg.get('content', '')})
+                
+                messages.append({"role": "user", "content": prompt})
+                
+                payload = {
+                    "model": model,
+                    "max_tokens": 1024,
+                    "messages": messages,
+                    "temperature": 0.7
+                }
+                if system_prompt:
+                    payload["system"] = system_prompt
                     
-        messages.append({"role": "user", "content": prompt})
-        
-        payload = {
-            "model": model,
-            "messages": messages,
-            "temperature": 0.7
-        }
-        
-        res = requests.post(url, headers=headers, json=payload, timeout=30)
-        
-        if res.status_code != 200:
-            raise ValueError(f"{provider.capitalize()} API Error: {res.text}")
+                res = requests.post(url, headers=headers, json=payload, timeout=30)
+                if res.status_code != 200:
+                    raise ValueError(f"Status {res.status_code}: {res.text}")
+                    
+                return res.json()["content"][0]["text"]
+                
+            else:
+                # OpenAI compatible (OpenAI, DeepSeek, Groq, Gemini)
+                headers = {
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {api_key.strip()}"
+                }
+                
+                messages = []
+                if system_prompt:
+                    messages.append({"role": "system", "content": system_prompt})
+                    
+                if history:
+                    for msg in history:
+                        role = 'user' if msg.get('role') == 'user' else 'assistant'
+                        if msg.get('role') == 'system' and not system_prompt: # Use history system prompt if provided
+                            messages.insert(0, {'role': 'system', 'content': msg.get('content', '')})
+                        elif msg.get('role') != 'system':
+                            messages.append({'role': role, 'content': msg.get('content', '')})
+                            
+                messages.append({"role": "user", "content": prompt})
+                
+                payload = {
+                    "model": model,
+                    "messages": messages,
+                    "temperature": 0.7
+                }
+                
+                res = requests.post(url, headers=headers, json=payload, timeout=30)
+                if res.status_code != 200:
+                    raise ValueError(f"Status {res.status_code}: {res.text}")
+                    
+                return res.json()["choices"][0]["message"]["content"]
+                
+        except Exception as e:
+            error_msg = f"{provider.capitalize()} failed: {str(e)}"
+            print(f"[Fallback] {error_msg}")
+            errors.append(error_msg)
+            continue
             
-        return res.json()["choices"][0]["message"]["content"]
+    raise ValueError(f"All active AI providers failed. Errors:\n" + "\n".join(errors))
 
 def handle_ai_error(e: Exception) -> dict:
     msg = str(e)

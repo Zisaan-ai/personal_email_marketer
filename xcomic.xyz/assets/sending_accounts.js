@@ -169,10 +169,13 @@ const ACCOUNTS = {
         document.getElementById('acc-id').value = '';
         document.getElementById('acc-modal-title').textContent = 'Add Sending Account';
         document.getElementById('save-account-btn').textContent = 'Connect Account';
-        ['acc-name','acc-email','acc-password'].forEach(id => {
+        ['acc-name','acc-email','acc-password','acc-smtp-server','acc-imap-server'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.value = '';
         });
+        document.getElementById('acc-smtp-port').value = '587';
+        document.getElementById('acc-imap-port').value = '993';
+        document.getElementById('custom-smtp-settings').style.display = 'none';
         document.getElementById('acc-daily-limit').value = '500';
         document.getElementById('acc-warmup-limit').value = '5';
         document.getElementById('acc-warmup-increment').value = '2';
@@ -198,6 +201,19 @@ const ACCOUNTS = {
         document.getElementById('acc-smart-warmup-enabled').checked = acc.smart_warmup_enabled || false;
         document.getElementById('manual-warmup-settings').style.display = (acc.smart_warmup_enabled || false) ? 'none' : 'grid';
         
+        // Populate custom server settings
+        document.getElementById('acc-smtp-server').value = acc.smtp_server || '';
+        document.getElementById('acc-smtp-port').value = acc.smtp_port || 587;
+        document.getElementById('acc-imap-server').value = acc.imap_server || '';
+        document.getElementById('acc-imap-port').value = acc.imap_port || 993;
+        
+        // Show custom fields if the host is not standard Gmail
+        if (acc.smtp_server && acc.smtp_server !== 'smtp.gmail.com') {
+            document.getElementById('custom-smtp-settings').style.display = 'block';
+        } else {
+            document.getElementById('custom-smtp-settings').style.display = 'none';
+        }
+        
         document.getElementById('add-account-modal').style.display = 'flex';
     },
     
@@ -205,16 +221,53 @@ const ACCOUNTS = {
         const email = document.getElementById('acc-email').value;
         const password = document.getElementById('acc-password').value.replace(/\s+/g, '');
         
+        let smtpServer = document.getElementById('acc-smtp-server').value.trim();
+        let smtpPort = parseInt(document.getElementById('acc-smtp-port').value) || 587;
+        let imapServer = document.getElementById('acc-imap-server').value.trim();
+        let imapPort = parseInt(document.getElementById('acc-imap-port').value) || 993;
+        
+        // If server details are left empty, auto-detect/guess based on the email domain
+        if (!smtpServer) {
+            const domain = email.split('@')[1]?.toLowerCase();
+            if (domain === 'gmail.com') {
+                smtpServer = 'smtp.gmail.com';
+                smtpPort = 587;
+                imapServer = 'imap.gmail.com';
+                imapPort = 993;
+            } else if (['outlook.com', 'hotmail.com', 'live.com', 'msn.com'].includes(domain)) {
+                smtpServer = 'smtp-mail.outlook.com';
+                smtpPort = 587;
+                imapServer = 'outlook.office365.com';
+                imapPort = 993;
+            } else if (domain === 'yahoo.com') {
+                smtpServer = 'smtp.mail.yahoo.com';
+                smtpPort = 465;
+                imapServer = 'imap.mail.yahoo.com';
+                imapPort = 993;
+            } else if (domain) {
+                // Default guess for custom domains (e.g. cPanel / VPS)
+                smtpServer = 'mail.' + domain;
+                smtpPort = 587;
+                imapServer = 'mail.' + domain;
+                imapPort = 993;
+            } else {
+                smtpServer = 'smtp.gmail.com';
+                smtpPort = 587;
+                imapServer = 'imap.gmail.com';
+                imapPort = 993;
+            }
+        }
+        
         const payload = {
             name: document.getElementById('acc-name').value,
             email: email,
-            smtp_server: 'smtp.gmail.com',
-            smtp_port: 587,
+            smtp_server: smtpServer,
+            smtp_port: smtpPort,
             smtp_username: email,
             smtp_password: password,
             daily_limit: parseInt(document.getElementById('acc-daily-limit').value) || 500,
-            imap_server: 'imap.gmail.com',
-            imap_port: 993,
+            imap_server: imapServer,
+            imap_port: imapPort,
             imap_password: password,
             warmup_daily_limit: parseInt(document.getElementById('acc-warmup-limit')?.value) || 5,
             warmup_increment_per_day: parseInt(document.getElementById('acc-warmup-increment')?.value) || 2,
@@ -224,7 +277,7 @@ const ACCOUNTS = {
         // Preserve existing warmup_enabled status if editing
         const accId = document.getElementById('acc-id').value;
         if (accId) {
-            const existingAcc = ACCOUNTS.list.find(a => a.id === accId);
+            const existingAcc = this.list.find(a => a.id === accId);
             if (existingAcc) {
                 payload.warmup_enabled = existingAcc.warmup_enabled || false;
             }

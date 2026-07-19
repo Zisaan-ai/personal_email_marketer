@@ -1006,6 +1006,10 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
 
         db.commit()
 
+        
+
+    if user.is_email_verified:
+
         access_token_expires = timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES)
 
         access_token = auth.create_access_token(data={"sub": user.email}, expires_delta=access_token_expires)
@@ -1014,7 +1018,7 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
 
         
 
-    # Generate 2FA code for normal users
+    # Generate 2FA code for normal users (first time login)
 
     verification_code = ''.join(random.choices(string.digits, k=6))
 

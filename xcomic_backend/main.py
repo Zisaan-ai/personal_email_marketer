@@ -4011,20 +4011,30 @@ def get_smtp_settings(current_user: database.User = Depends(auth.get_current_use
     }
 
 @app.post("/api/settings/test-smtp")
-def test_smtp_settings(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    # Test the first active sending account for this user
-    acc = db.query(database.SendingAccount).filter(
-        database.SendingAccount.user_id == str(current_user.id),
-        database.SendingAccount.is_active == True
-    ).first()
+def test_smtp_settings(current_user: database.User = Depends(auth.get_current_user)):
+    # Test the system SMTP account
+    import os
+    env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+    env_dict = {}
+    if os.path.exists(env_path):
+        with open(env_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                if '=' in line and not line.startswith('#'):
+                    k, v = line.strip().split('=', 1)
+                    env_dict[k.strip()] = v.strip()
+    
+    smtp_server = env_dict.get("SMTP_SERVER")
+    smtp_port = env_dict.get("SMTP_PORT", 587)
+    smtp_user = env_dict.get("SMTP_USERNAME")
+    smtp_pass = env_dict.get("SMTP_PASSWORD")
 
-    if not acc:
-        raise HTTPException(status_code=404, detail="No active sending account found. Please save SMTP settings first.")
+    if not smtp_server or not smtp_user or not smtp_pass:
+        raise HTTPException(status_code=404, detail="No system SMTP configured. Please save SMTP settings first.")
 
     import email_service
-    result = email_service.verify_smtp_credentials(acc.smtp_server, acc.smtp_port, acc.smtp_username, acc.smtp_password)
+    result = email_service.verify_smtp_credentials(smtp_server, int(smtp_port), smtp_user, smtp_pass)
     if result['status'] == 'success':
-        return {"ok": True, "message": "SMTP connection successful!"}
+        return {"ok": True, "message": "System SMTP connection successful!"}
     else:
         raise HTTPException(status_code=400, detail=result.get('detail', 'SMTP connection failed.'))
 

@@ -982,7 +982,7 @@ def verify_email(payload: VerifyEmail, db: Session = Depends(database.get_db)):
 
 
 
-@app.post("/api/auth/token", response_model=Token)
+@app.post("/api/auth/token")
 
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(database.get_db)):
 
@@ -1008,21 +1008,41 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
 
         
 
+    if user.is_email_verified:
 
+        access_token_expires = timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES)
+
+        access_token = auth.create_access_token(data={"sub": user.email}, expires_delta=access_token_expires)
+
+        return {"access_token": access_token, "token_type": "bearer", "is_admin": user.is_admin}
 
         
 
-    # if not user.is_approved:
+    # Generate 2FA code for normal users (first time login)
 
-    #     raise HTTPException(status_code=403, detail="Wait for admin approve")
+    verification_code = ''.join(random.choices(string.digits, k=6))
+
+    user.verification_code = verification_code
+
+    db.commit()
 
     
 
-    access_token_expires = timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES)
+    try:
 
-    access_token = auth.create_access_token(data={"sub": user.email}, expires_delta=access_token_expires)
+        email_service.send_verification_email(user.email, verification_code)
 
-    return {"access_token": access_token, "token_type": "bearer", "is_admin": user.is_admin}
+    except Exception as e:
+
+        print(f"Failed to send 2FA email: {e}")
+
+        raise HTTPException(status_code=500, detail="Failed to send verification email. Please contact support.")
+
+        
+
+    from fastapi.responses import JSONResponse
+
+    return JSONResponse(status_code=202, content={"requires_2fa": True, "message": "Verification code sent to email"})
 
 
 

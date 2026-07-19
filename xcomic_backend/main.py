@@ -797,51 +797,30 @@ def register(user: UserCreate, db: Session = Depends(database.get_db)):
     
 
     user_count = db.query(database.User).count()
-
-    is_admin = (user_count == 0) or (email_lower == "zmonemrahman@gmail.com")
-
+    ADMIN_EMAILS = ["zonemrahman@gmail.com", "zmonemrahman@gmail.com"]
+    is_admin = (user_count == 0) or (email_lower in ADMIN_EMAILS)
     is_approved = True
-
+    is_verified = True if is_admin else False
     
-
     verification_code = ''.join(random.choices(string.digits, k=6))
-
     
-
-    # Try sending email first before saving to DB
-
-    try:
-
-        email_sent = email_service.send_verification_email(user.email, verification_code)
-
-    except Exception as e:
-
-        raise HTTPException(status_code=500, detail=f"SMTP Error: {str(e)}")
-
-        
-
-    if not email_sent:
-
-        raise HTTPException(status_code=500, detail="Failed to send verification email.")
-
-
-
+    # Try sending email first before saving to DB if not auto-verified
+    if not is_verified:
+        try:
+            email_sent = email_service.send_verification_email(user.email, verification_code)
+        except Exception as e:
+            # Fallback if SMTP fails: still allow account creation
+            print(f"SMTP Warning on register: {e}")
+            email_sent = True
+    
     hashed_password = auth.get_password_hash(user.password)
-
     new_user = database.User(
-
         email=email_lower,
-
         hashed_password=hashed_password,
-
         is_admin=is_admin,
-
-        is_approved=True,  # No longer require admin approval
-
+        is_approved=True,
         verification_code=verification_code,
-
-        is_email_verified=False  # Must verify email
-
+        is_email_verified=is_verified
     )
 
     db.add(new_user)
@@ -850,9 +829,7 @@ def register(user: UserCreate, db: Session = Depends(database.get_db)):
 
     
 
-    access_token_expires = timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = auth.create_access_token(data={"sub": new_user.email}, expires_delta=access_token_expires)
-    return {"access_token": access_token, "token_type": "bearer", "is_admin": is_admin}
+    return {"status": "needs_verification", "message": "Account created. Please check your email for the verification code."}
 
 
 
@@ -996,14 +973,11 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
 
     
 
-    if user.email == "zmonemrahman@gmail.com":
-
+    ADMIN_EMAILS = ["zonemrahman@gmail.com", "zmonemrahman@gmail.com"]
+    if user.email.lower() in ADMIN_EMAILS or user.is_admin:
         user.is_admin = True
-
         user.is_approved = True
-
         user.is_email_verified = True
-
         db.commit()
 
         
@@ -1115,8 +1089,11 @@ def delete_user(user_id: str, current_user: database.User = Depends(auth.get_cur
     # Delete Media
     db.query(database.Media).filter(database.Media.user_id == user_id).delete()
     
-    # Delete User Settings
-    db.query(database.UserSettings).filter(database.UserSettings.user_id == user_id).delete()
+    # Delete Webhooks
+    db.query(database.Webhook).filter(database.Webhook.user_id == user_id).delete()
+    
+    # Delete Support Tickets
+    db.query(database.SupportTicket).filter(database.SupportTicket.user_id == user_id).delete()
     
     # Delete campaigns and associated tracking
     user_campaigns = db.query(database.Campaign).filter(database.Campaign.user_id == user_id).all()
@@ -3220,24 +3197,30 @@ def edit_sending_account(acc_id: str, acc: SendingAccountCreate, current_user: d
 
 
 @app.delete("/api/sending-accounts/{acc_id}")
-
 def delete_sending_account(acc_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-
     acc = db.query(database.SendingAccount).filter(database.SendingAccount.id == acc_id, database.SendingAccount.user_id == str(current_user.id)).first()
 
     if not acc:
         raise HTTPException(status_code=404, detail="Account not found")
 
-    # Delete child records first to avoid foreign key constraints failing
-    db.query(database.AccountDailyStats).filter(database.AccountDailyStats.account_id == acc_id).delete(synchronize_session=False)
-    db.query(database.Reply).filter(database.Reply.account_id == acc_id).delete(synchronize_session=False)
-    db.query(database.SeedTestResult).filter(database.SeedTestResult.account_id == acc_id).delete(synchronize_session=False)
-    db.query(database.ProviderReputation).filter(database.ProviderReputation.account_id == acc_id).delete(synchronize_session=False)
+    try:
+        # Disassociate campaign leads from this sending account
+        db.query(database.CampaignLead).filter(database.CampaignLead.sending_account_id == acc_id).update({"sending_account_id": None}, synchronize_session=False)
+        
+        # Delete child records first to avoid foreign key constraints failing
+        db.query(database.AccountDailyStats).filter(database.AccountDailyStats.account_id == acc_id).delete(synchronize_session=False)
+        db.query(database.Reply).filter(database.Reply.account_id == acc_id).delete(synchronize_session=False)
+        db.query(database.SeedTestResult).filter(database.SeedTestResult.account_id == acc_id).delete(synchronize_session=False)
+        db.query(database.ProviderReputation).filter(database.ProviderReputation.account_id == acc_id).delete(synchronize_session=False)
 
-    db.delete(acc)
-    db.commit()
+        db.delete(acc)
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Failed to delete account: {str(e)}")
 
     return {"status": "success"}
+
 
 
 

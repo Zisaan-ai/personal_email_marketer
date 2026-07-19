@@ -397,7 +397,7 @@ const ACCOUNTS = {
     },
     
     deleteAccount: async function(id) {
-        if(!(await customConfirm('Delete Account', 'Are you sure you want to delete this account?', 'DELETE'))) return;
+        if(!(await customConfirm('Delete Account', 'Are you sure you want to delete this account?'))) return;
         try {
             const res = await fetch(API_URL + '/sending-accounts/' + id, {
                 method: 'DELETE',

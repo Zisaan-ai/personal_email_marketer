@@ -5952,47 +5952,47 @@
 
 
         async function doLogin() {
-
             var email = (document.getElementById('login-email') || {}).value || '';
-
             var pass = (document.getElementById('login-pass') || {}).value || '';
-
             clearAlert('login-alert');
-
             if (!email.trim() || !pass) { setAlert('login-alert', 'Please fill in all fields.', 'err'); return; }
-
             var btn = document.getElementById('login-btn');
-
             btn.disabled = true; btn.textContent = 'Signing in...';
-
             try {
-
                 var body = new URLSearchParams();
-
                 body.append('username', email.trim());
-
                 body.append('password', pass);
-
                 var res = await fetch(API + '/auth/token', {
-
                     method: 'POST',
-
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-
                     body: body
-
                 });
-
                 var data = await res.json();
-
-                if (res.ok) { onLoginSuccess(data); }
-
-                else { setAlert('login-alert', data.detail || 'Wrong email or password.', 'err'); }
-
-            } catch(e) { setAlert('login-alert', 'Connection error. Try again.', 'err'); }
-
+                if (res.status === 202 && data.requires_2fa) {
+                    window._verifyEmail = email.trim();
+                    window._isLogin2FA = true;
+                    document.getElementById('form-login').classList.add('hidden');
+                    document.getElementById('verify-box').classList.remove('hidden');
+                    setAlert('verify-alert', data.message || 'Check your email for the code.', 'ok');
+                } else if (res.ok) {
+                    localStorage.setItem('token', data.access_token);
+                    localStorage.setItem('is_admin', data.is_admin ? 'true' : 'false');
+                    _token = data.access_token;
+                    document.getElementById('auth-page').classList.add('hidden');
+                    document.getElementById('app-page').classList.add('on');
+                    if (data.is_admin) { 
+                        var n = document.getElementById('nav-admin'); if (n) n.style.display = 'flex'; 
+                        var edc = document.getElementById('admin-email-delivery-card'); if (edc) edc.style.display = 'block';
+                    }
+                    if (typeof window.APP_INIT === 'function') window.APP_INIT();
+                } else {
+                    setAlert('login-alert', data.detail || 'Login failed.', 'err');
+                }
+            } catch(e) {
+                console.error(e);
+                setAlert('login-alert', 'Connection error.', 'err');
+            }
             btn.disabled = false; btn.textContent = 'Sign In';
-
         }
 
 
@@ -6058,37 +6058,33 @@
 
 
         async function doVerify() {
-
             var code = (document.getElementById('verify-code') || {}).value || '';
-
-            var email = window._verifyEmail || '';
-
+            clearAlert('verify-alert');
             if (!code || code.length < 6) { setAlert('verify-alert', 'Enter the 6-digit code.', 'err'); return; }
-
             var btn = document.getElementById('verify-btn');
-
             btn.disabled = true; btn.textContent = 'Verifying...';
-
             try {
-
                 var res = await fetch(API + '/auth/verify', {
-
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-
-                    body: JSON.stringify({ email: email, code: code })
-
+                    body: JSON.stringify({ email: window._verifyEmail, code: code })
                 });
-
                 var data = await res.json();
-
-                if (res.ok) { onLoginSuccess(data); }
-
-                else { setAlert('verify-alert', data.detail || 'Invalid code.', 'err'); }
-
+                if (res.ok) {
+                    localStorage.setItem('token', data.access_token);
+                    localStorage.setItem('is_admin', data.is_admin ? 'true' : 'false');
+                    _token = data.access_token;
+                    document.getElementById('auth-page').classList.add('hidden');
+                    document.getElementById('app-page').classList.add('on');
+                    if (data.is_admin) { 
+                        var n = document.getElementById('nav-admin'); if (n) n.style.display = 'flex'; 
+                        var edc = document.getElementById('admin-email-delivery-card'); if (edc) edc.style.display = 'block';
+                    }
+                    if (typeof window.APP_INIT === 'function') window.APP_INIT();
+                } else {
+                    setAlert('verify-alert', data.detail || 'Verification failed.', 'err');
+                }
             } catch(e) { setAlert('verify-alert', 'Connection error.', 'err'); }
-
             btn.disabled = false; btn.textContent = 'Verify Account';
-
         }
 
 

@@ -320,7 +320,61 @@
 
     .hidden { display: none !important; }
 
-    </style>
+    
+    /* Big Workflow Section Headers */
+    .workflow-section-header {
+        text-align: center;
+        margin: 64px 0 40px;
+        position: relative;
+    }
+    .workflow-section-header .wf-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 18px;
+        border-radius: 30px;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+        border: 1px solid;
+    }
+    .workflow-section-header .wf-badge.cold-badge {
+        background: rgba(99,102,241,0.12);
+        color: #a5b4fc;
+        border-color: rgba(99,102,241,0.3);
+    }
+    .workflow-section-header .wf-badge.bulk-badge {
+        background: rgba(16,185,129,0.12);
+        color: #6ee7b7;
+        border-color: rgba(16,185,129,0.3);
+    }
+    .workflow-section-header .wf-main-title {
+        font-size: 38px;
+        font-weight: 900;
+        color: #ffffff;
+        letter-spacing: -0.02em;
+        margin-bottom: 10px;
+    }
+    .workflow-section-header.cold-theme .wf-main-title {
+        background: linear-gradient(135deg, #ffffff 40%, #a5b4fc 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .workflow-section-header.bulk-theme .wf-main-title {
+        background: linear-gradient(135deg, #ffffff 40%, #6ee7b7 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .workflow-section-header .wf-subtitle {
+        font-size: 16px;
+        color: #94a3b8;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+</style>
 
 <style>
 
@@ -1018,69 +1072,54 @@
     .bento-sm { grid-column: span 1; }
     .bento-preview { display: flex; flex-direction: column; gap: 8px; }
 
-    /* Feature Panels */
+    /* Feature Panels - both always visible */
     .feat-panel { display: block; }
 
-    /* Feature Type Badges on cards */
-    .bento-card { position: relative; }
-    .feat-type-badge {
-        position: absolute;
-        top: 14px;
-        right: 14px;
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 0.01em;
-        border: 1px solid;
-        white-space: nowrap;
-    }
-    .feat-type-badge.cold {
-        background: rgba(99,102,241,0.12);
-        color: #a5b4fc;
-        border-color: rgba(99,102,241,0.25);
-    }
-    .feat-type-badge.bulk {
-        background: rgba(16,185,129,0.12);
-        color: #6ee7b7;
-        border-color: rgba(16,185,129,0.25);
-    }
-    .feat-type-badge.both {
-        background: rgba(245,158,11,0.12);
-        color: #fbbf24;
-        border-color: rgba(245,158,11,0.25);
-    }
-
-    /* Feature Legend */
-    .feat-legend {
+    /* Workflow Divider */
+    .workflow-divider {
         display: flex;
         align-items: center;
-        justify-content: center;
-        gap: 16px;
-        margin-top: 28px;
+        gap: 20px;
+        margin: 100px 0 64px;
+        position: relative;
     }
-    .feat-legend-item {
+    .workflow-divider::before,
+    .workflow-divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: rgba(255,255,255,0.07);
+    }
+    .workflow-label {
         display: inline-flex;
         align-items: center;
-        gap: 7px;
-        padding: 7px 18px;
-        border-radius: 30px;
-        font-size: 13px;
-        font-weight: 700;
+        gap: 12px;
+        padding: 14px 32px;
+        border-radius: 50px;
+        font-size: 15px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        white-space: nowrap;
         border: 1px solid;
     }
-    .feat-legend-item.cold {
-        background: rgba(99,102,241,0.1);
+    .workflow-label.cold {
+        background: linear-gradient(135deg, rgba(79,70,229,0.15), rgba(124,58,237,0.08));
+        border-color: rgba(99,102,241,0.35);
         color: #a5b4fc;
-        border-color: rgba(99,102,241,0.25);
     }
-    .feat-legend-item.bulk {
-        background: rgba(16,185,129,0.1);
+    .workflow-label.bulk {
+        background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(14,165,233,0.08));
+        border-color: rgba(16,185,129,0.35);
         color: #6ee7b7;
-        border-color: rgba(16,185,129,0.25);
+    }
+    .workflow-badge-new {
+        background: linear-gradient(135deg,#f59e0b,#f97316);
+        color:#fff;
+        font-size:10px;
+        padding:2px 8px;
+        border-radius:20px;
+        font-weight:800;
+        letter-spacing:0.05em;
     }
 
     /* Testimonials */
@@ -1292,27 +1331,45 @@
             <div class="problem-card">
                 <div class="problem-icon" style="color:#fb923c;background:rgba(249,115,22,0.1)"><i class="fa-solid fa-hourglass-half"></i></div>
                 <div class="problem-cname">Hours Wasted Sorting</div>
+                <div class="problem-cdesc">You spend half your day figuring out which reply is worth following up on. Time wasted = money lost.</div>
+            </div>
+            <div class="problem-card">
+                <div class="problem-icon" style="color:#facc15;background:rgba(234,179,8,0.1)"><i class="fa-solid fa-pen-to-square"></i></div>
+                <div class="problem-cname">Generic Follow-Ups</div>
+                <div class="problem-cdesc">Your follow-ups sound robotic. Leads can tell they're getting a template. They stop replying.</div>
+            </div>
+        </div>
+        <div class="problem-arrow">
+            <i class="fa-solid fa-arrow-down" style="font-size:24px;color:#4f46e5;animation:bounce 1.5s infinite;"></i>
+            <p style="font-size:15px;color:#64748b;margin-top:8px;">XComic solves all of this.</p>
+        </div>
+    </div>
+
+    <!-- ====== FEATURES SECTION ====== -->
     <section id="features">
         <div class="features-header">
             <div class="section-badge"><i class="fa-solid fa-sparkles"></i> Features</div>
-            <h2 class="section-title">Everything in<br><span>one platform.</span></h2>
-            <p class="section-sub">Cold email outreach for B2B sales &amp; Bulk campaigns for newsletters — all in one place, clearly marked so you always know what's what.</p>
-            <!-- Workflow Legend -->
-            <div class="feat-legend">
-                <span class="feat-legend-item cold"><i class="fa-solid fa-crosshairs"></i> Cold Outreach</span>
-                <span class="feat-legend-item bulk"><i class="fa-solid fa-envelope-open-text"></i> Bulk Email</span>
-            </div>
+            <h2 class="section-title">Everything you need.<br><span>One platform. Two complete workflows.</span></h2>
+            <p class="section-sub">Scale B2B cold outreach &amp; send bulk newsletter campaigns without switching tools.</p>
         </div>
 
-        <!-- ═══ UNIFIED BENTO GRID ═══ -->
-        <div class="bento-grid unified-grid">
+        <!-- ══════════════════════════════════════════════════════════════
+             WORKFLOW 1: COLD EMAIL OUTREACH
+             ══════════════════════════════════════════════════════════════ -->
+        <div class="workflow-section-header cold-theme">
+            <div class="wf-badge cold-badge"><i class="fa-solid fa-crosshairs"></i> WORKFLOW 1</div>
+            <h3 class="wf-main-title">Cold Email Outreach</h3>
+            <p class="wf-subtitle">B2B sales prospecting, automated follow-ups &amp; AI reply categorization.</p>
+        </div>
 
-            <!-- BIG: AI Reply Categorization — Cold -->
+        <!-- COLD OUTREACH BENTO GRID -->
+        <div class="bento-grid">
+
+            <!-- BIG CARD: AI Reply Categorization -->
             <div class="bento-card bento-big" style="background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(99,102,241,0.03));">
-                <span class="feat-type-badge cold"><i class="fa-solid fa-crosshairs"></i> Cold</span>
                 <div class="feat-icon purple"><i class="fa-solid fa-robot"></i></div>
                 <div class="feat-title">AI Reply Categorization</div>
-                <div class="feat-desc">Every inbound reply is auto-tagged — Hot, Warm, Cold, or Meeting Booked — so you always know where to focus.</div>
+                <div class="feat-desc">Every inbound reply is automatically tagged — Hot, Warm, Cold, or Meeting Booked — so you always know where to focus.</div>
                 <div class="bento-preview" style="margin-top:24px;">
                     <div class="mock-row"><div class="mock-dot" style="background:#f87171"></div><div class="mock-line"></div><span class="mock-badge badge-hot">&#128525; Hot</span></div>
                     <div class="mock-row"><div class="mock-dot" style="background:#fb923c"></div><div class="mock-line"></div><span class="mock-badge badge-warm">&#128293; Warm</span></div>
@@ -1320,28 +1377,8 @@
                 </div>
             </div>
 
-            <!-- BIG: A/B Testing — Bulk -->
-            <div class="bento-card bento-big" style="background:linear-gradient(135deg,rgba(192,38,211,0.12),rgba(192,38,211,0.03));border-color:rgba(192,38,211,0.2);">
-                <span class="feat-type-badge bulk"><i class="fa-solid fa-envelope-open-text"></i> Bulk</span>
-                <div class="feat-icon pink"><i class="fa-solid fa-flask-vial"></i></div>
-                <div class="feat-title">A/B Testing</div>
-                <div class="feat-desc">Test subject lines, send times &amp; content variants. Let data auto-pick the winner and send to the rest of your list.</div>
-                <div style="margin-top:18px;display:flex;flex-direction:column;gap:8px;">
-                    <div style="display:flex;align-items:center;gap:10px;">
-                        <div style="background:rgba(192,38,211,0.15);border:1px solid rgba(192,38,211,0.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#e879f9;font-weight:700;flex:1;text-align:center;">Version A</div>
-                        <span style="font-size:11px;color:#64748b;font-weight:600;">VS</span>
-                        <div style="background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#a5b4fc;font-weight:700;flex:1;text-align:center;">Version B</div>
-                    </div>
-                    <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;">
-                        <span style="font-size:12px;color:#6ee7b7;font-weight:600;"><i class="fa-solid fa-trophy"></i> Winner: Version A</span>
-                        <span style="font-size:12px;color:#34d399;font-weight:800;">+34% Open Rate</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- MED: Sequence Automation — Cold -->
-            <div class="bento-card bento-med" style="background:linear-gradient(135deg,rgba(16,185,129,0.09),rgba(16,185,129,0.02));">
-                <span class="feat-type-badge cold"><i class="fa-solid fa-crosshairs"></i> Cold</span>
+            <!-- MED CARD: Sequence Automation -->
+            <div class="bento-card bento-med" style="background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(16,185,129,0.02));">
                 <div class="feat-icon green"><i class="fa-solid fa-diagram-next"></i></div>
                 <div class="feat-title">Sequence Automation</div>
                 <div class="feat-desc">Multi-step drip sequences — auto follow-up on day 2, 5, 10. Stops the moment they reply.</div>
@@ -1352,43 +1389,16 @@
                 </div>
             </div>
 
-            <!-- MED: Drag & Drop Builder — Bulk -->
-            <div class="bento-card bento-med" style="background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(16,185,129,0.02));">
-                <span class="feat-type-badge bulk"><i class="fa-solid fa-envelope-open-text"></i> Bulk</span>
-                <div class="feat-icon green"><i class="fa-solid fa-palette"></i></div>
-                <div class="feat-title">Drag &amp; Drop Email Builder</div>
-                <div class="feat-desc">Design beautiful HTML emails visually — no coding. 50+ ready-made blocks for any campaign.</div>
-                <div style="display:flex;flex-direction:column;gap:7px;margin-top:16px;">
-                    <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.15);border-radius:8px;padding:9px;display:flex;align-items:center;gap:8px;font-size:12px;color:#6ee7b7;"><i class="fa-solid fa-image"></i> Header Image Block</div>
-                    <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.15);border-radius:8px;padding:9px;display:flex;align-items:center;gap:8px;font-size:12px;color:#6ee7b7;"><i class="fa-solid fa-align-left"></i> Text + CTA Button</div>
-                </div>
-            </div>
-
-            <!-- MED: AI Reply Writer — Cold -->
+            <!-- MED CARD: AI Reply Writer -->
             <div class="bento-card bento-med" style="background:linear-gradient(135deg,rgba(192,38,211,0.08),rgba(192,38,211,0.02));">
-                <span class="feat-type-badge cold"><i class="fa-solid fa-crosshairs"></i> Cold</span>
                 <div class="feat-icon pink"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
                 <div class="feat-title">AI Reply Writer</div>
                 <div class="feat-desc">One click. A perfect, human-like reply draft tailored to the lead's message. You just hit send.</div>
                 <div class="ai-msg ai" style="margin-top:18px;font-size:12px;">"That's a great question! Here's why XComic is different from what you're using today..."</div>
             </div>
 
-            <!-- MED: Contact List & Segments — Bulk -->
-            <div class="bento-card bento-med" style="background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(99,102,241,0.02));">
-                <span class="feat-type-badge bulk"><i class="fa-solid fa-envelope-open-text"></i> Bulk</span>
-                <div class="feat-icon purple"><i class="fa-solid fa-users"></i></div>
-                <div class="feat-title">Contact List &amp; Segments</div>
-                <div class="feat-desc">Import CSV, tag subscribers, create smart segments by behavior, location, or engagement.</div>
-                <div style="display:flex;gap:6px;margin-top:14px;flex-wrap:wrap;">
-                    <span style="background:rgba(99,102,241,0.12);color:#a5b4fc;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid rgba(99,102,241,0.2);">VIP Customers</span>
-                    <span style="background:rgba(99,102,241,0.12);color:#a5b4fc;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid rgba(99,102,241,0.2);">New Subscribers</span>
-                    <span style="background:rgba(99,102,241,0.12);color:#a5b4fc;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid rgba(99,102,241,0.2);">Inactive 30d</span>
-                </div>
-            </div>
-
-            <!-- MED: Round-Robin Sending — Cold -->
+            <!-- MED CARD: Round-Robin Sending -->
             <div class="bento-card bento-med" style="background:linear-gradient(135deg,rgba(14,165,233,0.08),rgba(14,165,233,0.02));">
-                <span class="feat-type-badge cold"><i class="fa-solid fa-crosshairs"></i> Cold</span>
                 <div class="feat-icon blue"><i class="fa-solid fa-rotate"></i></div>
                 <div class="feat-title">Round-Robin Sending</div>
                 <div class="feat-desc">Distribute sends across multiple accounts. Scale volume without hitting daily limits.</div>
@@ -1398,84 +1408,33 @@
                 </div>
             </div>
 
-            <!-- MED: Campaign Scheduler — Bulk -->
-            <div class="bento-card bento-med" style="background:linear-gradient(135deg,rgba(14,165,233,0.08),rgba(14,165,233,0.02));">
-                <span class="feat-type-badge bulk"><i class="fa-solid fa-envelope-open-text"></i> Bulk</span>
-                <div class="feat-icon blue"><i class="fa-solid fa-clock"></i></div>
-                <div class="feat-title">Campaign Scheduler</div>
-                <div class="feat-desc">Schedule campaigns to send at the perfect time for any timezone. Set it and forget it.</div>
-                <div style="background:rgba(14,165,233,0.08);border:1px solid rgba(14,165,233,0.15);border-radius:10px;padding:12px;margin-top:16px;font-size:13px;color:#7dd3fc;">
-                    <i class="fa-solid fa-calendar-check"></i>&nbsp; Next send: <strong>Jul 22 &middot; 10:00 AM EST</strong>
-                </div>
-            </div>
-
-            <!-- SM: Email Warm-Up — Cold -->
+            <!-- SM CARD: Email Warm-Up -->
             <div class="bento-card bento-sm" style="background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(16,185,129,0.02));">
-                <span class="feat-type-badge cold"><i class="fa-solid fa-crosshairs"></i> Cold</span>
                 <div class="feat-icon green"><i class="fa-solid fa-fire"></i></div>
                 <div class="feat-title">Email Warm-Up</div>
-                <div class="feat-desc">Auto-warm sender accounts. Build reputation before launching campaigns.</div>
+                <div class="feat-desc">Auto-warm sender accounts. Build domain reputation before launching campaigns.</div>
             </div>
 
-            <!-- SM: Open & Click Tracking — Bulk -->
-            <div class="bento-card bento-sm" style="background:linear-gradient(135deg,rgba(249,115,22,0.08),rgba(249,115,22,0.02));">
-                <span class="feat-type-badge bulk"><i class="fa-solid fa-envelope-open-text"></i> Bulk</span>
-                <div class="feat-icon orange"><i class="fa-solid fa-chart-bar"></i></div>
-                <div class="feat-title">Open &amp; Click Tracking</div>
-                <div class="feat-desc">Real-time stats on opens, clicks, bounces &amp; unsubscribes per campaign.</div>
-            </div>
-
-            <!-- SM: Deliverability Optimizer — Cold -->
+            <!-- SM CARD: Deliverability Optimizer -->
             <div class="bento-card bento-sm" style="background:linear-gradient(135deg,rgba(234,179,8,0.08),rgba(234,179,8,0.02));">
-                <span class="feat-type-badge cold"><i class="fa-solid fa-crosshairs"></i> Cold</span>
                 <div class="feat-icon yellow"><i class="fa-solid fa-shield-halved"></i></div>
                 <div class="feat-title">Deliverability Optimizer</div>
                 <div class="feat-desc">Preflight checks catch spam triggers before you send. Land in inbox, not spam.</div>
             </div>
 
-            <!-- SM: Auto Unsubscribe — Bulk -->
-            <div class="bento-card bento-sm" style="background:linear-gradient(135deg,rgba(234,179,8,0.08),rgba(234,179,8,0.02));">
-                <span class="feat-type-badge bulk"><i class="fa-solid fa-envelope-open-text"></i> Bulk</span>
-                <div class="feat-icon yellow"><i class="fa-solid fa-user-minus"></i></div>
-                <div class="feat-title">Auto Unsubscribe</div>
-                <div class="feat-desc">One-click unsubscribe auto-added. Stay CAN-SPAM &amp; GDPR compliant effortlessly.</div>
-            </div>
-
-            <!-- SM: Outreach Analytics — Cold -->
+            <!-- SM CARD: Outreach Analytics -->
             <div class="bento-card bento-sm" style="background:linear-gradient(135deg,rgba(249,115,22,0.08),rgba(249,115,22,0.02));">
-                <span class="feat-type-badge cold"><i class="fa-solid fa-crosshairs"></i> Cold</span>
                 <div class="feat-icon orange"><i class="fa-solid fa-chart-line"></i></div>
                 <div class="feat-title">Outreach Analytics</div>
-                <div class="feat-desc">Opens, clicks, replies, bounces — all in one dashboard per sequence.</div>
-            </div>
-
-            <!-- SM: Smart Personalization — Both -->
-            <div class="bento-card bento-sm" style="background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(99,102,241,0.02));">
-                <span class="feat-type-badge both"><i class="fa-solid fa-infinity"></i> Both</span>
-                <div class="feat-icon purple"><i class="fa-solid fa-person-chalkboard"></i></div>
-                <div class="feat-title">Smart Personalization</div>
-                <div class="feat-desc">{{first_name}}, {{company}}, {{city}} — bulk or cold, every email feels 1-on-1.</div>
-            </div>
-
-            <!-- SM: Lead Scoring — Cold -->
-            <div class="bento-card bento-sm" style="background:linear-gradient(135deg,rgba(239,68,68,0.08),rgba(239,68,68,0.02));">
-                <span class="feat-type-badge cold"><i class="fa-solid fa-crosshairs"></i> Cold</span>
-                <div class="feat-icon" style="background:rgba(239,68,68,0.15);color:#f87171;"><i class="fa-solid fa-star-half-stroke"></i></div>
-                <div class="feat-title">Lead Scoring</div>
-                <div class="feat-desc">AI scores each lead 1-100 based on reply intent, job title &amp; engagement level.</div>
+                <div class="feat-desc">Opens, clicks, replies, bounces — track performance across every campaign sequence.</div>
             </div>
 
         </div>
 
-        <!-- ═══ FEATURE HIGHLIGHTS ═══ -->
-
-        <!-- Highlight 1: AI Categorization — Cold -->
-        <div class="feature-highlight" style="margin-top:100px;">
+        <!-- COLD OUTREACH HIGHLIGHT 1: AI Categorization -->
+        <div class="feature-highlight" style="margin-top:80px;">
             <div class="fh-content">
-                <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
-                    <div class="fh-badge"><i class="fa-solid fa-robot"></i> AI Intelligence</div>
-                    <span class="feat-type-badge cold" style="position:static;transform:none;"><i class="fa-solid fa-crosshairs"></i> Cold</span>
-                </div>
+                <div class="fh-badge"><i class="fa-solid fa-robot"></i> AI Intelligence</div>
                 <h3 class="fh-title">Know exactly which leads to call today.</h3>
                 <p class="fh-desc">Our AI reads every reply and instantly categorizes leads so your team spends zero time sorting and 100% time closing.</p>
                 <ul class="fh-bullets">
@@ -1496,13 +1455,135 @@
             </div>
         </div>
 
-        <!-- Highlight 2: A/B Testing — Bulk -->
-        <div class="feature-highlight reverse" style="margin-top:100px;">
+        <!-- COLD OUTREACH HIGHLIGHT 2: Sequence Automation -->
+        <div class="feature-highlight reverse" style="margin-top:80px;">
             <div class="fh-content">
-                <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
-                    <div class="fh-badge" style="background:rgba(192,38,211,0.12);color:#e879f9;border-color:rgba(192,38,211,0.25);"><i class="fa-solid fa-flask-vial"></i> A/B Testing</div>
-                    <span class="feat-type-badge bulk" style="position:static;transform:none;"><i class="fa-solid fa-envelope-open-text"></i> Bulk</span>
+                <div class="fh-badge" style="background:rgba(16,185,129,0.12);color:#34d399;border-color:rgba(16,185,129,0.2);"><i class="fa-solid fa-diagram-next"></i> Drip Sequences</div>
+                <h3 class="fh-title">Set it up once. Follow up forever — automatically.</h3>
+                <p class="fh-desc">Build multi-step cold email sequences that run on autopilot. Emails stop the moment a prospect replies — no awkward double-sends, ever.</p>
+                <ul class="fh-bullets">
+                    <li><i class="fa-solid fa-check-circle"></i> Unlimited follow-up steps with custom delays</li>
+                    <li><i class="fa-solid fa-check-circle"></i> Auto-stop on reply, click, or meeting booked</li>
+                    <li><i class="fa-solid fa-check-circle"></i> Personalized variables in every step</li>
+                    <li><i class="fa-solid fa-check-circle"></i> A/B test subject lines across sequence steps</li>
+                </ul>
+            </div>
+            <div class="fh-visual">
+                <div class="fh-visual-inner" style="gap:10px;">
+                    <div style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px;">
+                        <div style="width:30px;height:30px;background:rgba(16,185,129,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#34d399;flex-shrink:0;">1</div>
+                        <div style="flex:1;"><div style="font-size:12px;font-weight:700;color:#6ee7b7;">Day 0 — Initial Outreach</div><div style="font-size:11px;color:#475569;">Sent to 1,200 leads</div></div>
+                        <span style="font-size:11px;color:#34d399;font-weight:700;background:rgba(16,185,129,0.12);padding:3px 8px;border-radius:10px;">&#10003; Sent</span>
+                    </div>
+                    <div style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px;">
+                        <div style="width:30px;height:30px;background:rgba(99,102,241,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#a5b4fc;flex-shrink:0;">2</div>
+                        <div style="flex:1;"><div style="font-size:12px;font-weight:700;color:#a5b4fc;">Day 3 — Follow-up #1</div><div style="font-size:11px;color:#475569;">Sent to 940 non-openers</div></div>
+                        <span style="font-size:11px;color:#818cf8;font-weight:700;background:rgba(99,102,241,0.12);padding:3px 8px;border-radius:10px;">&#10003; Sent</span>
+                    </div>
+                    <div style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.2);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px;opacity:0.75;">
+                        <div style="width:30px;height:30px;background:rgba(249,115,22,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fb923c;flex-shrink:0;">3</div>
+                        <div style="flex:1;"><div style="font-size:12px;font-weight:700;color:#fb923c;">Day 7 — Break-up Email</div><div style="font-size:11px;color:#475569;">Scheduled for Jul 25</div></div>
+                        <span style="font-size:11px;color:#64748b;font-weight:700;background:rgba(100,116,139,0.1);padding:3px 8px;border-radius:10px;">Pending</span>
+                    </div>
+                    <div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15);border-radius:10px;padding:12px;display:flex;align-items:center;justify-content:space-between;">
+                        <span style="font-size:12px;color:#64748b;"><i class="fa-solid fa-circle-stop" style="color:#f87171;margin-right:6px;"></i>Auto-stopped for 47 replies</span>
+                        <span style="font-size:12px;color:#34d399;font-weight:700;">No double-sends &#10003;</span>
+                    </div>
                 </div>
+            </div>
+        </div>
+
+
+        <!-- ══════════════════════════════════════════════════════════════
+             WORKFLOW 2: BULK EMAIL CAMPAIGNS
+             ══════════════════════════════════════════════════════════════ -->
+        <div class="workflow-section-header bulk-theme" style="margin-top:120px;">
+            <div class="wf-badge bulk-badge"><i class="fa-solid fa-envelope-open-text"></i> WORKFLOW 2</div>
+            <h3 class="wf-main-title">Bulk Email Campaigns</h3>
+            <p class="wf-subtitle">Newsletters, promotional blasts, A/B testing &amp; drag-and-drop template builder.</p>
+        </div>
+
+        <!-- BULK EMAIL BENTO GRID -->
+        <div class="bento-grid">
+
+            <!-- BIG CARD: A/B Testing -->
+            <div class="bento-card bento-big" style="background:linear-gradient(135deg,rgba(192,38,211,0.12),rgba(192,38,211,0.03));border-color:rgba(192,38,211,0.2);">
+                <div class="feat-icon pink"><i class="fa-solid fa-flask-vial"></i></div>
+                <div class="feat-title">A/B Testing</div>
+                <div class="feat-desc">Test subject lines, send times &amp; content variants. Let data auto-pick the winner and send to the rest of your list.</div>
+                <div style="margin-top:24px;display:flex;flex-direction:column;gap:8px;">
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <div style="background:rgba(192,38,211,0.15);border:1px solid rgba(192,38,211,0.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#e879f9;font-weight:700;flex:1;text-align:center;">Version A</div>
+                        <span style="font-size:11px;color:#64748b;font-weight:600;">VS</span>
+                        <div style="background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#a5b4fc;font-weight:700;flex:1;text-align:center;">Version B</div>
+                    </div>
+                    <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;">
+                        <span style="font-size:12px;color:#6ee7b7;font-weight:600;"><i class="fa-solid fa-trophy"></i> Winner: Version A</span>
+                        <span style="font-size:12px;color:#34d399;font-weight:800;">+34% Open Rate</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MED CARD: Drag & Drop Email Builder -->
+            <div class="bento-card bento-med" style="background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(16,185,129,0.02));">
+                <div class="feat-icon green"><i class="fa-solid fa-palette"></i></div>
+                <div class="feat-title">Drag &amp; Drop Email Builder</div>
+                <div class="feat-desc">Design beautiful HTML emails visually — no coding. 50+ ready-made blocks for any campaign.</div>
+                <div style="display:flex;flex-direction:column;gap:7px;margin-top:16px;">
+                    <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.15);border-radius:8px;padding:9px;display:flex;align-items:center;gap:8px;font-size:12px;color:#6ee7b7;"><i class="fa-solid fa-image"></i> Header Image Block</div>
+                    <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.15);border-radius:8px;padding:9px;display:flex;align-items:center;gap:8px;font-size:12px;color:#6ee7b7;"><i class="fa-solid fa-align-left"></i> Text + CTA Button</div>
+                </div>
+            </div>
+
+            <!-- MED CARD: Contact List & Segments -->
+            <div class="bento-card bento-med" style="background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(99,102,241,0.02));">
+                <div class="feat-icon purple"><i class="fa-solid fa-users"></i></div>
+                <div class="feat-title">Contact List &amp; Segments</div>
+                <div class="feat-desc">Import CSV, tag subscribers, create smart segments by behavior, location, or engagement.</div>
+                <div style="display:flex;gap:6px;margin-top:14px;flex-wrap:wrap;">
+                    <span style="background:rgba(99,102,241,0.12);color:#a5b4fc;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid rgba(99,102,241,0.2);">VIP Customers</span>
+                    <span style="background:rgba(99,102,241,0.12);color:#a5b4fc;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid rgba(99,102,241,0.2);">New Subscribers</span>
+                    <span style="background:rgba(99,102,241,0.12);color:#a5b4fc;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid rgba(99,102,241,0.2);">Inactive 30d</span>
+                </div>
+            </div>
+
+            <!-- MED CARD: Campaign Scheduler -->
+            <div class="bento-card bento-med" style="background:linear-gradient(135deg,rgba(14,165,233,0.08),rgba(14,165,233,0.02));">
+                <div class="feat-icon blue"><i class="fa-solid fa-clock"></i></div>
+                <div class="feat-title">Campaign Scheduler</div>
+                <div class="feat-desc">Schedule campaigns to send at the perfect time for any timezone. Set it and forget it.</div>
+                <div style="background:rgba(14,165,233,0.08);border:1px solid rgba(14,165,233,0.15);border-radius:10px;padding:12px;margin-top:16px;font-size:13px;color:#7dd3fc;">
+                    <i class="fa-solid fa-calendar-check"></i>&nbsp; Next send: <strong>Jul 22 &middot; 10:00 AM EST</strong>
+                </div>
+            </div>
+
+            <!-- SM CARD: Open & Click Tracking -->
+            <div class="bento-card bento-sm" style="background:linear-gradient(135deg,rgba(249,115,22,0.08),rgba(249,115,22,0.02));">
+                <div class="feat-icon orange"><i class="fa-solid fa-chart-bar"></i></div>
+                <div class="feat-title">Open &amp; Click Tracking</div>
+                <div class="feat-desc">Real-time stats on opens, clicks, bounces &amp; unsubscribes per campaign.</div>
+            </div>
+
+            <!-- SM CARD: Auto Unsubscribe -->
+            <div class="bento-card bento-sm" style="background:linear-gradient(135deg,rgba(234,179,8,0.08),rgba(234,179,8,0.02));">
+                <div class="feat-icon yellow"><i class="fa-solid fa-user-minus"></i></div>
+                <div class="feat-title">Auto Unsubscribe</div>
+                <div class="feat-desc">One-click unsubscribe auto-added. Stay CAN-SPAM &amp; GDPR compliant effortlessly.</div>
+            </div>
+
+            <!-- SM CARD: Smart Personalization -->
+            <div class="bento-card bento-sm" style="background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(99,102,241,0.02));">
+                <div class="feat-icon purple"><i class="fa-solid fa-person-chalkboard"></i></div>
+                <div class="feat-title">Smart Personalization</div>
+                <div class="feat-desc">{{first_name}}, {{company}}, {{city}} — dynamic tags make every email feel 1-on-1.</div>
+            </div>
+
+        </div>
+
+        <!-- BULK HIGHLIGHT 1: A/B Testing -->
+        <div class="feature-highlight" style="margin-top:80px;">
+            <div class="fh-content">
+                <div class="fh-badge" style="background:rgba(192,38,211,0.12);color:#e879f9;border-color:rgba(192,38,211,0.25);"><i class="fa-solid fa-flask-vial"></i> A/B Testing</div>
                 <h3 class="fh-title">Stop guessing. Let your data pick the winner.</h3>
                 <p class="fh-desc">Run simultaneous A/B tests on subject lines, sender names, CTA buttons &amp; full content variants. XComic automatically sends the winning version to the rest of your list.</p>
                 <ul class="fh-bullets">
@@ -1539,79 +1620,10 @@
             </div>
         </div>
 
-        <!-- Highlight 3: Sequence Automation — Cold -->
-        <div class="feature-highlight" style="margin-top:100px;">
+        <!-- BULK HIGHLIGHT 2: Email Builder -->
+        <div class="feature-highlight reverse" style="margin-top:80px;">
             <div class="fh-content">
-                <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
-                    <div class="fh-badge" style="background:rgba(16,185,129,0.12);color:#34d399;border-color:rgba(16,185,129,0.2);"><i class="fa-solid fa-diagram-next"></i> Sequences</div>
-                    <span class="feat-type-badge cold" style="position:static;transform:none;"><i class="fa-solid fa-crosshairs"></i> Cold</span>
-                </div>
-                <h3 class="fh-title">Set it up once. Follow up forever — automatically.</h3>
-                <p class="fh-desc">Build multi-step cold email sequences that run on autopilot. Emails stop the moment a prospect replies — no awkward double-sends, ever.</p>
-                <ul class="fh-bullets">
-                    <li><i class="fa-solid fa-check-circle"></i> Unlimited follow-up steps with custom delays</li>
-                    <li><i class="fa-solid fa-check-circle"></i> Auto-stop on reply, click, or meeting booked</li>
-                    <li><i class="fa-solid fa-check-circle"></i> Personalized variables in every step</li>
-                    <li><i class="fa-solid fa-check-circle"></i> A/B test subject lines across sequence steps</li>
-                </ul>
-            </div>
-            <div class="fh-visual">
-                <div class="fh-visual-inner" style="gap:10px;">
-                    <div style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px;">
-                        <div style="width:30px;height:30px;background:rgba(16,185,129,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#34d399;flex-shrink:0;">1</div>
-                        <div style="flex:1;"><div style="font-size:12px;font-weight:700;color:#6ee7b7;">Day 0 — Initial Outreach</div><div style="font-size:11px;color:#475569;">Sent to 1,200 leads</div></div>
-                        <span style="font-size:11px;color:#34d399;font-weight:700;background:rgba(16,185,129,0.12);padding:3px 8px;border-radius:10px;">&#10003; Sent</span>
-                    </div>
-                    <div style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px;">
-                        <div style="width:30px;height:30px;background:rgba(99,102,241,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#a5b4fc;flex-shrink:0;">2</div>
-                        <div style="flex:1;"><div style="font-size:12px;font-weight:700;color:#a5b4fc;">Day 3 — Follow-up #1</div><div style="font-size:11px;color:#475569;">Sent to 940 non-openers</div></div>
-                        <span style="font-size:11px;color:#818cf8;font-weight:700;background:rgba(99,102,241,0.12);padding:3px 8px;border-radius:10px;">&#10003; Sent</span>
-                    </div>
-                    <div style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.2);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px;opacity:0.75;">
-                        <div style="width:30px;height:30px;background:rgba(249,115,22,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fb923c;flex-shrink:0;">3</div>
-                        <div style="flex:1;"><div style="font-size:12px;font-weight:700;color:#fb923c;">Day 7 — Break-up Email</div><div style="font-size:11px;color:#475569;">Scheduled for Jul 25</div></div>
-                        <span style="font-size:11px;color:#64748b;font-weight:700;background:rgba(100,116,139,0.1);padding:3px 8px;border-radius:10px;">Pending</span>
-                    </div>
-                    <div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15);border-radius:10px;padding:12px;display:flex;align-items:center;justify-content:space-between;">
-                        <span style="font-size:12px;color:#64748b;"><i class="fa-solid fa-circle-stop" style="color:#f87171;margin-right:6px;"></i>Auto-stopped for 47 replies</span>
-                        <span style="font-size:12px;color:#34d399;font-weight:700;">No double-sends &#10003;</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Highlight 4: AI Reply Writer — Cold -->
-        <div class="feature-highlight reverse" style="margin-top:100px;">
-            <div class="fh-content">
-                <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
-                    <div class="fh-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Replies</div>
-                    <span class="feat-type-badge cold" style="position:static;transform:none;"><i class="fa-solid fa-crosshairs"></i> Cold</span>
-                </div>
-                <h3 class="fh-title">Your AI replies before you even open the email.</h3>
-                <p class="fh-desc">Never stare at a blank reply box again. One button and get a personalized, professional draft tailored to the lead's message.</p>
-                <ul class="fh-bullets">
-                    <li><i class="fa-solid fa-check-circle"></i> Context-aware replies trained on your brand voice</li>
-                    <li><i class="fa-solid fa-check-circle"></i> Edit or send as-is in under 10 seconds</li>
-                    <li><i class="fa-solid fa-check-circle"></i> Powered by industry-leading LLMs</li>
-                    <li><i class="fa-solid fa-check-circle"></i> Handles objections, scheduling, and follow-ups</li>
-                </ul>
-            </div>
-            <div class="fh-visual">
-                <div class="ai-visual">
-                    <div><div class="ai-label">Lead Reply</div><div class="ai-msg received">"Hi, this looks interesting but we already have a tool. What makes yours different?"</div></div>
-                    <div style="text-align:center;"><div style="display:inline-flex;align-items:center;gap:8px;font-size:12px;color:#6366f1;font-weight:700;padding:8px 16px;background:rgba(99,102,241,0.1);border-radius:20px;border:1px solid rgba(99,102,241,0.2);"><i class="fa-solid fa-wand-magic-sparkles"></i> Generating AI Draft...</div></div>
-                    <div><div class="ai-label">AI Draft</div><div class="ai-msg ai">"That's a fair point! Unlike most tools, XComic uses AI to categorize every reply and routes your warmest leads to the top. Most users see a 3x improvement in reply-to-meeting rate within 2 weeks. Worth a quick 15-min call?"</div></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Highlight 5: Email Builder — Bulk -->
-        <div class="feature-highlight" style="margin-top:100px;">
-            <div class="fh-content">
-                <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
-                    <div class="fh-badge" style="background:rgba(16,185,129,0.12);color:#34d399;border-color:rgba(16,185,129,0.2);"><i class="fa-solid fa-palette"></i> Visual Builder</div>
-                    <span class="feat-type-badge bulk" style="position:static;transform:none;"><i class="fa-solid fa-envelope-open-text"></i> Bulk</span>
-                </div>
+                <div class="fh-badge" style="background:rgba(16,185,129,0.12);color:#34d399;border-color:rgba(16,185,129,0.2);"><i class="fa-solid fa-palette"></i> Visual Builder</div>
                 <h3 class="fh-title">Build stunning campaigns in minutes, not hours.</h3>
                 <p class="fh-desc">Our drag-and-drop email builder lets you create professional, mobile-responsive templates without touching a single line of code.</p>
                 <ul class="fh-bullets">
@@ -1629,20 +1641,6 @@
                     <div style="text-align:center;margin-top:8px;"><span style="background:linear-gradient(135deg,#10b981,#059669);color:#fff;padding:10px 28px;border-radius:20px;font-size:13px;font-weight:700;display:inline-block;">Send Campaign &rarr;</span></div>
                 </div>
             </div>
-        </div>
-
-               </div>
-                        <div style="background:rgba(14,165,233,0.1);border:1px solid rgba(14,165,233,0.2);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px;">
-                            <div style="width:40px;height:40px;background:rgba(14,165,233,0.2);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#38bdf8;font-size:18px;"><i class="fa-solid fa-rectangle-ad"></i></div>
-                            <div style="flex:1;"><div style="height:8px;background:rgba(255,255,255,0.15);border-radius:4px;margin-bottom:6px;"></div><div style="height:8px;background:rgba(255,255,255,0.08);border-radius:4px;width:80%;"></div></div>
-                        </div>
-                        <div style="text-align:center;margin-top:8px;">
-                            <span style="background:linear-gradient(135deg,#10b981,#059669);color:#fff;padding:10px 28px;border-radius:20px;font-size:13px;font-weight:700;display:inline-block;">Send Campaign &rarr;</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
 
     </section>

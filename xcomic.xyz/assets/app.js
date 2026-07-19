@@ -5073,6 +5073,19 @@ async function loadSmtpStatus() {
             if (data.has_account) {
                 statusEl.innerHTML = `✅ <strong>Saved Account:</strong> ${data.email} &nbsp;|&nbsp; Host: ${data.smtp_host}:${data.smtp_port} &nbsp;|&nbsp; Name: ${data.from_name || '-'}`;
                 statusEl.style.cssText = 'display:block; margin-top:20px; padding:14px 18px; border-radius:10px; background:#f0fdf4; color:#16a34a; border:1px solid #bbf7d0; font-size:14px;';
+                
+                // Pre-populate the form fields
+                const hostInput = document.getElementById('smtp-host');
+                if (hostInput) hostInput.value = data.smtp_host || '';
+                
+                const portInput = document.getElementById('smtp-port');
+                if (portInput) portInput.value = data.smtp_port || 587;
+                
+                const userInput = document.getElementById('smtp-user');
+                if (userInput) userInput.value = data.email || '';
+                
+                const fromNameInput = document.getElementById('smtp-from-name');
+                if (fromNameInput) fromNameInput.value = data.from_name || '';
             } else {
                 statusEl.textContent = '⚠️ No email account saved yet. Fill the form below and click Save Changes.';
                 statusEl.style.cssText = 'display:block; margin-top:20px; padding:14px 18px; border-radius:10px; background:#fffbeb; color:#b45309; border:1px solid #fcd34d; font-size:14px;';
@@ -5095,6 +5108,19 @@ function setupSettings() {
                     statusEl.innerHTML = `✅ <strong>Saved Account:</strong> ${data.email} &nbsp;|&nbsp; Host: ${data.smtp_host}:${data.smtp_port} &nbsp;|&nbsp; Name: ${data.from_name || '-'}`;
                     statusEl.className = 'alert success';
                     statusEl.style.display = 'block';
+                    
+                    // Pre-populate the form fields
+                    const hostInput = document.getElementById('smtp-host');
+                    if (hostInput) hostInput.value = data.smtp_host || '';
+                    
+                    const portInput = document.getElementById('smtp-port');
+                    if (portInput) portInput.value = data.smtp_port || 587;
+                    
+                    const userInput = document.getElementById('smtp-user');
+                    if (userInput) userInput.value = data.email || '';
+                    
+                    const fromNameInput = document.getElementById('smtp-from-name');
+                    if (fromNameInput) fromNameInput.value = data.from_name || '';
                 } else {
                     statusEl.textContent = '⚠️ No email account saved yet. Fill the form below and click Save Changes.';
                     statusEl.className = 'alert warning';
@@ -5180,14 +5206,9 @@ function setupSettings() {
 
 
 
+                    statusEl.style.cssText = '';
                     statusEl.textContent = res.ok ? 'Settings saved!' : (data.detail || 'Error');
-
-
-
                     statusEl.className = res.ok ? 'alert success' : 'alert error';
-
-
-
                     statusEl.style.display = 'block';
 
 
@@ -5233,8 +5254,16 @@ function setupSettings() {
 
 
             try {
-
-                const res = await apiCall('/settings/test-smtp', 'POST');
+                const body = {
+                    smtp_host: document.getElementById('smtp-host').value,
+                    smtp_port: parseInt(document.getElementById('smtp-port').value) || 587,
+                    smtp_user: document.getElementById('smtp-user').value,
+                    smtp_pass: document.getElementById('smtp-pass').value
+                };
+                const res = await apiCall('/settings/test-smtp', 'POST', body);
+                
+                const statusEl = document.getElementById('smtp-status');
+                if (statusEl) statusEl.style.display = 'none';
                 const data = await res.json();
 
                 if (res.ok) {

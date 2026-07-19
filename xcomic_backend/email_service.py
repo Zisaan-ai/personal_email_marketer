@@ -504,7 +504,7 @@ def get_system_smtp_config():
             for line in f:
                 if '=' in line and not line.startswith('#'):
                     k, v = line.strip().split('=', 1)
-                    config[k.strip()] = v.strip()
+                    config[k.strip()] = v.strip().strip('"').strip("'")
     return config
 
 def _send_system_email(subject: str, body_html: str, recipient: str) -> bool:
@@ -517,28 +517,54 @@ def _send_system_email(subject: str, body_html: str, recipient: str) -> bool:
         return False
         
     try:
+        from_name = config.get("SMTP_FROM_NAME", "System Admin")
+        body_text = generate_clean_plaintext(body_html)
+        
+        # Brevo API Support for System Emails
+        if smtp_pass.startswith("xkeysib-"):
+            import requests
+            headers = {
+                "accept": "application/json",
+                "api-key": smtp_pass,
+                "content-type": "application/json"
+            }
+            payload = {
+                "sender": {"email": smtp_user, "name": from_name},
+                "to": [{"email": recipient}],
+                "replyTo": {"email": smtp_user, "name": from_name},
+                "subject": subject,
+                "htmlContent": body_html,
+                "textContent": body_text
+            }
+            res = requests.post("https://api.brevo.com/v3/smtp/email", json=payload, headers=headers, timeout=10)
+            if res.status_code in [200, 201, 202]:
+                return True
+            print(f"Brevo System Email Error: {res.text}")
+            return False
+
+        # Standard SMTP
         smtp_port = int(config.get("SMTP_PORT", 587))
         if smtp_port == 465:
-            server = smtplib.SMTP_SSL(config.get("SMTP_SERVER"), smtp_port, timeout=5)
+            server = smtplib.SMTP_SSL(config.get("SMTP_SERVER"), smtp_port, timeout=10)
         else:
-            server = smtplib.SMTP(config.get("SMTP_SERVER"), smtp_port, timeout=5)
+            server = smtplib.SMTP(config.get("SMTP_SERVER"), smtp_port, timeout=10)
             server.starttls()
             
         server.login(smtp_user, smtp_pass)
         
         msg = MIMEMultipart("alternative")
         msg["Subject"] = subject
-        from_name = config.get("SMTP_FROM_NAME", "System Admin")
         msg["From"] = f"{from_name} <{smtp_user}>"
         msg["To"] = recipient
         msg["Reply-To"] = smtp_user
+        msg["Date"] = formatdate(localtime=True)
+        msg["Message-ID"] = make_msgid(domain=smtp_user.split('@')[-1] if '@' in smtp_user else 'localhost')
         msg["MIME-Version"] = "1.0"
         
-        body_text = generate_clean_plaintext(body_html)
         msg.attach(MIMEText(body_text, "plain", "utf-8"))
         msg.attach(MIMEText(body_html, "html", "utf-8"))
         
-        server.sendmail(smtp_user, [recipient], msg.as_string())
+        server.send_message(msg)
         return True
     except Exception as e:
         print(f"System Email failed: {e}")
@@ -638,6 +664,29 @@ import imaplib
 
 def verify_smtp_credentials(server: str, port: int, user: str, password: str) -> dict:
     try:
+        password = password.strip()
+        user = user.strip()
+        server = server.strip()
+        
+        # If the user provides a Brevo API key, verify it via API instead of SMTP
+        if password.startswith("xkeysib-"):
+            if not user or '@' not in user:
+                return {'status': 'error', 'detail': 'A valid sender email address is required in the Username field.'}
+            if not server:
+                return {'status': 'error', 'detail': 'SMTP Host is required.'}
+            
+            import requests
+            headers = {
+                "accept": "application/json",
+                "api-key": password
+            }
+            resp = requests.get("https://api.brevo.com/v3/account", headers=headers, timeout=10)
+            if resp.status_code == 200:
+                return {'status': 'success'}
+            else:
+                return {'status': 'error', 'detail': 'Brevo API key validation failed. Please check the key.'}
+
+        # Otherwise, perform standard SMTP test
         if port == 465:
             smtp = smtplib.SMTP_SSL(server, port, timeout=10)
         else:

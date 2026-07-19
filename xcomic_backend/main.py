@@ -3928,30 +3928,46 @@ def save_deepseek_key(req: DeepSeekKeyRequest, current_user: database.User = Dep
 # --- SETTINGS SMTP ENDPOINT ---
 
 class SMTPSettingsRequest(BaseModel):
-    provider: str = "smtp"
-    smtp_host: str = ""
-    smtp_user: str = ""
-    smtp_pass: str = ""
-    smtp_port: int = 587
-    from_name: str = ""
+    provider: str
+    smtp_host: Optional[str] = None
+    smtp_user: Optional[str] = None
+    smtp_pass: Optional[str] = None
+    smtp_port: Optional[int] = 587
+    from_name: Optional[str] = None
+
+class SMTPTestRequest(BaseModel):
+    smtp_host: Optional[str] = None
+    smtp_port: Optional[int] = None
+    smtp_user: Optional[str] = None
+    smtp_pass: Optional[str] = None
 
 @app.post("/api/settings/smtp")
 def save_smtp_settings(req: SMTPSettingsRequest, current_user: database.User = Depends(auth.get_current_user)):
     if req.provider != "smtp":
         raise HTTPException(status_code=400, detail="Only SMTP provider is supported.")
-    if not req.smtp_host or not req.smtp_user or not req.smtp_pass:
+    # Read existing .env to fallback if password is empty
+    import os
+    env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+    env_dict = {}
+    env_lines = []
+    if os.path.exists(env_path):
+        with open(env_path, 'r', encoding='utf-8') as f:
+            env_lines = f.readlines()
+            for line in env_lines:
+                if '=' in line and not line.startswith('#'):
+                    k, v = line.strip().split('=', 1)
+                    env_dict[k.strip()] = v.strip()
+
+    smtp_pass = req.smtp_pass if req.smtp_pass else env_dict.get("SMTP_PASSWORD")
+
+    if not req.smtp_host or not req.smtp_user or not smtp_pass:
         raise HTTPException(status_code=400, detail="SMTP Host, Username and Password are required.")
 
     # Verify credentials
     import email_service
-    smtp_check = email_service.verify_smtp_credentials(req.smtp_host, req.smtp_port, req.smtp_user, req.smtp_pass)
+    smtp_check = email_service.verify_smtp_credentials(req.smtp_host, req.smtp_port, req.smtp_user, smtp_pass)
     if smtp_check['status'] != 'success':
         raise HTTPException(status_code=400, detail=smtp_check['detail'])
-
-    # Write to .env
-    import os
-    env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
-    env_lines = []
     if os.path.exists(env_path):
         with open(env_path, 'r', encoding='utf-8') as f:
             env_lines = f.readlines()
@@ -3968,7 +3984,7 @@ def save_smtp_settings(req: SMTPSettingsRequest, current_user: database.User = D
         "SMTP_SERVER": req.smtp_host,
         "SMTP_PORT": str(req.smtp_port),
         "SMTP_USERNAME": req.smtp_user,
-        "SMTP_PASSWORD": req.smtp_pass,
+        "SMTP_PASSWORD": smtp_pass,
         "SMTP_FROM_NAME": req.from_name
     }
 
@@ -4011,7 +4027,7 @@ def get_smtp_settings(current_user: database.User = Depends(auth.get_current_use
     }
 
 @app.post("/api/settings/test-smtp")
-def test_smtp_settings(current_user: database.User = Depends(auth.get_current_user)):
+def test_smtp_settings(req: Optional[SMTPTestRequest] = None, current_user: database.User = Depends(auth.get_current_user)):
     # Test the system SMTP account
     import os
     env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
@@ -4023,16 +4039,19 @@ def test_smtp_settings(current_user: database.User = Depends(auth.get_current_us
                     k, v = line.strip().split('=', 1)
                     env_dict[k.strip()] = v.strip()
     
-    smtp_server = env_dict.get("SMTP_SERVER")
-    smtp_port = env_dict.get("SMTP_PORT", 587)
-    smtp_user = env_dict.get("SMTP_USERNAME")
-    smtp_pass = env_dict.get("SMTP_PASSWORD")
+    smtp_server = req.smtp_host if (req and req.smtp_host) else ""
+    smtp_port = req.smtp_port if (req and req.smtp_port) else env_dict.get("SMTP_PORT", 587)
+    smtp_user = req.smtp_user if (req and req.smtp_user) else ""
+    smtp_pass = req.smtp_pass if (req and req.smtp_pass) else env_dict.get("SMTP_PASSWORD")
 
     if not smtp_server or not smtp_user or not smtp_pass:
-        raise HTTPException(status_code=404, detail="No system SMTP configured. Please save SMTP settings first.")
+        raise HTTPException(status_code=400, detail="SMTP Host, Username, and Password are required for testing.")
 
     import email_service
+    print(f"DEBUG test_smtp: req={req}, env_dict={env_dict}")
+    print(f"DEBUG test_smtp: USING server={smtp_server}, port={smtp_port}, user={smtp_user}, pass={smtp_pass}")
     result = email_service.verify_smtp_credentials(smtp_server, int(smtp_port), smtp_user, smtp_pass)
+    print(f"DEBUG test_smtp: result={result}")
     if result['status'] == 'success':
         return {"ok": True, "message": "System SMTP connection successful!"}
     else:

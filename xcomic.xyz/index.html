@@ -1020,10 +1020,16 @@
     }
     .problem-grid {
         display: grid;
-        grid-template-columns: repeat(3,1fr);
+        grid-template-columns: repeat(4, 1fr);
         gap: 24px;
-        max-width: 1000px;
+        max-width: 1200px;
         margin: 0 auto 48px;
+    }
+    @media (max-width: 1024px) {
+        .problem-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+        .problem-grid { grid-template-columns: 1fr; }
     }
     .problem-card {
         background: rgba(255,255,255,0.02);
@@ -1319,29 +1325,39 @@
     </div>
 
     <!-- ====== PROBLEM SECTION ====== -->
+    <!-- ====== PROBLEM SECTION ====== -->
     <div class="problem-section">
         <div class="problem-badge"><i class="fa-solid fa-triangle-exclamation"></i> The Problem</div>
-        <h2 class="problem-title">Cold email is broken.<br>Here's why yours isn't working.</h2>
+        <h2 class="problem-title">Email outreach &amp; bulk campaigns are broken.<br><span style="background:linear-gradient(135deg,#818cf8,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Here's why your emails aren't converting.</span></h2>
         <div class="problem-grid">
             <div class="problem-card">
+                <div style="display:inline-block;padding:3px 10px;border-radius:12px;background:rgba(239,68,68,0.12);color:#f87171;font-size:11px;font-weight:700;margin-bottom:12px;">BOTH WORKFLOWS</div>
                 <div class="problem-icon" style="color:#f87171;background:rgba(239,68,68,0.1)"><i class="fa-solid fa-inbox"></i></div>
                 <div class="problem-cname">Landing in Spam</div>
-                <div class="problem-cdesc">Your emails never reach the inbox. Deliverability is broken before you even start.</div>
+                <div class="problem-cdesc">Poor warm-up and spam triggers cause both your cold outreach &amp; newsletter blasts to land in the spam folder.</div>
             </div>
             <div class="problem-card">
+                <div style="display:inline-block;padding:3px 10px;border-radius:12px;background:rgba(99,102,241,0.12);color:#a5b4fc;font-size:11px;font-weight:700;margin-bottom:12px;">COLD OUTREACH</div>
                 <div class="problem-icon" style="color:#fb923c;background:rgba(249,115,22,0.1)"><i class="fa-solid fa-hourglass-half"></i></div>
                 <div class="problem-cname">Hours Wasted Sorting</div>
-                <div class="problem-cdesc">You spend half your day figuring out which reply is worth following up on. Time wasted = money lost.</div>
+                <div class="problem-cdesc">Manually reading and categorizing cold replies wastes hours daily. Time wasted equals missed sales deals.</div>
             </div>
             <div class="problem-card">
+                <div style="display:inline-block;padding:3px 10px;border-radius:12px;background:rgba(99,102,241,0.12);color:#a5b4fc;font-size:11px;font-weight:700;margin-bottom:12px;">COLD OUTREACH</div>
                 <div class="problem-icon" style="color:#facc15;background:rgba(234,179,8,0.1)"><i class="fa-solid fa-pen-to-square"></i></div>
-                <div class="problem-cname">Generic Follow-Ups</div>
-                <div class="problem-cdesc">Your follow-ups sound robotic. Leads can tell they're getting a template. They stop replying.</div>
+                <div class="problem-cname">Robotic Follow-Ups</div>
+                <div class="problem-cdesc">Generic email templates sound robotic. Prospects ignore cold follow-ups that lack AI context.</div>
+            </div>
+            <div class="problem-card">
+                <div style="display:inline-block;padding:3px 10px;border-radius:12px;background:rgba(16,185,129,0.12);color:#6ee7b7;font-size:11px;font-weight:700;margin-bottom:12px;">BULK CAMPAIGNS</div>
+                <div class="problem-icon" style="color:#e879f9;background:rgba(192,38,211,0.1)"><i class="fa-solid fa-flask-vial"></i></div>
+                <div class="problem-cname">No A/B Testing &amp; High Cost</div>
+                <div class="problem-cdesc">Bulk email platforms charge fortune prices as lists grow, while providing zero automated A/B test optimization.</div>
             </div>
         </div>
         <div class="problem-arrow">
             <i class="fa-solid fa-arrow-down" style="font-size:24px;color:#4f46e5;animation:bounce 1.5s infinite;"></i>
-            <p style="font-size:15px;color:#64748b;margin-top:8px;">XComic solves all of this.</p>
+            <p style="font-size:15px;color:#64748b;margin-top:8px;">XComic solves all of this for both Cold Outreach &amp; Bulk Campaigns.</p>
         </div>
     </div>
 

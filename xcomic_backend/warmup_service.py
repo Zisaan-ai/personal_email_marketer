@@ -210,7 +210,8 @@ def send_warmup_email(db, sender_acc, all_warmup_accounts):
         
         msg = MIMEMultipart("alternative")
         msg['Subject'] = subject
-        msg['From'] = f"{sender_acc.name or ''} <{sender_acc.smtp_username}>"
+        from email.utils import formataddr
+        msg['From'] = formataddr((sender_acc.name or '', sender_acc.smtp_username))
         msg['To'] = target_acc.email
         msg['Date'] = formatdate(localtime=True)
         msg[WARMUP_HEADER] = WARMUP_ID

@@ -1,3 +1,9 @@
+if (typeof window.customConfirm === 'undefined') {
+    window.customConfirm = async function(title, message) {
+        return confirm(title + '\n' + message);
+    };
+}
+
 const ACCOUNTS = {
     list: [],
     

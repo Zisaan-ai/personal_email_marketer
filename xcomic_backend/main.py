@@ -2129,17 +2129,15 @@ def _run_campaign(db, campaign_id):
 
     def get_available_account(db_session):
 
-        # SMART SELECTION: Health-based ordering, skip auto-paused, check sending window
-
+        # SMART SELECTION: Health-based ordering, then least sent today (ROUND ROBIN), skip auto-paused
         all_accounts = db_session.query(database.SendingAccount).filter(
-
             database.SendingAccount.is_active == True,
-
             database.SendingAccount.auto_paused == False,
-
             database.SendingAccount.user_id == campaign.user_id
-
-        ).order_by(database.SendingAccount.health_score.desc()).all()
+        ).order_by(
+            database.SendingAccount.health_score.desc(), 
+            database.SendingAccount.sent_today.asc()
+        ).all()
 
 
 

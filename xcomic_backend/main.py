@@ -363,7 +363,7 @@ app.add_middleware(
 
     CORSMiddleware,
 
-    allow_origins=["https://terapk.com", "https://www.terapk.com", "http://localhost", "http://127.0.0.1"],
+    allow_origins=["https://terapk.com", "https://www.terapk.com", "https://xcomic.xyz", "https://www.xcomic.xyz", "http://localhost", "http://127.0.0.1"],
 
     allow_credentials=True,
 

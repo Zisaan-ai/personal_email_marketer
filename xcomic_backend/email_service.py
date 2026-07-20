@@ -586,25 +586,27 @@ def send_verification_email(email: str, code: str):
         print(f"*** MOCK EMAIL: Verification code for {email} is {code} ***")
         return True
 
-    subject = "Action Required: Verify Your Email Address"
+    subject = "Your XComic Verification Code"
     body_html = f"""
-    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 40px 20px; max-width: 550px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
+    <div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 40px 20px; max-width: 550px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
         <div style="text-align: center; margin-bottom: 30px;">
-            <h2 style="color: #111827; font-size: 24px; font-weight: 700; margin: 0;">Verify Your Email Address</h2>
+            <h2 style="color: #6366f1; font-size: 28px; font-weight: 800; margin: 0; letter-spacing: -0.5px;">XComic</h2>
+            <p style="color: #6b7280; font-size: 14px; margin-top: 5px; font-weight: 500;">Secure Your Account</p>
         </div>
-        <p style="color: #4b5563; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
+        <p style="color: #374151; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
             Hello,<br><br>
-            Thank you for creating an account with us. To complete your registration and secure your account, please verify your email address by entering the 6-digit code below:
+            Thank you for joining <strong>XComic</strong>! To complete your registration and secure your account, please verify your email address by entering the 6-digit code below:
         </p>
-        <div style="background-color: #f3f4f6; padding: 20px; text-align: center; font-size: 32px; font-weight: 800; letter-spacing: 8px; color: #4f46e5; border-radius: 8px; margin: 30px 0;">
+        <div style="background-color: #f8fafc; padding: 24px; text-align: center; font-size: 36px; font-weight: 800; letter-spacing: 12px; color: #4f46e5; border-radius: 12px; margin: 30px 0; border: 2px dashed #e2e8f0;">
             {code}
         </div>
-        <p style="color: #4b5563; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
-            This verification code will expire soon. If you did not request this code, you can safely ignore this email.
+        <p style="color: #4b5563; font-size: 15px; line-height: 1.6; margin-bottom: 24px;">
+            This verification code is valid for a limited time. If you didn't request this code or didn't try to sign up for XComic, you can safely ignore and delete this email.
         </p>
         <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
-        <p style="color: #9ca3af; font-size: 13px; text-align: center; margin: 0;">
-            &copy; Email Marketer. All rights reserved.
+        <p style="color: #9ca3af; font-size: 12px; text-align: center; margin: 0; line-height: 1.5;">
+            &copy; XComic. All rights reserved.<br>
+            This is an automated message, please do not reply.
         </p>
     </div>
     """

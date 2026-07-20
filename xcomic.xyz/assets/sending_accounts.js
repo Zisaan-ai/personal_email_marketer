@@ -175,7 +175,7 @@ const ACCOUNTS = {
         document.getElementById('acc-id').value = '';
         document.getElementById('acc-modal-title').textContent = 'Add Sending Account';
         document.getElementById('save-account-btn').textContent = 'Connect Account';
-        ['acc-name','acc-email','acc-password','acc-smtp-server','acc-imap-server'].forEach(id => {
+        ['acc-name','acc-email','acc-password','acc-smtp-server','acc-imap-server','acc-smtp-username','acc-imap-password'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.value = '';
         });
@@ -187,7 +187,36 @@ const ACCOUNTS = {
         document.getElementById('acc-warmup-increment').value = '2';
         document.getElementById('acc-smart-warmup-enabled').checked = false;
         document.getElementById('manual-warmup-settings').style.display = 'grid';
+        
+        if (document.getElementById('acc-provider')) {
+            document.getElementById('acc-provider').value = 'google';
+            this.handleProviderChange();
+        }
+        
         document.getElementById('add-account-modal').style.display = 'flex';
+    },
+
+    handleProviderChange: function() {
+        const provider = document.getElementById('acc-provider').value;
+        const passNote = document.getElementById('password-note');
+        const passLabel = document.getElementById('acc-password-label');
+        const customSettings = document.getElementById('custom-smtp-settings');
+        
+        if (provider === 'google' || provider === 'microsoft') {
+            if (passNote) passNote.style.display = 'flex';
+            if (passLabel) passLabel.textContent = 'App Password (16-digit Google/Microsoft App Password)';
+            customSettings.style.display = 'none';
+        } else if (provider === 'brevo') {
+            if (passNote) passNote.style.display = 'none';
+            if (passLabel) passLabel.textContent = 'Brevo SMTP Master Password (or SMTP Key)';
+            customSettings.style.display = 'block';
+            document.getElementById('acc-smtp-server').value = 'smtp-relay.brevo.com';
+            document.getElementById('acc-smtp-port').value = '587';
+        } else if (provider === 'custom') {
+            if (passNote) passNote.style.display = 'none';
+            if (passLabel) passLabel.textContent = 'Main Password (or SMTP/IMAP Password)';
+            customSettings.style.display = 'block';
+        }
     },
 
     editAccount: function(id) {
@@ -213,12 +242,23 @@ const ACCOUNTS = {
         document.getElementById('acc-imap-server').value = acc.imap_server || '';
         document.getElementById('acc-imap-port').value = acc.imap_port || 993;
         
-        // Show custom fields if the host is not standard Gmail
-        if (acc.smtp_server && acc.smtp_server !== 'smtp.gmail.com') {
-            document.getElementById('custom-smtp-settings').style.display = 'block';
+        if (document.getElementById('acc-smtp-username')) document.getElementById('acc-smtp-username').value = (acc.smtp_username && acc.smtp_username !== acc.email) ? acc.smtp_username : '';
+        if (document.getElementById('acc-imap-password')) document.getElementById('acc-imap-password').value = '';
+        
+        // Determine Provider
+        if (acc.smtp_server === 'smtp-relay.brevo.com') {
+            document.getElementById('acc-provider').value = 'brevo';
+        } else if (acc.smtp_server === 'smtp.gmail.com') {
+            document.getElementById('acc-provider').value = 'google';
+        } else if (acc.smtp_server === 'smtp-mail.outlook.com') {
+            document.getElementById('acc-provider').value = 'microsoft';
+        } else if (acc.smtp_server && acc.smtp_server !== 'smtp.gmail.com') {
+            document.getElementById('acc-provider').value = 'custom';
         } else {
-            document.getElementById('custom-smtp-settings').style.display = 'none';
+            document.getElementById('acc-provider').value = 'google';
         }
+        
+        this.handleProviderChange();
         
         document.getElementById('add-account-modal').style.display = 'flex';
     },
@@ -264,17 +304,20 @@ const ACCOUNTS = {
             }
         }
         
+        const smtpUsernameInput = document.getElementById('acc-smtp-username')?.value.trim();
+        const imapPasswordInput = document.getElementById('acc-imap-password')?.value;
+        
         const payload = {
             name: document.getElementById('acc-name').value,
             email: email,
             smtp_server: smtpServer,
             smtp_port: smtpPort,
-            smtp_username: email,
+            smtp_username: smtpUsernameInput ? smtpUsernameInput : email,
             smtp_password: password,
             daily_limit: parseInt(document.getElementById('acc-daily-limit').value) || 500,
             imap_server: imapServer,
             imap_port: imapPort,
-            imap_password: password,
+            imap_password: imapPasswordInput ? imapPasswordInput.replace(/\s+/g, '') : password,
             warmup_daily_limit: parseInt(document.getElementById('acc-warmup-limit')?.value) || 5,
             warmup_increment_per_day: parseInt(document.getElementById('acc-warmup-increment')?.value) || 2,
             smart_warmup_enabled: document.getElementById('acc-smart-warmup-enabled')?.checked || false
@@ -314,7 +357,7 @@ const ACCOUNTS = {
             
             if(res.ok) {
                 document.getElementById('add-account-modal').style.display = 'none';
-                ['acc-name','acc-email','acc-password'].forEach(id => {
+                ['acc-name','acc-email','acc-password','acc-smtp-username','acc-imap-password'].forEach(id => {
                     const el = document.getElementById(id);
                     if (el) el.value = '';
                 });

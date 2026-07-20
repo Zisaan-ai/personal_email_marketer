@@ -4544,7 +4544,7 @@
 
                     
 
-                    <div style="background:rgba(234, 179, 8, 0.1); border:1px solid rgba(234, 179, 8, 0.2); padding:12px; border-radius:8px; margin-bottom:20px; display:flex; gap:12px; align-items:flex-start;">
+                    <div style="background:rgba(234, 179, 8, 0.1); border:1px solid rgba(234, 179, 8, 0.2); padding:12px; border-radius:8px; margin-bottom:20px; display:flex; gap:12px; align-items:flex-start;" id="password-note">
 
                         <i class="fa-solid fa-triangle-exclamation" style="color:#eab308; margin-top:2px;"></i>
 
@@ -4559,6 +4559,16 @@
                     
 
                     <input type="hidden" id="acc-id" value="">
+
+                    <div class="form-group">
+                        <label>Account Provider</label>
+                        <select id="acc-provider" style="width: 100%; padding: 13px 16px; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; font-size: 15px; color: #ffffff; font-family: 'Inter', sans-serif; transition: all 0.2s ease; margin-bottom: 20px; outline: none; appearance: auto;" onchange="ACCOUNTS.handleProviderChange()">
+                            <option value="google" style="color:#000;">Google Workspace / Gmail</option>
+                            <option value="microsoft" style="color:#000;">Microsoft 365 / Outlook</option>
+                            <option value="brevo" style="color:#000;">Brevo (Sendinblue)</option>
+                            <option value="custom" style="color:#000;">Custom SMTP/IMAP</option>
+                        </select>
+                    </div>
 
                     <div class="form-group">
 
@@ -4580,9 +4590,12 @@
 
                     <div class="form-group">
 
-                        <label>App Password (16-digit Google App Password)</label>
+                        <label id="acc-password-label">App Password (16-digit Google App Password)</label>
 
-                        <input type="password" id="acc-password" placeholder="••••••••••••••••" style="font-family: 'Courier New', Courier, monospace; letter-spacing: 4px; font-size: 18px; padding: 14px 16px; border: 2px solid var(--p); background: rgba(79, 70, 229, 0.05); color: var(--p); font-weight: bold; border-radius: 8px; outline: none; transition: all 0.3s ease;">
+                        <div style="position: relative; width: 100%;">
+                            <input type="password" id="acc-password" placeholder="••••••••••••••••" style="width: 100%; font-family: 'Courier New', Courier, monospace; letter-spacing: 4px; font-size: 18px; padding: 14px 45px 14px 16px; border: 2px solid var(--p); background: rgba(79, 70, 229, 0.05); color: var(--p); font-weight: bold; border-radius: 8px; outline: none; transition: all 0.3s ease;">
+                            <i class="fa-regular fa-eye" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); cursor: pointer; font-size: 18px; transition: color 0.2s;" onclick="const input = document.getElementById('acc-password'); if(input.type === 'password'){input.type='text'; this.classList.remove('fa-eye'); this.classList.add('fa-eye-slash'); this.style.color='var(--p)';}else{input.type='password'; this.classList.remove('fa-eye-slash'); this.classList.add('fa-eye'); this.style.color='var(--text-muted)';}"></i>
+                        </div>
 
                     </div>
 
@@ -4611,12 +4624,20 @@
                                 <input type="number" id="acc-smtp-port" placeholder="587" value="587">
                             </div>
                             <div class="form-group" style="margin-bottom:12px;">
+                                <label style="font-size:12px; color:var(--text-muted);">SMTP Username (Leave blank to use Email)</label>
+                                <input type="text" id="acc-smtp-username" placeholder="Usually your sender email">
+                            </div>
+                            <div class="form-group" style="margin-bottom:12px;">
                                 <label style="font-size:12px; color:var(--text-muted);">IMAP Server (Incoming Host)</label>
                                 <input type="text" id="acc-imap-server" placeholder="e.g. imap.zoho.com or mail.yourdomain.com">
                             </div>
-                            <div class="form-group" style="margin-bottom:0;">
+                            <div class="form-group" style="margin-bottom:12px;">
                                 <label style="font-size:12px; color:var(--text-muted);">IMAP Port</label>
                                 <input type="number" id="acc-imap-port" placeholder="993" value="993">
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label style="font-size:12px; color:var(--text-muted);">IMAP Password (Leave blank to use main Password)</label>
+                                <input type="password" id="acc-imap-password" placeholder="••••••••" style="width: 100%; padding: 13px 16px; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; font-size: 15px; color: #ffffff; font-family: 'Inter', sans-serif; box-sizing: border-box;">
                             </div>
                         </div>
                     </div>

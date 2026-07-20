@@ -586,15 +586,26 @@ def send_verification_email(email: str, code: str):
         print(f"*** MOCK EMAIL: Verification code for {email} is {code} ***")
         return True
 
-    subject = "Verify your account"
+    subject = "Action Required: Verify Your Email Address"
     body_html = f"""
-    <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 500px; margin: 0 auto; border: 1px solid #ddd; border-radius: 8px;">
-        <h2 style="color: #4F46E5; text-align: center;">Account Verification</h2>
-        <p>Thank you for registering. Please use the following 6-digit code to verify your email address:</p>
-        <div style="background: #F3F4F6; padding: 15px; text-align: center; font-size: 24px; font-weight: bold; letter-spacing: 5px; border-radius: 6px; margin: 20px 0;">
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 40px 20px; max-width: 550px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <h2 style="color: #111827; font-size: 24px; font-weight: 700; margin: 0;">Verify Your Email Address</h2>
+        </div>
+        <p style="color: #4b5563; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
+            Hello,<br><br>
+            Thank you for creating an account with us. To complete your registration and secure your account, please verify your email address by entering the 6-digit code below:
+        </p>
+        <div style="background-color: #f3f4f6; padding: 20px; text-align: center; font-size: 32px; font-weight: 800; letter-spacing: 8px; color: #4f46e5; border-radius: 8px; margin: 30px 0;">
             {code}
         </div>
-        <p>If you did not request this, please ignore this email.</p>
+        <p style="color: #4b5563; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
+            This verification code will expire soon. If you did not request this code, you can safely ignore this email.
+        </p>
+        <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
+        <p style="color: #9ca3af; font-size: 13px; text-align: center; margin: 0;">
+            &copy; Email Marketer. All rights reserved.
+        </p>
     </div>
     """
     return _send_system_email(subject, body_html, email)

@@ -55,7 +55,7 @@ const ACCOUNTS = {
             }
 
             // Health score with animated bar
-            const healthScore = acc.health_score ?? 100;
+            const healthScore = acc.health_score ?? 0;
             let healthColor, healthIcon;
             if (healthScore >= 90) {
                 healthColor = '#059669';
@@ -512,7 +512,7 @@ const ACCOUNTS = {
 
         // Health color
         let healthColor = '#059669';
-        const score = h.health_score || 100;
+        const score = h.health_score ?? 0;
         if (score < 50) healthColor = '#ef4444';
         else if (score < 70) healthColor = '#f97316';
         else if (score < 90) healthColor = '#f59e0b';

@@ -2542,190 +2542,14 @@ async function initOrUpdateChart(campaigns) {
 
 
     }
-
-
-
-
-
-
-
-    // --- Account Health Summary ---
-
-
-
-    try {
-
-
-
-        const healthRes = await apiCall('/account-health-all');
-
-
-
-        if (healthRes && healthRes.ok) {
-
-
-
-            const healthData = await healthRes.json();
-
-
-
-            const container = document.getElementById('dashboard-health-cards');
-
-
-
-            const wrapper = document.getElementById('dashboard-health-summary');
-
-
-
-            if (container && wrapper && healthData.length > 0) {
-
-
-
-                wrapper.style.display = 'block';
-
-
-
-                container.innerHTML = '';
-
-
-
-                healthData.forEach(h => {
-
-
-
-                    let color = '#059669';
-
-
-
-                    const score = h.health_score || 100;
-
-
-
-                    if (score < 50) color = '#ef4444';
-
-
-
-                    else if (score < 70) color = '#f97316';
-
-
-
-                    else if (score < 90) color = '#f59e0b';
-
-
-
-
-
-
-
-                    const autoPauseBanner = h.auto_paused 
-
-
-
-                        ? `<div style="background:#fef2f2;color:#dc2626;padding:6px 10px;border-radius:6px;font-size:11px;margin-top:8px;">⚠️ Auto-paused: ${h.auto_paused_reason || 'Poor health'}</div>` 
-
-
-
-                        : '';
-
-
-
-
-
-
-
-                    container.innerHTML += `
-
-
-
-                        <div style="background:#fff;padding:20px;border-radius:12px;border:1px solid rgba(0,0,0,0.06);box-shadow:0 2px 8px rgba(0,0,0,0.02);transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
-
-
-
-                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-
-
-
-                                <div style="font-weight:600;font-size:14px;color:var(--text);">${h.email || 'Unknown'}</div>
-
-
-
-                                <div style="font-size:20px;font-weight:800;color:${color};">${score}%</div>
-
-
-
-                            </div>
-
-
-
-                            <div style="width:100%;height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden;margin-bottom:8px;">
-
-
-
-                                <div style="width:${score}%;height:100%;background:${color};border-radius:3px;transition:width 0.8s ease;"></div>
-
-
-
-                            </div>
-
-
-
-                            <div style="display:flex;gap:12px;font-size:12px;color:var(--text-muted);">
-
-
-
-                                <span>📧 ${(h.metrics || {}).total_sent || 0} sent</span>
-
-
-
-                                <span>💥 ${(h.metrics || {}).bounce_rate || 0}% bounce</span>
-
-
-
-                                <span>📊 ${h.suggested_daily_limit || '-'}/day</span>
-
-
-
-                            </div>
-
-
-
-                            ${autoPauseBanner}
-
-
-
-                        </div>
-
-
-
-                    `;
-
-
-
-                });
-
-
-
-            }
-
-
-
-        }
-
-
-
-    } catch(e) {
-
-
-
-        console.warn('Health summary fetch error:', e);
-
-
-
-    }
-
-
-
 }
+
+
+
+
+
+
+
 
 
 
@@ -13884,5 +13708,71 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function() {
     const activePanel = document.querySelector('.feat-panel.active');
     if (activePanel) activePanel.style.opacity = '1';
+});
+
+// --- TIMEZONE SETTINGS ---
+document.addEventListener('DOMContentLoaded', async () => {
+    const tzSelect = document.getElementById('user-timezone');
+    const saveTzBtn = document.getElementById('save-timezone-btn');
+    const tzStatus = document.getElementById('timezone-status');
+    
+    if (tzSelect && saveTzBtn) {
+        // Populate options
+        try {
+            const timezones = Intl.supportedValuesOf('timeZone');
+            timezones.forEach(tz => {
+                const opt = document.createElement('option');
+                opt.value = tz;
+                opt.textContent = tz;
+                tzSelect.appendChild(opt);
+            });
+        } catch(e) {
+            console.error('Timezones not supported in this browser', e);
+        }
+        
+        // Fetch current timezone
+        try {
+            const res = await apiCall('/settings/timezone', 'GET');
+            const data = await res.json();
+            if (data.timezone) {
+                tzSelect.value = data.timezone;
+            }
+        } catch(e) {
+            console.error('Failed to load timezone', e);
+        }
+
+        // Initialize Choices.js
+        if (typeof Choices !== 'undefined') {
+            new Choices(tzSelect, {
+                searchEnabled: true,
+                itemSelectText: '',
+                shouldSort: false,
+                position: 'bottom'
+            });
+        }
+        
+        saveTzBtn.addEventListener('click', async () => {
+            const tz = tzSelect.value;
+            tzStatus.className = 'alert';
+            tzStatus.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="margin-right:8px;"></i>Saving...';
+            tzStatus.style.display = 'block';
+            
+            try {
+                const res = await apiCall('/settings/timezone', 'POST', { timezone: tz });
+                const data = await res.json();
+                if (data.ok) {
+                    tzStatus.className = 'alert success';
+                    tzStatus.innerHTML = '<i class="fa-solid fa-circle-check" style="margin-right:8px;"></i>' + data.message;
+                } else {
+                    tzStatus.className = 'alert error';
+                    tzStatus.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="margin-right:8px;"></i>' + (data.detail || 'Error saving timezone');
+                }
+            } catch(e) {
+                tzStatus.className = 'alert error';
+                tzStatus.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="margin-right:8px;"></i>Failed to save timezone';
+            }
+            setTimeout(() => { tzStatus.style.display = 'none'; }, 3000);
+        });
+    }
 });
 

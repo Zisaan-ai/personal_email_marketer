@@ -1912,11 +1912,11 @@
 
             </a>
 
-            <!-- <a class="nav-item" data-target="audience-health" onclick="window.navTo('audience-health')">
+            <a class="nav-item" data-target="audience-health" onclick="window.navTo('audience-health')">
 
                 <i class="fa-solid fa-heart-pulse"></i><span>Audience Health</span>
 
-            </a> -->
+            </a>
 
             <a class="nav-item" data-target="replies-view" onclick="window.navTo('replies-view')">
 
@@ -2294,7 +2294,21 @@
 
 
 
+            <!-- ACCOUNT HEALTH SUMMARY -->
 
+            <div id="dashboard-health-summary" style="margin-bottom:32px;display:none;">
+
+                <h3 style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 16px;">
+
+                    <i class="fa-solid fa-heart-pulse" style="color: #059669; margin-right: 8px;"></i>
+
+                    Account Health Overview
+
+                </h3>
+
+                <div id="dashboard-health-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;"></div>
+
+            </div>
 
         </div>
 
@@ -4398,6 +4412,7 @@
                 </div>
 
                 
+
                 <!-- WEBHOOK CONFIGURATION CARD -->
 
                 <div class="glass" style="padding:28px; border-radius:16px;">
@@ -4444,31 +4459,6 @@
 
 
 
-            </div>
-
-            <!-- TIMEZONE SETTINGS CARD -->
-            <div class="glass" style="padding:28px; border-radius:16px; margin-bottom:24px;">
-                <div style="display:flex; align-items:center; gap:12px; margin-bottom:24px; padding-bottom:20px; border-bottom:1px solid var(--border);">
-                    <div style="width:40px;height:40px;border-radius:10px;background:var(--primary-bg);display:flex;align-items:center;justify-content:center;color:var(--primary);">
-                        <i class="fa-solid fa-earth-americas" style="font-size:18px;"></i>
-                    </div>
-                    <div>
-                        <h2 style="font-size:18px; font-weight:700; margin:0; letter-spacing:-0.5px;">Timezone Configuration</h2>
-                        <p style="font-size:13px; color:var(--text-muted); margin:4px 0 0 0;">Set your local timezone for daily statistics reset and warmup scheduling.</p>
-                    </div>
-                </div>
-                
-                <div style="margin-bottom: 20px; position:relative;">
-                    <label for="user-timezone" style="display:block; font-size:14px; font-weight:600; margin-bottom:8px;">Your Timezone</label>
-                    <select id="user-timezone" style="width:100%; padding:14px 16px; border:2px solid var(--border); border-radius:12px; font-size:14px; outline:none; transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1); background:var(--bg); color:var(--text); appearance:none;">
-                        <!-- Options will be populated by JS -->
-                    </select>
-                </div>
-
-                <button id="save-timezone-btn" class="btn primary" style="width:100%; justify-content:center; padding:14px;">
-                    <i class="fa-solid fa-save" style="margin-right:8px;"></i>Save Timezone
-                </button>
-                <div id="timezone-status" class="alert" style="margin-top:16px;"></div>
             </div>
 
         </div>
@@ -5944,15 +5934,9 @@
         }
 
         function showForgot() {
+
             hide('form-login'); hide('form-signup'); hide('verify-box'); show('forgot-box');
-            var step1 = document.getElementById('forgot-step1');
-            var step2 = document.getElementById('forgot-step2');
-            if(step1) step1.classList.remove('hidden');
-            if(step2) step2.classList.add('hidden');
-            if(document.getElementById('forgot-email')) document.getElementById('forgot-email').value = '';
-            if(document.getElementById('reset-code')) document.getElementById('reset-code').value = '';
-            if(document.getElementById('new-pass')) document.getElementById('new-pass').value = '';
-            clearAlert('forgot-alert');
+
         }
 
 

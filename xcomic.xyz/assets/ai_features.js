@@ -236,7 +236,7 @@ window.setupAICopilot = function() {
 
     // Welcome message
     if (chatMessages && chatMessages.children.length === 0) {
-        appendMsg('assistant', 'Hi! I\'m your AI Copilot. 🚀\n\nI can help you:\n• Write cold emails & subject lines\n• Improve your email copy\n• Give campaign strategy advice\n• Generate personalized icebreakers\n\nWhat do you need?');
+        appendMsg('assistant', 'Hi! I\'m your AI Copilot. 👋\n\nI can help you:\n• Write cold & bulk emails & subject lines\n• Improve your email copy\n• Give campaign strategy advice\n• Generate personalized icebreakers\n\nWhat do you need?');
     }
 };
 

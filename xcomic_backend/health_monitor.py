@@ -36,10 +36,10 @@ def calculate_health_score(account) -> int:
     bounce_streak = account.bounce_streak or 0
 
     if total_sent == 0:
-        return 0  # New account, no data yet
+        return 0  # New account, starts at 0 health initially
 
-    # Base score grows with total_sent up to 100 (reaches 100 after 100 emails)
-    base_score = min(100, total_sent)
+    # Start at 100 as per the formula definition
+    base_score = 100
 
     # Bounce rate penalty (heaviest weight - up to 80 points)
     bounce_rate = total_bounced / total_sent
@@ -455,8 +455,8 @@ def get_health_report(db, account_id: str) -> dict:
     open_rate = (total_opened / total_sent * 100) if total_sent > 0 else 0
     reply_rate = (total_replied / total_sent * 100) if total_sent > 0 else 0
 
-    # Determine health status
-    health = account.health_score if account.health_score is not None else 0
+    # Determine health status dynamically to ensure consistency across the app
+    health = calculate_health_score(account)
     if health >= 95:
         status = "excellent"
         status_label = "Excellent 🟢"

@@ -5934,9 +5934,15 @@
         }
 
         function showForgot() {
-
             hide('form-login'); hide('form-signup'); hide('verify-box'); show('forgot-box');
-
+            var step1 = document.getElementById('forgot-step1');
+            var step2 = document.getElementById('forgot-step2');
+            if(step1) step1.classList.remove('hidden');
+            if(step2) step2.classList.add('hidden');
+            if(document.getElementById('forgot-email')) document.getElementById('forgot-email').value = '';
+            if(document.getElementById('reset-code')) document.getElementById('reset-code').value = '';
+            if(document.getElementById('new-pass')) document.getElementById('new-pass').value = '';
+            clearAlert('forgot-alert');
         }
 
 

@@ -1082,38 +1082,42 @@ def delete_user(user_id: str, current_user: database.User = Depends(auth.get_cur
 
         raise HTTPException(status_code=404, detail="User not found")
 
-    # Protect the owner account â€” can NEVER be deleted
+    # Protect the owner account — can NEVER be deleted
     if target_user.email == "zmonemrahman@gmail.com":
         raise HTTPException(status_code=403, detail="Owner account cannot be deleted")
 
-    # Delete Media
-    db.query(database.Media).filter(database.Media.user_id == user_id).delete()
-    
-    # Delete Webhooks
-    db.query(database.Webhook).filter(database.Webhook.user_id == user_id).delete()
-    
-    # Delete Support Tickets
-    db.query(database.SupportTicket).filter(database.SupportTicket.user_id == user_id).delete()
-    
-    # Delete campaigns and associated tracking
-    user_campaigns = db.query(database.Campaign).filter(database.Campaign.user_id == user_id).all()
-    for camp in user_campaigns:
-        db.query(database.CampaignLead).filter(database.CampaignLead.campaign_id == str(camp.id)).delete()
-        db.query(database.TrackingLog).filter(database.TrackingLog.campaign_id == str(camp.id)).delete()
-        db.query(database.BounceRecord).filter(database.BounceRecord.campaign_id == str(camp.id)).delete()
-        db.delete(camp)
+    try:
+        # Delete Media
+        db.query(database.Media).filter(database.Media.user_id == user_id).delete()
         
-    # Delete sending accounts and associated stats
-    user_accounts = db.query(database.SendingAccount).filter(database.SendingAccount.user_id == user_id).all()
-    for acc in user_accounts:
-        db.query(database.AccountDailyStats).filter(database.AccountDailyStats.account_id == str(acc.id)).delete()
-        db.query(database.ProviderReputation).filter(database.ProviderReputation.account_id == str(acc.id)).delete()
-        db.query(database.Reply).filter(database.Reply.account_id == str(acc.id)).delete()
-        db.query(database.SeedTestResult).filter(database.SeedTestResult.account_id == str(acc.id)).delete()
-        db.delete(acc)
+        # Delete Webhooks
+        db.query(database.Webhook).filter(database.Webhook.user_id == user_id).delete()
+        
+        # Delete Support Tickets
+        db.query(database.SupportTicket).filter(database.SupportTicket.user_id == user_id).delete()
+        
+        # Delete campaigns and associated tracking
+        user_campaigns = db.query(database.Campaign).filter(database.Campaign.user_id == user_id).all()
+        for camp in user_campaigns:
+            db.query(database.CampaignLead).filter(database.CampaignLead.campaign_id == str(camp.id)).delete()
+            db.query(database.TrackingLog).filter(database.TrackingLog.campaign_id == str(camp.id)).delete()
+            db.query(database.BounceRecord).filter(database.BounceRecord.campaign_id == str(camp.id)).delete()
+            db.delete(camp)
+            
+        # Delete sending accounts and associated stats
+        user_accounts = db.query(database.SendingAccount).filter(database.SendingAccount.user_id == user_id).all()
+        for acc in user_accounts:
+            db.query(database.AccountDailyStats).filter(database.AccountDailyStats.account_id == str(acc.id)).delete()
+            db.query(database.ProviderReputation).filter(database.ProviderReputation.account_id == str(acc.id)).delete()
+            db.query(database.Reply).filter(database.Reply.account_id == str(acc.id)).delete()
+            db.query(database.SeedTestResult).filter(database.SeedTestResult.account_id == str(acc.id)).delete()
+            db.delete(acc)
 
-    db.delete(target_user)
-    db.commit()
+        db.delete(target_user)
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Database error during deletion: {str(e)}")
 
     return {"message": "User deleted"}
 

@@ -379,10 +379,10 @@ def run_migrations():
         _safe_add_column("campaign_leads", "replied", "BOOLEAN", False)
 
         _safe_add_column("account_daily_stats", "provider_name", "VARCHAR", None)
+        _safe_add_column("support_tickets", "replies_json", "TEXT", "[]")
 
         print("[Migration] All migrations completed successfully.")
     except Exception as e:
         print(f"[Migration] Error: {e}")
 
-# run_migrations()
-
+run_migrations()

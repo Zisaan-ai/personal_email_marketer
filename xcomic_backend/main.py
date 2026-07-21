@@ -64,45 +64,25 @@ from datetime import datetime
 
 scheduler.add_job(warmup_service.run_warmup_cycle, 'interval', minutes=1, id='warmup_job', coalesce=True, max_instances=1, misfire_grace_time=60)
 
-scheduler.add_job(warmup_service.reset_daily_warmup_counts, 'cron', hour=18, minute=0, id='warmup_reset', timezone='UTC', coalesce=True, max_instances=1)
-
 scheduler.add_job(health_monitor.run_health_audit, 'interval', hours=2, id='health_audit_job', coalesce=True, max_instances=1)
 
 
 
 
 
-# Reset sent_today at midnight Bangladesh time (UTC+6 = UTC 18:00)
-
 def reset_daily_sent_counts():
-
-    """Resets sent_today for all sending accounts at midnight Bangladesh time (UTC+6)."""
-
+    """Runs auto_reset_daily_counts on a schedule."""
     db = database.SessionLocal()
-
     try:
-
-        from sqlalchemy import text
-
-        db.execute(text("UPDATE sending_accounts SET sent_today = 0"))
-
-        db.commit()
-
-        print("[Daily Reset] sent_today reset for all accounts (Bangladesh midnight).")
-
+        auto_reset_daily_counts(db)
     except Exception as e:
-
-        print(f"[Daily Reset] Error resetting sent_today: {e}")
-
-        db.rollback()
-
+        print(f"[Daily Reset] Error triggering dynamic reset: {e}")
     finally:
-
         db.close()
 
 
 
-scheduler.add_job(reset_daily_sent_counts, 'cron', hour=18, minute=0, id='daily_sent_reset', timezone='UTC')
+scheduler.add_job(reset_daily_sent_counts, 'interval', minutes=30, id='daily_sent_reset')
 
 
 
@@ -120,23 +100,53 @@ _BD_TZ = pytz.timezone("Asia/Dhaka")
 
 def auto_reset_daily_counts(db):
 
-    """Check if Bangladesh date changed; if so, reset sent_today for all accounts."""
+    """Check if the user's timezone date changed; if so, reset sent_today for their accounts."""
 
     try:
 
-        today_bd = datetime.now(_BD_TZ).strftime("%Y-%m-%d")
+        import pytz
 
         accounts = db.query(database.SendingAccount).all()
 
-        needs_reset = [a for a in accounts if (a.sent_today_date or "") != today_bd]
+        users = db.query(database.User).all()
+
+        user_tz_map = {u.id: u.timezone or "Asia/Dhaka" for u in users}
+
+
+
+        needs_reset = []
+
+        for acc in accounts:
+
+            tz_str = user_tz_map.get(acc.user_id, "Asia/Dhaka")
+
+            try:
+
+                tz = pytz.timezone(tz_str)
+
+            except pytz.UnknownTimeZoneError:
+
+                tz = pytz.timezone("Asia/Dhaka")
+
+            
+
+            today_local = datetime.now(pytz.utc).astimezone(tz).strftime("%Y-%m-%d")
+
+            
+
+            if (acc.sent_today_date or "") != today_local:
+
+                needs_reset.append((acc, today_local))
+
+
 
         if needs_reset:
 
-            for acc in needs_reset:
+            for acc, today_local in needs_reset:
 
                 acc.sent_today = 0
 
-                acc.sent_today_date = today_bd
+                acc.sent_today_date = today_local
 
                 # Reset warmup limits as well
 
@@ -160,7 +170,7 @@ def auto_reset_daily_counts(db):
 
             db.commit()
 
-            print(f"[Daily Reset] Reset sent_today for {len(needs_reset)} accounts (BD date: {today_bd})")
+            print(f"[Daily Reset] Reset sent_today for {len(needs_reset)} accounts based on local timezones.")
 
     except Exception as e:
 
@@ -377,6 +387,28 @@ app.add_middleware(
 
 
 
+# Error logging middleware for debugging
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import JSONResponse
+import traceback as _tb
+
+class ErrorLoggingMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        try:
+            response = await call_next(request)
+            return response
+        except Exception as exc:
+            err_msg = _tb.format_exc()
+            print(f"[FASTAPI ERROR] {request.url.path}: {err_msg}", flush=True)
+            try:
+                with open(os.path.join(os.path.dirname(__file__), 'fastapi_errors.log'), 'a') as f:
+                    f.write(f"\n[{datetime.now()}] {request.url.path}\n{err_msg}\n")
+            except:
+                pass
+            return JSONResponse(status_code=500, content={"detail": str(exc)})
+
+app.add_middleware(ErrorLoggingMiddleware)
+
 from bounce_processor import check_bounces
 
 
@@ -407,9 +439,7 @@ def trace(msg):
 
 def trigger_warmup_reset():
 
-    warmup_service.reset_daily_warmup_counts()
-
-    return {"status": "success", "message": "Warmup counts reset"}
+    return {"status": "success", "message": "Warmup counts are now reset automatically per user timezone"}
 
 
 
@@ -3776,6 +3806,12 @@ class DeepSeekKeyRequest(BaseModel):
 
 
 
+class TimezoneRequest(BaseModel):
+
+    timezone: str
+
+
+
 @app.get("/api/settings/all")
 
 def get_settings(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
@@ -3791,10 +3827,19 @@ def get_settings(current_user: database.User = Depends(auth.get_current_user), d
         "has_anthropic_api_key": bool(current_user.anthropic_api_key),
 
         "has_deepseek_api_key": bool(current_user.deepseek_api_key),
-
+        "timezone": current_user.timezone or "Asia/Dhaka",
     }
 
 
+@app.get("/api/settings/timezone")
+def get_timezone(current_user: database.User = Depends(auth.get_current_user)):
+    return {"timezone": current_user.timezone or "Asia/Dhaka"}
+
+@app.post("/api/settings/timezone")
+def save_timezone(req: TimezoneRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    current_user.timezone = req.timezone
+    db.commit()
+    return {"ok": True, "message": "Timezone updated successfully."}
 
 @app.post("/api/settings/verify_key")
 

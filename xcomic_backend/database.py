@@ -57,6 +57,7 @@ class User(Base):
     openai_api_key = Column(String, nullable=True)
     anthropic_api_key = Column(String, nullable=True)
     deepseek_api_key = Column(String, nullable=True)
+    timezone = Column(String, default="Asia/Dhaka")
 
 class Campaign(Base):
     __tablename__ = "campaigns"
@@ -294,22 +295,7 @@ class InactiveLeadList(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     tagged_at = Column(DateTime, default=datetime.utcnow)
 
-class SupportTicket(Base):
-    __tablename__ = "support_tickets"
-
-    id = Column(String, primary_key=True, default=generate_uuid)
-    user_id = Column(String, ForeignKey("users.id"), nullable=False)
-    subject = Column(String, nullable=False)
-    status = Column(String, default="Open")
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
-    # Store replies as a JSON string: [{"sender": "user/admin", "message": "...", "timestamp": "..."}]
-    replies_json = Column(Text, default="[]")
-
-    user = relationship("User")
-
-Base.metadata.create_all(bind=engine)
+# Base.metadata.create_all(bind=engine)
 
 # --- Safe Migration for existing SQLite databases ---
 def _safe_add_column(table_name: str, column_name: str, column_type: str, default=None):
@@ -351,6 +337,10 @@ def run_migrations():
         _safe_add_column("sending_accounts", "send_window_start", "INTEGER", 0)
         _safe_add_column("sending_accounts", "send_window_end", "INTEGER", 24)
         _safe_add_column("sending_accounts", "send_window_timezone", "VARCHAR", "UTC")
+        
+        # New: timezone for User
+        _safe_add_column("users", "timezone", "VARCHAR", "'Asia/Dhaka'")
+
         _safe_add_column("sending_accounts", "custom_tracking_domain", "VARCHAR", None)
         _safe_add_column("replies", "message_id", "VARCHAR", None)
         _safe_add_column("sending_accounts", "sent_today_date", "VARCHAR", None)
@@ -379,10 +369,10 @@ def run_migrations():
         _safe_add_column("campaign_leads", "replied", "BOOLEAN", False)
 
         _safe_add_column("account_daily_stats", "provider_name", "VARCHAR", None)
-        _safe_add_column("support_tickets", "replies_json", "TEXT", "[]")
 
         print("[Migration] All migrations completed successfully.")
     except Exception as e:
         print(f"[Migration] Error: {e}")
 
 run_migrations()
+

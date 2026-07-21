@@ -19,6 +19,8 @@ class SafeStream:
 
 import sys
 import os
+import traceback
+import datetime
 
 sys.stdout = SafeStream(sys.stdout)
 sys.stderr = SafeStream(sys.stderr)
@@ -26,26 +28,56 @@ sys.stderr = SafeStream(sys.stderr)
 # Set up the path to your FastAPI app directory
 sys.path.insert(0, os.path.dirname(__file__))
 
+LOG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'wsgi_debug.log')
+
+def log_debug(msg):
+    try:
+        with open(LOG_FILE, 'a') as f:
+            f.write(f"[{datetime.datetime.now()}] {msg}\n")
+    except:
+        pass
+
 wsgi_app = None
 
 def application(environ, start_response):
     global wsgi_app
-    if wsgi_app is None:
-        # Import and instantiate lazily INSIDE the worker process post-fork
-        from main import app as fastapi_app
-        from a2wsgi import ASGIMiddleware
-        wsgi_app = ASGIMiddleware(fastapi_app)
-
+    
+    path = environ.get('PATH_INFO', '')
+    method = environ.get('REQUEST_METHOD', '')
+    
     try:
+        if wsgi_app is None:
+            log_debug("Initializing WSGI app...")
+            from main import app as fastapi_app
+            from a2wsgi import ASGIMiddleware
+            wsgi_app = ASGIMiddleware(fastapi_app)
+            log_debug("WSGI app initialized successfully")
+
         # LiteSpeed strips '/api' from PATH_INFO. We need to add it back for FastAPI.
-        path = environ.get('PATH_INFO', '')
         if not path.startswith('/api'):
             environ['PATH_INFO'] = '/api' + path
 
-        return wsgi_app(environ, start_response)
+        # Log POST requests to auth/token for debugging
+        if 'auth/token' in path and method == 'POST':
+            log_debug(f"LOGIN REQUEST: {path} | Content-Type: {environ.get('CONTENT_TYPE', 'N/A')} | Content-Length: {environ.get('CONTENT_LENGTH', 'N/A')}")
+            
+            # Read and re-wrap the input for debugging
+            try:
+                content_length = int(environ.get('CONTENT_LENGTH', 0))
+                body = environ['wsgi.input'].read(content_length)
+                log_debug(f"LOGIN BODY: {body[:500]}")
+                # Re-wrap for consumption by ASGI
+                import io
+                environ['wsgi.input'] = io.BytesIO(body)
+            except Exception as be:
+                log_debug(f"BODY READ ERROR: {be}")
+
+        result = wsgi_app(environ, start_response)
+        return result
 
     except Exception as e:
-        import traceback
         err = traceback.format_exc()
+        log_debug(f"WSGI ERROR on {method} {path}: {err}")
+        sys.stderr.write(f"\n[PASSENGER ERROR] {err}\n")
         start_response('500 Internal Server Error', [('Content-Type', 'text/plain')])
         return [err.encode('utf-8')]

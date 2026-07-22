@@ -10306,18 +10306,26 @@ viewTicket: async function(ticketId) {
                     }
                 }
 
+                // Hide or show reply box depending on status
+                let replyBox = document.getElementById('support-reply-box');
+                if (replyBox) {
+                    replyBox.style.display = (data.status === 'resolved') ? 'none' : 'block';
+                }
+
                 let chatContainer = document.getElementById('support-replies-container');
                 let chatHtml = '';
                 
                 data.messages.forEach(m => {
-                    let bg = m.is_admin ? '#e0e7ff' : '#fff';
-                    let align = m.is_admin ? 'flex-start' : 'flex-end';
-                    let name = m.is_admin ? 'Support Team' : 'You';
+                    let isAdminMsg = m.is_admin;
+                    let bg = isAdminMsg ? 'var(--card-bg, #e0e7ff)' : 'var(--bg-secondary, #f1f5f9)';
+                    let border = isAdminMsg ? '1px solid #6366f1' : '1px solid var(--border)';
+                    let align = isAdminMsg ? 'flex-start' : 'flex-end';
+                    let name = isAdminMsg ? '<i class="fa-solid fa-headset" style="color:#6366f1"></i> Support Team' : '<i class="fa-solid fa-user"></i> You';
                     
                     chatHtml += `
-                    <div style="display:flex; flex-direction:column; align-items:${align};">
-                        <div style="font-size:11px; color:#64748b; margin-bottom:4px;">${name} &bull; ${new Date(m.created_at).toLocaleString()}</div>
-                        <div style="background:${bg}; padding:12px 16px; border-radius:12px; box-shadow:0 1px 2px rgba(0,0,0,0.05); max-width:80%; font-size:14px; color:#1e293b; white-space:pre-wrap;">${m.message}</div>
+                    <div style="display:flex; flex-direction:column; align-items:${align}; margin-bottom:12px;">
+                        <div style="font-size:11px; color:var(--text-muted,#64748b); margin-bottom:4px;">${name} &bull; ${new Date(m.created_at).toLocaleString()}</div>
+                        <div style="background:${bg}; border:${border}; padding:12px 16px; border-radius:12px; max-width:80%; font-size:14px; color:var(--text-primary,#1e293b); white-space:pre-wrap;">${m.message}</div>
                     </div>`;
                 });
                 
@@ -10352,9 +10360,12 @@ viewTicket: async function(ticketId) {
             });
             if (res.ok) {
                 message.value = '';
-                // Reload ticket chat and ticket list
+                // Reload ticket chat
                 SUPPORT.viewTicket(ticketId);
+                // Refresh ticket lists for both user and admin
                 SUPPORT.loadSupportTickets();
+                SUPPORT.loadAdminTickets();
+                SUPPORT.checkUnreadTickets();
             } else {
                 alert('Failed to send reply.');
             }
@@ -10378,6 +10389,7 @@ viewTicket: async function(ticketId) {
             if (res.ok) {
                 SUPPORT.viewTicket(ticketId);
                 SUPPORT.loadAdminTickets();
+                SUPPORT.loadSupportTickets();
                 SUPPORT.checkUnreadTickets();
             } else { alert('Failed to resolve ticket.'); }
         } catch(e) { alert('Error resolving ticket.'); }

@@ -10279,7 +10279,7 @@ viewTicket: async function(ticketId) {
             if (res.ok) {
                 let data = await res.json();
                 let currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-                let isAdmin = currentUser.is_admin === true;
+                let isAdmin = currentUser.is_admin === true || localStorage.getItem('is_admin') === 'true';
                 document.getElementById('support-active-ticket-id').value = ticketId;
                 let statusColor = data.status === 'resolved' ? '#10b981' : (data.status === 'Admin Reply' ? '#10b981' : '#3b82f6');
                 document.getElementById('support-view-title').innerHTML = '<i class="fa-solid fa-comments"></i> ' + data.subject + ' <span style="font-size:12px;color:' + statusColor + ';margin-left:8px;text-transform:capitalize;font-weight:600;">(' + data.status + ')</span>';
@@ -10413,8 +10413,9 @@ viewTicket: async function(ticketId) {
     checkUnreadTickets: async function() {
         try {
             let currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+            let isAdminUser = currentUser.is_admin === true || localStorage.getItem('is_admin') === 'true';
 
-            if (currentUser.is_admin) {
+            if (isAdminUser) {
                 // ADMIN: check tickets with "User Reply" status
                 let res = await fetch('/api/admin/tickets/unread-count', {
                     headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }

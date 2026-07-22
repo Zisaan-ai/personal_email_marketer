@@ -421,11 +421,11 @@ async function apiCall(endpoint, method = 'GET', body = null) {
 
 
 
-        var appPage = document.getElementById('app-page');
+        var authPage = document.getElementById('auth-page');
 
 
 
-        if (appPage && appPage.classList.contains('on')) {
+        if (authPage && authPage.classList.contains('hidden')) {
 
 
 
@@ -1726,30 +1726,15 @@ async function fetchDashboard() {
 
 
         const cRes = await apiCall('/campaigns');
-
-
-
+        const bulkRes = await apiCall('/bulk-campaigns');
         if (cRes && cRes.ok) {
-
-
-
             campaigns = await cRes.json();
-
-
-
-            if (!Array.isArray(campaigns)) campaigns = [];
-
-
-
-        } else {
-
-
-
-            console.warn('Campaigns API returned status:', cRes ? cRes.status : 'no response');
-
-
-
+            window.lastFetchedCampaigns = campaigns;
         }
+        if (bulkRes && bulkRes.ok) {
+            window.lastFetchedBulkCampaigns = await bulkRes.json();
+        }
+        if (!Array.isArray(campaigns)) campaigns = [];
 
 
 
@@ -2542,14 +2527,190 @@ async function initOrUpdateChart(campaigns) {
 
 
     }
+
+
+
+
+
+
+
+    // --- Account Health Summary ---
+
+
+
+    try {
+
+
+
+        const healthRes = await apiCall('/account-health-all');
+
+
+
+        if (healthRes && healthRes.ok) {
+
+
+
+            const healthData = await healthRes.json();
+
+
+
+            const container = document.getElementById('dashboard-health-cards');
+
+
+
+            const wrapper = document.getElementById('dashboard-health-summary');
+
+
+
+            if (container && wrapper && healthData.length > 0) {
+
+
+
+                wrapper.style.display = 'block';
+
+
+
+                container.innerHTML = '';
+
+
+
+                healthData.forEach(h => {
+
+
+
+                    let color = '#059669';
+
+
+
+                    const score = h.health_score || 100;
+
+
+
+                    if (score < 50) color = '#ef4444';
+
+
+
+                    else if (score < 70) color = '#f97316';
+
+
+
+                    else if (score < 90) color = '#f59e0b';
+
+
+
+
+
+
+
+                    const autoPauseBanner = h.auto_paused 
+
+
+
+                        ? `<div style="background:#fef2f2;color:#dc2626;padding:6px 10px;border-radius:6px;font-size:11px;margin-top:8px;">⚠️ Auto-paused: ${h.auto_paused_reason || 'Poor health'}</div>` 
+
+
+
+                        : '';
+
+
+
+
+
+
+
+                    container.innerHTML += `
+
+
+
+                        <div style="background:#fff;padding:20px;border-radius:12px;border:1px solid rgba(0,0,0,0.06);box-shadow:0 2px 8px rgba(0,0,0,0.02);transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+
+
+
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+
+
+
+                                <div style="font-weight:600;font-size:14px;color:var(--text);">${h.email || 'Unknown'}</div>
+
+
+
+                                <div style="font-size:20px;font-weight:800;color:${color};">${score}%</div>
+
+
+
+                            </div>
+
+
+
+                            <div style="width:100%;height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden;margin-bottom:8px;">
+
+
+
+                                <div style="width:${score}%;height:100%;background:${color};border-radius:3px;transition:width 0.8s ease;"></div>
+
+
+
+                            </div>
+
+
+
+                            <div style="display:flex;gap:12px;font-size:12px;color:var(--text-muted);">
+
+
+
+                                <span>📧 ${(h.metrics || {}).total_sent || 0} sent</span>
+
+
+
+                                <span>💥 ${(h.metrics || {}).bounce_rate || 0}% bounce</span>
+
+
+
+                                <span>📊 ${h.suggested_daily_limit || '-'}/day</span>
+
+
+
+                            </div>
+
+
+
+                            ${autoPauseBanner}
+
+
+
+                        </div>
+
+
+
+                    `;
+
+
+
+                });
+
+
+
+            }
+
+
+
+        }
+
+
+
+    } catch(e) {
+
+
+
+        console.warn('Health summary fetch error:', e);
+
+
+
+    }
+
+
+
 }
-
-
-
-
-
-
-
 
 
 
@@ -4897,19 +5058,6 @@ async function loadSmtpStatus() {
             if (data.has_account) {
                 statusEl.innerHTML = `✅ <strong>Saved Account:</strong> ${data.email} &nbsp;|&nbsp; Host: ${data.smtp_host}:${data.smtp_port} &nbsp;|&nbsp; Name: ${data.from_name || '-'}`;
                 statusEl.style.cssText = 'display:block; margin-top:20px; padding:14px 18px; border-radius:10px; background:#f0fdf4; color:#16a34a; border:1px solid #bbf7d0; font-size:14px;';
-                
-                // Pre-populate the form fields
-                const hostInput = document.getElementById('smtp-host');
-                if (hostInput) hostInput.value = data.smtp_host || '';
-                
-                const portInput = document.getElementById('smtp-port');
-                if (portInput) portInput.value = data.smtp_port || 587;
-                
-                const userInput = document.getElementById('smtp-user');
-                if (userInput) userInput.value = data.email || '';
-                
-                const fromNameInput = document.getElementById('smtp-from-name');
-                if (fromNameInput) fromNameInput.value = data.from_name || '';
             } else {
                 statusEl.textContent = '⚠️ No email account saved yet. Fill the form below and click Save Changes.';
                 statusEl.style.cssText = 'display:block; margin-top:20px; padding:14px 18px; border-radius:10px; background:#fffbeb; color:#b45309; border:1px solid #fcd34d; font-size:14px;';
@@ -4932,19 +5080,6 @@ function setupSettings() {
                     statusEl.innerHTML = `✅ <strong>Saved Account:</strong> ${data.email} &nbsp;|&nbsp; Host: ${data.smtp_host}:${data.smtp_port} &nbsp;|&nbsp; Name: ${data.from_name || '-'}`;
                     statusEl.className = 'alert success';
                     statusEl.style.display = 'block';
-                    
-                    // Pre-populate the form fields
-                    const hostInput = document.getElementById('smtp-host');
-                    if (hostInput) hostInput.value = data.smtp_host || '';
-                    
-                    const portInput = document.getElementById('smtp-port');
-                    if (portInput) portInput.value = data.smtp_port || 587;
-                    
-                    const userInput = document.getElementById('smtp-user');
-                    if (userInput) userInput.value = data.email || '';
-                    
-                    const fromNameInput = document.getElementById('smtp-from-name');
-                    if (fromNameInput) fromNameInput.value = data.from_name || '';
                 } else {
                     statusEl.textContent = '⚠️ No email account saved yet. Fill the form below and click Save Changes.';
                     statusEl.className = 'alert warning';
@@ -5030,9 +5165,14 @@ function setupSettings() {
 
 
 
-                    statusEl.style.cssText = '';
                     statusEl.textContent = res.ok ? 'Settings saved!' : (data.detail || 'Error');
+
+
+
                     statusEl.className = res.ok ? 'alert success' : 'alert error';
+
+
+
                     statusEl.style.display = 'block';
 
 
@@ -5078,16 +5218,8 @@ function setupSettings() {
 
 
             try {
-                const body = {
-                    smtp_host: document.getElementById('smtp-host').value,
-                    smtp_port: parseInt(document.getElementById('smtp-port').value) || 587,
-                    smtp_user: document.getElementById('smtp-user').value,
-                    smtp_pass: document.getElementById('smtp-pass').value
-                };
-                const res = await apiCall('/settings/test-smtp', 'POST', body);
-                
-                const statusEl = document.getElementById('smtp-status');
-                if (statusEl) statusEl.style.display = 'none';
+
+                const res = await apiCall('/settings/test-smtp', 'POST');
                 const data = await res.json();
 
                 if (res.ok) {
@@ -10040,6 +10172,186 @@ async function checkPendingApprovals() {
 
 
 
+window.SUPPORT = {
+    showCreateModal: function() {
+        var m = document.getElementById('support-create-modal');
+        if (m) m.style.display = 'flex';
+    },
+    createTicket: async function(btn) {
+        var subject = document.getElementById('support-subject');
+        var message = document.getElementById('support-message');
+        if (!subject.value.trim() || !message.value.trim()) {
+            alert('Please enter a subject and message.');
+            return;
+        }
+        var origText = btn.innerHTML;
+        btn.innerHTML = 'Submitting...';
+        btn.disabled = true;
+        
+        try {
+            let res = await fetch('/api/support/tickets', {
+                method: 'POST',
+                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token'), 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    subject: subject.value.trim(),
+                    message: message.value.trim()
+                })
+            });
+            if (res.ok) {
+                document.getElementById('support-create-modal').style.display = 'none';
+                subject.value = '';
+                message.value = '';
+                SUPPORT.loadSupportTickets();
+                alert('Ticket created successfully.');
+            } else {
+                let err = await res.json();
+                alert('Failed to create ticket: ' + (err.detail || 'Unknown error'));
+            }
+        } catch (e) {
+            console.error(e);
+            alert('An error occurred.');
+        } finally {
+            btn.innerHTML = origText;
+            btn.disabled = false;
+        }
+    },
+    
+    loadSupportTickets: async function() {
+        try {
+            let res = await fetch('/api/support/tickets', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
+            if (res.ok) {
+                let data = await res.json();
+                let tbody = document.getElementById('user-tickets-body');
+                let userHtml = '';
+                
+                data.tickets.forEach(t => {
+                    let statusColor = t.status === 'open' ? '#3b82f6' : (t.status === 'answered' ? '#10b981' : '#64748b');
+                    let dt = new Date(t.updated_at).toLocaleString();
+                    
+                    userHtml += `<tr>
+                        <td>${t.subject}</td>
+                        <td><span style="color:${statusColor}; font-weight:600; text-transform:capitalize;">${t.status}</span></td>
+                        <td>${dt}</td>
+                        <td><button class="btn" onclick="SUPPORT.viewTicket('${t.id}')">View</button></td>
+                    </tr>`;
+                });
+                if (tbody) tbody.innerHTML = userHtml || '<tr><td colspan="4">No tickets found.</td></tr>';
+            }
+        } catch (e) {
+            console.error('Failed to load user tickets', e);
+        }
+    },
+    loadAdminTickets: async function() {
+        try {
+            let res = await fetch('/api/admin/tickets', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
+            if (res.ok) {
+                let data = await res.json();
+                let adminBody = document.getElementById('admin-all-tickets-body');
+                let adminHtml = '';
+                
+                data.tickets.forEach(t => {
+                    let statusColor = t.status === 'open' ? '#3b82f6' : (t.status === 'answered' ? '#10b981' : '#64748b');
+                    let dt = new Date(t.updated_at).toLocaleString();
+                    
+                    adminHtml += `<tr>
+                        <td>${t.user_email}</td>
+                        <td>${t.subject}</td>
+                        <td><span style="color:${statusColor}; font-weight:600; text-transform:capitalize;">${t.status}</span></td>
+                        <td><button class="btn" onclick="SUPPORT.viewTicket('${t.id}')">View & Reply</button></td>
+                    </tr>`;
+                });
+                if (adminBody) adminBody.innerHTML = adminHtml || '<tr><td colspan="4">No tickets found.</td></tr>';
+            }
+        } catch (e) {
+            console.error('Failed to load admin tickets', e);
+        }
+    },
+viewTicket: async function(ticketId) {
+        try {
+            let res = await fetch('/api/support/tickets/' + ticketId, { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
+            if (res.ok) {
+                let data = await res.json();
+                document.getElementById('support-active-ticket-id').value = ticketId;
+                document.getElementById('support-view-title').innerHTML = '<i class="fa-solid fa-comments"></i> ' + data.subject + ' <span style="font-size:12px;color:#64748b;margin-left:8px;text-transform:capitalize;">(' + data.status + ')</span>';
+                
+                let chatContainer = document.getElementById('support-replies-container');
+                let chatHtml = '';
+                
+                data.messages.forEach(m => {
+                    let bg = m.is_admin ? '#e0e7ff' : '#fff';
+                    let align = m.is_admin ? 'flex-start' : 'flex-end';
+                    let name = m.is_admin ? 'Support Team' : 'You';
+                    
+                    chatHtml += `
+                    <div style="display:flex; flex-direction:column; align-items:${align};">
+                        <div style="font-size:11px; color:#64748b; margin-bottom:4px;">${name} &bull; ${new Date(m.created_at).toLocaleString()}</div>
+                        <div style="background:${bg}; padding:12px 16px; border-radius:12px; box-shadow:0 1px 2px rgba(0,0,0,0.05); max-width:80%; font-size:14px; color:#1e293b; white-space:pre-wrap;">${m.message}</div>
+                    </div>`;
+                });
+                
+                chatContainer.innerHTML = chatHtml;
+                document.getElementById('support-view-modal').style.display = 'flex';
+                // scroll to bottom
+                setTimeout(() => { chatContainer.scrollTop = chatContainer.scrollHeight; }, 100);
+            } else {
+                alert('Failed to load ticket details.');
+            }
+        } catch (e) {
+            console.error('Error viewing ticket', e);
+            alert('An error occurred loading the ticket.');
+        }
+    },
+    replyToTicket: async function(btn) {
+        var message = document.getElementById('support-reply-message');
+        var ticketId = document.getElementById('support-active-ticket-id').value;
+        if (!message.value.trim() || !ticketId) {
+            alert('Please enter a reply.');
+            return;
+        }
+        var origText = btn.innerHTML;
+        btn.innerHTML = 'Sending...';
+        btn.disabled = true;
+        
+        try {
+            let res = await fetch('/api/support/tickets/' + ticketId + '/reply', {
+                method: 'POST',
+                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token'), 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: message.value.trim() })
+            });
+            if (res.ok) {
+                message.value = '';
+                // Reload ticket chat and ticket list
+                SUPPORT.viewTicket(ticketId);
+                SUPPORT.loadSupportTickets();
+            } else {
+                alert('Failed to send reply.');
+            }
+        } catch(e) {
+            console.error(e);
+            alert('An error occurred.');
+        } finally {
+            btn.innerHTML = origText;
+            btn.disabled = false;
+        }
+    },
+    switchAdminTab: function(tab) {
+        document.querySelectorAll('.admin-tab').forEach(t => {
+            t.classList.remove('active');
+            t.style.color = 'var(--text-muted)';
+            t.style.borderBottomColor = 'transparent';
+        });
+        document.querySelectorAll('.admin-section').forEach(s => s.style.display = 'none');
+        var btn = document.getElementById('tab-btn-' + tab);
+        if(btn) {
+            btn.classList.add('active');
+            btn.style.color = 'var(--primary)';
+            btn.style.borderBottomColor = 'var(--primary)';
+        }
+        var sec = document.getElementById('admin-section-' + tab);
+        if(sec) sec.style.display = 'block';
+    }
+};
+
 function setupAdmin() {
 
 
@@ -10930,7 +11242,7 @@ async function renderNewsletterList() {
 
 
 
-    const campaigns = (window.lastFetchedCampaigns || []).filter(c => c.type !== 'cold_mail');
+    const campaigns = window.lastFetchedBulkCampaigns || [];
 
 
 
@@ -10982,7 +11294,7 @@ async function renderNewsletterList() {
 
 
 
-            <td><div style="font-weight:600;color:var(--text);">${c.subject || 'Untitled'}</div></td>
+            <td><div style="font-weight:600;color:var(--text);">${c.name || 'Untitled'}</div></td>
 
 
 
@@ -12824,37 +13136,45 @@ window.saveNewsletterSchedule = async function() {
 
             const draftPayload = {
 
-                subject: (subEl ? subEl.value : '') || 'Untitled Newsletter',
+                name: (subEl ? subEl.value : '') || 'Untitled Newsletter',
 
-                body: '',
+                html_content: editor ? editor.exportHtml() : '',
 
-                type: 'newsletter',
+                design_json: editor ? JSON.stringify(editor.exportDesign()) : '',
 
                 leads: [],
 
-                is_draft: true,
-
-                sending_days: payload.sending_days,
-
-                start_hour: payload.start_hour,
-
-                end_hour: payload.end_hour,
-
-                timezone: payload.timezone,
-
-                delay_min: payload.delay_min,
-
-                delay_max: payload.delay_max
+                is_draft: false
 
             };
 
+
+
+            const leadsText = (document.getElementById('newsletter-leads') || {}).value || '';
+
+            leadsText.split('\n').map(l => l.trim()).filter(l => l).forEach(line => {
+
+                const parts = line.split(',').map(p => p.trim());
+                draftPayload.leads.push({ email: parts[0], name: parts[1] || '', company: parts[2] || '' });
+            });
+
+
+
             if (window.getSelectedSenderIds) {
 
-                draftPayload.selected_sender_ids = window.getSelectedSenderIds('vb-sender-accounts-list');
+                const sendingIds = window.getSelectedSenderIds('vb-sender-accounts-list');
+
+                if (sendingIds) {
+
+                    draftPayload.sending_account_ids = JSON.stringify(sendingIds);
+
+                }
 
             }
 
-            const draftRes = await apiCall('/campaigns/send', 'POST', draftPayload);
+
+
+            const draftRes = await apiCall('/bulk-campaigns', 'POST', draftPayload);
 
             if (draftRes && draftRes.ok) {
 
@@ -13327,452 +13647,4 @@ window.filterAccounts = function(input, containerId) {
     });
 
 };
-
-
-
-// ============================================================
-// SUPPORT TICKETS (CLIENT & ADMIN)
-// ============================================================
-const SUPPORT = {
-    tickets: [],
-    adminTickets: [],
-    
-    async updateBadges() {
-        if (!localStorage.getItem('token')) return;
-        try {
-            const isAdmin = localStorage.getItem('is_admin') === 'true';
-            let hasUnread = false;
-            
-            if (isAdmin) {
-                const res = await apiCall('/admin/tickets', 'GET');
-                if (res.ok) {
-                    const tickets = await res.json();
-                    hasUnread = tickets.some(t => t.status === 'Open');
-                    
-                    const adminNav = document.querySelector('a[data-target="admin-view"]');
-                    if (adminNav) {
-                        let badge = adminNav.querySelector('.support-badge');
-                        if (hasUnread) {
-                            if (!badge) adminNav.innerHTML += '<span class="support-badge" style="background:#ef4444; border-radius:50%; width:8px; height:8px; margin-left:auto; display:inline-block; box-shadow: 0 0 6px #ef4444;"></span>';
-                        } else {
-                            if (badge) badge.remove();
-                        }
-                    }
-                    const tabBtn = document.getElementById('tab-btn-tickets');
-                    if (tabBtn) {
-                        let badge = tabBtn.querySelector('.support-badge');
-                        if (hasUnread) {
-                            if (!badge) tabBtn.innerHTML += '<span class="support-badge" style="background:#ef4444; border-radius:50%; width:8px; height:8px; margin-left:8px; display:inline-block; vertical-align:middle; box-shadow: 0 0 6px #ef4444;"></span>';
-                        } else {
-                            if (badge) badge.remove();
-                        }
-                    }
-                }
-            } else {
-                const res = await apiCall('/tickets', 'GET');
-                if (res.ok) {
-                    const tickets = await res.json();
-                    hasUnread = tickets.some(t => t.status === 'Replied');
-                    
-                    const supportNav = document.querySelector('a[data-target="support-view"]');
-                    if (supportNav) {
-                        let badge = supportNav.querySelector('.support-badge');
-                        if (hasUnread) {
-                            if (!badge) supportNav.innerHTML += '<span class="support-badge" style="background:#ef4444; border-radius:50%; width:8px; height:8px; margin-left:auto; display:inline-block; box-shadow: 0 0 6px #ef4444;"></span>';
-                        } else {
-                            if (badge) badge.remove();
-                        }
-                    }
-                }
-            }
-        } catch(e) {}
-    },
-    
-    switchAdminTab(tab) {
-        document.querySelectorAll('.admin-tab').forEach(b => {
-            b.classList.remove('active');
-            b.style.color = 'var(--text-muted)';
-            b.style.borderBottomColor = 'transparent';
-        });
-        const btn = document.getElementById('tab-btn-' + tab);
-        if (btn) {
-            btn.classList.add('active');
-            btn.style.color = 'var(--primary)';
-            btn.style.borderBottomColor = 'var(--primary)';
-        }
-        document.querySelectorAll('.admin-section').forEach(s => s.style.display = 'none');
-        const sec = document.getElementById('admin-section-' + tab);
-        if (sec) sec.style.display = 'block';
-    },
-    
-    // -- Client Side --
-    async loadUserTickets() {
-        try {
-            const res = await apiCall('/tickets', 'GET');
-            if (res.ok) {
-                this.tickets = await res.json();
-                this.renderUserTickets();
-            }
-        } catch(e) {
-            console.error(e);
-        }
-    },
-    
-    renderUserTickets() {
-        const tbody = document.getElementById('user-tickets-body');
-        if (!tbody) return;
-        tbody.innerHTML = '';
-        if (this.tickets.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#64748b;">No support tickets found.</td></tr>';
-            return;
-        }
-        
-        this.tickets.forEach(t => {
-            const statusColor = t.status === 'Open' ? '#f59e0b' : (t.status === 'Replied' ? '#10b981' : '#64748b');
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><strong>${t.subject}</strong></td>
-                <td><span style="background:${statusColor}22;color:${statusColor};padding:4px 8px;border-radius:12px;font-size:12px;font-weight:600;">${t.status}</span></td>
-                <td>${new Date(t.updated_at).toLocaleString()}</td>
-                <td><button class="btn" style="padding:4px 12px;font-size:12px;" onclick="SUPPORT.viewTicket('${t.id}')">View</button></td>
-            `;
-            tbody.appendChild(tr);
-        });
-    },
-    
-    showCreateModal() {
-        document.getElementById('support-subject').value = '';
-        document.getElementById('support-message').value = '';
-        document.getElementById('support-create-modal').style.display = 'flex';
-    },
-    
-    async createTicket(btn) {
-        const subject = document.getElementById('support-subject').value.trim();
-        const message = document.getElementById('support-message').value.trim();
-        if (!subject || !message) return alert("Please fill in both fields.");
-        
-        btn.disabled = true;
-        btn.innerText = "Submitting...";
-        
-        try {
-            const res = await apiCall('/tickets', 'POST', { subject, message });
-            if (res.ok) {
-                document.getElementById('support-create-modal').style.display = 'none';
-                this.loadUserTickets();
-                if (window.adminMode) this.loadAdminTickets();
-                alert("Ticket submitted successfully! You will receive an email when we reply.");
-            } else {
-                const data = await res.json();
-                alert(data.detail || "Failed to submit ticket.");
-            }
-        } catch(e) {
-            alert("Network error.");
-        }
-        btn.disabled = false;
-        btn.innerText = "Submit Ticket";
-    },
-    
-    viewTicket(id, isAdmin = false) {
-        const ticketList = isAdmin ? this.adminTickets : this.tickets;
-        const ticket = ticketList.find(t => t.id === id);
-        if (!ticket) return;
-        
-        document.getElementById('support-active-ticket-id').value = id;
-        document.getElementById('support-view-title').innerText = ticket.subject;
-        document.getElementById('support-reply-message').value = '';
-        
-        const container = document.getElementById('support-replies-container');
-        container.innerHTML = '';
-        
-        ticket.replies.forEach(r => {
-            const isUser = r.sender === 'user';
-            const align = isUser ? 'flex-end' : 'flex-start';
-            const bg = isUser ? '#4f46e5' : '#fff';
-            const color = isUser ? '#fff' : '#1e293b';
-            const border = isUser ? 'none' : '1px solid #e2e8f0';
-            const author = isUser ? 'You' : 'Support Team';
-            
-            // For admin view, flip the perspective
-            const displayAuthor = isAdmin ? (isUser ? 'Client' : 'You (Admin)') : author;
-            const displayAlign = isAdmin ? (isUser ? 'flex-start' : 'flex-end') : align;
-            const displayBg = isAdmin ? (isUser ? '#fff' : '#4f46e5') : bg;
-            const displayColor = isAdmin ? (isUser ? '#1e293b' : '#fff') : color;
-            const displayBorder = isAdmin ? (isUser ? '1px solid #e2e8f0' : 'none') : border;
-            
-            const div = document.createElement('div');
-            div.style.cssText = `display:flex; flex-direction:column; align-items:${displayAlign}; width:100%;`;
-            div.innerHTML = `
-                <span style="font-size:11px; color:#64748b; margin-bottom:4px; padding:0 4px;">${displayAuthor} &bull; ${new Date(r.timestamp).toLocaleString()}</span>
-                <div style="background:${displayBg}; color:${displayColor}; border:${displayBorder}; padding:12px 16px; border-radius:12px; max-width:80%; box-shadow:0 1px 2px rgba(0,0,0,0.05);">
-                    <p style="margin:0; white-space:pre-wrap; font-size:14px; line-height:1.5;">${r.message}</p>
-                </div>
-            `;
-            container.appendChild(div);
-        });
-        
-        document.getElementById('support-view-modal').style.display = 'flex';
-        // Scroll to bottom
-        setTimeout(() => container.scrollTop = container.scrollHeight, 50);
-    },
-    
-    async replyToTicket(btn) {
-        const id = document.getElementById('support-active-ticket-id').value;
-        const message = document.getElementById('support-reply-message').value.trim();
-        if (!message) return;
-        
-        btn.disabled = true;
-        btn.innerText = "Sending...";
-        
-        try {
-            const res = await apiCall(`/tickets/${id}/reply`, 'POST', { message });
-            if (res.ok) {
-                if (window.adminMode) {
-                    await this.loadAdminTickets();
-                    this.viewTicket(id, true);
-                } else {
-                    await this.loadUserTickets();
-                    this.viewTicket(id, false);
-                }
-            } else {
-                alert("Failed to send reply.");
-            }
-        } catch(e) {
-            alert("Network error.");
-        }
-        btn.disabled = false;
-        btn.innerText = "Send Reply";
-    },
-    
-    // -- Admin Side --
-    async loadAdminTickets() {
-        try {
-            const res = await apiCall('/admin/tickets', 'GET');
-            if (res.ok) {
-                this.adminTickets = await res.json();
-                this.renderAdminTickets();
-            }
-        } catch(e) {
-            console.error(e);
-        }
-    },
-    
-    renderAdminTickets() {
-        const tbody = document.getElementById('admin-all-tickets-body');
-        if (!tbody) return;
-        tbody.innerHTML = '';
-        if (this.adminTickets.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#64748b;">No support tickets.</td></tr>';
-            return;
-        }
-        
-        this.adminTickets.forEach(t => {
-            const statusColor = t.status === 'Open' ? '#ef4444' : (t.status === 'Replied' ? '#10b981' : '#64748b');
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td style="padding:12px;border-bottom:1px solid var(--border);">
-                    <div style="font-size:14px;font-weight:500;color:var(--text);">${t.user_email}</div>
-                    <div style="font-size:12px;color:var(--text-muted);">${new Date(t.updated_at).toLocaleString()}</div>
-                </td>
-                <td style="padding:12px;border-bottom:1px solid var(--border);"><strong>${t.subject}</strong></td>
-                <td style="padding:12px;border-bottom:1px solid var(--border);">
-                    <span style="background:${statusColor}22;color:${statusColor};padding:4px 8px;border-radius:12px;font-size:12px;font-weight:600;">${t.status}</span>
-                </td>
-                <td style="padding:12px;border-bottom:1px solid var(--border);">
-                    <button class="btn primary" style="padding:4px 12px;font-size:12px;" onclick="SUPPORT.viewTicket('${t.id}', true)">Reply</button>
-                    <button class="btn" style="padding:4px 12px;font-size:12px;margin-left:4px;" onclick="SUPPORT.closeTicket('${t.id}')" title="Mark Resolved"><i class="fa-solid fa-check"></i></button>
-                </td>
-            `;
-            tbody.appendChild(tr);
-        });
-    },
-    
-    async closeTicket(id) {
-        if(!confirm("Mark this ticket as Resolved?")) return;
-        try {
-            const res = await apiCall(`/admin/tickets/${id}/status`, 'PUT', { status: 'Resolved' });
-            if(res.ok) {
-                this.loadAdminTickets();
-            }
-        } catch(e) {}
-    }
-};
-
-// Hook into navigation
-const originalNavTo = window.navTo;
-window.navTo = function(viewId) {
-    if(originalNavTo) originalNavTo(viewId);
-    if(viewId === 'support-view') {
-        SUPPORT.loadUserTickets();
-    }
-    if(viewId === 'admin-view') {
-        SUPPORT.loadAdminTickets();
-    }
-};
-
-setTimeout(() => {
-    SUPPORT.updateBadges();
-    setInterval(() => SUPPORT.updateBadges(), 30000);
-}, 2000);
-
-
-// --- LANDING PAGE LOGIC ---
-const LANDING = {
-    selectedMethod: 'stripe',
-    
-    goToLogin: () => {
-        document.getElementById('landing-page').classList.add('hidden');
-        document.getElementById('auth-page').classList.remove('hidden');
-        if (window.AUTH && window.AUTH.showLogin) window.AUTH.showLogin();
-    },
-    
-    goToSignup: () => {
-        document.getElementById('landing-page').classList.add('hidden');
-        document.getElementById('auth-page').classList.remove('hidden');
-        if (window.AUTH && window.AUTH.showSignup) window.AUTH.showSignup();
-    },
-    
-    backToFeatures: () => {
-        document.getElementById('auth-page').classList.add('hidden');
-        document.getElementById('landing-page').classList.remove('hidden');
-        const featEl = document.getElementById('features');
-        if (featEl) {
-            featEl.scrollIntoView({ behavior: 'smooth' });
-        }
-    },
-    
-    openPayment: function(planName, price) {
-        document.getElementById('pm-plan-name').innerText = planName;
-        document.getElementById('pm-plan-price').innerText = '$' + price;
-        document.getElementById('payment-modal').classList.add('active');
-    },
-    
-    closePayment: function() {
-        document.getElementById('payment-modal').classList.remove('active');
-        const featEl = document.getElementById('features');
-        if (featEl) {
-            featEl.scrollIntoView({ behavior: 'smooth' });
-        }
-    },
-    
-    selectMethod: function(method) {
-        this.selectedMethod = method;
-        const methods = document.querySelectorAll('.pm-method');
-        methods.forEach(m => m.classList.remove('selected'));
-        event.currentTarget.classList.add('selected');
-    },
-    
-    processPayment: function() {
-        const btn = document.querySelector('.pm-btn');
-        const originalText = btn.innerText;
-        btn.innerText = "Processing...";
-        btn.disabled = true;
-        
-        // Mock processing time, then go to auth
-        setTimeout(() => {
-            btn.innerText = originalText;
-            btn.disabled = false;
-            this.closePayment();
-            // Assuming after payment they should sign up
-            this.goToSignup();
-            document.getElementById('signup-alert').className = 'aalert show ok';
-            document.getElementById('signup-alert').innerHTML = '<i class="fa-solid fa-circle-check"></i> Payment successful! Create your account to start.';
-        }, 1500);
-    }
-};
-
-// Override the initial boot logic slightly so landing page is shown if not logged in.
-// Actually, since index.html has landing-page visible and auth-page hidden, it will work natively, 
-// EXCEPT window.onload checks token and might redirect to dashboard.
-
-// ====== FEAT: Features Tab Toggle ======
-// Workflow section scroll animation
-document.addEventListener('DOMContentLoaded', function() {
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-            }
-        });
-    }, { threshold: 0.1 });
-
-    document.querySelectorAll('.workflow-divider').forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(20px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(el);
-    });
-});
-
-// Initialize panel opacity on page load
-document.addEventListener('DOMContentLoaded', function() {
-    const activePanel = document.querySelector('.feat-panel.active');
-    if (activePanel) activePanel.style.opacity = '1';
-});
-
-// --- TIMEZONE SETTINGS ---
-document.addEventListener('DOMContentLoaded', async () => {
-    const tzSelect = document.getElementById('user-timezone');
-    const saveTzBtn = document.getElementById('save-timezone-btn');
-    const tzStatus = document.getElementById('timezone-status');
-    
-    if (tzSelect && saveTzBtn) {
-        // Populate options
-        try {
-            const timezones = Intl.supportedValuesOf('timeZone');
-            timezones.forEach(tz => {
-                const opt = document.createElement('option');
-                opt.value = tz;
-                opt.textContent = tz;
-                tzSelect.appendChild(opt);
-            });
-        } catch(e) {
-            console.error('Timezones not supported in this browser', e);
-        }
-        
-        // Fetch current timezone
-        try {
-            const res = await apiCall('/settings/timezone', 'GET');
-            const data = await res.json();
-            if (data.timezone) {
-                tzSelect.value = data.timezone;
-            }
-        } catch(e) {
-            console.error('Failed to load timezone', e);
-        }
-
-        // Initialize Choices.js
-        if (typeof Choices !== 'undefined') {
-            new Choices(tzSelect, {
-                searchEnabled: true,
-                itemSelectText: '',
-                shouldSort: false,
-                position: 'bottom'
-            });
-        }
-        
-        saveTzBtn.addEventListener('click', async () => {
-            const tz = tzSelect.value;
-            tzStatus.className = 'alert';
-            tzStatus.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="margin-right:8px;"></i>Saving...';
-            tzStatus.style.display = 'block';
-            
-            try {
-                const res = await apiCall('/settings/timezone', 'POST', { timezone: tz });
-                const data = await res.json();
-                if (data.ok) {
-                    tzStatus.className = 'alert success';
-                    tzStatus.innerHTML = '<i class="fa-solid fa-circle-check" style="margin-right:8px;"></i>' + data.message;
-                } else {
-                    tzStatus.className = 'alert error';
-                    tzStatus.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="margin-right:8px;"></i>' + (data.detail || 'Error saving timezone');
-                }
-            } catch(e) {
-                tzStatus.className = 'alert error';
-                tzStatus.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="margin-right:8px;"></i>Failed to save timezone';
-            }
-            setTimeout(() => { tzStatus.style.display = 'none'; }, 3000);
-        });
-    }
-});
 

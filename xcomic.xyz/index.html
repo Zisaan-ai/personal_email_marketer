@@ -5984,6 +5984,15 @@
 
             if (typeof window.APP_INIT === 'function') window.APP_INIT();
 
+            // Check unread badges after login and poll every 60s
+            if (typeof SUPPORT !== 'undefined') {
+                SUPPORT.checkUnreadTickets();
+                if (window._unreadPollInterval) clearInterval(window._unreadPollInterval);
+                window._unreadPollInterval = setInterval(function() {
+                    SUPPORT.checkUnreadTickets();
+                }, 60000);
+            }
+
         }
 
 

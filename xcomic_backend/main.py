@@ -4765,6 +4765,27 @@ def update_ticket_status(ticket_id: str, req: TicketStatusUpdate, current_user: 
     db.commit()
     return {"status": "success"}
 
+@app.delete("/api/admin/tickets/{ticket_id}")
+def delete_ticket(ticket_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin only")
+    ticket = db.query(database.Ticket).filter(database.Ticket.id == ticket_id).first()
+    if not ticket:
+        raise HTTPException(status_code=404, detail="Ticket not found")
+    # Delete messages first (FK constraint)
+    db.query(database.TicketMessage).filter(database.TicketMessage.ticket_id == ticket_id).delete()
+    db.delete(ticket)
+    db.commit()
+    return {"status": "deleted"}
+
+@app.get("/api/admin/tickets/unread-count")
+def get_unread_ticket_count(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin only")
+    # Count tickets where status is "User Reply" (admin hasn't responded yet)
+    count = db.query(database.Ticket).filter(database.Ticket.status == "User Reply").count()
+    return {"unread": count}
+
 # CATCH-ALL: Serve Frontend (MUST be LAST route)
 
 # ============================================================

@@ -804,7 +804,7 @@ window.navTo = function(targetId) {
         if (targetId === 'unsubscribes-view') loadUnsubscribes();
 
         if (targetId === 'replies-view') loadReplies();
-if (targetId === 'support-view') SUPPORT.loadSupportTickets();
+if (targetId === 'support-view') { SUPPORT.loadSupportTickets(); SUPPORT.checkUnreadTickets(); }
 
         if (targetId === 'settings') loadSmtpStatus();
 
@@ -10272,9 +10272,34 @@ viewTicket: async function(ticketId) {
             let res = await fetch('/api/support/tickets/' + ticketId, { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
             if (res.ok) {
                 let data = await res.json();
+                let currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+                let isAdmin = currentUser.is_admin === true;
                 document.getElementById('support-active-ticket-id').value = ticketId;
-                document.getElementById('support-view-title').innerHTML = '<i class="fa-solid fa-comments"></i> ' + data.subject + ' <span style="font-size:12px;color:#64748b;margin-left:8px;text-transform:capitalize;">(' + data.status + ')</span>';
+                let statusColor = data.status === 'resolved' ? '#10b981' : (data.status === 'Admin Reply' ? '#10b981' : '#3b82f6');
+                document.getElementById('support-view-title').innerHTML = '<i class="fa-solid fa-comments"></i> ' + data.subject + ' <span style="font-size:12px;color:' + statusColor + ';margin-left:8px;text-transform:capitalize;font-weight:600;">(' + data.status + ')</span>';
                 
+                // Show/hide admin action buttons
+                let adminActions = document.getElementById('support-admin-actions');
+                if (adminActions) {
+                    if (isAdmin) {
+                        adminActions.style.display = 'flex';
+                        let resolveBtn = document.getElementById('support-resolve-btn');
+                        if (resolveBtn) {
+                            if (data.status === 'resolved') {
+                                resolveBtn.innerHTML = '<i class="fa-solid fa-check-circle"></i> Resolved';
+                                resolveBtn.style.background = '#10b981';
+                                resolveBtn.disabled = true;
+                            } else {
+                                resolveBtn.innerHTML = '<i class="fa-solid fa-check-circle"></i> Resolve';
+                                resolveBtn.style.background = '#3b82f6';
+                                resolveBtn.disabled = false;
+                            }
+                        }
+                    } else {
+                        adminActions.style.display = 'none';
+                    }
+                }
+
                 let chatContainer = document.getElementById('support-replies-container');
                 let chatHtml = '';
                 
@@ -10334,6 +10359,59 @@ viewTicket: async function(ticketId) {
             btn.innerHTML = origText;
             btn.disabled = false;
         }
+    },
+    resolveTicket: async function() {
+        let ticketId = document.getElementById('support-active-ticket-id').value;
+        if (!ticketId) return;
+        try {
+            let res = await fetch('/api/admin/tickets/' + ticketId + '/status', {
+                method: 'PUT',
+                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token'), 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: 'resolved' })
+            });
+            if (res.ok) {
+                SUPPORT.viewTicket(ticketId);
+                SUPPORT.loadAdminTickets();
+                SUPPORT.checkUnreadTickets();
+            } else { alert('Failed to resolve ticket.'); }
+        } catch(e) { alert('Error resolving ticket.'); }
+    },
+    deleteTicket: async function() {
+        let ticketId = document.getElementById('support-active-ticket-id').value;
+        if (!ticketId) return;
+        if (!confirm('Are you sure you want to delete this ticket? This cannot be undone.')) return;
+        try {
+            let res = await fetch('/api/admin/tickets/' + ticketId, {
+                method: 'DELETE',
+                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+            });
+            if (res.ok) {
+                document.getElementById('support-view-modal').style.display = 'none';
+                SUPPORT.loadAdminTickets();
+                SUPPORT.checkUnreadTickets();
+            } else { alert('Failed to delete ticket.'); }
+        } catch(e) { alert('Error deleting ticket.'); }
+    },
+    checkUnreadTickets: async function() {
+        try {
+            let currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+            if (!currentUser.is_admin) return;
+            let res = await fetch('/api/admin/tickets/unread-count', {
+                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+            });
+            if (res.ok) {
+                let data = await res.json();
+                let badge = document.getElementById('support-unread-badge');
+                if (badge) {
+                    if (data.unread > 0) {
+                        badge.textContent = data.unread;
+                        badge.style.display = 'inline-flex';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                }
+            }
+        } catch(e) { /* silent */ }
     },
     switchAdminTab: function(tab) {
         document.querySelectorAll('.admin-tab').forEach(t => {

@@ -4632,6 +4632,7 @@ def run_mig_2():
 
 
 
+
 class TicketCreate(BaseModel):
     subject: str
     message: str
@@ -4654,7 +4655,8 @@ def create_ticket(req: TicketCreate, current_user: database.User = Depends(auth.
     first_msg = database.TicketMessage(
         id=str(uuid.uuid4()),
         ticket_id=new_ticket.id,
-        sender="user",
+        user_id=current_user.id,
+        is_admin=False,
         message=req.message
     )
     db.add(first_msg)
@@ -4667,7 +4669,7 @@ def get_user_tickets(current_user: database.User = Depends(auth.get_current_user
     result = []
     for t in tickets:
         msgs = db.query(database.TicketMessage).filter(database.TicketMessage.ticket_id == t.id).order_by(database.TicketMessage.created_at.asc()).all()
-        replies = [{"sender": m.sender, "message": m.message, "created_at": m.created_at.isoformat()} for m in msgs]
+        replies = [{"sender": "admin" if m.is_admin else "user", "message": m.message, "created_at": m.created_at.isoformat()} for m in msgs]
         result.append({
             "id": t.id,
             "subject": t.subject,
@@ -4691,7 +4693,8 @@ def reply_ticket(ticket_id: str, req: TicketReply, current_user: database.User =
     new_msg = database.TicketMessage(
         id=str(uuid.uuid4()),
         ticket_id=ticket.id,
-        sender="admin" if current_user.is_admin else "user",
+        user_id=current_user.id,
+        is_admin=current_user.is_admin,
         message=req.message
     )
     db.add(new_msg)
@@ -4719,7 +4722,7 @@ def get_all_tickets(current_user: database.User = Depends(auth.get_current_user)
     for t in tickets:
         user = db.query(database.User).filter(database.User.id == t.user_id).first()
         msgs = db.query(database.TicketMessage).filter(database.TicketMessage.ticket_id == t.id).order_by(database.TicketMessage.created_at.asc()).all()
-        replies = [{"sender": m.sender, "message": m.message, "created_at": m.created_at.isoformat()} for m in msgs]
+        replies = [{"sender": "admin" if m.is_admin else "user", "message": m.message, "created_at": m.created_at.isoformat()} for m in msgs]
         result.append({
             "id": t.id,
             "user_email": user.email if user else "Unknown",

@@ -10348,7 +10348,10 @@ viewTicket: async function(ticketId) {
             btn.style.borderBottomColor = 'var(--primary)';
         }
         var sec = document.getElementById('admin-section-' + tab);
-        if(sec) sec.style.display = 'block';
+        if(sec) {
+            sec.style.display = 'block';
+            if (tab === 'tickets') SUPPORT.loadAdminTickets();
+        }
     }
 };
 

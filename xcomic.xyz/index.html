@@ -6257,6 +6257,44 @@
 
     });
 
+
+    var LANDING = {
+        goToLogin: function() {
+            var lp = document.getElementById('landing-page'); if (lp) lp.classList.add('hidden');
+            var ap = document.getElementById('auth-page'); if (ap) ap.classList.remove('hidden');
+            if (typeof AUTH !== 'undefined' && AUTH.showLogin) AUTH.showLogin();
+            window.scrollTo(0, 0);
+        },
+        goToSignup: function() {
+            var lp = document.getElementById('landing-page'); if (lp) lp.classList.add('hidden');
+            var ap = document.getElementById('auth-page'); if (ap) ap.classList.remove('hidden');
+            if (typeof AUTH !== 'undefined' && AUTH.showSignup) AUTH.showSignup();
+            window.scrollTo(0, 0);
+        },
+        backToFeatures: function() {
+            var lp = document.getElementById('landing-page'); if (lp) lp.classList.remove('hidden');
+            var ap = document.getElementById('auth-page'); if (ap) ap.classList.add('hidden');
+            window.scrollTo(0, 0);
+        },
+        openPayment: function(plan, price) {
+            var pm = document.getElementById('payment-modal'); if (pm) pm.style.display = 'flex';
+        },
+        closePayment: function() {
+            var pm = document.getElementById('payment-modal'); if (pm) pm.style.display = 'none';
+        },
+        selectMethod: function(method) {
+            document.querySelectorAll('.pm-method').forEach(function(el) { el.classList.remove('selected'); });
+            var e = window.event;
+            if(e && e.currentTarget) e.currentTarget.classList.add('selected');
+        },
+        processPayment: function() {
+            alert("Payment gateway will be integrated soon.");
+        }
+    };
+
+    window.LANDING = LANDING;
+    if (typeof AUTH !== 'undefined') window.AUTH = AUTH;
+
 </script>
 
 

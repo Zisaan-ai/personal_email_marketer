@@ -277,6 +277,26 @@ class ProviderReputation(Base):
     campaign_percent = Column(Integer, default=50)
     updated_at = Column(DateTime, default=datetime.utcnow)
 
+
+# --- Support Tickets ---
+class Ticket(Base):
+    __tablename__ = "tickets"
+    id = Column(String, primary_key=True, default=generate_uuid)
+    user_id = Column(String, ForeignKey("users.id"), index=True)
+    subject = Column(String, nullable=False)
+    status = Column(String, default="open") # open, answered, closed
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+class TicketMessage(Base):
+    __tablename__ = "ticket_messages"
+    id = Column(String, primary_key=True, default=generate_uuid)
+    ticket_id = Column(String, ForeignKey("tickets.id"), index=True)
+    user_id = Column(String, ForeignKey("users.id"))
+    message = Column(Text, nullable=False)
+    is_admin = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
 # Dependency for FastAPI
 def get_db():
     db = SessionLocal()
@@ -295,7 +315,7 @@ class InactiveLeadList(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     tagged_at = Column(DateTime, default=datetime.utcnow)
 
-# Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
 
 # --- Safe Migration for existing SQLite databases ---
 def _safe_add_column(table_name: str, column_name: str, column_type: str, default=None):
@@ -339,7 +359,7 @@ def run_migrations():
         _safe_add_column("sending_accounts", "send_window_timezone", "VARCHAR", "UTC")
         
         # New: timezone for User
-        _safe_add_column("users", "timezone", "VARCHAR", "'Asia/Dhaka'")
+        _safe_add_column("users", "timezone", "VARCHAR", "Asia/Dhaka")
 
         _safe_add_column("sending_accounts", "custom_tracking_domain", "VARCHAR", None)
         _safe_add_column("replies", "message_id", "VARCHAR", None)

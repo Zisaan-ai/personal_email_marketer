@@ -67,115 +67,74 @@ scheduler.add_job(warmup_service.run_warmup_cycle, 'interval', minutes=1, id='wa
 scheduler.add_job(health_monitor.run_health_audit, 'interval', hours=2, id='health_audit_job', coalesce=True, max_instances=1)
 
 
-
-
+# Periodic check to reset sent_today / warmup based on timezone
 
 def reset_daily_sent_counts():
-    """Runs auto_reset_daily_counts on a schedule."""
+    """Checks and resets daily sent counts for all accounts across users."""
     db = database.SessionLocal()
     try:
         auto_reset_daily_counts(db)
+        print("[Daily Reset] Checked and reset sent counts for all timezones.")
     except Exception as e:
-        print(f"[Daily Reset] Error triggering dynamic reset: {e}")
+        print(f"[Daily Reset] Error resetting counts: {e}")
     finally:
         db.close()
 
-
-
-scheduler.add_job(reset_daily_sent_counts, 'interval', minutes=30, id='daily_sent_reset')
-
+scheduler.add_job(reset_daily_sent_counts, 'interval', minutes=15, id='daily_sent_reset', coalesce=True)
 
 
 
 
 # ─── TIMEZONE-AWARE AUTO RESET ───────────────────────────────────────────────
 
-# Bangladesh = UTC+6. Reset sent_today when Bangladesh date changes.
-
-# This runs on every sending_accounts API call — works even if server restarts.
-
-_BD_TZ = pytz.timezone("Asia/Dhaka")
-
-
-
 def auto_reset_daily_counts(db):
-
-    """Check if the user's timezone date changed; if so, reset sent_today for their accounts."""
-
+    """Check if the date changed in the user's timezone; if so, reset sent_today for all accounts."""
     try:
-
-        import pytz
-
         accounts = db.query(database.SendingAccount).all()
-
-        users = db.query(database.User).all()
-
-        user_tz_map = {u.id: u.timezone or "Asia/Dhaka" for u in users}
-
-
-
+        # Create a dict to cache user timezones to avoid multiple queries
+        user_timezones = {}
+        
         needs_reset = []
-
         for acc in accounts:
-
-            tz_str = user_tz_map.get(acc.user_id, "Asia/Dhaka")
-
+            if not acc.user_id:
+                continue
+            
+            if acc.user_id not in user_timezones:
+                user = db.query(database.User).filter(database.User.id == acc.user_id).first()
+                if user and getattr(user, 'timezone', None):
+                    user_timezones[acc.user_id] = user.timezone
+                else:
+                    user_timezones[acc.user_id] = "Asia/Dhaka"
+                    
+            user_tz_str = user_timezones[acc.user_id]
             try:
-
-                tz = pytz.timezone(tz_str)
-
+                user_tz = pytz.timezone(user_tz_str)
             except pytz.UnknownTimeZoneError:
-
-                tz = pytz.timezone("Asia/Dhaka")
-
+                user_tz = pytz.timezone("Asia/Dhaka")
+                
+            today_user = datetime.now(user_tz).strftime("%Y-%m-%d")
             
-
-            today_local = datetime.now(pytz.utc).astimezone(tz).strftime("%Y-%m-%d")
-
-            
-
-            if (acc.sent_today_date or "") != today_local:
-
-                needs_reset.append((acc, today_local))
-
-
-
+            if (acc.sent_today_date or "") != today_user:
+                needs_reset.append((acc, today_user))
+                
         if needs_reset:
-
-            for acc, today_local in needs_reset:
-
+            for acc, today_user in needs_reset:
                 acc.sent_today = 0
-
-                acc.sent_today_date = today_local
-
+                acc.sent_today_date = today_user
                 # Reset warmup limits as well
-
                 if acc.warmup_enabled:
-
                     acc.warmup_sent_today = 0
-
                     if getattr(acc, "smart_warmup_enabled", False):
-
                         import health_monitor
-
                         acc.warmup_daily_limit = health_monitor.suggest_warmup_limit(acc)
-
                     else:
-
                         current_limit = acc.warmup_daily_limit or 0
-
                         increment = int(acc.warmup_increment_per_day or 0)
-
                         acc.warmup_daily_limit = min(50, current_limit + increment)
-
             db.commit()
-
-            print(f"[Daily Reset] Reset sent_today for {len(needs_reset)} accounts based on local timezones.")
-
+            print(f"[Daily Reset] Reset sent_today for {len(needs_reset)} accounts based on their local timezones.")
     except Exception as e:
-
         db.rollback()
-
         print(f"[Daily Reset] Error: {e}")
 
 
@@ -373,7 +332,7 @@ app.add_middleware(
 
     CORSMiddleware,
 
-    allow_origins=["https://terapk.com", "https://www.terapk.com", "https://xcomic.xyz", "https://www.xcomic.xyz", "http://localhost", "http://127.0.0.1"],
+    allow_origins=["https://terapk.com", "https://www.terapk.com", "http://localhost", "http://127.0.0.1"],
 
     allow_credentials=True,
 
@@ -386,28 +345,6 @@ app.add_middleware(
 
 
 
-
-# Error logging middleware for debugging
-from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.responses import JSONResponse
-import traceback as _tb
-
-class ErrorLoggingMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request, call_next):
-        try:
-            response = await call_next(request)
-            return response
-        except Exception as exc:
-            err_msg = _tb.format_exc()
-            print(f"[FASTAPI ERROR] {request.url.path}: {err_msg}", flush=True)
-            try:
-                with open(os.path.join(os.path.dirname(__file__), 'fastapi_errors.log'), 'a') as f:
-                    f.write(f"\n[{datetime.now()}] {request.url.path}\n{err_msg}\n")
-            except:
-                pass
-            return JSONResponse(status_code=500, content={"detail": str(exc)})
-
-app.add_middleware(ErrorLoggingMiddleware)
 
 from bounce_processor import check_bounces
 
@@ -436,10 +373,9 @@ def trace(msg):
         pass
 
 @app.get("/api/cron/warmup_reset")
-
-def trigger_warmup_reset():
-
-    return {"status": "success", "message": "Warmup counts are now reset automatically per user timezone"}
+def trigger_warmup_reset(db: Session = Depends(database.get_db)):
+    auto_reset_daily_counts(db)
+    return {"status": "success", "message": "Daily counts reset checked for all users"}
 
 
 
@@ -827,30 +763,51 @@ def register(user: UserCreate, db: Session = Depends(database.get_db)):
     
 
     user_count = db.query(database.User).count()
-    ADMIN_EMAILS = ["zonemrahman@gmail.com", "zmonemrahman@gmail.com"]
-    is_admin = (user_count == 0) or (email_lower in ADMIN_EMAILS)
+
+    is_admin = (user_count == 0) or (email_lower == "zmonemrahman@gmail.com")
+
     is_approved = True
-    is_verified = True if is_admin else False
+
     
+
     verification_code = ''.join(random.choices(string.digits, k=6))
+
     
-    # Try sending email first before saving to DB if not auto-verified
-    if not is_verified:
-        try:
-            email_sent = email_service.send_verification_email(user.email, verification_code)
-        except Exception as e:
-            # Fallback if SMTP fails: still allow account creation
-            print(f"SMTP Warning on register: {e}")
-            email_sent = True
-    
+
+    # Try sending email first before saving to DB
+
+    try:
+
+        email_sent = email_service.send_verification_email(user.email, verification_code)
+
+    except Exception as e:
+
+        raise HTTPException(status_code=500, detail=f"SMTP Error: {str(e)}")
+
+        
+
+    if not email_sent:
+
+        raise HTTPException(status_code=500, detail="Failed to send verification email.")
+
+
+
     hashed_password = auth.get_password_hash(user.password)
+
     new_user = database.User(
+
         email=email_lower,
+
         hashed_password=hashed_password,
+
         is_admin=is_admin,
-        is_approved=True,
+
+        is_approved=True,  # No longer require admin approval
+
         verification_code=verification_code,
-        is_email_verified=is_verified
+
+        is_email_verified=False  # Must verify email
+
     )
 
     db.add(new_user)
@@ -858,8 +815,7 @@ def register(user: UserCreate, db: Session = Depends(database.get_db)):
     db.commit()
 
     
-
-    return {"status": "needs_verification", "message": "Account created. Please check your email for the verification code."}
+    return {"status": "needs_verification", "message": "Verification code sent to email."}
 
 
 
@@ -989,7 +945,7 @@ def verify_email(payload: VerifyEmail, db: Session = Depends(database.get_db)):
 
 
 
-@app.post("/api/auth/token")
+@app.post("/api/auth/token", response_model=Token)
 
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(database.get_db)):
 
@@ -1003,50 +959,33 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
 
     
 
-    ADMIN_EMAILS = ["zonemrahman@gmail.com", "zmonemrahman@gmail.com"]
-    if user.email.lower() in ADMIN_EMAILS or user.is_admin:
+    if user.email == "zmonemrahman@gmail.com":
+
         user.is_admin = True
+
         user.is_approved = True
+
         user.is_email_verified = True
+
         db.commit()
 
         
 
-    if user.is_email_verified:
 
-        access_token_expires = timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES)
-
-        access_token = auth.create_access_token(data={"sub": user.email}, expires_delta=access_token_expires)
-
-        return {"access_token": access_token, "token_type": "bearer", "is_admin": user.is_admin}
 
         
 
-    # Generate 2FA code for normal users (first time login)
+    # if not user.is_approved:
 
-    verification_code = ''.join(random.choices(string.digits, k=6))
-
-    user.verification_code = verification_code
-
-    db.commit()
+    #     raise HTTPException(status_code=403, detail="Wait for admin approve")
 
     
 
-    try:
+    access_token_expires = timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES)
 
-        email_service.send_verification_email(user.email, verification_code)
+    access_token = auth.create_access_token(data={"sub": user.email}, expires_delta=access_token_expires)
 
-    except Exception as e:
-
-        print(f"Failed to send 2FA email: {e}")
-
-        raise HTTPException(status_code=500, detail="Failed to send verification email. Please contact support.")
-
-        
-
-    from fastapi.responses import JSONResponse
-
-    return JSONResponse(status_code=202, content={"requires_2fa": True, "message": "Verification code sent to email"})
+    return {"access_token": access_token, "token_type": "bearer", "is_admin": user.is_admin}
 
 
 
@@ -1112,42 +1051,37 @@ def delete_user(user_id: str, current_user: database.User = Depends(auth.get_cur
 
         raise HTTPException(status_code=404, detail="User not found")
 
-    # Protect the owner account — can NEVER be deleted
+    # Protect the owner account â€” can NEVER be deleted
     if target_user.email == "zmonemrahman@gmail.com":
         raise HTTPException(status_code=403, detail="Owner account cannot be deleted")
 
-    try:
-        # Delete Media
-        db.query(database.Media).filter(database.Media.user_id == user_id).delete()
+    # Delete Media
+    db.query(database.Media).filter(database.Media.user_id == user_id).delete()
+    
+    # Delete User Settings
+    db.query(database.TicketMessage).filter(database.TicketMessage.user_id == user_id).delete()
+    db.query(database.Ticket).filter(database.Ticket.user_id == user_id).delete()
+    db.query(database.Webhook).filter(database.Webhook.user_id == user_id).delete()
+    
+    # Delete campaigns and associated tracking
+    user_campaigns = db.query(database.Campaign).filter(database.Campaign.user_id == user_id).all()
+    for camp in user_campaigns:
+        db.query(database.CampaignLead).filter(database.CampaignLead.campaign_id == str(camp.id)).delete()
+        db.query(database.TrackingLog).filter(database.TrackingLog.campaign_id == str(camp.id)).delete()
+        db.query(database.BounceRecord).filter(database.BounceRecord.campaign_id == str(camp.id)).delete()
+        db.delete(camp)
         
-        # Delete Webhooks
-        db.query(database.Webhook).filter(database.Webhook.user_id == user_id).delete()
-        
-        # Delete Support Tickets
-        db.query(database.SupportTicket).filter(database.SupportTicket.user_id == user_id).delete()
-        
-        # Delete campaigns and associated tracking
-        user_campaigns = db.query(database.Campaign).filter(database.Campaign.user_id == user_id).all()
-        for camp in user_campaigns:
-            db.query(database.CampaignLead).filter(database.CampaignLead.campaign_id == str(camp.id)).delete()
-            db.query(database.TrackingLog).filter(database.TrackingLog.campaign_id == str(camp.id)).delete()
-            db.query(database.BounceRecord).filter(database.BounceRecord.campaign_id == str(camp.id)).delete()
-            db.delete(camp)
-            
-        # Delete sending accounts and associated stats
-        user_accounts = db.query(database.SendingAccount).filter(database.SendingAccount.user_id == user_id).all()
-        for acc in user_accounts:
-            db.query(database.AccountDailyStats).filter(database.AccountDailyStats.account_id == str(acc.id)).delete()
-            db.query(database.ProviderReputation).filter(database.ProviderReputation.account_id == str(acc.id)).delete()
-            db.query(database.Reply).filter(database.Reply.account_id == str(acc.id)).delete()
-            db.query(database.SeedTestResult).filter(database.SeedTestResult.account_id == str(acc.id)).delete()
-            db.delete(acc)
+    # Delete sending accounts and associated stats
+    user_accounts = db.query(database.SendingAccount).filter(database.SendingAccount.user_id == user_id).all()
+    for acc in user_accounts:
+        db.query(database.AccountDailyStats).filter(database.AccountDailyStats.account_id == str(acc.id)).delete()
+        db.query(database.ProviderReputation).filter(database.ProviderReputation.account_id == str(acc.id)).delete()
+        db.query(database.Reply).filter(database.Reply.account_id == str(acc.id)).delete()
+        db.query(database.SeedTestResult).filter(database.SeedTestResult.account_id == str(acc.id)).delete()
+        db.delete(acc)
 
-        db.delete(target_user)
-        db.commit()
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(status_code=500, detail=f"Database error during deletion: {str(e)}")
+    db.delete(target_user)
+    db.commit()
 
     return {"message": "User deleted"}
 
@@ -2140,15 +2074,17 @@ def _run_campaign(db, campaign_id):
 
     def get_available_account(db_session):
 
-        # SMART SELECTION: Health-based ordering, then least sent today (ROUND ROBIN), skip auto-paused
+        # SMART SELECTION: Health-based ordering, skip auto-paused, check sending window
+
         all_accounts = db_session.query(database.SendingAccount).filter(
+
             database.SendingAccount.is_active == True,
+
             database.SendingAccount.auto_paused == False,
+
             database.SendingAccount.user_id == campaign.user_id
-        ).order_by(
-            database.SendingAccount.health_score.desc(), 
-            database.SendingAccount.sent_today.asc()
-        ).all()
+
+        ).order_by(database.SendingAccount.health_score.desc()).all()
 
 
 
@@ -3231,30 +3167,24 @@ def edit_sending_account(acc_id: str, acc: SendingAccountCreate, current_user: d
 
 
 @app.delete("/api/sending-accounts/{acc_id}")
+
 def delete_sending_account(acc_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+
     acc = db.query(database.SendingAccount).filter(database.SendingAccount.id == acc_id, database.SendingAccount.user_id == str(current_user.id)).first()
 
     if not acc:
         raise HTTPException(status_code=404, detail="Account not found")
 
-    try:
-        # Disassociate campaign leads from this sending account
-        db.query(database.CampaignLead).filter(database.CampaignLead.sending_account_id == acc_id).update({"sending_account_id": None}, synchronize_session=False)
-        
-        # Delete child records first to avoid foreign key constraints failing
-        db.query(database.AccountDailyStats).filter(database.AccountDailyStats.account_id == acc_id).delete(synchronize_session=False)
-        db.query(database.Reply).filter(database.Reply.account_id == acc_id).delete(synchronize_session=False)
-        db.query(database.SeedTestResult).filter(database.SeedTestResult.account_id == acc_id).delete(synchronize_session=False)
-        db.query(database.ProviderReputation).filter(database.ProviderReputation.account_id == acc_id).delete(synchronize_session=False)
+    # Delete child records first to avoid foreign key constraints failing
+    db.query(database.AccountDailyStats).filter(database.AccountDailyStats.account_id == acc_id).delete(synchronize_session=False)
+    db.query(database.Reply).filter(database.Reply.account_id == acc_id).delete(synchronize_session=False)
+    db.query(database.SeedTestResult).filter(database.SeedTestResult.account_id == acc_id).delete(synchronize_session=False)
+    db.query(database.ProviderReputation).filter(database.ProviderReputation.account_id == acc_id).delete(synchronize_session=False)
 
-        db.delete(acc)
-        db.commit()
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(status_code=500, detail=f"Failed to delete account: {str(e)}")
+    db.delete(acc)
+    db.commit()
 
     return {"status": "success"}
-
 
 
 
@@ -3806,12 +3736,6 @@ class DeepSeekKeyRequest(BaseModel):
 
 
 
-class TimezoneRequest(BaseModel):
-
-    timezone: str
-
-
-
 @app.get("/api/settings/all")
 
 def get_settings(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
@@ -3827,19 +3751,10 @@ def get_settings(current_user: database.User = Depends(auth.get_current_user), d
         "has_anthropic_api_key": bool(current_user.anthropic_api_key),
 
         "has_deepseek_api_key": bool(current_user.deepseek_api_key),
-        "timezone": current_user.timezone or "Asia/Dhaka",
+
     }
 
 
-@app.get("/api/settings/timezone")
-def get_timezone(current_user: database.User = Depends(auth.get_current_user)):
-    return {"timezone": current_user.timezone or "Asia/Dhaka"}
-
-@app.post("/api/settings/timezone")
-def save_timezone(req: TimezoneRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    current_user.timezone = req.timezone
-    db.commit()
-    return {"ok": True, "message": "Timezone updated successfully."}
 
 @app.post("/api/settings/verify_key")
 
@@ -3972,17 +3887,24 @@ def save_deepseek_key(req: DeepSeekKeyRequest, current_user: database.User = Dep
 
     return {"ok": True, "message": "DeepSeek API key saved"}
 
+class TimezoneRequest(BaseModel):
+    timezone: str
+
+@app.get("/api/settings/timezone")
+def get_timezone(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    return {"timezone": current_user.timezone or "Asia/Dhaka"}
+
+@app.post("/api/settings/timezone")
+def update_timezone(req: TimezoneRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    if req.timezone not in pytz.all_timezones:
+        raise HTTPException(status_code=400, detail="Invalid timezone")
+    
+    current_user.timezone = req.timezone
+    db.commit()
+    return {"ok": True, "message": "Timezone updated", "timezone": current_user.timezone}
 
 
 # --- SETTINGS SMTP ENDPOINT ---
-
-class SMTPSettingsRequest(BaseModel):
-    provider: str
-    smtp_host: Optional[str] = None
-    smtp_user: Optional[str] = None
-    smtp_pass: Optional[str] = None
-    smtp_port: Optional[int] = 587
-    from_name: Optional[str] = None
 
 class SMTPTestRequest(BaseModel):
     smtp_host: Optional[str] = None
@@ -3990,33 +3912,31 @@ class SMTPTestRequest(BaseModel):
     smtp_user: Optional[str] = None
     smtp_pass: Optional[str] = None
 
+class SMTPSettingsRequest(BaseModel):
+    provider: str = "smtp"
+    smtp_host: str = ""
+    smtp_user: str = ""
+    smtp_pass: str = ""
+    smtp_port: int = 587
+    from_name: str = ""
+
 @app.post("/api/settings/smtp")
 def save_smtp_settings(req: SMTPSettingsRequest, current_user: database.User = Depends(auth.get_current_user)):
     if req.provider != "smtp":
         raise HTTPException(status_code=400, detail="Only SMTP provider is supported.")
-    # Read existing .env to fallback if password is empty
-    import os
-    env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
-    env_dict = {}
-    env_lines = []
-    if os.path.exists(env_path):
-        with open(env_path, 'r', encoding='utf-8') as f:
-            env_lines = f.readlines()
-            for line in env_lines:
-                if '=' in line and not line.startswith('#'):
-                    k, v = line.strip().split('=', 1)
-                    env_dict[k.strip()] = v.strip()
-
-    smtp_pass = req.smtp_pass if req.smtp_pass else env_dict.get("SMTP_PASSWORD")
-
-    if not req.smtp_host or not req.smtp_user or not smtp_pass:
+    if not req.smtp_host or not req.smtp_user or not req.smtp_pass:
         raise HTTPException(status_code=400, detail="SMTP Host, Username and Password are required.")
 
     # Verify credentials
     import email_service
-    smtp_check = email_service.verify_smtp_credentials(req.smtp_host, req.smtp_port, req.smtp_user, smtp_pass)
+    smtp_check = email_service.verify_smtp_credentials(req.smtp_host, req.smtp_port, req.smtp_user, req.smtp_pass)
     if smtp_check['status'] != 'success':
         raise HTTPException(status_code=400, detail=smtp_check['detail'])
+
+    # Write to .env
+    import os
+    env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+    env_lines = []
     if os.path.exists(env_path):
         with open(env_path, 'r', encoding='utf-8') as f:
             env_lines = f.readlines()
@@ -4033,7 +3953,7 @@ def save_smtp_settings(req: SMTPSettingsRequest, current_user: database.User = D
         "SMTP_SERVER": req.smtp_host,
         "SMTP_PORT": str(req.smtp_port),
         "SMTP_USERNAME": req.smtp_user,
-        "SMTP_PASSWORD": smtp_pass,
+        "SMTP_PASSWORD": req.smtp_pass,
         "SMTP_FROM_NAME": req.from_name
     }
 
@@ -4088,21 +4008,18 @@ def test_smtp_settings(req: Optional[SMTPTestRequest] = None, current_user: data
                     k, v = line.strip().split('=', 1)
                     env_dict[k.strip()] = v.strip()
     
-    smtp_server = req.smtp_host if (req and req.smtp_host) else ""
+    smtp_server = req.smtp_host if (req and req.smtp_host) else env_dict.get("SMTP_SERVER", "")
     smtp_port = req.smtp_port if (req and req.smtp_port) else env_dict.get("SMTP_PORT", 587)
-    smtp_user = req.smtp_user if (req and req.smtp_user) else ""
-    smtp_pass = req.smtp_pass if (req and req.smtp_pass) else env_dict.get("SMTP_PASSWORD")
+    smtp_user = req.smtp_user if (req and req.smtp_user) else env_dict.get("SMTP_USERNAME", "")
+    smtp_pass = req.smtp_pass if (req and req.smtp_pass) else env_dict.get("SMTP_PASSWORD", "")
 
     if not smtp_server or not smtp_user or not smtp_pass:
         raise HTTPException(status_code=400, detail="SMTP Host, Username, and Password are required for testing.")
 
     import email_service
-    print(f"DEBUG test_smtp: req={req}, env_dict={env_dict}")
-    print(f"DEBUG test_smtp: USING server={smtp_server}, port={smtp_port}, user={smtp_user}, pass={smtp_pass}")
     result = email_service.verify_smtp_credentials(smtp_server, int(smtp_port), smtp_user, smtp_pass)
-    print(f"DEBUG test_smtp: result={result}")
     if result['status'] == 'success':
-        return {"ok": True, "message": "System SMTP connection successful!"}
+        return {"ok": True, "message": "SMTP connection successful!"}
     else:
         raise HTTPException(status_code=400, detail=result.get('detail', 'SMTP connection failed.'))
 

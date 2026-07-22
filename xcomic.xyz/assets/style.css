@@ -81,8 +81,7 @@ body {
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    display: block;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
@@ -101,7 +100,7 @@ body {
 #app-page {
     display: none;
     width: 100%;
-    flex: 1;
+    min-height: 100vh;
     background: var(--bg);
     position: relative;
 }

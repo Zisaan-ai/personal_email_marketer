@@ -4631,19 +4631,95 @@ def run_mig_2():
         return f"Migration error: {str(e)}"
 
 
+
+class TicketCreate(BaseModel):
+    subject: str
+    message: str
+
+class TicketReply(BaseModel):
+    message: str
+
+@app.post("/api/support/tickets")
+def create_ticket(req: TicketCreate, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    import uuid
+    new_ticket = database.Ticket(
+        id=str(uuid.uuid4()),
+        user_id=current_user.id,
+        subject=req.subject,
+        status="Open"
+    )
+    db.add(new_ticket)
+    db.flush()
+    
+    first_msg = database.TicketMessage(
+        id=str(uuid.uuid4()),
+        ticket_id=new_ticket.id,
+        sender="user",
+        message=req.message
+    )
+    db.add(first_msg)
+    db.commit()
+    return {"status": "success", "ticket_id": new_ticket.id}
+
+@app.get("/api/support/tickets")
+def get_user_tickets(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    tickets = db.query(database.Ticket).filter(database.Ticket.user_id == current_user.id).order_by(database.Ticket.created_at.desc()).all()
+    result = []
+    for t in tickets:
+        msgs = db.query(database.TicketMessage).filter(database.TicketMessage.ticket_id == t.id).order_by(database.TicketMessage.created_at.asc()).all()
+        replies = [{"sender": m.sender, "message": m.message, "created_at": m.created_at.isoformat()} for m in msgs]
+        result.append({
+            "id": t.id,
+            "subject": t.subject,
+            "status": t.status,
+            "created_at": t.created_at.isoformat(),
+            "updated_at": t.updated_at.isoformat(),
+            "replies": replies
+        })
+    return result
+
+@app.post("/api/support/tickets/{ticket_id}/reply")
+def reply_ticket(ticket_id: str, req: TicketReply, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    ticket = db.query(database.Ticket).filter(database.Ticket.id == ticket_id).first()
+    if not ticket:
+        raise HTTPException(status_code=404, detail="Ticket not found")
+        
+    if not current_user.is_admin and ticket.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized")
+        
+    import uuid
+    new_msg = database.TicketMessage(
+        id=str(uuid.uuid4()),
+        ticket_id=ticket.id,
+        sender="admin" if current_user.is_admin else "user",
+        message=req.message
+    )
+    db.add(new_msg)
+    
+    # Update ticket status and updated_at
+    if current_user.is_admin:
+        ticket.status = "Answered"
+    else:
+        ticket.status = "Open"
+        
+    db.commit()
+    return {"status": "success"}
+
 @app.get("/api/admin/tickets")
 def get_all_tickets(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admin only")
         
-    tickets = db.query(database.SupportTicket).order_by(
-        (database.SupportTicket.status == 'Open').desc(),
-        database.SupportTicket.updated_at.desc()
+    tickets = db.query(database.Ticket).order_by(
+        (database.Ticket.status == 'Open').desc(),
+        database.Ticket.updated_at.desc()
     ).all()
     
     result = []
     for t in tickets:
         user = db.query(database.User).filter(database.User.id == t.user_id).first()
+        msgs = db.query(database.TicketMessage).filter(database.TicketMessage.ticket_id == t.id).order_by(database.TicketMessage.created_at.asc()).all()
+        replies = [{"sender": m.sender, "message": m.message, "created_at": m.created_at.isoformat()} for m in msgs]
         result.append({
             "id": t.id,
             "user_email": user.email if user else "Unknown",
@@ -4651,7 +4727,7 @@ def get_all_tickets(current_user: database.User = Depends(auth.get_current_user)
             "status": t.status,
             "created_at": t.created_at.isoformat(),
             "updated_at": t.updated_at.isoformat(),
-            "replies": json.loads(t.replies_json) if t.replies_json else []
+            "replies": replies
         })
     return result
 
@@ -4663,7 +4739,7 @@ def update_ticket_status(ticket_id: str, req: TicketStatusUpdate, current_user: 
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admin only")
         
-    ticket = db.query(database.SupportTicket).filter(database.SupportTicket.id == ticket_id).first()
+    ticket = db.query(database.Ticket).filter(database.Ticket.id == ticket_id).first()
     if not ticket:
         raise HTTPException(status_code=404, detail="Ticket not found")
         
@@ -4794,84 +4870,577 @@ def clean_invalid_leads(db: Session = Depends(database.get_db)):
 
 
 # ============================================================
-# SUPPORT TICKET API ENDPOINTS
+# EMAIL HEALTH & DELIVERABILITY ENDPOINTS
 # ============================================================
-import json
-from pydantic import BaseModel
 
-class TicketCreateRequest(BaseModel):
-    subject: str
-    message: str
+@app.get("/api/account-health/{acc_id}")
+def get_account_health(acc_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    """Get detailed health report for a specific sending account."""
+    acc = db.query(database.SendingAccount).filter(database.SendingAccount.id == acc_id, database.SendingAccount.user_id == str(current_user.id)).first()
+    if not acc:
+        raise HTTPException(status_code=404, detail="Account not found")
+    return health_monitor.get_health_report(db, acc_id)
 
-class TicketReplyRequest(BaseModel):
-    message: str
+@app.get("/api/account-health-all")
+def get_all_account_health(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    """Get health reports and suggested limits for all accounts."""
+    
+    accounts = db.query(database.SendingAccount).filter(database.SendingAccount.user_id == str(current_user.id)).all()
+    print("DEBUG: Fetched", len(accounts), "accounts for user", current_user.email, flush=True)
 
-@app.post("/api/tickets")
-def create_ticket(req: TicketCreateRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    replies = [{"sender": "user", "message": req.message, "timestamp": datetime.utcnow().isoformat()}]
-    new_ticket = database.SupportTicket(
-        user_id=str(current_user.id),
-        subject=req.subject,
-        status="Open",
-        replies_json=json.dumps(replies)
+    return [health_monitor.get_health_report(db, str(acc.id)) for acc in accounts]
+
+@app.post("/api/sending-accounts/{acc_id}/reactivate")
+def reactivate_account(acc_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    """Manually reactivate an auto-paused account."""
+    acc = db.query(database.SendingAccount).filter(database.SendingAccount.id == acc_id, database.SendingAccount.user_id == str(current_user.id)).first()
+    if not acc:
+        raise HTTPException(status_code=404, detail="Account not found")
+    result = health_monitor.reactivate_account(db, acc_id)
+    if result["status"] == "error":
+        raise HTTPException(status_code=400, detail=result["detail"])
+    return result
+
+@app.get("/api/account-stats/{acc_id}")
+def get_account_stats(acc_id: str, days: int = 30, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    """Get per-account daily stats for analytics charts."""
+    acc = db.query(database.SendingAccount).filter(database.SendingAccount.id == acc_id, database.SendingAccount.user_id == str(current_user.id)).first()
+    if not acc:
+        raise HTTPException(status_code=404, detail="Account not found")
+    stats = health_monitor.get_account_stats(db, acc_id, days)
+    return {"account_id": acc_id, "email": acc.email, "days": days, "stats": stats}
+
+# --- Domain Health Endpoints ---
+@app.get("/api/domain-health/{domain}")
+def get_domain_health(domain: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    """Run a full domain health audit (SPF/DKIM/DMARC/Blacklist/Catch-all)."""
+    result = domain_checker.full_domain_audit(domain)
+    # Cache the result
+    domain_checker.cache_domain_health(db, domain, result)
+    return result
+
+@app.get("/api/domain-health-all")
+def get_all_domains_health(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    """Get cached domain health for all sending account domains."""
+    
+    accounts = db.query(database.SendingAccount).filter(database.SendingAccount.user_id == str(current_user.id)).all()
+    print("DEBUG: Fetched", len(accounts), "accounts for user", current_user.email, flush=True)
+
+    domains = set()
+    for acc in accounts:
+        if '@' in acc.email:
+            domains.add(acc.email.split('@')[1])
+
+    results = []
+    for domain in domains:
+        cache = db.query(database.DomainHealthCache).filter(database.DomainHealthCache.domain == domain).first()
+        if cache:
+            results.append({
+                "domain": domain,
+                "has_spf": cache.has_spf,
+                "has_dkim": cache.has_dkim,
+                "has_dmarc": cache.has_dmarc,
+                "is_blacklisted": cache.is_blacklisted,
+                "blacklist_details": cache.blacklist_details,
+                "is_catch_all": cache.is_catch_all,
+                "last_checked": str(cache.last_checked) if cache.last_checked else None,
+            })
+        else:
+            results.append({"domain": domain, "status": "not_checked"})
+    return results
+
+# --- Inbox Placement Test (Seed Testing) ---
+class InboxTestRequest(BaseModel):
+    seed_email: str
+    seed_imap_server: Optional[str] = None
+    seed_imap_port: int = 993
+    seed_imap_password: Optional[str] = None
+
+@app.post("/api/inbox-test/{acc_id}")
+def run_inbox_test(acc_id: str, req: InboxTestRequest, background_tasks: BackgroundTasks, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    """Send a test email and check if it lands in inbox or spam."""
+    acc = db.query(database.SendingAccount).filter(database.SendingAccount.id == acc_id, database.SendingAccount.user_id == str(current_user.id)).first()
+    if not acc:
+        raise HTTPException(status_code=404, detail="Account not found")
+
+    # Create seed test record
+    test = database.SeedTestResult(
+        account_id=acc_id,
+        seed_email=req.seed_email,
+        provider=req.seed_email.split('@')[-1] if '@' in req.seed_email else 'unknown',
+        landed_in="pending"
     )
-    db.add(new_ticket)
+    db.add(test)
     db.commit()
-    db.refresh(new_ticket)
-    
-    # Notify Admin
-    import email_service
-    email_service.send_new_ticket_notification(current_user.email, req.subject, req.message)
-    
-    return {"status": "success", "ticket_id": new_ticket.id}
+    test_id = str(test.id)
 
-@app.get("/api/tickets")
-def get_user_tickets(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    tickets = db.query(database.SupportTicket).filter(database.SupportTicket.user_id == str(current_user.id)).order_by(database.SupportTicket.created_at.desc()).all()
+    # Send test email in background
+    def _run_seed_test():
+        import time
+        test_db = database.SessionLocal()
+        try:
+            # Send a test email
+            subject = f"Inbox Test {datetime.utcnow().strftime('%H:%M')}"
+            body = "<p>This is an automated inbox placement test. If you can read this, your email is landing in the inbox!</p>"
+            sent = email_service.send_single_email(subject, body, req.seed_email, account=acc)
+
+            if not sent:
+                t = test_db.query(database.SeedTestResult).filter(database.SeedTestResult.id == test_id).first()
+                if t:
+                    t.landed_in = "send_failed"
+                    test_db.commit()
+                return
+
+            # Wait for email to arrive
+            time.sleep(120)  # 2 minutes
+
+            # Check via IMAP if provided
+            if req.seed_imap_server and req.seed_imap_password:
+                import imaplib
+                import email as email_module
+                try:
+                    imap = imaplib.IMAP4_SSL(req.seed_imap_server, req.seed_imap_port, timeout=15)
+                    imap.login(req.seed_email, req.seed_imap_password)
+
+                    # Check inbox first
+                    imap.select('INBOX')
+                    typ, data = imap.search(None, f'SUBJECT "{subject}"')
+                    if typ == 'OK' and data[0]:
+                        landed = "inbox"
+                    else:
+                        # Check spam
+                        spam_folders = ['[Gmail]/Spam', 'Spam', 'Junk', 'Junk Email']
+                        landed = "not_found"
+                        for folder in spam_folders:
+                            try:
+                                imap.select(folder)
+                                typ, data = imap.search(None, f'SUBJECT "{subject}"')
+                                if typ == 'OK' and data[0]:
+                                    landed = "spam"
+                                    break
+                            except Exception:
+                                continue
+
+                    imap.logout()
+
+                    t = test_db.query(database.SeedTestResult).filter(database.SeedTestResult.id == test_id).first()
+                    if t:
+                        t.landed_in = landed
+                        test_db.commit()
+                except Exception as e:
+                    print(f"[Inbox Test] IMAP check failed: {e}")
+                    t = test_db.query(database.SeedTestResult).filter(database.SeedTestResult.id == test_id).first()
+                    if t:
+                        t.landed_in = "check_failed"
+                        test_db.commit()
+            else:
+                # No IMAP credentials — mark as sent (user checks manually)
+                t = test_db.query(database.SeedTestResult).filter(database.SeedTestResult.id == test_id).first()
+                if t:
+                    t.landed_in = "sent_check_manually"
+                    test_db.commit()
+        except Exception as e:
+            print(f"[Inbox Test] Error: {e}")
+        finally:
+            test_db.close()
+
+    import threading; threading.Thread(target=_run_seed_test, daemon=True).start()
+    return {"status": "test_started", "test_id": test_id, "message": "Test email sent. Results will be available in ~2 minutes."}
+
+@app.get("/api/inbox-test/{acc_id}/results")
+def get_inbox_test_results(acc_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    """Get inbox placement test results for an account."""
+    tests = db.query(database.SeedTestResult).filter(
+        database.SeedTestResult.account_id == acc_id
+    ).order_by(database.SeedTestResult.tested_at.desc()).limit(20).all()
     return [{
-        "id": t.id,
-        "subject": t.subject,
-        "status": t.status,
-        "created_at": t.created_at.isoformat(),
-        "updated_at": t.updated_at.isoformat(),
-        "replies": json.loads(t.replies_json) if t.replies_json else []
-    } for t in tickets]
+        "id": str(t.id),
+        "seed_email": t.seed_email,
+        "provider": t.provider,
+        "landed_in": t.landed_in,
+        "tested_at": str(t.tested_at) if t.tested_at else None
+    } for t in tests]
 
-@app.post("/api/tickets/{ticket_id}/reply")
-def reply_to_ticket(ticket_id: str, req: TicketReplyRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    ticket = db.query(database.SupportTicket).filter(database.SupportTicket.id == ticket_id).first()
-    if not ticket:
-        raise HTTPException(status_code=404, detail="Ticket not found")
-        
-    is_admin = current_user.is_admin
-    if not is_admin and ticket.user_id != str(current_user.id):
-        raise HTTPException(status_code=403, detail="Not authorized")
-        
-    replies = json.loads(ticket.replies_json) if ticket.replies_json else []
-    sender = "admin" if is_admin else "user"
-    replies.append({"sender": sender, "message": req.message, "timestamp": datetime.utcnow().isoformat()})
-    
-    ticket.replies_json = json.dumps(replies)
-    if is_admin:
-        ticket.status = "Replied"
-    else:
-        ticket.status = "Open"
-        
+# --- Sending Window Configuration ---
+class SendWindowRequest(BaseModel):
+    send_window_start: int = 9
+    send_window_end: int = 17
+    send_window_timezone: str = "UTC"
+
+@app.post("/api/sending-accounts/{acc_id}/send-window")
+def update_send_window(acc_id: str, req: SendWindowRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    """Update sending window for an account."""
+    acc = db.query(database.SendingAccount).filter(database.SendingAccount.id == acc_id, database.SendingAccount.user_id == str(current_user.id)).first()
+    if not acc:
+        raise HTTPException(status_code=404, detail="Account not found")
+    acc.send_window_start = req.send_window_start
+    acc.send_window_end = req.send_window_end
+    acc.send_window_timezone = req.send_window_timezone
     db.commit()
-    
-    # Send Notifications
-    import email_service
-    if is_admin:
-        # Admin replied, notify user
-        user = db.query(database.User).filter(database.User.id == ticket.user_id).first()
-        if user:
-            email_service.send_ticket_reply_notification(user.email, ticket.subject, req.message)
-    else:
-        # User replied, notify admin
-        email_service.send_new_ticket_notification(current_user.email, f"Re: {ticket.subject}", req.message)
-        
     return {"status": "success"}
 
+# --- Custom Tracking Domain ---
+class TrackingDomainRequest(BaseModel):
+    custom_tracking_domain: Optional[str] = None
+
+@app.post("/api/sending-accounts/{acc_id}/tracking-domain")
+def update_tracking_domain(acc_id: str, req: TrackingDomainRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    """Update custom tracking domain for an account."""
+    acc = db.query(database.SendingAccount).filter(database.SendingAccount.id == acc_id, database.SendingAccount.user_id == str(current_user.id)).first()
+    if not acc:
+        raise HTTPException(status_code=404, detail="Account not found")
+    acc.custom_tracking_domain = req.custom_tracking_domain
+    db.commit()
+    return {"status": "success"}
+
+# NOTE: BUG-45 FIX - Duplicate unprotected AI endpoints removed.
+# The authenticated versions are defined above at /api/ai/chat, /api/ai/generate,
+# /api/ai/optimize-subject, /api/ai/generate-icebreakers, /api/ai/autopilot
+
+# --- SETTINGS ENDPOINTS ---
+class GeminiKeyRequest(BaseModel):
+    gemini_api_key: str
+
+class GroqKeyRequest(BaseModel):
+    groq_api_key: str
+
+class OpenAIKeyRequest(BaseModel):
+    openai_api_key: str
+
+class AnthropicKeyRequest(BaseModel):
+    anthropic_api_key: str
+
+class DeepSeekKeyRequest(BaseModel):
+    deepseek_api_key: str
+
+@app.get("/api/settings")
+def get_settings(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    return {
+        "has_gemini_api_key": bool(current_user.gemini_api_key),
+        "has_groq_api_key": bool(current_user.groq_api_key),
+        "has_openai_api_key": bool(current_user.openai_api_key),
+        "has_anthropic_api_key": bool(current_user.anthropic_api_key),
+        "has_deepseek_api_key": bool(current_user.deepseek_api_key),
+    }
+
+@app.post("/api/settings/gemini")
+def save_gemini_key(req: GeminiKeyRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    current_user.gemini_api_key = req.gemini_api_key
+    db.commit()
+    os.environ["GEMINI_API_KEY"] = req.gemini_api_key
+    return {"ok": True, "message": "Gemini API key saved"}
+
+@app.post("/api/settings/groq")
+def save_groq_key(req: GroqKeyRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    current_user.groq_api_key = req.groq_api_key
+    db.commit()
+    os.environ["GROQ_API_KEY"] = req.groq_api_key
+    return {"ok": True, "message": "Groq API key saved"}
+
+@app.post("/api/settings/openai")
+def save_openai_key(req: OpenAIKeyRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    current_user.openai_api_key = req.openai_api_key
+    db.commit()
+    os.environ["OPENAI_API_KEY"] = req.openai_api_key
+    return {"ok": True, "message": "OpenAI API key saved"}
+
+@app.post("/api/settings/anthropic")
+def save_anthropic_key(req: AnthropicKeyRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    current_user.anthropic_api_key = req.anthropic_api_key
+    db.commit()
+    os.environ["ANTHROPIC_API_KEY"] = req.anthropic_api_key
+    return {"ok": True, "message": "Anthropic API key saved"}
+
+@app.post("/api/settings/deepseek")
+def save_deepseek_key(req: DeepSeekKeyRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    current_user.deepseek_api_key = req.deepseek_api_key
+    db.commit()
+    os.environ["DEEPSEEK_API_KEY"] = req.deepseek_api_key
+    return {"ok": True, "message": "DeepSeek API key saved"}
+
+
+
+# --- UNSUBSCRIBE ENDPOINTS ---
+@app.get('/unsubscribe/{token}')
+def unsubscribe(token: str, db: Session = Depends(database.get_db)):
+    try:
+        email = base64.b64decode(token).decode('utf-8')
+        existing = db.query(database.UnsubscribeList).filter(database.UnsubscribeList.email == email).first()
+        if not existing:
+            new_unsub = database.UnsubscribeList(email=email)
+            db.add(new_unsub)
+            db.commit()
+            # db.commit()
+        return Response(content="<html><body style='font-family:sans-serif;text-align:center;padding:50px;'><h2>Unsubscribed Successfully</h2><p>You will no longer receive emails from us.</p></body></html>", media_type='text/html')
+    except:
+        raise HTTPException(status_code=400, detail='Invalid token')
+
+@app.get('/api/unsubscribes')
+def get_unsubscribes(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    # BUG FIX: return serializable dicts, accessible to all users
+    unsubs = db.query(database.UnsubscribeList).all()
+    return [{"email": u.email, "unsubscribed_at": str(u.unsubscribed_at)} for u in unsubs]
+
+
+# --- BOUNCES ENDPOINT ---
+@app.get('/api/bounces')
+def get_bounces(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    # BUG FIX: return serializable dicts
+    bounces = db.query(database.CampaignLead).join(database.Campaign).filter(
+        database.CampaignLead.status == 'bounced',
+        database.Campaign.user_id == str(current_user.id)
+    ).all()
+    return [{"email": l.email, "campaign_id": l.campaign_id, "name": l.name} for l in bounces]
+
+
+
+
+
+# --- REPLIES ENDPOINT ---
+@app.get('/api/run-campaign-debug/{campaign_id}')
+def debug_campaign(campaign_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    try:
+        _run_campaign(db, campaign_id)
+        leads = db.query(database.CampaignLead).filter_by(campaign_id=campaign_id).all()
+        return {"status": "done", "leads": [{"email": l.email, "status": l.status} for l in leads]}
+    except Exception as e:
+        import traceback
+        return {"error": str(e), "trace": traceback.format_exc()}
+
+@app.get('/api/reset-lead/{campaign_id}')
+def reset_lead(campaign_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    leads = db.query(database.CampaignLead).filter_by(campaign_id=campaign_id).all()
+    for l in leads: l.status = 'pending'
+    db.commit()
+    return {"status": "reset"}
+
+class ReplySendRequest(BaseModel):
+    content: str
+
+@app.post("/api/replies/{reply_id}/draft")
+def draft_reply(reply_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    reply = db.query(database.Reply).join(database.SendingAccount).filter(
+        database.Reply.id == reply_id, 
+        database.SendingAccount.user_id == current_user.id
+    ).first()
+    
+    if not reply:
+        raise HTTPException(status_code=404, detail="Reply not found or unauthorized")
+        
+    import ai_core
+    draft = ai_core.draft_reply_to_email(reply.body or "", current_user)
+    return {"draft": draft}
+
+@app.post("/api/replies/{reply_id}/send")
+def send_ai_reply(reply_id: str, req: ReplySendRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    reply = db.query(database.Reply).join(database.SendingAccount).filter(
+        database.Reply.id == reply_id, 
+        database.SendingAccount.user_id == current_user.id
+    ).first()
+    
+    if not reply:
+        raise HTTPException(status_code=404, detail="Reply not found or unauthorized")
+        
+    account = db.query(database.SendingAccount).filter(database.SendingAccount.id == reply.account_id).first()
+    
+    import email_service
+    success = email_service.send_single_email(
+        subject="Re: " + (reply.subject or "Your Message"),
+        body_html=f"<p>{req.content.replace(chr(10), '<br>')}</p>",
+        recipient=reply.sender_email,
+        account=account
+    )
+    
+    if success:
+        return {"status": "ok"}
+    else:
+        raise HTTPException(status_code=500, detail="Failed to send email. Check account settings.")
+
+@app.get('/api/replies')
+def get_replies(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    replies = db.query(database.Reply).join(database.SendingAccount).filter(
+        database.SendingAccount.user_id == current_user.id
+    ).order_by(database.Reply.received_at.desc()).all()
+    
+    return [{
+        "id": str(r.id),
+        "account_id": r.account_id,
+        "sender_email": r.sender_email,
+        "subject": r.subject,
+        "body": r.body,
+        "sentiment": r.sentiment,
+        "received_at": str(r.received_at)
+    } for r in replies]
+
+@app.delete('/api/replies/{reply_id}')
+def delete_reply(reply_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    reply = db.query(database.Reply).join(database.SendingAccount).filter(
+        database.Reply.id == reply_id, 
+        database.SendingAccount.user_id == current_user.id
+    ).first()
+    
+    if not reply:
+        raise HTTPException(status_code=404, detail="Reply not found or unauthorized")
+        
+    db.delete(reply)
+    db.commit()
+    return {"status": "ok", "message": "Reply deleted successfully"}
+
+
+# --- WEBHOOK ENDPOINTS ---
+import requests
+import threading
+
+def trigger_webhook(user_id: str, event_type: str, payload: dict):
+    db = database.SessionLocal()
+    try:
+        if not user_id:
+            return
+        webhook = db.query(database.Webhook).filter(database.Webhook.user_id == user_id).first()
+        if not webhook or not webhook.url:
+            return
+            
+        webhook_url = webhook.url
+    finally:
+        db.close()
+    
+    def _send():
+        try:
+            import requests
+            requests.post(webhook_url, json={"event": event_type, "data": payload}, timeout=5)
+        except Exception as e:
+            print(f"Webhook error: {e}")
+    threading.Thread(target=_send, daemon=True).start()
+
+class WebhookRequest(BaseModel):
+    url: str
+
+@app.get('/api/webhook')
+def get_webhook(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    webhook = db.query(database.Webhook).filter(database.Webhook.user_id == str(current_user.id)).first()
+    return {"url": webhook.url if webhook else ""}
+
+@app.post('/api/webhook')
+def save_webhook(req: WebhookRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    webhook = db.query(database.Webhook).filter(database.Webhook.user_id == str(current_user.id)).first()
+    if not webhook:
+        webhook = database.Webhook(user_id=str(current_user.id), url=req.url)
+        db.add(webhook)
+    else:
+        webhook.url = req.url
+    db.commit()
+    return {"ok": True}
+
+# ============================================================
+# MEDIA GALLERY ENDPOINTS
+# ============================================================
+import uuid
+from fastapi import UploadFile, File
+
+@app.post("/api/gallery/upload")
+async def upload_image(file: UploadFile = File(...), current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    if not file.content_type.startswith('image/'):
+        raise HTTPException(status_code=400, detail="File must be an image.")
+    
+    ext = file.filename.split('.')[-1] if '.' in file.filename else 'png'
+    new_filename = f"{uuid.uuid4().hex}.{ext}"
+    os.makedirs("uploads", exist_ok=True)
+    file_path = os.path.join("uploads", new_filename)
+    
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+        
+    url = f"/uploads/{new_filename}"
+    
+    media = database.Media(
+        user_id=str(current_user.id),
+        filename=new_filename,
+        original_name=file.filename,
+        url=url
+    )
+    db.add(media)
+    db.commit()
+    db.refresh(media)
+    
+    return {"status": "success", "media": {"id": media.id, "url": media.url, "name": media.original_name}}
+
+@app.get("/api/gallery")
+def get_gallery(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    media_files = db.query(database.Media).filter(database.Media.user_id == str(current_user.id)).order_by(database.Media.created_at.desc()).all()
+    return [{"id": m.id, "url": m.url, "name": m.original_name, "created_at": m.created_at} for m in media_files]
+
+@app.delete("/api/gallery/{media_id}")
+def delete_media(media_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    media = db.query(database.Media).filter(database.Media.id == media_id, database.Media.user_id == str(current_user.id)).first()
+    if not media:
+        raise HTTPException(status_code=404, detail="Media not found")
+        
+    file_path = os.path.join("uploads", media.filename)
+    if os.path.exists(file_path):
+        os.remove(file_path)
+    db.delete(media)
+    db.commit()
+    return {"status": "success"}
+
+@app.get("/api/dump-replies")
+def dump_replies(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin only")
+    try:
+        with open("error.log", "r") as f:
+            log = f.read()[-5000:]
+    except:
+        log = "no log"
+    return {"log": log}
+
+@app.get("/api/recalculate-stats")
+def recalculate_stats(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin only")
+    campaigns = db.query(database.Campaign).all()
+    for c in campaigns:
+        leads = db.query(database.CampaignLead).filter(database.CampaignLead.campaign_id == str(c.id)).all()
+        sent = 0
+        opens = 0
+        clicks = 0
+        for l in leads:
+            if l.status in ['sent', 'opened', 'clicked', 'replied']:
+                sent += 1
+            if l.status in ['opened', 'clicked', 'replied']:
+                opens += 1
+            if l.status == 'clicked':
+                clicks += 1
+        c.sent_count = sent
+        c.opens = opens
+        c.clicks = clicks
+    db.commit()
+    return {"status": "ok"}
+
+@app.get("/api/debug-imap")
+def debug_imap(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin only")
+    import sys, io
+    import bounce_processor
+    
+    out = io.StringIO()
+    old_stdout = sys.stdout
+    old_stderr = sys.stderr
+    sys.stdout = out
+    sys.stderr = out
+    
+    try:
+        bounce_processor.check_bounces()
+    except Exception as e:
+        print(f"CRASH: {str(e)}")
+    finally:
+        sys.stdout = old_stdout
+        sys.stderr = old_stderr
+        
+    return {"debug_logs": out.getvalue().split('\n')}
+
+
+# ============================================================
 
 @app.get("/{full_path:path}")
 

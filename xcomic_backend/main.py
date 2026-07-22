@@ -4710,12 +4710,14 @@ def reply_ticket(ticket_id: str, req: TicketReply, current_user: database.User =
         id=str(uuid.uuid4()),
         ticket_id=ticket.id,
         user_id=current_user.id,
-        is_admin=current_user.is_admin,
+        is_admin=(current_user.is_admin and current_user.id != ticket.user_id),
         message=req.message
     )
     db.add(new_msg)
     
-    if current_user.is_admin:
+    if current_user.id == ticket.user_id:
+        ticket.status = "User Reply"
+    elif current_user.is_admin:
         ticket.status = "Admin Reply"
     else:
         ticket.status = "User Reply"

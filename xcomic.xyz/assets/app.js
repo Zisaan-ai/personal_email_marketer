@@ -10401,13 +10401,27 @@ viewTicket: async function(ticketId) {
             });
             if (res.ok) {
                 let data = await res.json();
-                let badge = document.getElementById('support-unread-badge');
-                if (badge) {
-                    if (data.unread > 0) {
-                        badge.textContent = data.unread;
-                        badge.style.display = 'inline-flex';
+                let count = data.unread || 0;
+
+                // 1. Admin sidebar nav badge
+                let adminBadge = document.getElementById('admin-unread-badge');
+                if (adminBadge) {
+                    if (count > 0) {
+                        adminBadge.textContent = count;
+                        adminBadge.style.display = 'inline-flex';
                     } else {
-                        badge.style.display = 'none';
+                        adminBadge.style.display = 'none';
+                    }
+                }
+
+                // 2. Support Tickets sub-tab badge inside Admin panel
+                let tabBadge = document.getElementById('tab-tickets-unread-badge');
+                if (tabBadge) {
+                    if (count > 0) {
+                        tabBadge.textContent = count;
+                        tabBadge.style.display = 'inline-flex';
+                    } else {
+                        tabBadge.style.display = 'none';
                     }
                 }
             }

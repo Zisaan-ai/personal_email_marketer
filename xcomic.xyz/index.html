@@ -1924,19 +1924,17 @@
 
             </a>
 
-            <a class="nav-item" data-target="support-view" onclick="window.navTo('support-view')" style="position:relative;">
+            <a class="nav-item" data-target="support-view" onclick="window.navTo('support-view')">
                 <i class="fa-solid fa-headset"></i><span>Support</span>
-                <span id="support-unread-badge" style="display:none;position:absolute;top:4px;right:4px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;border-radius:50%;width:16px;height:16px;align-items:center;justify-content:center;line-height:1;">0</span>
             </a>
             
             <a class="nav-item" data-target="settings" onclick="window.navTo('settings')">
                 <i class="fa-solid fa-gear"></i><span>Settings</span>
             </a>
 
-            <a class="nav-item" data-target="admin-view" id="nav-admin" style="display:none;" onclick="window.navTo('admin-view')">
-
+            <a class="nav-item" data-target="admin-view" id="nav-admin" style="display:none;position:relative;" onclick="window.navTo('admin-view')">
                 <i class="fa-solid fa-shield-halved"></i><span>Admin</span>
-
+                <span id="admin-unread-badge" style="display:none;position:absolute;top:4px;right:4px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;border-radius:50%;width:16px;height:16px;align-items:center;justify-content:center;line-height:1;">0</span>
             </a>
 
             <a class="nav-item" data-target="about-view" onclick="window.navTo('about-view')">
@@ -4740,7 +4738,7 @@
             
             <div class="admin-tabs" style="display: flex; gap: 16px; margin-bottom: 24px; border-bottom: 1px solid var(--border);">
                 <button id="tab-btn-users" class="admin-tab active" onclick="SUPPORT.switchAdminTab('users')" style="padding: 12px 24px; border: none; background: transparent; color: var(--primary); font-weight: 600; cursor: pointer; border-bottom: 2px solid var(--primary);">Users</button>
-                <button id="tab-btn-tickets" class="admin-tab" onclick="SUPPORT.switchAdminTab('tickets')" style="padding: 12px 24px; border: none; background: transparent; color: var(--text-muted); font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent;">Support Tickets</button>
+                <button id="tab-btn-tickets" class="admin-tab" onclick="SUPPORT.switchAdminTab('tickets')" style="padding: 12px 24px; border: none; background: transparent; color: var(--text-muted); font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent;position:relative;">Support Tickets<span id="tab-tickets-unread-badge" style="display:none;position:absolute;top:4px;right:4px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;border-radius:50%;width:16px;height:16px;align-items:center;justify-content:center;line-height:1;">0</span></button>
                 <button id="tab-btn-email" class="admin-tab" onclick="SUPPORT.switchAdminTab('email')" style="padding: 12px 24px; border: none; background: transparent; color: var(--text-muted); font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent;">Email Delivery</button>
             </div>
 

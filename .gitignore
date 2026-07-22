@@ -1,4 +1,4 @@
-tmp/
+﻿tmp/
 __pycache__/
 *.db
 *.db-shm
@@ -7,3 +7,10 @@ __pycache__/
 node_modules/
 vendor/
 .env
+*.pyc
+live_*.py
+check_*.py
+fix_*.py
+test_*.py
+patch_*.py
+upload_*.py

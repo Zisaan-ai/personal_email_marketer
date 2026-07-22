@@ -4633,6 +4633,7 @@ def run_mig_2():
 
 
 
+
 class TicketCreate(BaseModel):
     subject: str
     message: str
@@ -4668,17 +4669,32 @@ def get_user_tickets(current_user: database.User = Depends(auth.get_current_user
     tickets = db.query(database.Ticket).filter(database.Ticket.user_id == current_user.id).order_by(database.Ticket.created_at.desc()).all()
     result = []
     for t in tickets:
-        msgs = db.query(database.TicketMessage).filter(database.TicketMessage.ticket_id == t.id).order_by(database.TicketMessage.created_at.asc()).all()
-        replies = [{"sender": "admin" if m.is_admin else "user", "message": m.message, "created_at": m.created_at.isoformat()} for m in msgs]
         result.append({
             "id": t.id,
             "subject": t.subject,
             "status": t.status,
             "created_at": t.created_at.isoformat(),
-            "updated_at": t.updated_at.isoformat(),
-            "replies": replies
+            "updated_at": t.updated_at.isoformat()
         })
-    return result
+    return {"tickets": result}
+
+@app.get("/api/support/tickets/{ticket_id}")
+def get_ticket(ticket_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    ticket = db.query(database.Ticket).filter(database.Ticket.id == ticket_id).first()
+    if not ticket:
+        raise HTTPException(status_code=404, detail="Ticket not found")
+    if not current_user.is_admin and ticket.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized")
+        
+    msgs = db.query(database.TicketMessage).filter(database.TicketMessage.ticket_id == ticket.id).order_by(database.TicketMessage.created_at.asc()).all()
+    messages = [{"is_admin": m.is_admin, "message": m.message, "created_at": m.created_at.isoformat()} for m in msgs]
+    
+    return {
+        "id": ticket.id,
+        "subject": ticket.subject,
+        "status": ticket.status,
+        "messages": messages
+    }
 
 @app.post("/api/support/tickets/{ticket_id}/reply")
 def reply_ticket(ticket_id: str, req: TicketReply, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
@@ -4699,11 +4715,10 @@ def reply_ticket(ticket_id: str, req: TicketReply, current_user: database.User =
     )
     db.add(new_msg)
     
-    # Update ticket status and updated_at
     if current_user.is_admin:
-        ticket.status = "Answered"
+        ticket.status = "Admin Reply"
     else:
-        ticket.status = "Open"
+        ticket.status = "User Reply"
         
     db.commit()
     return {"status": "success"}
@@ -4713,26 +4728,24 @@ def get_all_tickets(current_user: database.User = Depends(auth.get_current_user)
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admin only")
         
+    # Sort un-answered (open) tickets first, then sort by updated_at descending
     tickets = db.query(database.Ticket).order_by(
-        (database.Ticket.status == 'Open').desc(),
+        (database.Ticket.status.in_(['Open', 'open', 'User Reply', 'user reply'])).desc(),
         database.Ticket.updated_at.desc()
     ).all()
     
     result = []
     for t in tickets:
         user = db.query(database.User).filter(database.User.id == t.user_id).first()
-        msgs = db.query(database.TicketMessage).filter(database.TicketMessage.ticket_id == t.id).order_by(database.TicketMessage.created_at.asc()).all()
-        replies = [{"sender": "admin" if m.is_admin else "user", "message": m.message, "created_at": m.created_at.isoformat()} for m in msgs]
         result.append({
             "id": t.id,
             "user_email": user.email if user else "Unknown",
             "subject": t.subject,
             "status": t.status,
             "created_at": t.created_at.isoformat(),
-            "updated_at": t.updated_at.isoformat(),
-            "replies": replies
+            "updated_at": t.updated_at.isoformat()
         })
-    return result
+    return {"tickets": result}
 
 class TicketStatusUpdate(BaseModel):
     status: str

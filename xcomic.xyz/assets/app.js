@@ -10225,7 +10225,7 @@ window.SUPPORT = {
                 let userHtml = '';
                 
                 data.tickets.forEach(t => {
-                    let statusColor = t.status === 'open' ? '#3b82f6' : (t.status === 'answered' ? '#10b981' : '#64748b');
+                    let statusColor = (t.status.toLowerCase() === 'open' || t.status.toLowerCase() === 'user reply') ? '#3b82f6' : (t.status.toLowerCase() === 'admin reply' ? '#10b981' : '#64748b');
                     let dt = new Date(t.updated_at).toLocaleString();
                     
                     userHtml += `<tr>
@@ -10250,7 +10250,7 @@ window.SUPPORT = {
                 let adminHtml = '';
                 
                 data.tickets.forEach(t => {
-                    let statusColor = t.status === 'open' ? '#3b82f6' : (t.status === 'answered' ? '#10b981' : '#64748b');
+                    let statusColor = (t.status.toLowerCase() === 'open' || t.status.toLowerCase() === 'user reply') ? '#3b82f6' : (t.status.toLowerCase() === 'admin reply' ? '#10b981' : '#64748b');
                     let dt = new Date(t.updated_at).toLocaleString();
                     
                     adminHtml += `<tr>

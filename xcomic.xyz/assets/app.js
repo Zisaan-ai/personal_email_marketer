@@ -4807,6 +4807,9 @@ function populateTimezones() {
 
         if (vbSchTimezone) vbSchTimezone.innerHTML = html;
 
+        const userTzSelect = document.getElementById('user-timezone');
+        if (userTzSelect) userTzSelect.innerHTML = html;
+
 
 
         
@@ -5074,6 +5077,54 @@ async function loadSmtpStatus() {
 }
 
 function setupSettings() {
+
+    // --- Load existing Timezone ---
+    (async () => {
+        const tzEl = document.getElementById('user-timezone');
+        if (tzEl) {
+            try {
+                const res = await apiCall('/settings/timezone', 'GET');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.timezone) tzEl.value = data.timezone;
+                }
+            } catch(e) {}
+        }
+    })();
+    
+    // --- Handle Save Timezone ---
+    const saveTzBtn = document.getElementById('save-timezone-btn');
+    if (saveTzBtn) {
+        saveTzBtn.addEventListener('click', async () => {
+            const tz = document.getElementById('user-timezone').value;
+            const statusEl = document.getElementById('timezone-status');
+            if (statusEl) {
+                statusEl.textContent = 'Saving...';
+                statusEl.className = 'alert info';
+                statusEl.style.display = 'block';
+            }
+            try {
+                const res = await apiCall('/settings/timezone', 'POST', { timezone: tz });
+                if (res.ok) {
+                    if (statusEl) {
+                        statusEl.textContent = 'Timezone saved successfully!';
+                        statusEl.className = 'alert success';
+                    }
+                    if (window.currentUser) window.currentUser.timezone = tz;
+                } else {
+                    if (statusEl) {
+                        statusEl.textContent = 'Failed to save timezone.';
+                        statusEl.className = 'alert error';
+                    }
+                }
+            } catch (e) {
+                if (statusEl) {
+                    statusEl.textContent = 'Error saving timezone.';
+                    statusEl.className = 'alert error';
+                }
+            }
+        });
+    }
 
     // --- Load existing SMTP account status on page open ---
     (async () => {

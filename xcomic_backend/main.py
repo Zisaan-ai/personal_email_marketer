@@ -4678,6 +4678,15 @@ def get_user_tickets(current_user: database.User = Depends(auth.get_current_user
         })
     return {"tickets": result}
 
+@app.get("/api/support/tickets/unread-count")
+def get_user_unread_ticket_count(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    # Count user's tickets where admin has replied (status is "Admin Reply") - user hasn't seen yet
+    count = db.query(database.Ticket).filter(
+        database.Ticket.user_id == current_user.id,
+        database.Ticket.status == "Admin Reply"
+    ).count()
+    return {"unread": count}
+
 @app.get("/api/support/tickets/{ticket_id}")
 def get_ticket(ticket_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     ticket = db.query(database.Ticket).filter(database.Ticket.id == ticket_id).first()
@@ -4786,14 +4795,7 @@ def get_unread_ticket_count(current_user: database.User = Depends(auth.get_curre
     count = db.query(database.Ticket).filter(database.Ticket.status == "User Reply").count()
     return {"unread": count}
 
-@app.get("/api/support/tickets/unread-count")
-def get_user_unread_ticket_count(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    # Count user's tickets where admin has replied (status is "Admin Reply") - user hasn't seen yet
-    count = db.query(database.Ticket).filter(
-        database.Ticket.user_id == current_user.id,
-        database.Ticket.status == "Admin Reply"
-    ).count()
-    return {"unread": count}
+
 
 # CATCH-ALL: Serve Frontend (MUST be LAST route)
 

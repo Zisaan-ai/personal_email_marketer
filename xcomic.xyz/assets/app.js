@@ -804,7 +804,13 @@ window.navTo = function(targetId) {
         if (targetId === 'unsubscribes-view') loadUnsubscribes();
 
         if (targetId === 'replies-view') loadReplies();
-if (targetId === 'support-view') { SUPPORT.loadSupportTickets(); SUPPORT.checkUnreadTickets(); }
+if (targetId === 'support-view') { 
+            SUPPORT.loadSupportTickets(); 
+            SUPPORT.checkUnreadTickets();
+            // Clear user badge when support is opened
+            let userBadge = document.getElementById('user-support-badge');
+            if (userBadge) userBadge.style.display = 'none';
+        }
 
         if (targetId === 'settings') loadSmtpStatus();
 
@@ -10395,33 +10401,58 @@ viewTicket: async function(ticketId) {
     checkUnreadTickets: async function() {
         try {
             let currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-            if (!currentUser.is_admin) return;
-            let res = await fetch('/api/admin/tickets/unread-count', {
-                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
-            });
-            if (res.ok) {
-                let data = await res.json();
-                let count = data.unread || 0;
 
-                // 1. Admin sidebar nav badge
-                let adminBadge = document.getElementById('admin-unread-badge');
-                if (adminBadge) {
-                    if (count > 0) {
-                        adminBadge.textContent = count;
-                        adminBadge.style.display = 'inline-flex';
-                    } else {
-                        adminBadge.style.display = 'none';
+            if (currentUser.is_admin) {
+                // ADMIN: check tickets with "User Reply" status
+                let res = await fetch('/api/admin/tickets/unread-count', {
+                    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+                });
+                if (res.ok) {
+                    let data = await res.json();
+                    let count = data.unread || 0;
+
+                    // 1. Admin sidebar nav badge
+                    let adminBadge = document.getElementById('admin-unread-badge');
+                    if (adminBadge) {
+                        if (count > 0) {
+                            adminBadge.textContent = count;
+                            adminBadge.style.display = 'inline-flex';
+                        } else {
+                            adminBadge.style.display = 'none';
+                        }
+                    }
+
+                    // 2. Support Tickets sub-tab badge inside Admin panel
+                    let tabBadge = document.getElementById('tab-tickets-unread-badge');
+                    if (tabBadge) {
+                        if (count > 0) {
+                            tabBadge.textContent = count;
+                            tabBadge.style.display = 'inline-flex';
+                        } else {
+                            tabBadge.style.display = 'none';
+                        }
                     }
                 }
+            } else {
+                // REGULAR USER: check if admin replied to any of their tickets
+                let currentView = document.querySelector('.view.active');
+                let isOnSupportView = currentView && currentView.id === 'support-view';
+                if (isOnSupportView) return; // already on support page, no need for badge
 
-                // 2. Support Tickets sub-tab badge inside Admin panel
-                let tabBadge = document.getElementById('tab-tickets-unread-badge');
-                if (tabBadge) {
-                    if (count > 0) {
-                        tabBadge.textContent = count;
-                        tabBadge.style.display = 'inline-flex';
-                    } else {
-                        tabBadge.style.display = 'none';
+                let res = await fetch('/api/support/tickets/unread-count', {
+                    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+                });
+                if (res.ok) {
+                    let data = await res.json();
+                    let count = data.unread || 0;
+                    let userBadge = document.getElementById('user-support-badge');
+                    if (userBadge) {
+                        if (count > 0) {
+                            userBadge.textContent = count;
+                            userBadge.style.display = 'inline-flex';
+                        } else {
+                            userBadge.style.display = 'none';
+                        }
                     }
                 }
             }

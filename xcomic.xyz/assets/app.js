@@ -413,7 +413,7 @@ async function apiCall(endpoint, method = 'GET', body = null) {
 
 
 
-        try { localStorage.removeItem('token'); localStorage.removeItem('is_admin'); } catch(e) {}
+        try { localStorage.removeItem('token'); localStorage.removeItem('is_admin'); localStorage.removeItem('user'); } catch(e) {}
 
 
 
@@ -1584,7 +1584,7 @@ function setupLogout() {
 
 
 
-        try { localStorage.removeItem('token'); localStorage.removeItem('is_admin'); } catch(e) {}
+        try { localStorage.removeItem('token'); localStorage.removeItem('is_admin'); localStorage.removeItem('user'); } catch(e) {}
 
 
 

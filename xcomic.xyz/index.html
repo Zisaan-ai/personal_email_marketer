@@ -6020,6 +6020,7 @@
                 } else if (res.ok) {
                     localStorage.setItem('token', data.access_token);
                     localStorage.setItem('is_admin', data.is_admin ? 'true' : 'false');
+                    localStorage.setItem('user', JSON.stringify({ is_admin: data.is_admin, email: data.email || '' }));
                     _token = data.access_token;
                     document.getElementById('auth-page').classList.add('hidden');
                     document.getElementById('app-page').classList.add('on');
@@ -6115,6 +6116,7 @@
                 if (res.ok) {
                     localStorage.setItem('token', data.access_token);
                     localStorage.setItem('is_admin', data.is_admin ? 'true' : 'false');
+                    localStorage.setItem('user', JSON.stringify({ is_admin: data.is_admin, email: data.email || '' }));
                     _token = data.access_token;
                     document.getElementById('auth-page').classList.add('hidden');
                     document.getElementById('app-page').classList.add('on');

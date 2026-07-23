@@ -4665,495 +4665,185 @@
 
               
 
-              <div class="about-grid">
-
-
+              
+<div class="about-grid">
 
 <div class="about-card" style="--icon-color-1:#10b981; --icon-color-2:#059669; --icon-color-rgb:16,185,129;">
-
     <div class="about-icon-wrapper"><i class="fa-solid fa-users-gear"></i></div>
-
     <h3 class="about-title">1. Multi-Sender & Account Rotation</h3>
-
     <p class="about-text">Seamlessly integrate multiple SMTP accounts. Choose Automatic Load Balancing (Round-Robin) to let the system dynamically rotate senders, or manually select specific sending accounts for targeted campaigns to protect domain reputation.</p>
-
     <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-
         <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-
             <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-
             <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-
         </button>
-
         <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-
             <div style="padding: 16px;">
-
-                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;">Go to 'Accounts' > 'Add Account' to add SMTPs. In campaigns, select 'Auto-Rotate' or manually pick specific accounts.</p>
-
-                </div>
-
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;">Go to 'Accounts' > 'Add Account' to add SMTPs. In campaigns, select 'Auto-Rotate' or manually pick specific accounts.</p>
+            </div>
         </div>
-
     </div>
-
 </div>
-
-
 
 <div class="about-card" style="--icon-color-1:#3b82f6; --icon-color-2:#2563eb; --icon-color-rgb:59,130,246;">
-
     <div class="about-icon-wrapper"><i class="fa-solid fa-arrow-trend-up"></i></div>
-
-    <h3 class="about-title">2. Auto-Warmup vs Manual Warmup</h3>
-
+    <h3 class="about-title">2. Smart Daily Limits & Warmup</h3>
     <p class="about-text">Build domain trust effectively. Enable Smart Auto-Warmup to algorithmically scale your daily sending volume, or set Manual Warmup parameters to strictly control the exact number of emails sent per day.</p>
-
     <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-
         <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-
             <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-
             <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-
         </button>
-
         <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-
             <div style="padding: 16px;">
-
-                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;">In Sending Accounts, toggle 'Warmup' for automatic scaling, or manually type your preferred daily limit.</p>
-
-                </div>
-
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;">In Sending Accounts, toggle 'Warmup' for automatic scaling, or manually type your preferred daily limit.</p>
+            </div>
         </div>
-
     </div>
-
 </div>
-
-
-
-<div class="about-card" style="--icon-color-1:#f59e0b; --icon-color-2:#d97706; --icon-color-rgb:245,158,11;">
-
-    <div class="about-icon-wrapper"><i class="fa-solid fa-heart-pulse"></i></div>
-
-    <h3 class="about-title">3. Delivery-Based System Health Monitor</h3>
-
-    <p class="about-text">Dynamic health assessment based on true deliverability metrics. The system auto-calculates health percentage from open/reply rates vs bounces. You can manually pause unhealthy accounts before reputation drops.</p>
-
-    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-
-        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-
-            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-
-            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-
-        </button>
-
-        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-
-            <div style="padding: 16px;">
-
-                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;">Monitor the real-time health progress bars. If health drops below 50%, the system flags it—manually pause the account to recover.</p>
-
-                </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-
 
 <div class="about-card" style="--icon-color-1:#a855f7; --icon-color-2:#9333ea; --icon-color-rgb:168,85,247;">
-
-    <div class="about-icon-wrapper"><i class="fa-solid fa-shield-check"></i></div>
-
-    <h3 class="about-title">4. Pre-Flight Deliverability Optimizer</h3>
-
-    <p class="about-text">Ensure maximum inbox placement. The system automatically performs DNS (SPF/DKIM/DMARC) validation and algorithmic spam-word analysis before launching, while you can manually tweak the content based on its feedback.</p>
-
+    <div class="about-icon-wrapper"><i class="fa-solid fa-shield-halved"></i></div>
+    <h3 class="about-title">3. DKIM, SPF & DMARC Ready</h3>
+    <p class="about-text">Maximize deliverability. The system supports full domain authentication protocols. Ensure your custom SMTP settings and sender domains are authenticated to bypass spam filters securely.</p>
     <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-
         <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-
             <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-
             <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-
         </button>
-
         <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-
             <div style="padding: 16px;">
-
-                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;">Click 'Launch Campaign'. Review the auto-generated deliverability report, manually fix highlighted spam triggers, and confirm.</p>
-
-                </div>
-
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;">Add your SMTP servers with proper DNS records configured at your domain registrar.</p>
+            </div>
         </div>
-
     </div>
-
 </div>
-
-
-
-<div class="about-card" style="--icon-color-1:#ef4444; --icon-color-2:#dc2626; --icon-color-rgb:239,68,68;">
-
-    <div class="about-icon-wrapper"><i class="fa-solid fa-inbox"></i></div>
-
-    <h3 class="about-title">5. Live Inbox & Spam Placement Testing</h3>
-
-    <p class="about-text">Never guess your deliverability. Use the manual Inbox Test feature to send a live probe email to any address and instantly verify if it lands in the Inbox, Promotions, or Spam folder.</p>
-
-    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-
-        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-
-            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-
-            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-
-        </button>
-
-        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-
-            <div style="padding: 16px;">
-
-                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;">Click the 'Test Inbox' icon next to any sending account, type your test email, and check the inbox placement manually.</p>
-
-                </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-
 
 <div class="about-card" style="--icon-color-1:#14b8a6; --icon-color-2:#0d9488; --icon-color-rgb:20,184,166;">
-
-    <div class="about-icon-wrapper"><i class="fa-solid fa-link"></i></div>
-
-    <h3 class="about-title">6. Custom Tracking Domains</h3>
-
-    <p class="about-text">Bypass rigid spam filters by masking click/open tracking links. Set a Custom Tracking Domain manually for each sender to maintain a pristine sender reputation and avoid blacklisted shared domains.</p>
-
+    <div class="about-icon-wrapper"><i class="fa-solid fa-address-book"></i></div>
+    <h3 class="about-title">4. Dynamic Lead Management</h3>
+    <p class="about-text">Easily manage massive lists. Upload leads in bulk via TXT. Manage invalid emails, handle bounces, and track specific contacts securely to maintain a healthy subscriber base.</p>
     <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-
         <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-
             <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-
             <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-
         </button>
-
         <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-
             <div style="padding: 16px;">
-
-                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;">Edit an account, toggle 'Custom Tracking Domain', and manually enter your verified CNAME domain URL.</p>
-
-                </div>
-
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;">Navigate to Lists > Create List > Upload TXT file to populate your audience instantly.</p>
+            </div>
         </div>
-
     </div>
-
 </div>
-
-
-
-<div class="about-card" style="--icon-color-1:#f43f5e; --icon-color-2:#e11d48; --icon-color-rgb:244,63,94;">
-
-    <div class="about-icon-wrapper"><i class="fa-solid fa-filter-circle-xmark"></i></div>
-
-    <h3 class="about-title">7. Audience & Intelligent Auto-Cleaning</h3>
-
-    <p class="about-text">Maintain a pristine lead list. The system auto-detects hard bounces and invalidates them immediately. You can also manually upload CSVs, delete inactive leads, and segment audiences for precision targeting.</p>
-
-    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-
-        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-
-            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-
-            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-
-        </button>
-
-        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-
-            <div style="padding: 16px;">
-
-                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;">Manually import leads via CSV. The platform's automated chron-jobs handle hard bounce invalidation behind the scenes.</p>
-
-                </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-
-<div class="about-card" style="--icon-color-1:#6366f1; --icon-color-2:#4f46e5; --icon-color-rgb:99,102,241;">
-
-    <div class="about-icon-wrapper"><i class="fa-solid fa-brain"></i></div>
-
-    <h3 class="about-title">8. AI Autopilot: Cold Email & Icebreakers</h3>
-
-    <p class="about-text">Harness the power of Gemini & Groq AI. Let the AI automatically generate highly-converting cold email drafts and personalized icebreakers, or manually edit and refine the AI's suggestions in the rich text editor.</p>
-
-    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-
-        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-
-            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-
-            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-
-        </button>
-
-        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-
-            <div style="padding: 16px;">
-
-                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;">In the Composer, click 'AI Assistant', input your product details, auto-generate the content, and manually refine the text.</p>
-
-                </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-
-<div class="about-card" style="--icon-color-1:#0ea5e9; --icon-color-2:#0284c7; --icon-color-rgb:14,165,233;">
-
-    <div class="about-icon-wrapper"><i class="fa-solid fa-reply-all"></i></div>
-
-    <h3 class="about-title">9. AI Auto-Reply & Manual Inbox Management</h3>
-
-    <p class="about-text">Manage client responses seamlessly. Let the AI automatically read incoming replies and draft contextual responses, or take manual control to write and send highly personalized follow-ups directly from the dashboard.</p>
-
-    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-
-        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-
-            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-
-            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-
-        </button>
-
-        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-
-            <div style="padding: 16px;">
-
-                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;">Open any replied email. Click 'Generate AI Reply' for an automated draft, or manually type your response and hit Send.</p>
-
-                </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-
 
 <div class="about-card" style="--icon-color-1:#eab308; --icon-color-2:#ca8a04; --icon-color-rgb:234,179,8;">
-
     <div class="about-icon-wrapper"><i class="fa-solid fa-clock"></i></div>
-
-    <h3 class="about-title">10. Anti-Spam Humanized Delays</h3>
-
-    <p class="about-text">Evade rigorous anti-spam algorithms. The system automatically randomizes sending intervals between your configured boundaries, while you manually define the Min and Max delay ranges to dictate the pacing.</p>
-
+    <h3 class="about-title">5. Anti-Spam Humanized Delays</h3>
+    <p class="about-text">Evade rigorous anti-spam algorithms. The system automatically randomizes sending intervals between your configured boundaries. Define the Min and Max delay ranges to mimic real human behavior.</p>
     <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-
         <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-
             <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-
             <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-
         </button>
-
         <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-
             <div style="padding: 16px;">
-
-                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;">Before Campaign launch, manually set Min (e.g. 60s) and Max Delay (e.g. 120s). The engine auto-randomizes delays in between.</p>
-
-                </div>
-
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;">During campaign setup, input minimum and maximum delay in seconds (e.g., 5 to 15 seconds).</p>
+            </div>
         </div>
-
     </div>
-
 </div>
-
-
 
 <div class="about-card" style="--icon-color-1:#22c55e; --icon-color-2:#16a34a; --icon-color-rgb:34,197,94;">
-
     <div class="about-icon-wrapper"><i class="fa-solid fa-chart-line"></i></div>
-
-    <h3 class="about-title">11. Background IMAP Sync & Analytics</h3>
-
-    <p class="about-text">True 360-degree analytics. The system automatically syncs via IMAP in the background to securely detect replies without pixel tracking. Meanwhile, you can manually analyze campaign metrics from the visual dashboard.</p>
-
+    <h3 class="about-title">6. Analytics & Performance Tracking</h3>
+    <p class="about-text">Get true 360-degree analytics. The system embeds tracking pixels to securely detect opens and syncs replies efficiently. Monitor campaign metrics in real-time from the intuitive visual dashboard.</p>
     <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-
         <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-
             <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-
             <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-
         </button>
-
         <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-
             <div style="padding: 16px;">
-
-                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;">Input IMAP details manually when adding an account. The system will automatically fetch open/reply data in the background.</p>
-
-                </div>
-
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;">Analytics are collected automatically. View your stats on the Dashboard and inside specific Campaign details.</p>
+            </div>
         </div>
-
     </div>
-
 </div>
-
-
 
 <div class="about-card" style="--icon-color-1:#8b5cf6; --icon-color-2:#7c3aed; --icon-color-rgb:139,92,246;">
-
-    <div class="about-icon-wrapper"><i class="fa-solid fa-calendar-days"></i></div>
-
-    <h3 class="about-title">12. Campaign Scheduling & Timezone Mastery</h3>
-
-    <p class="about-text">Precision timing for maximum conversion. The automated chron-job resets all daily limits precisely at midnight Bangladesh Time (BST). You can also manually schedule campaigns to trigger on specific days and times.</p>
-
+    <div class="about-icon-wrapper"><i class="fa-solid fa-globe"></i></div>
+    <h3 class="about-title">7. Custom Timezone Support</h3>
+    <p class="about-text">Full global flexibility. Configure your personalized timezone right from your Settings. The automated cron-jobs will reset daily sending limits exactly at midnight in your specific local time, not a hardcoded server time.</p>
     <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-
         <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-
             <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-
             <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-
         </button>
-
         <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-
             <div style="padding: 16px;">
-
-                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;">Limits auto-reset at 12:00 AM BST. Manually select active sending days (Mon-Fri) in the Campaign creation settings.</p>
-
-                </div>
-
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;">Navigate to 'Settings' and update your Timezone dropdown. Limits will auto-reset at 12:00 AM of that region.</p>
+            </div>
         </div>
-
     </div>
-
 </div>
-
-
 
 <div class="about-card" style="--icon-color-1:#f59e0b; --icon-color-2:#d97706; --icon-color-rgb:245,158,11;">
-
     <div class="about-icon-wrapper"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
-
-    <h3 class="about-title">13. Spintax & Hyper-Personalization</h3>
-
-    <p class="about-text">Avoid duplicate content penalties. Manually insert Spintax {Hi|Hello|Hey} into your emails, and the engine automatically generates unique variations for every single lead on the fly.</p>
-
+    <h3 class="about-title">8. Spintax & Hyper-Personalization</h3>
+    <p class="about-text">Avoid duplicate content penalties. Insert Spintax formats like {Hi|Hello|Hey} into your emails, and the engine automatically generates unique variations for every single lead on the fly.</p>
     <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-
         <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-
             <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-
             <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-
         </button>
-
         <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-
             <div style="padding: 16px;">
-
-                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;">Manually write {{FirstName}} or Spintax {A|B} in the editor. The system auto-replaces these variables during sending.</p>
-
-                </div>
-
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;">Manually write Spintax {A|B} in the editor. The system auto-replaces these variables during sending.</p>
+            </div>
         </div>
-
     </div>
-
 </div>
-
-
 
 <div class="about-card" style="--icon-color-1:#ec4899; --icon-color-2:#db2777; --icon-color-rgb:236,72,153;">
-
     <div class="about-icon-wrapper"><i class="fa-solid fa-laptop-code"></i></div>
-
-    <h3 class="about-title">14. State-of-the-Art Visual Template Engine</h3>
-
-    <p class="about-text">Build stunning newsletters instantly. Use 100+ auto-responsive pre-built layouts, or switch to the Advanced Source Code view to manually inject your own highly-customized HTML & CSS.</p>
-
+    <h3 class="about-title">9. State-of-the-Art Visual Template Engine</h3>
+    <p class="about-text">Build stunning newsletters instantly. Use the intuitive visual editor, select from pre-built layouts, or switch to the Source Code view to inject your highly-customized HTML & CSS.</p>
     <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
-
         <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-
             <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
-
             <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
-
         </button>
-
         <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
-
             <div style="padding: 16px;">
-
-                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 12px;">Choose auto-layouts from the Gallery, or click '< >' to manually write HTML/CSS code.</p>
-
-                </div>
-
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;">Compose campaigns using the rich text editor or click '< >' to manually write HTML/CSS code.</p>
+            </div>
         </div>
-
     </div>
-
 </div>
 
-
+<div class="about-card" style="--icon-color-1:#0ea5e9; --icon-color-2:#0284c7; --icon-color-rgb:14,165,233;">
+    <div class="about-icon-wrapper"><i class="fa-solid fa-headset"></i></div>
+    <h3 class="about-title">10. Integrated Support Ticket System</h3>
+    <p class="about-text">Get help instantly. The built-in ticketing system allows users to seamlessly request support, upload attachments, and track statuses (Open/Closed), while admins can manage inquiries via an exclusive panel.</p>
+    <div class="htu-container" style="margin-top: auto; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); perspective: 1000px;">
+        <button class="htu-btn" onclick="toggle3DHowToUse(this)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(0,0,0,0.02); box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
+            <span style="font-weight: 600; color: var(--text); font-size: 15px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--p);"></i> How to Use</span>
+            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 14px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+        </button>
+        <div class="htu-content" style="max-height: 0; opacity: 0; transform-origin: top; transform: rotateX(-90deg); transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; background: rgba(var(--icon-color-rgb), 0.05); border-left: 3px solid var(--icon-color-1); border-radius: 0 8px 8px 0; margin-top: 12px;">
+            <div style="padding: 16px;">
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 0;">Go to 'Support Tickets', click 'Create New Ticket' to submit issues, and chat directly with administrators.</p>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="about-card" style="grid-column: 1 / -1; --icon-color-1:#4f46e5; --icon-color-2:#ec4899; --icon-color-rgb:79,70,229; background: linear-gradient(135deg, rgba(79, 70, 229, 0.05), rgba(236, 72, 153, 0.05)); border: 1px solid rgba(79, 70, 229, 0.2);">
-
     <div class="about-icon-wrapper" style="margin-left:auto; margin-right:auto; margin-bottom: 16px;"><i class="fa-solid fa-user-shield"></i></div>
-    <p class="about-text" style="text-align:center; max-width: 900px; margin: 0 auto; line-height: 1.8;">This entire advanced email marketing system was architected, designed, and developed by <strong>Monem Rahman Zisan</strong>. To ensure enterprise-grade performance and maximum security, it features an extremely powerful and secure admin dashboard, exclusively reserved for the creator. It utilizes JWT token-based authentication, strict RBAC (Role-Based Access Control), and deep encryption algorithms. The system's background automation, cron-jobs, server load balancing, and database integrity are monitored and controlled directly from this core dashboard. Along with the facility to manually override in any emergency, this multi-layered security infrastructure ensures user data protection and 100% platform stability.</p>
-
+    <p class="about-text" style="text-align:center; max-width: 900px; margin: 0 auto; line-height: 1.8;">This entire advanced email marketing system was architected, designed, and developed by <strong>the developer</strong>. To ensure enterprise-grade performance and maximum security, it features an extremely powerful and secure admin dashboard, exclusively reserved for administrators. It utilizes JWT token-based authentication, strict RBAC (Role-Based Access Control), and deep encryption algorithms. The system's background automation, cron-jobs, server load balancing, user timezones, and database integrity are monitored and controlled directly from this core dashboard. Along with the facility to manually override in any emergency, this multi-layered security infrastructure ensures user data protection and 100% platform stability.</p>
+</div>
 </div>
 
-
-</div>
 
           </div>
 

@@ -1085,7 +1085,7 @@
     <script>
         // Prevent FOUC by setting correct display styles immediately before body renders
         let _init_token = null;
-        try { _init_token = localStorage.getItem('token') || localStorage.getItem('xcomic_token'); } catch(e) {}
+        try { _init_token = localStorage.getItem('token'); if(!_init_token) localStorage.removeItem('xcomic_token'); } catch(e) {}
         if (_init_token) {
             // User is logged in -> show app-page (app-page is hidden by default usually, but we hide others)
             document.write('<style>#public-container { display: none !important; } #auth-page { display: none !important; }</style>');

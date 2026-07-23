@@ -557,13 +557,24 @@ def send_verification_email(email: str, code: str):
 
     subject = "Verify your account"
     body_html = f"""
-    <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 500px; margin: 0 auto; border: 1px solid #ddd; border-radius: 8px;">
-        <h2 style="color: #4F46E5; text-align: center;">Account Verification</h2>
-        <p>Thank you for registering. Please use the following 6-digit code to verify your email address:</p>
-        <div style="background: #F3F4F6; padding: 15px; text-align: center; font-size: 24px; font-weight: bold; letter-spacing: 5px; border-radius: 6px; margin: 20px 0;">
+    <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 30px; max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+        <div style="text-align: center; margin-bottom: 25px;">
+            <h2 style="color: #111827; margin: 0; font-size: 24px; font-weight: 700;">Account Verification</h2>
+        </div>
+        <p style="color: #374151; font-size: 16px; line-height: 1.6; margin-bottom: 25px;">
+            Thank you for registering with XComic. To complete your account setup and ensure the security of your account, please verify your email address using the authorization code below:
+        </p>
+        <div style="background: #f3f4f6; padding: 20px; text-align: center; font-size: 32px; font-weight: 800; letter-spacing: 8px; color: #4f46e5; border-radius: 8px; margin: 30px 0;">
             {code}
         </div>
-        <p>If you did not request this, please ignore this email.</p>
+        <p style="color: #6b7280; font-size: 14px; line-height: 1.6; margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 20px;">
+            If you did not initiate this request, please disregard this email. No further action is required.
+        </p>
+        <div style="margin-top: 30px;">
+            <p style="color: #374151; font-size: 16px; margin: 0;">Best regards,</p>
+            <p style="color: #111827; font-size: 18px; font-weight: 600; margin: 5px 0 0 0;">The XComic Team</p>
+            <p style="color: #6b7280; font-size: 14px; margin: 5px 0 0 0;">support@xcomic.xyz | <a href="https://xcomic.xyz" style="color: #4f46e5; text-decoration: none;">xcomic.xyz</a></p>
+        </div>
     </div>
     """
     # Since it's a single email, we can reuse our bulk send logic or write a simpler one
@@ -576,13 +587,24 @@ def send_password_reset_email(email: str, code: str):
 
     subject = "Reset your password"
     body_html = f"""
-    <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 500px; margin: 0 auto; border: 1px solid #ddd; border-radius: 8px;">
-        <h2 style="color: #4F46E5; text-align: center;">Password Reset</h2>
-        <p>We received a request to reset your password. Please use the following 6-digit code to reset it:</p>
-        <div style="background: #F3F4F6; padding: 15px; text-align: center; font-size: 24px; font-weight: bold; letter-spacing: 5px; border-radius: 6px; margin: 20px 0;">
+    <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 30px; max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+        <div style="text-align: center; margin-bottom: 25px;">
+            <h2 style="color: #111827; margin: 0; font-size: 24px; font-weight: 700;">Password Reset Request</h2>
+        </div>
+        <p style="color: #374151; font-size: 16px; line-height: 1.6; margin-bottom: 25px;">
+            We received a request to reset the password associated with your XComic account. Please use the following 6-digit verification code to proceed with the reset process:
+        </p>
+        <div style="background: #f3f4f6; padding: 20px; text-align: center; font-size: 32px; font-weight: 800; letter-spacing: 8px; color: #4f46e5; border-radius: 8px; margin: 30px 0;">
             {code}
         </div>
-        <p>If you did not request this, please ignore this email.</p>
+        <p style="color: #6b7280; font-size: 14px; line-height: 1.6; margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 20px;">
+            If you did not request a password reset, please ignore this email. Your account remains secure and your current password has not been changed.
+        </p>
+        <div style="margin-top: 30px;">
+            <p style="color: #374151; font-size: 16px; margin: 0;">Best regards,</p>
+            <p style="color: #111827; font-size: 18px; font-weight: 600; margin: 5px 0 0 0;">The XComic Team</p>
+            <p style="color: #6b7280; font-size: 14px; margin: 5px 0 0 0;">support@xcomic.xyz | <a href="https://xcomic.xyz" style="color: #4f46e5; text-decoration: none;">xcomic.xyz</a></p>
+        </div>
     </div>
     """
     return _send_system_email(subject, body_html, email)

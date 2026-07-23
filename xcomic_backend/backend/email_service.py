@@ -553,9 +553,6 @@ def send_verification_email(email: str, code: str):
     Sends a 6-digit verification code to the user.
     If SMTP credentials are not configured, it just prints it to the console.
     """
-    if not SMTP_USERNAME or not SMTP_PASSWORD:
-        print(f"*** MOCK EMAIL: Verification code for {email} is {code} ***")
-        return True
 
     subject = "Verify your account"
     body_html = f"""
@@ -575,9 +572,6 @@ def send_password_reset_email(email: str, code: str):
     """
     Sends a 6-digit password reset code to the user.
     """
-    if not SMTP_PASSWORD or not SMTP_USERNAME:
-        print(f"*** MOCK EMAIL: Password reset code for {email} is {code} ***")
-        return True
 
     subject = "Reset your password"
     body_html = f"""

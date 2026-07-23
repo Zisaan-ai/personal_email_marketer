@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication - XComic</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* Slate 900 */
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        /* LEFT SIDE - FORM */
+        .auth-form-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 40px;
+            max-width: 560px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            margin-bottom: 60px;
+        }
+        .brand-logo img { width: 32px; height: 32px; border-radius: 8px; }
+        .brand-logo span { 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 20px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
+        }
+
+        .auth-header {
+            margin-bottom: 32px;
+        }
+        .auth-header h1 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            color: #f8fafc;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+        .auth-header p {
+            color: #94a3b8;
+            font-size: 16px;
+        }
+        .auth-header p a {
+            color: #6366f1;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+        .auth-header p a:hover {
+            color: #818cf8;
+        }
+
+        .social-login {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .btn-social {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px;
+            background: #1e293b;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            color: #f8fafc;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-social:hover {
+            background: #334155;
+            border-color: rgba(255,255,255,0.2);
+        }
+        .btn-social img { width: 20px; height: 20px; }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 24px;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .divider:not(:empty)::before { margin-right: 16px; }
+        .divider:not(:empty)::after { margin-left: 16px; }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: 600;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+        }
+        .form-group label a {
+            color: #6366f1;
+            text-decoration: none;
+        }
+        .form-group label a:hover {
+            color: #818cf8;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background: #1e293b;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            outline: none;
+            transition: 0.2s;
+        }
+        .form-group input:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        .form-group input::placeholder {
+            color: #64748b;
+        }
+
+        
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .password-wrapper input {
+            padding-right: 48px; /* space for the eye icon */
+        }
+        .eye-btn {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+        }
+        .eye-btn:hover {
+            color: #f8fafc;
+        }
+        .eye-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: #4f46e5;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+            margin-top: 8px;
+        }
+        .btn-submit:hover {
+            background: #4338ca;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+        }
+
+        /* RIGHT SIDE - SHOWCASE */
+        .showcase-container {
+            flex: 1.2;
+            position: relative;
+            background: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-left: 1px solid rgba(255,255,255,0.05);
+        }
+        @media(max-width: 900px) {
+            .showcase-container { display: none; }
+            .auth-form-container { max-width: 100%; }
+        }
+
+        /* Animated Orbs */
+        .showcase-container::before, .showcase-container::after {
+            content: ''; position: absolute;
+            width: 600px; height: 600px;
+            filter: blur(100px); opacity: 0.4;
+            border-radius: 50%;
+            z-index: 0;
+            animation: floatBg 20s infinite alternate ease-in-out;
+        }
+        .showcase-container::before {
+            background: #4f46e5; /* Indigo */
+            top: -100px; left: -100px;
+        }
+        .showcase-container::after {
+            background: #c026d3; /* Fuchsia */
+            bottom: -100px; right: -100px;
+            animation-delay: -10s;
+        }
+        @keyframes floatBg {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(50px, 50px) scale(1.1); }
+            100% { transform: translate(-50px, 100px) scale(0.9); }
+        }
+
+        .showcase-content {
+            position: relative;
+            z-index: 10;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 48px;
+            max-width: 500px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+
+        .quote-icon {
+            font-size: 40px;
+            color: #818cf8;
+            margin-bottom: 24px;
+        }
+        .showcase-quote {
+            font-size: 24px;
+            font-weight: 500;
+            line-height: 1.5;
+            color: #f8fafc;
+            margin-bottom: 32px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: -0.5px;
+        }
+        .showcase-author {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .author-avatar {
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            background: #1e293b;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        .author-info h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #f8fafc;
+            margin-bottom: 4px;
+        }
+        .author-info p {
+            font-size: 14px;
+            color: #94a3b8;
+        }
+
+        /* TOGGLE STATES */
+        .signup-only { display: none; }
+        
+        html.is-signup .signup-only { display: block; }
+        html.is-signup .login-only { display: none; }
+    </style>
+
+    <script>
+        // Check URL for mode BEFORE rendering body to prevent flash
+        const urlParams = new URLSearchParams(window.location.search);
+        const mode = urlParams.get('mode');
+        if (mode === 'signup') {
+            document.documentElement.classList.add('is-signup');
+        }
+    </script>
+</head>
+
+<body>
+
+    <!-- LEFT SIDE: FORM -->
+    <div class="auth-form-container">
+        <a href="index.html" class="brand-logo">
+            <img src="https://ui-avatars.com/api/?name=XC&background=4F46E5&color=fff&rounded=true&bold=true" alt="XComic Logo">
+            <span>XComic</span>
+        </a>
+
+        <div class="auth-header">
+            <h1 class="login-only">Welcome back</h1>
+            <p class="login-only">Don't have an account? <a href="#" onclick="toggleMode('signup'); return false;">Sign up</a></p>
+
+            <h1 class="signup-only">Create your account</h1>
+            <p class="signup-only">Already have an account? <a href="#" onclick="toggleMode('login'); return false;">Log in</a></p>
+        </div>
+
+        <div class="social-login">
+            <button class="btn-social">
+                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google">
+                Google
+            </button>
+            <button class="btn-social">
+                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" style="filter: invert(1);">
+                GitHub
+            </button>
+        </div>
+
+        <div class="divider">or continue with email</div>
+
+        <form onsubmit="event.preventDefault(); window.location.href='app.html';">
+            
+            <div class="form-group signup-only">
+                <label>Full Name</label>
+                <input type="text" placeholder="John Doe">
+            </div>
+
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" placeholder="you@company.com" required>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    Password
+                    <a href="#" class="login-only">Forgot password?</a>
+                </label>
+                <div class="password-wrapper">
+                    <input type="password" id="passwordInput" placeholder="••••••••" required>
+                    <button type="button" class="eye-btn" id="togglePassword" aria-label="Toggle password visibility">
+                        <!-- Eye icon (default: password hidden) -->
+                        <svg id="eye-icon-closed" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                        </svg>
+                        <!-- Eye icon (password visible) -->
+                        <svg id="eye-icon-open" style="display:none;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit login-only">Sign In</button>
+            <button type="submit" class="btn-submit signup-only">Create Account</button>
+        </form>
+    </div>
+
+    <!-- RIGHT SIDE: SHOWCASE -->
+    <div class="showcase-container">
+        <div class="showcase-content">
+            <div class="quote-icon">"</div>
+            <div class="showcase-quote">
+                XComic completely transformed our outbound engine. We booked 45 qualified meetings in our first week alone. The platform is blazing fast and the AI personalization is unmatched.
+            </div>
+            <div class="showcase-author">
+                <img src="https://ui-avatars.com/api/?name=Sarah+J&background=1e293b&color=fff" alt="Sarah J." class="author-avatar">
+                <div class="author-info">
+                    <h4>Sarah Jenkins</h4>
+                    <p>VP of Sales, TechFlow Inc.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check URL for mode
+        function toggleMode(newMode) {
+            if (newMode === 'signup') {
+                document.documentElement.classList.add('is-signup');
+                window.history.pushState({}, '', '?mode=signup');
+            } else {
+                document.documentElement.classList.remove('is-signup');
+                window.history.pushState({}, '', '?mode=login');
+            }
+        }
+    
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('passwordInput');
+        const eyeIconClosed = document.getElementById('eye-icon-closed');
+        const eyeIconOpen = document.getElementById('eye-icon-open');
+
+        togglePassword.addEventListener('click', function () {
+            // Toggle the type attribute
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            // Toggle icons
+            if (type === 'text') {
+                eyeIconClosed.style.display = 'none';
+                eyeIconOpen.style.display = 'block';
+            } else {
+                eyeIconClosed.style.display = 'block';
+                eyeIconOpen.style.display = 'none';
+            }
+        });
+
+    </script>
+</body>
+</html>

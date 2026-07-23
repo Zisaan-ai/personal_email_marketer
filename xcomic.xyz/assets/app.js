@@ -4846,6 +4846,14 @@ function populateTimezones() {
 
             }
 
+            if (userTzSelect) {
+                userTzSelect.choicesInstance = new Choices(userTzSelect, {
+                    searchEnabled: true,
+                    itemSelectText: '',
+                    shouldSort: false
+                });
+            }
+
         }
 
 
@@ -5086,7 +5094,12 @@ function setupSettings() {
                 const res = await apiCall('/settings/timezone', 'GET');
                 if (res.ok) {
                     const data = await res.json();
-                    if (data.timezone) tzEl.value = data.timezone;
+                    if (data.timezone) {
+                        tzEl.value = data.timezone;
+                        if (tzEl.choicesInstance) {
+                            tzEl.choicesInstance.setChoiceByValue(data.timezone);
+                        }
+                    }
                 }
             } catch(e) {}
         }

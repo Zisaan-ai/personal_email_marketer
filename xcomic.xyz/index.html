@@ -391,7 +391,45 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
 
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
-
+    <style>
+        .choices[data-type*="select-one"] .choices__inner {
+            background-color: var(--bg);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 10px 16px;
+            min-height: 48px;
+            color: var(--text);
+            font-size: 14px;
+        }
+        .choices[data-type*="select-one"]:after {
+            border-color: var(--text) transparent transparent transparent;
+        }
+        .choices.is-open[data-type*="select-one"]:after {
+            border-color: transparent transparent var(--text) transparent;
+        }
+        .choices__list--dropdown {
+            background-color: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        .choices__list--dropdown .choices__item {
+            font-size: 14px;
+            color: var(--text);
+        }
+        .choices__list--dropdown .choices__item--selectable.is-highlighted {
+            background-color: var(--surface);
+            color: var(--primary);
+        }
+        .choices__input {
+            background-color: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+    </style>
 
     <style>
     /* LANDING PAGE STYLES */

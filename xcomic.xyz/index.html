@@ -5094,8 +5094,10 @@
 
             } catch(e) {}
 
-            document.getElementById('landing-page').classList.add('hidden');
-            document.getElementById('auth-page').classList.add('hidden');
+            var lp = document.getElementById('landing-page');
+            if (lp) lp.classList.add('hidden');
+            var ap = document.getElementById('auth-page');
+            if (ap) ap.classList.add('hidden');
 
             document.getElementById('app-page').classList.add('on');
 
@@ -5362,10 +5364,14 @@
 
         if (_token) {
 
-            document.getElementById('landing-page').classList.add('hidden');
-            document.getElementById('auth-page').classList.add('hidden');
+            var lp = document.getElementById('landing-page');
+            if (lp) lp.classList.add('hidden');
+            
+            var ap = document.getElementById('auth-page');
+            if (ap) ap.classList.add('hidden');
 
-            document.getElementById('app-page').classList.add('on');
+            var appP = document.getElementById('app-page');
+            if (appP) appP.classList.add('on');
 
             var isAdmin = false;
 

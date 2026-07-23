@@ -4,18 +4,11 @@
 
 <head>
 
-    <script>
-        if (!localStorage.getItem('token') && !window.location.href.includes('auth.html')) {
-            window.location.href = 'auth.html';
-        }
-    </script>
-
-
     <meta charset="UTF-8">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>XComic Email Marketer ΓÇö Elegant Email Marketing</title>
+    <title>XComic Email Marketer — Elegant Email Marketing</title>
 
     <meta name="description" content="AI-powered email marketing platform. Clean, elegant, powerful.">
 
@@ -33,7 +26,7 @@
 
     /* ============================================================
 
-       AUTH PAGE ΓÇö FRESH REBUILD
+       AUTH PAGE — FRESH REBUILD
 
        ============================================================ */
 
@@ -1253,7 +1246,7 @@
             </div>
         </div>
         
-        <button class="pm-btn" onclick="LANDING.processPayment()">Proceed to Payment ΓåÆ</button>
+        <button class="pm-btn" onclick="LANDING.processPayment()">Proceed to Payment →</button>
     </div>
 </div>
 
@@ -1277,7 +1270,7 @@
 
             <!-- LOGIN FORM -->
             <div id="form-login">
-                <p class="auth-head">Welcome back ≡ƒæï</p>
+                <p class="auth-head">Welcome back 👋</p>
                 <p class="auth-sub">Enter your details to sign in to your account.</p>
                 <div class="aalert" id="login-alert"></div>
                 
@@ -1289,7 +1282,7 @@
                 <div class="afield">
                     <label>Password</label>
                     <div style="position:relative;">
-                        <input type="password" id="login-pass" placeholder="ΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇó" autocomplete="current-password" onkeydown="if(event.key==='Enter') AUTH.doLogin()" style="width:100%; padding-right:40px;">
+                        <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter') AUTH.doLogin()" style="width:100%; padding-right:40px;">
                         <button type="button" onclick="var el=document.getElementById('login-pass'); el.type=el.type==='password'?'text':'password'; this.innerHTML=el.type==='password'?'<i class=\'fa-regular fa-eye\'></i>':'<i class=\'fa-regular fa-eye-slash\'></i>'" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--text-muted); padding:0;">
                             <i class="fa-regular fa-eye"></i>
                         </button>
@@ -1305,7 +1298,7 @@
 
             <!-- SIGNUP FORM -->
             <div id="form-signup" class="hidden">
-                <p class="auth-head">Create account Γ£¿</p>
+                <p class="auth-head">Create account ✨</p>
                 <p class="auth-sub">Start sending elegant emails today.</p>
                 <div class="aalert" id="signup-alert"></div>
                 
@@ -1317,7 +1310,7 @@
                 <div class="afield">
                     <label>Password</label>
                     <div style="position:relative;">
-                        <input type="password" id="signup-pass" placeholder="ΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇó" autocomplete="new-password" style="width:100%; padding-right:40px;">
+                        <input type="password" id="signup-pass" placeholder="••••••••" autocomplete="new-password" style="width:100%; padding-right:40px;">
                         <button type="button" onclick="var el=document.getElementById('signup-pass'); el.type=el.type==='password'?'text':'password'; this.innerHTML=el.type==='password'?'<i class=\'fa-regular fa-eye\'></i>':'<i class=\'fa-regular fa-eye-slash\'></i>'" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--text-muted); padding:0;">
                             <i class="fa-regular fa-eye"></i>
                         </button>
@@ -1327,7 +1320,7 @@
                 <div class="afield">
                     <label>Confirm Password</label>
                     <div style="position:relative;">
-                        <input type="password" id="signup-pass2" placeholder="ΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇó" autocomplete="new-password" onkeydown="if(event.key==='Enter') AUTH.doSignup()" style="width:100%; padding-right:40px;">
+                        <input type="password" id="signup-pass2" placeholder="••••••••" autocomplete="new-password" onkeydown="if(event.key==='Enter') AUTH.doSignup()" style="width:100%; padding-right:40px;">
                         <button type="button" onclick="var el=document.getElementById('signup-pass2'); el.type=el.type==='password'?'text':'password'; this.innerHTML=el.type==='password'?'<i class=\'fa-regular fa-eye\'></i>':'<i class=\'fa-regular fa-eye-slash\'></i>'" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--text-muted); padding:0;">
                             <i class="fa-regular fa-eye"></i>
                         </button>
@@ -1341,7 +1334,7 @@
 
             <!-- VERIFY FORM -->
             <div id="verify-box" class="hidden">
-                <p class="auth-head">Check your email ≡ƒôº</p>
+                <p class="auth-head">Check your email 📧</p>
                 <p class="auth-sub">We sent a 6-digit verification code to your email address.</p>
                 <div class="aalert" id="verify-alert"></div>
                 
@@ -1349,14 +1342,14 @@
                 
                 <button class="abtn primary" id="verify-btn" onclick="AUTH.doVerify()">Verify Account</button>
                 
-                <a class="back-link" onclick="AUTH.showSignup()">ΓåÉ Back to sign up</a>
+                <a class="back-link" onclick="AUTH.showSignup()">← Back to sign up</a>
             </div>
 
             <!-- FORGOT FORM -->
             <div id="forgot-box" class="hidden">
                 <div class="aalert" id="forgot-alert"></div>
                 <div id="forgot-step1">
-                    <p class="auth-head">Reset Password ≡ƒöÆ</p>
+                    <p class="auth-head">Reset Password 🔒</p>
                     <p class="auth-sub">Enter your email and we'll send a code to reset your password.</p>
                     
                     <div class="afield">
@@ -1366,11 +1359,11 @@
                     
                     <button class="abtn primary" id="forgot-btn" onclick="AUTH.sendReset()">Send Reset Code</button>
                     
-                    <a class="back-link" onclick="AUTH.showLogin()">ΓåÉ Back to sign in</a>
+                    <a class="back-link" onclick="AUTH.showLogin()">← Back to sign in</a>
                 </div>
                 
                 <div id="forgot-step2" class="hidden">
-                    <p class="auth-head">Set new password ≡ƒöÆ</p>
+                    <p class="auth-head">Set new password 🔒</p>
                     <p class="auth-sub">Enter the code from your email and a new password.</p>
                     
                     <div class="afield">
@@ -1381,7 +1374,7 @@
                     <div class="afield">
                         <label>New Password</label>
                         <div style="position:relative;">
-                            <input type="password" id="new-pass" placeholder="ΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇó" style="width:100%; padding-right:40px;">
+                            <input type="password" id="new-pass" placeholder="••••••••" style="width:100%; padding-right:40px;">
                             <button type="button" onclick="var el=document.getElementById('new-pass'); el.type=el.type==='password'?'text':'password'; this.innerHTML=el.type==='password'?'<i class=\'fa-regular fa-eye\'></i>':'<i class=\'fa-regular fa-eye-slash\'></i>'" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--text-muted); padding:0;">
                                 <i class="fa-regular fa-eye"></i>
                             </button>
@@ -3071,7 +3064,7 @@
 
                             <h3 style="margin-top:0; color:#4f46e5; display:flex; align-items:center; gap:8px;">
 
-                                ≡ƒÜÇ One-Click Auto-Pilot Campaign Builder
+                                🚀 One-Click Auto-Pilot Campaign Builder
 
                             </h3>
 
@@ -3087,7 +3080,7 @@
 
                                 <button id="autopilot-btn" onclick="window.runAutopilot()" style="background: linear-gradient(to right, #4f46e5, #8b5cf6); color:white; border:none; padding:12px 24px; border-radius:8px; cursor:pointer; font-weight:600; font-size:14px; transition:0.2s; box-shadow:0 4px 10px rgba(79,70,229,0.3);">
 
-                                    Γ£¿ Auto-Build Campaign
+                                    ✨ Auto-Build Campaign
 
                                 </button>
 
@@ -3119,7 +3112,7 @@
 
                             <div class="form-group" style="position:relative;margin-bottom:24px;display:flex;gap:12px;">
 
-                                <button onclick="window.optimizeSubject('inst-subject')" style="margin-left:8px; padding:4px 12px; background:linear-gradient(to right, #8b5cf6, #d946ef); color:white; border:none; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; display:flex; align-items:center; gap:4px; box-shadow:0 2px 5px rgba(217,70,239,0.3);">Γ£¿ Optimize</button>
+                                <button onclick="window.optimizeSubject('inst-subject')" style="margin-left:8px; padding:4px 12px; background:linear-gradient(to right, #8b5cf6, #d946ef); color:white; border:none; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; display:flex; align-items:center; gap:4px; box-shadow:0 2px 5px rgba(217,70,239,0.3);">✨ Optimize</button>
 
                                 <input type="text" id="inst-subject" placeholder="Subject" style="font-size:16px;font-weight:600;padding:16px;flex:1;">
 
@@ -3137,9 +3130,9 @@
 
                                     <button onclick="window.checkSpamScore()" style="margin-right:8px; background:linear-gradient(135deg, #10b981 0%, #059669 100%);color:#fff;border:none;padding:6px 16px;border-radius:6px;font-weight:600;font-size:12px;cursor:pointer;box-shadow:0 2px 5px rgba(16,185,129,0.3);display:flex;align-items:center;gap:6px;"><i class="fa-solid fa-shield-halved"></i> Check Spam Score</button>
 
-                                    <button onclick="window.previewInbox('inst-subject', 'inst-body')" style="margin-right:8px; padding:6px 16px; background:linear-gradient(to right, #f59e0b, #d97706); color:white; border:none; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; display:flex; align-items:center; gap:6px; box-shadow:0 2px 5px rgba(245,158,11,0.3);">≡ƒæü∩╕Å Inbox Preview</button>
+                                    <button onclick="window.previewInbox('inst-subject', 'inst-body')" style="margin-right:8px; padding:6px 16px; background:linear-gradient(to right, #f59e0b, #d97706); color:white; border:none; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; display:flex; align-items:center; gap:6px; box-shadow:0 2px 5px rgba(245,158,11,0.3);">👁️ Inbox Preview</button>
 
-                                    <button onclick="window.generateEmail('inst-body')" style="padding:6px 16px; background:linear-gradient(to right, #3b82f6, #8b5cf6); color:white; border:none; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; display:flex; align-items:center; gap:6px; box-shadow:0 2px 5px rgba(59,130,246,0.3);">≡ƒ¬ä Write with AI</button>
+                                    <button onclick="window.generateEmail('inst-body')" style="padding:6px 16px; background:linear-gradient(to right, #3b82f6, #8b5cf6); color:white; border:none; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; display:flex; align-items:center; gap:6px; box-shadow:0 2px 5px rgba(59,130,246,0.3);">🪄 Write with AI</button>
 
                                 </div>
 
@@ -3191,9 +3184,9 @@
 
                                     <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
 
-                                        <button onclick="window.previewInbox('inst-subject-b', 'inst-body-b')" style="margin-right:8px; padding:6px 16px; background:linear-gradient(to right, #f59e0b, #d97706); color:white; border:none; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; display:flex; align-items:center; gap:6px; box-shadow:0 2px 5px rgba(245,158,11,0.3);">≡ƒæü∩╕Å Inbox Preview</button>
+                                        <button onclick="window.previewInbox('inst-subject-b', 'inst-body-b')" style="margin-right:8px; padding:6px 16px; background:linear-gradient(to right, #f59e0b, #d97706); color:white; border:none; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; display:flex; align-items:center; gap:6px; box-shadow:0 2px 5px rgba(245,158,11,0.3);">👁️ Inbox Preview</button>
 
-                                        <button onclick="window.generateEmail('inst-body-b')" style="padding:6px 16px; background:linear-gradient(to right, #3b82f6, #8b5cf6); color:white; border:none; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; display:flex; align-items:center; gap:6px; box-shadow:0 2px 5px rgba(59,130,246,0.3);">≡ƒ¬ä Generate Follow-up</button>
+                                        <button onclick="window.generateEmail('inst-body-b')" style="padding:6px 16px; background:linear-gradient(to right, #3b82f6, #8b5cf6); color:white; border:none; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; display:flex; align-items:center; gap:6px; box-shadow:0 2px 5px rgba(59,130,246,0.3);">🪄 Generate Follow-up</button>
 
                                     </div>
 
@@ -3327,7 +3320,7 @@
 
                     <p style="font-size:13px;color:var(--text-muted);margin-top:8px;margin-bottom:16px;">
 
-                        ΓÜí Campaign will only send emails on selected days and within the specified time window.
+                        ⚡ Campaign will only send emails on selected days and within the specified time window.
 
                         <br>If no time is set (Start = 00:00, End = 00:00), emails will send 24/7.
 
@@ -4139,7 +4132,7 @@
                         <label id="acc-password-label">App Password (16-digit Google App Password)</label>
 
                         <div style="position: relative; width: 100%;">
-                            <input type="password" id="acc-password" placeholder="ΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇó" style="width: 100%; font-family: 'Courier New', Courier, monospace; letter-spacing: 4px; font-size: 18px; padding: 14px 45px 14px 16px; border: 2px solid var(--p); background: rgba(79, 70, 229, 0.05); color: var(--p); font-weight: bold; border-radius: 8px; outline: none; transition: all 0.3s ease;">
+                            <input type="password" id="acc-password" placeholder="••••••••••••••••" style="width: 100%; font-family: 'Courier New', Courier, monospace; letter-spacing: 4px; font-size: 18px; padding: 14px 45px 14px 16px; border: 2px solid var(--p); background: rgba(79, 70, 229, 0.05); color: var(--p); font-weight: bold; border-radius: 8px; outline: none; transition: all 0.3s ease;">
                             <i class="fa-regular fa-eye" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); cursor: pointer; font-size: 18px; transition: color 0.2s;" onclick="const input = document.getElementById('acc-password'); if(input.type === 'password'){input.type='text'; this.classList.remove('fa-eye'); this.classList.add('fa-eye-slash'); this.style.color='var(--p)';}else{input.type='password'; this.classList.remove('fa-eye-slash'); this.classList.add('fa-eye'); this.style.color='var(--text-muted)';}"></i>
                         </div>
 
@@ -4183,7 +4176,7 @@
                             </div>
                             <div class="form-group" style="margin-bottom:0;">
                                 <label style="font-size:12px; color:var(--text-muted);">IMAP Password (Leave blank to use main Password)</label>
-                                <input type="password" id="acc-imap-password" placeholder="ΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇó" style="width: 100%; padding: 13px 16px; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; font-size: 15px; color: #ffffff; font-family: 'Inter', sans-serif; box-sizing: border-box;">
+                                <input type="password" id="acc-imap-password" placeholder="••••••••" style="width: 100%; padding: 13px 16px; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; font-size: 15px; color: #ffffff; font-family: 'Inter', sans-serif; box-sizing: border-box;">
                             </div>
                         </div>
                     </div>
@@ -4379,7 +4372,7 @@
 
                             <div style="position:relative;">
 
-                                <input type="password" id="smtp-pass" placeholder="ΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇó" style="padding-right:44px;">
+                                <input type="password" id="smtp-pass" placeholder="••••••••••••" style="padding-right:44px;">
 
                                 <button type="button" onclick="var el=document.getElementById('smtp-pass'); el.type=el.type==='password'?'text':'password'; this.innerHTML=el.type==='password'?'<i class=\'fa-regular fa-eye\'></i>':'<i class=\'fa-regular fa-eye-slash\'></i>'" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);">
 
@@ -5042,7 +5035,7 @@
 
             el.className = 'aalert show ' + (type === 'err' ? 'err' : 'ok');
 
-            el.innerHTML = (type === 'err' ? 'ΓÜá∩╕Å ' : 'Γ£à ') + msg;
+            el.innerHTML = (type === 'err' ? '⚠️ ' : '✅ ') + msg;
 
         }
 
@@ -5440,15 +5433,15 @@
 
 
 
-    <script src="assets/templates.js?v=20260724012000"></script>
+    <script src="assets/templates.js?v=20260724013000"></script>
 
-    <script src="assets/app.js?v=20260724012000"></script>
+    <script src="assets/app.js?v=20260724013000"></script>
 
-    <script src="assets/sending_accounts.js?v=20260724012000"></script>
+    <script src="assets/sending_accounts.js?v=20260724013000"></script>
 
-    <script src="assets/ai_features.js?v=20260724012000"></script>
+    <script src="assets/ai_features.js?v=20260724013000"></script>
 
-    <script src="assets/deliverability_v2.js?v=20260724012000"></script>
+    <script src="assets/deliverability_v2.js?v=20260724013000"></script>
 
 
 

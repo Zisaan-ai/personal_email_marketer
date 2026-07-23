@@ -4,6 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Authentication - XComic</title>
+    <!-- INSTANT AUTH GUARD: redirect before page renders to prevent login page flash -->
+    <script>
+        (function() {
+            try {
+                var token = localStorage.getItem('token') || localStorage.getItem('xcomic_token');
+                if (token) {
+                    // Already logged in — go to main app immediately, no flash
+                    window.location.replace('index.html');
+                } else {
+                    // Not logged in — show the page
+                    document.documentElement.style.visibility = 'hidden';
+                    document.addEventListener('DOMContentLoaded', function() {
+                        document.documentElement.style.visibility = '';
+                    });
+                }
+            } catch(e) {}
+        })();
+    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap');
 

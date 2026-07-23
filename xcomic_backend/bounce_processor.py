@@ -125,12 +125,21 @@ def check_bounces():
                                         # Check if we already have this reply
                                         existing = db.query(database.Reply).filter_by(message_id=message_id).first()
                                         if not existing:
+                                            # Call AI to analyze sentiment
+                                            try:
+                                                import ai_core
+                                                user = db.query(database.User).filter_by(id=account.user_id).first()
+                                                sentiment = ai_core.analyze_reply_sentiment(body, user=user)
+                                            except:
+                                                sentiment = "Unknown"
+
                                             new_reply = database.Reply(
                                                 account_id=account.id,
                                                 message_id=message_id,
                                                 sender_email=sender_email,
                                                 subject=subject,
-                                                body=body
+                                                body=body,
+                                                sentiment=sentiment
                                             )
                                             db.add(new_reply)
                                             

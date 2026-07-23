@@ -525,18 +525,19 @@ def _send_system_email(subject: str, body_html: str, recipient: str) -> bool:
             
         server.login(smtp_user, smtp_pass)
         
+        smtp_from = config.get("SMTP_FROM_EMAIL") or os.getenv("SMTP_FROM_EMAIL") or "support@xcomic.xyz"
         msg = MIMEMultipart("alternative")
         msg["Subject"] = subject
-        msg["From"] = f"Admin <{smtp_user}>"
+        msg["From"] = f"XComic Support <{smtp_from}>"
         msg["To"] = recipient
-        msg["Reply-To"] = smtp_user
+        msg["Reply-To"] = smtp_from
         msg["MIME-Version"] = "1.0"
         
         body_text = generate_clean_plaintext(body_html)
         msg.attach(MIMEText(body_text, "plain", "utf-8"))
         msg.attach(MIMEText(body_html, "html", "utf-8"))
         
-        server.sendmail(smtp_user, [recipient], msg.as_string())
+        server.sendmail(smtp_from, [recipient], msg.as_string())
         return True
     except Exception as e:
         print(f"System Email failed: {e}")

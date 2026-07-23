@@ -1210,6 +1210,12 @@
     }
     </style>
 
+    <script>
+        // Auth check before rendering body (avoids flicker)
+        if (!localStorage.getItem('xcomic_token') && window.location.pathname !== '/auth.html') {
+            window.location.href = 'auth.html';
+        }
+    </script>
 </head>
 
 <body>
@@ -5433,15 +5439,15 @@
 
 
 
-    <script src="assets/templates.js?v=20260724013000"></script>
+    <script src="assets/templates.js?v=20260724014000"></script>
 
-    <script src="assets/app.js?v=20260724013000"></script>
+    <script src="assets/app.js?v=20260724014000"></script>
 
-    <script src="assets/sending_accounts.js?v=20260724013000"></script>
+    <script src="assets/sending_accounts.js?v=20260724014000"></script>
 
-    <script src="assets/ai_features.js?v=20260724013000"></script>
+    <script src="assets/ai_features.js?v=20260724014000"></script>
 
-    <script src="assets/deliverability_v2.js?v=20260724013000"></script>
+    <script src="assets/deliverability_v2.js?v=20260724014000"></script>
 
 
 

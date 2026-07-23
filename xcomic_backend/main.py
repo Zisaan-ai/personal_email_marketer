@@ -2271,12 +2271,28 @@ def _run_campaign(db, campaign_id):
             # Fallback for old campaigns without steps
 
             if variant_label == 'B':
-
                 send_subject = c.subject_b or c.subject
-
                 send_body = c.body_b or c.body
 
+        # Spintax and {{FirstName}} Personalization
+        import re
+        import random
+        def process_spintax(text):
+            if not text: return text
+            first_name = lead.name.split()[0] if lead.name else "Friend"
+            text = text.replace("{{FirstName}}", first_name)
+            pattern = re.compile(r'\{([^{}]+)\}')
+            while True:
+                match = pattern.search(text)
+                if not match:
+                    break
+                options = match.group(1).split('|')
+                choice = random.choice(options)
+                text = text[:match.start()] + choice + text[match.end():]
+            return text
             
+        send_subject = process_spintax(send_subject)
+        send_body = process_spintax(send_body)
 
         # Skip unsubscribed
 

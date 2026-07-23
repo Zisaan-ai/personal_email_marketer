@@ -1219,16 +1219,6 @@
 </head>
 
 <body>
-<script>
-    // If logged in, show app-page and initialize app immediately
-    if (localStorage.getItem('xcomic_token')) {
-        document.addEventListener('DOMContentLoaded', function() {
-            var appPage = document.getElementById('app-page');
-            if (appPage) appPage.classList.add('on');
-            if (typeof window.APP_INIT === 'function') window.APP_INIT();
-        });
-    }
-</script>
 
 
 
@@ -5449,15 +5439,15 @@
 
 
 
-    <script src="assets/templates.js?v=20260724015000"></script>
+    <script src="assets/templates.js?v=20260724016000"></script>
 
-    <script src="assets/app.js?v=20260724015000"></script>
+    <script src="assets/app.js?v=20260724016000"></script>
 
-    <script src="assets/sending_accounts.js?v=20260724015000"></script>
+    <script src="assets/sending_accounts.js?v=20260724016000"></script>
 
-    <script src="assets/ai_features.js?v=20260724015000"></script>
+    <script src="assets/ai_features.js?v=20260724016000"></script>
 
-    <script src="assets/deliverability_v2.js?v=20260724015000"></script>
+    <script src="assets/deliverability_v2.js?v=20260724016000"></script>
 
 
 
@@ -5693,6 +5683,18 @@
             </div>
         </div>
     </div>
+<script>
+    // Init app after ALL scripts are loaded - runs after app.js, templates.js etc
+    (function() {
+        if (localStorage.getItem('xcomic_token')) {
+            var appPage = document.getElementById('app-page');
+            if (appPage) appPage.classList.add('on');
+            if (typeof window.APP_INIT === 'function') {
+                window.APP_INIT();
+            }
+        }
+    })();
+</script>
 </body>
 
 </html>

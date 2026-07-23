@@ -4791,8 +4791,8 @@ def delete_ticket(ticket_id: str, current_user: database.User = Depends(auth.get
 def get_unread_ticket_count(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admin only")
-    # Count tickets where status is "User Reply" (admin hasn't responded yet)
-    count = db.query(database.Ticket).filter(database.Ticket.status == "User Reply").count()
+    # Count tickets where status is "User Reply" or "Open" (admin hasn't responded yet)
+    count = db.query(database.Ticket).filter(database.Ticket.status.in_(["User Reply", "Open", "open"])).count()
     return {"unread": count}
 
 

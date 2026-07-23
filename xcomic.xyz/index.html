@@ -1281,7 +1281,12 @@
                 
                 <div class="afield">
                     <label>Password</label>
-                    <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter') AUTH.doLogin()">
+                    <div style="position:relative;">
+                        <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter') AUTH.doLogin()" style="width:100%; padding-right:40px;">
+                        <button type="button" onclick="var el=document.getElementById('login-pass'); el.type=el.type==='password'?'text':'password'; this.innerHTML=el.type==='password'?'<i class=\'fa-regular fa-eye\'></i>':'<i class=\'fa-regular fa-eye-slash\'></i>'" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--text-muted); padding:0;">
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
                 </div>
                 
                 <a class="aforgot" onclick="AUTH.showForgot()">Forgot password?</a>
@@ -1304,12 +1309,22 @@
                 
                 <div class="afield">
                     <label>Password</label>
-                    <input type="password" id="signup-pass" placeholder="••••••••" autocomplete="new-password">
+                    <div style="position:relative;">
+                        <input type="password" id="signup-pass" placeholder="••••••••" autocomplete="new-password" style="width:100%; padding-right:40px;">
+                        <button type="button" onclick="var el=document.getElementById('signup-pass'); el.type=el.type==='password'?'text':'password'; this.innerHTML=el.type==='password'?'<i class=\'fa-regular fa-eye\'></i>':'<i class=\'fa-regular fa-eye-slash\'></i>'" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--text-muted); padding:0;">
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
                 </div>
                 
                 <div class="afield">
                     <label>Confirm Password</label>
-                    <input type="password" id="signup-pass2" placeholder="••••••••" autocomplete="new-password" onkeydown="if(event.key==='Enter') AUTH.doSignup()">
+                    <div style="position:relative;">
+                        <input type="password" id="signup-pass2" placeholder="••••••••" autocomplete="new-password" onkeydown="if(event.key==='Enter') AUTH.doSignup()" style="width:100%; padding-right:40px;">
+                        <button type="button" onclick="var el=document.getElementById('signup-pass2'); el.type=el.type==='password'?'text':'password'; this.innerHTML=el.type==='password'?'<i class=\'fa-regular fa-eye\'></i>':'<i class=\'fa-regular fa-eye-slash\'></i>'" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--text-muted); padding:0;">
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
                 </div>
                 
                 <button class="abtn primary" id="signup-btn" onclick="AUTH.doSignup()">Create Account</button>
@@ -1358,7 +1373,12 @@
                     
                     <div class="afield">
                         <label>New Password</label>
-                        <input type="password" id="new-pass" placeholder="••••••••">
+                        <div style="position:relative;">
+                            <input type="password" id="new-pass" placeholder="••••••••" style="width:100%; padding-right:40px;">
+                            <button type="button" onclick="var el=document.getElementById('new-pass'); el.type=el.type==='password'?'text':'password'; this.innerHTML=el.type==='password'?'<i class=\'fa-regular fa-eye\'></i>':'<i class=\'fa-regular fa-eye-slash\'></i>'" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--text-muted); padding:0;">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
                     </div>
                     
                     <button class="abtn primary" id="reset-btn" onclick="AUTH.doReset()">Reset Password</button>

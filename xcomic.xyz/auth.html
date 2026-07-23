@@ -337,7 +337,7 @@
 
         <div class="divider">or continue with email</div>
 
-        <form onsubmit="event.preventDefault(); window.location.href='app.html';">
+        <form id="authForm">
             
 
 
@@ -428,6 +428,69 @@
             }
         });
 
+        // API Integration
+        const API = '/api'; 
+        document.getElementById('authForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const mode = new URLSearchParams(window.location.search).get('mode') || 'login';
+            
+            const email = document.querySelector('input[type="email"]').value;
+            const pass = document.getElementById('passwordInput').value;
+            const btn = document.querySelector(mode === 'login' ? '.btn-submit.login-only' : '.btn-submit.signup-only');
+            
+            const origText = btn.textContent;
+            btn.textContent = 'Please wait...';
+            btn.disabled = true;
+
+            try {
+                if (mode === 'login') {
+                    const body = new URLSearchParams();
+                    body.append('username', email.trim());
+                    body.append('password', pass);
+
+                    const res = await fetch(API + '/auth/token', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: body
+                    });
+                    
+                    if (res.ok) {
+                        const data = await res.json();
+                        localStorage.setItem('token', data.access_token);
+                        localStorage.setItem('xcomic_token', data.access_token);
+                        window.location.href = 'index.html';
+                    } else {
+                        alert('Login failed. Please check your credentials.');
+                    }
+                } else {
+                    const confirmPass = document.getElementById('confirmPasswordInput').value;
+                    if(pass !== confirmPass) {
+                         alert("Passwords do not match!");
+                         btn.textContent = origText;
+                         btn.disabled = false;
+                         return;
+                    }
+
+                    const res = await fetch(API + '/auth/register', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: email.trim(), password: pass })
+                    });
+                    
+                    if (res.ok) {
+                        alert("Account created! Please log in.");
+                        toggleMode('login');
+                    } else {
+                        const data = await res.json();
+                        alert(data.detail || 'Signup failed.');
+                    }
+                }
+            } catch(e) {
+                alert("Error connecting to server.");
+            }
+            btn.textContent = origText;
+            btn.disabled = false;
+        });
     </script>
 </body>
 </html>

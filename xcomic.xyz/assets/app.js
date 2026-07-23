@@ -413,7 +413,7 @@ async function apiCall(endpoint, method = 'GET', body = null) {
 
 
 
-        try { localStorage.removeItem('token'); localStorage.removeItem('is_admin'); localStorage.removeItem('xcomic_token'); } catch(e) {}
+        try { localStorage.removeItem('token'); localStorage.removeItem('is_admin'); localStorage.removeItem('user'); localStorage.removeItem('xcomic_token'); } catch(e) {}
 
 
 
@@ -804,6 +804,13 @@ window.navTo = function(targetId) {
         if (targetId === 'unsubscribes-view') loadUnsubscribes();
 
         if (targetId === 'replies-view') loadReplies();
+if (targetId === 'support-view') { 
+            SUPPORT.loadSupportTickets(); 
+            SUPPORT.checkUnreadTickets();
+            // Clear user badge when support is opened
+            let userBadge = document.getElementById('user-support-badge');
+            if (userBadge) userBadge.style.display = 'none';
+        }
 
         if (targetId === 'settings') loadSmtpStatus();
 
@@ -1577,7 +1584,7 @@ function setupLogout() {
 
 
 
-        try { localStorage.removeItem('token'); localStorage.removeItem('is_admin'); localStorage.removeItem('xcomic_token'); } catch(e) {}
+        try { localStorage.removeItem('token'); localStorage.removeItem('is_admin'); localStorage.removeItem('user'); localStorage.removeItem('xcomic_token'); } catch(e) {}
 
 
 
@@ -1726,30 +1733,15 @@ async function fetchDashboard() {
 
 
         const cRes = await apiCall('/campaigns');
-
-
-
+        const bulkRes = await apiCall('/bulk-campaigns');
         if (cRes && cRes.ok) {
-
-
-
             campaigns = await cRes.json();
-
-
-
-            if (!Array.isArray(campaigns)) campaigns = [];
-
-
-
-        } else {
-
-
-
-            console.warn('Campaigns API returned status:', cRes ? cRes.status : 'no response');
-
-
-
+            window.lastFetchedCampaigns = campaigns;
         }
+        if (bulkRes && bulkRes.ok) {
+            window.lastFetchedBulkCampaigns = await bulkRes.json();
+        }
+        if (!Array.isArray(campaigns)) campaigns = [];
 
 
 
@@ -4815,6 +4807,9 @@ function populateTimezones() {
 
         if (vbSchTimezone) vbSchTimezone.innerHTML = html;
 
+        const userTzSelect = document.getElementById('user-timezone');
+        if (userTzSelect) userTzSelect.innerHTML = html;
+
 
 
         
@@ -4849,6 +4844,14 @@ function populateTimezones() {
 
                 });
 
+            }
+
+            if (userTzSelect) {
+                userTzSelect.choicesInstance = new Choices(userTzSelect, {
+                    searchEnabled: true,
+                    itemSelectText: '',
+                    shouldSort: false
+                });
             }
 
         }
@@ -5082,6 +5085,59 @@ async function loadSmtpStatus() {
 }
 
 function setupSettings() {
+
+    // --- Load existing Timezone ---
+    (async () => {
+        const tzEl = document.getElementById('user-timezone');
+        if (tzEl) {
+            try {
+                const res = await apiCall('/settings/timezone', 'GET');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.timezone) {
+                        tzEl.value = data.timezone;
+                        if (tzEl.choicesInstance) {
+                            tzEl.choicesInstance.setChoiceByValue(data.timezone);
+                        }
+                    }
+                }
+            } catch(e) {}
+        }
+    })();
+    
+    // --- Handle Save Timezone ---
+    const saveTzBtn = document.getElementById('save-timezone-btn');
+    if (saveTzBtn) {
+        saveTzBtn.addEventListener('click', async () => {
+            const tz = document.getElementById('user-timezone').value;
+            const statusEl = document.getElementById('timezone-status');
+            if (statusEl) {
+                statusEl.textContent = 'Saving...';
+                statusEl.className = 'alert info';
+                statusEl.style.display = 'block';
+            }
+            try {
+                const res = await apiCall('/settings/timezone', 'POST', { timezone: tz });
+                if (res.ok) {
+                    if (statusEl) {
+                        statusEl.textContent = 'Timezone saved successfully!';
+                        statusEl.className = 'alert success';
+                    }
+                    if (window.currentUser) window.currentUser.timezone = tz;
+                } else {
+                    if (statusEl) {
+                        statusEl.textContent = 'Failed to save timezone.';
+                        statusEl.className = 'alert error';
+                    }
+                }
+            } catch (e) {
+                if (statusEl) {
+                    statusEl.textContent = 'Error saving timezone.';
+                    statusEl.className = 'alert error';
+                }
+            }
+        });
+    }
 
     // --- Load existing SMTP account status on page open ---
     (async () => {
@@ -10187,6 +10243,319 @@ async function checkPendingApprovals() {
 
 
 
+window.SUPPORT = {
+    showCreateModal: function() {
+        var m = document.getElementById('support-create-modal');
+        if (m) m.style.display = 'flex';
+    },
+    createTicket: async function(btn) {
+        var subject = document.getElementById('support-subject');
+        var message = document.getElementById('support-message');
+        if (!subject.value.trim() || !message.value.trim()) {
+            alert('Please enter a subject and message.');
+            return;
+        }
+        var origText = btn.innerHTML;
+        btn.innerHTML = 'Submitting...';
+        btn.disabled = true;
+        
+        try {
+            let res = await fetch('/api/support/tickets', {
+                method: 'POST',
+                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token'), 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    subject: subject.value.trim(),
+                    message: message.value.trim()
+                })
+            });
+            if (res.ok) {
+                document.getElementById('support-create-modal').style.display = 'none';
+                subject.value = '';
+                message.value = '';
+                SUPPORT.loadSupportTickets();
+                alert('Ticket created successfully.');
+            } else {
+                let err = await res.json();
+                alert('Failed to create ticket: ' + (err.detail || 'Unknown error'));
+            }
+        } catch (e) {
+            console.error(e);
+            alert('An error occurred.');
+        } finally {
+            btn.innerHTML = origText;
+            btn.disabled = false;
+        }
+    },
+    
+    loadSupportTickets: async function() {
+        try {
+            let res = await fetch('/api/support/tickets', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
+            if (res.ok) {
+                let data = await res.json();
+                let tbody = document.getElementById('user-tickets-body');
+                let userHtml = '';
+                
+                data.tickets.forEach(t => {
+                    let statusColor = (t.status.toLowerCase() === 'open' || t.status.toLowerCase() === 'user reply') ? '#3b82f6' : (t.status.toLowerCase() === 'admin reply' ? '#10b981' : '#64748b');
+                    let dt = new Date(t.updated_at).toLocaleString();
+                    
+                    userHtml += `<tr>
+                        <td>${t.subject}</td>
+                        <td><span style="color:${statusColor}; font-weight:600; text-transform:capitalize;">${t.status}</span></td>
+                        <td>${dt}</td>
+                        <td><button class="btn" onclick="SUPPORT.viewTicket('${t.id}')">View</button></td>
+                    </tr>`;
+                });
+                if (tbody) tbody.innerHTML = userHtml || '<tr><td colspan="4">No tickets found.</td></tr>';
+            }
+        } catch (e) {
+            console.error('Failed to load user tickets', e);
+        }
+    },
+    loadAdminTickets: async function() {
+        try {
+            let res = await fetch('/api/admin/tickets', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
+            if (res.ok) {
+                let data = await res.json();
+                let adminBody = document.getElementById('admin-all-tickets-body');
+                let adminHtml = '';
+                
+                data.tickets.forEach(t => {
+                    let statusColor = (t.status.toLowerCase() === 'open' || t.status.toLowerCase() === 'user reply') ? '#3b82f6' : (t.status.toLowerCase() === 'admin reply' ? '#10b981' : '#64748b');
+                    let dt = new Date(t.updated_at).toLocaleString();
+                    
+                    adminHtml += `<tr>
+                        <td>${t.user_email}</td>
+                        <td>${t.subject}</td>
+                        <td><span style="color:${statusColor}; font-weight:600; text-transform:capitalize;">${t.status}</span></td>
+                        <td><button class="btn" onclick="SUPPORT.viewTicket('${t.id}')">View & Reply</button></td>
+                    </tr>`;
+                });
+                if (adminBody) adminBody.innerHTML = adminHtml || '<tr><td colspan="4">No tickets found.</td></tr>';
+            }
+        } catch (e) {
+            console.error('Failed to load admin tickets', e);
+        }
+    },
+viewTicket: async function(ticketId) {
+        try {
+            let res = await fetch('/api/support/tickets/' + ticketId, { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
+            if (res.ok) {
+                let data = await res.json();
+                let currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+                let isAdmin = currentUser.is_admin === true || localStorage.getItem('is_admin') === 'true';
+                document.getElementById('support-active-ticket-id').value = ticketId;
+                let statusColor = data.status === 'resolved' ? '#10b981' : (data.status === 'Admin Reply' ? '#10b981' : '#3b82f6');
+                document.getElementById('support-view-title').innerHTML = '<i class="fa-solid fa-comments"></i> ' + data.subject + ' <span style="font-size:12px;color:' + statusColor + ';margin-left:8px;text-transform:capitalize;font-weight:600;">(' + data.status + ')</span>';
+                
+                // Show/hide admin action buttons
+                let adminActions = document.getElementById('support-admin-actions');
+                if (adminActions) {
+                    if (isAdmin) {
+                        adminActions.style.display = 'flex';
+                        let resolveBtn = document.getElementById('support-resolve-btn');
+                        if (resolveBtn) {
+                            if (data.status === 'resolved') {
+                                resolveBtn.innerHTML = '<i class="fa-solid fa-check-circle"></i> Resolved';
+                                resolveBtn.style.background = '#10b981';
+                                resolveBtn.disabled = true;
+                            } else {
+                                resolveBtn.innerHTML = '<i class="fa-solid fa-check-circle"></i> Resolve';
+                                resolveBtn.style.background = '#3b82f6';
+                                resolveBtn.disabled = false;
+                            }
+                        }
+                    } else {
+                        adminActions.style.display = 'none';
+                    }
+                }
+
+                // Hide or show reply box depending on status
+                let replyBox = document.getElementById('support-reply-box');
+                if (replyBox) {
+                    replyBox.style.display = (data.status === 'resolved') ? 'none' : 'block';
+                }
+
+                let chatContainer = document.getElementById('support-replies-container');
+                let chatHtml = '';
+                
+                data.messages.forEach(m => {
+                    let isAdminMsg = m.is_admin;
+                    let bg = isAdminMsg ? 'var(--card-bg, #e0e7ff)' : 'var(--bg-secondary, #f1f5f9)';
+                    let border = isAdminMsg ? '1px solid #6366f1' : '1px solid var(--border)';
+                    let align = isAdminMsg ? 'flex-start' : 'flex-end';
+                    let name = isAdminMsg ? '<i class="fa-solid fa-headset" style="color:#6366f1"></i> Support Team' : '<i class="fa-solid fa-user"></i> You';
+                    
+                    chatHtml += `
+                    <div style="display:flex; flex-direction:column; align-items:${align}; margin-bottom:12px;">
+                        <div style="font-size:11px; color:var(--text-muted,#64748b); margin-bottom:4px;">${name} &bull; ${new Date(m.created_at).toLocaleString()}</div>
+                        <div style="background:${bg}; border:${border}; padding:12px 16px; border-radius:12px; max-width:80%; font-size:14px; color:var(--text-primary,#1e293b); white-space:pre-wrap;">${m.message}</div>
+                    </div>`;
+                });
+                
+                chatContainer.innerHTML = chatHtml;
+                document.getElementById('support-view-modal').style.display = 'flex';
+                // scroll to bottom
+                setTimeout(() => { chatContainer.scrollTop = chatContainer.scrollHeight; }, 100);
+            } else {
+                alert('Failed to load ticket details.');
+            }
+        } catch (e) {
+            console.error('Error viewing ticket', e);
+            alert('An error occurred loading the ticket.');
+        }
+    },
+    replyToTicket: async function(btn) {
+        var message = document.getElementById('support-reply-message');
+        var ticketId = document.getElementById('support-active-ticket-id').value;
+        if (!message.value.trim() || !ticketId) {
+            alert('Please enter a reply.');
+            return;
+        }
+        var origText = btn.innerHTML;
+        btn.innerHTML = 'Sending...';
+        btn.disabled = true;
+        
+        try {
+            let res = await fetch('/api/support/tickets/' + ticketId + '/reply', {
+                method: 'POST',
+                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token'), 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: message.value.trim() })
+            });
+            if (res.ok) {
+                message.value = '';
+                // Reload ticket chat
+                SUPPORT.viewTicket(ticketId);
+                // Refresh ticket lists for both user and admin
+                SUPPORT.loadSupportTickets();
+                SUPPORT.loadAdminTickets();
+                SUPPORT.checkUnreadTickets();
+            } else {
+                alert('Failed to send reply.');
+            }
+        } catch(e) {
+            console.error(e);
+            alert('An error occurred.');
+        } finally {
+            btn.innerHTML = origText;
+            btn.disabled = false;
+        }
+    },
+    resolveTicket: async function() {
+        let ticketId = document.getElementById('support-active-ticket-id').value;
+        if (!ticketId) return;
+        try {
+            let res = await fetch('/api/admin/tickets/' + ticketId + '/status', {
+                method: 'PUT',
+                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token'), 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: 'resolved' })
+            });
+            if (res.ok) {
+                SUPPORT.viewTicket(ticketId);
+                SUPPORT.loadAdminTickets();
+                SUPPORT.loadSupportTickets();
+                SUPPORT.checkUnreadTickets();
+            } else { alert('Failed to resolve ticket.'); }
+        } catch(e) { alert('Error resolving ticket.'); }
+    },
+    deleteTicket: async function() {
+        let ticketId = document.getElementById('support-active-ticket-id').value;
+        if (!ticketId) return;
+        if (!confirm('Are you sure you want to delete this ticket? This cannot be undone.')) return;
+        try {
+            let res = await fetch('/api/admin/tickets/' + ticketId, {
+                method: 'DELETE',
+                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+            });
+            if (res.ok) {
+                document.getElementById('support-view-modal').style.display = 'none';
+                SUPPORT.loadAdminTickets();
+                SUPPORT.checkUnreadTickets();
+            } else { alert('Failed to delete ticket.'); }
+        } catch(e) { alert('Error deleting ticket.'); }
+    },
+    checkUnreadTickets: async function() {
+        try {
+            let currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+            let isAdminUser = currentUser.is_admin === true || localStorage.getItem('is_admin') === 'true';
+
+            if (isAdminUser) {
+                // ADMIN: check tickets with "User Reply" status
+                let res = await fetch('/api/admin/tickets/unread-count', {
+                    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+                });
+                if (res.ok) {
+                    let data = await res.json();
+                    let count = data.unread || 0;
+
+                    // 1. Admin sidebar nav badge
+                    let adminBadge = document.getElementById('admin-unread-badge');
+                    if (adminBadge) {
+                        if (count > 0) {
+                            adminBadge.textContent = count;
+                            adminBadge.style.display = 'inline-flex';
+                        } else {
+                            adminBadge.style.display = 'none';
+                        }
+                    }
+
+                    // 2. Support Tickets sub-tab badge inside Admin panel
+                    let tabBadge = document.getElementById('tab-tickets-unread-badge');
+                    if (tabBadge) {
+                        if (count > 0) {
+                            tabBadge.textContent = count;
+                            tabBadge.style.display = 'inline-flex';
+                        } else {
+                            tabBadge.style.display = 'none';
+                        }
+                    }
+                }
+            } else {
+                // REGULAR USER: check if admin replied to any of their tickets
+                let currentView = document.querySelector('.view.active');
+                let isOnSupportView = currentView && currentView.id === 'support-view';
+                if (isOnSupportView) return; // already on support page, no need for badge
+
+                let res = await fetch('/api/support/tickets/unread-count', {
+                    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+                });
+                if (res.ok) {
+                    let data = await res.json();
+                    let count = data.unread || 0;
+                    let userBadge = document.getElementById('user-support-badge');
+                    if (userBadge) {
+                        if (count > 0) {
+                            userBadge.textContent = count;
+                            userBadge.style.display = 'inline-flex';
+                        } else {
+                            userBadge.style.display = 'none';
+                        }
+                    }
+                }
+            }
+        } catch(e) { /* silent */ }
+    },
+    switchAdminTab: function(tab) {
+        document.querySelectorAll('.admin-tab').forEach(t => {
+            t.classList.remove('active');
+            t.style.color = 'var(--text-muted)';
+            t.style.borderBottomColor = 'transparent';
+        });
+        document.querySelectorAll('.admin-section').forEach(s => s.style.display = 'none');
+        var btn = document.getElementById('tab-btn-' + tab);
+        if(btn) {
+            btn.classList.add('active');
+            btn.style.color = 'var(--primary)';
+            btn.style.borderBottomColor = 'var(--primary)';
+        }
+        var sec = document.getElementById('admin-section-' + tab);
+        if(sec) {
+            sec.style.display = 'block';
+            if (tab === 'tickets') SUPPORT.loadAdminTickets();
+        }
+    }
+};
+
 function setupAdmin() {
 
 
@@ -11077,7 +11446,7 @@ async function renderNewsletterList() {
 
 
 
-    const campaigns = (window.lastFetchedCampaigns || []).filter(c => c.type !== 'cold_mail');
+    const campaigns = window.lastFetchedBulkCampaigns || [];
 
 
 
@@ -11129,7 +11498,7 @@ async function renderNewsletterList() {
 
 
 
-            <td><div style="font-weight:600;color:var(--text);">${c.subject || 'Untitled'}</div></td>
+            <td><div style="font-weight:600;color:var(--text);">${c.name || 'Untitled'}</div></td>
 
 
 
@@ -12971,37 +13340,45 @@ window.saveNewsletterSchedule = async function() {
 
             const draftPayload = {
 
-                subject: (subEl ? subEl.value : '') || 'Untitled Newsletter',
+                name: (subEl ? subEl.value : '') || 'Untitled Newsletter',
 
-                body: '',
+                html_content: editor ? editor.exportHtml() : '',
 
-                type: 'newsletter',
+                design_json: editor ? JSON.stringify(editor.exportDesign()) : '',
 
                 leads: [],
 
-                is_draft: true,
-
-                sending_days: payload.sending_days,
-
-                start_hour: payload.start_hour,
-
-                end_hour: payload.end_hour,
-
-                timezone: payload.timezone,
-
-                delay_min: payload.delay_min,
-
-                delay_max: payload.delay_max
+                is_draft: false
 
             };
 
+
+
+            const leadsText = (document.getElementById('newsletter-leads') || {}).value || '';
+
+            leadsText.split('\n').map(l => l.trim()).filter(l => l).forEach(line => {
+
+                const parts = line.split(',').map(p => p.trim());
+                draftPayload.leads.push({ email: parts[0], name: parts[1] || '', company: parts[2] || '' });
+            });
+
+
+
             if (window.getSelectedSenderIds) {
 
-                draftPayload.selected_sender_ids = window.getSelectedSenderIds('vb-sender-accounts-list');
+                const sendingIds = window.getSelectedSenderIds('vb-sender-accounts-list');
+
+                if (sendingIds) {
+
+                    draftPayload.sending_account_ids = JSON.stringify(sendingIds);
+
+                }
 
             }
 
-            const draftRes = await apiCall('/campaigns/send', 'POST', draftPayload);
+
+
+            const draftRes = await apiCall('/bulk-campaigns', 'POST', draftPayload);
 
             if (draftRes && draftRes.ok) {
 
@@ -13475,58 +13852,3 @@ window.filterAccounts = function(input, containerId) {
 
 };
 
-
-
-// Public Pages Logic
-window.showPublicPage = function(pageId) {
-    // Hide auth and app
-    document.getElementById('auth-page').style.display = 'none';
-    if(document.getElementById('app-page')) document.getElementById('app-page').style.display = 'none';
-    
-    // Show public container
-    const pubContainer = document.getElementById('public-container');
-    if(pubContainer) {
-        pubContainer.style.display = 'block';
-        
-        // Hide all public pages
-        document.querySelectorAll('.public-page').forEach(p => {
-            p.classList.remove('active');
-            p.style.display = 'none'; // Ensure they are completely hidden before making active
-            // trigger reflow
-            void p.offsetWidth;
-        });
-        
-        // Show target
-        const target = document.getElementById('public-' + pageId);
-        if(target) {
-            target.style.display = 'block';
-            target.classList.add('active');
-        }
-    }
-};
-
-window.showAuthPage = function() {
-    const pubContainer = document.getElementById('public-container');
-    if(pubContainer) pubContainer.style.display = 'none';
-    
-    const authPage = document.getElementById('auth-page');
-    if(authPage) {
-        authPage.style.display = 'flex'; // Auth page uses flex
-        authPage.classList.remove('hidden');
-    }
-};
-
-// Override original auth page showing if no token
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(function() {
-        const token = window.getToken ? window.getToken() : null;
-        if (!token) {
-            // Check if auth page is currently showing (which means we are not logged in)
-            const authPage = document.getElementById('auth-page');
-            if (authPage && !authPage.classList.contains('hidden')) {
-                // We are not logged in. Show public home page by default instead of Auth.
-                showPublicPage('home');
-            }
-        }
-    }, 100); // slight delay to let existing init finish
-});

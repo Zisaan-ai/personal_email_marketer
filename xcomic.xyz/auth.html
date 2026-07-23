@@ -458,6 +458,7 @@
                         const data = await res.json();
                         localStorage.setItem('token', data.access_token);
                         localStorage.setItem('xcomic_token', data.access_token);
+                        localStorage.setItem('is_admin', data.is_admin ? 'true' : 'false');
                         window.location.href = 'index.html';
                     } else {
                         alert('Login failed. Please check your credentials.');

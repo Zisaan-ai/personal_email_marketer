@@ -14,8 +14,12 @@ import dns.resolver
 
 load_dotenv()
 
-SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
-SMTP_PORT = int(os.getenv("SMTP_PORT", 587))
+SMTP_SERVER = os.getenv("SMTP_SERVER") or "smtp.gmail.com"
+try:
+    SMTP_PORT = int(os.getenv("SMTP_PORT") or 587)
+except:
+    SMTP_PORT = 587
+    
 SMTP_USERNAME = os.getenv("SMTP_USERNAME")
 if SMTP_USERNAME == "your_email@gmail.com":
     SMTP_USERNAME = ""
@@ -481,7 +485,7 @@ def send_single_email(subject: str, body_html: str, recipient: str, account=None
         return True
     except Exception as e:
         print(f"Failed to send to {recipient}: {e}")
-        raise e
+        return False
     finally:
         if 'server' in locals() and server is not None:
             try:
@@ -491,30 +495,48 @@ def send_single_email(subject: str, body_html: str, recipient: str, account=None
 
 def _send_system_email(subject: str, body_html: str, recipient: str) -> bool:
     """Sends a system email (like auth/verification) using .env credentials."""
-    if not SMTP_PASSWORD:
+    from dotenv import dotenv_values
+    
+    # Dynamically load from .env file to catch updates without restart
+    env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+    config = dotenv_values(env_path)
+    
+    smtp_pass = config.get("SMTP_PASSWORD") or os.getenv("SMTP_PASSWORD")
+    if not smtp_pass or smtp_pass == "your_app_password_here":
+        print(f"SMTP Config error: No password found. Mocking send to {recipient}.")
         return False
         
+    smtp_server = config.get("SMTP_SERVER") or os.getenv("SMTP_SERVER") or "smtp.gmail.com"
     try:
-        if int(SMTP_PORT) == 465:
-            server = smtplib.SMTP_SSL(SMTP_SERVER, int(SMTP_PORT), timeout=5)
+        smtp_port = int(config.get("SMTP_PORT") or os.getenv("SMTP_PORT") or 587)
+    except:
+        smtp_port = 587
+        
+    smtp_user = config.get("SMTP_USERNAME") or os.getenv("SMTP_USERNAME")
+    if smtp_user == "your_email@gmail.com":
+        smtp_user = ""
+        
+    try:
+        if smtp_port == 465:
+            server = smtplib.SMTP_SSL(smtp_server, smtp_port, timeout=5)
         else:
-            server = smtplib.SMTP(SMTP_SERVER, int(SMTP_PORT), timeout=5)
+            server = smtplib.SMTP(smtp_server, smtp_port, timeout=5)
             server.starttls()
             
-        server.login(SMTP_USERNAME, SMTP_PASSWORD)
+        server.login(smtp_user, smtp_pass)
         
         msg = MIMEMultipart("alternative")
         msg["Subject"] = subject
-        msg["From"] = f"Admin <{SMTP_USERNAME}>"
+        msg["From"] = f"Admin <{smtp_user}>"
         msg["To"] = recipient
-        msg["Reply-To"] = SMTP_USERNAME
+        msg["Reply-To"] = smtp_user
         msg["MIME-Version"] = "1.0"
         
         body_text = generate_clean_plaintext(body_html)
         msg.attach(MIMEText(body_text, "plain", "utf-8"))
         msg.attach(MIMEText(body_html, "html", "utf-8"))
         
-        server.sendmail(SMTP_USERNAME, [recipient], msg.as_string())
+        server.sendmail(smtp_user, [recipient], msg.as_string())
         return True
     except Exception as e:
         print(f"System Email failed: {e}")

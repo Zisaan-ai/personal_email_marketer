@@ -14,8 +14,12 @@ import dns.resolver
 
 load_dotenv()
 
-SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
-SMTP_PORT = int(os.getenv("SMTP_PORT", 587))
+SMTP_SERVER = os.getenv("SMTP_SERVER") or "smtp.gmail.com"
+try:
+    SMTP_PORT = int(os.getenv("SMTP_PORT") or 587)
+except:
+    SMTP_PORT = 587
+    
 SMTP_USERNAME = os.getenv("SMTP_USERNAME")
 if SMTP_USERNAME == "your_email@gmail.com":
     SMTP_USERNAME = ""
@@ -489,76 +493,46 @@ def send_single_email(subject: str, body_html: str, recipient: str, account=None
             except:
                 pass
 
-def get_system_smtp_config():
-    """Reads system SMTP settings dynamically from .env so no restart is needed."""
-    env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
-    config = {
-        "SMTP_SERVER": "smtp.gmail.com",
-        "SMTP_PORT": 587,
-        "SMTP_USERNAME": "",
-        "SMTP_PASSWORD": "",
-        "SMTP_FROM_NAME": "System Admin"
-    }
-    if os.path.exists(env_path):
-        with open(env_path, 'r', encoding='utf-8') as f:
-            for line in f:
-                if '=' in line and not line.startswith('#'):
-                    k, v = line.strip().split('=', 1)
-                    config[k.strip()] = v.strip()
-    return config
-
 def _send_system_email(subject: str, body_html: str, recipient: str) -> bool:
     """Sends a system email (like auth/verification) using .env credentials."""
-    config = get_system_smtp_config()
-    smtp_user = config.get("SMTP_USERNAME")
-    smtp_pass = config.get("SMTP_PASSWORD")
+    from dotenv import dotenv_values
     
+    # Dynamically load from .env file to catch updates without restart
+    env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+    config = dotenv_values(env_path)
+    
+    smtp_pass = config.get("SMTP_PASSWORD") or os.getenv("SMTP_PASSWORD")
     if not smtp_pass or smtp_pass == "your_app_password_here":
+        print(f"SMTP Config error: No password found. Mocking send to {recipient}.")
         return False
         
-    # Generate clean plain-text
-    body_text = generate_clean_plaintext(body_html)
-    from_name = config.get("SMTP_FROM_NAME", "System Admin")
+    smtp_server = config.get("SMTP_SERVER") or os.getenv("SMTP_SERVER") or "smtp.gmail.com"
+    try:
+        smtp_port = int(config.get("SMTP_PORT") or os.getenv("SMTP_PORT") or 587)
+    except:
+        smtp_port = 587
+        
+    smtp_user = config.get("SMTP_USERNAME") or os.getenv("SMTP_USERNAME")
+    if smtp_user == "your_email@gmail.com":
+        smtp_user = ""
         
     try:
-        # Check if using Brevo API Key
-        if smtp_pass.startswith("xkeysib-"):
-            import requests
-            headers = {
-                "accept": "application/json",
-                "api-key": smtp_pass,
-                "content-type": "application/json"
-            }
-            payload = {
-                "sender": {"email": smtp_user, "name": from_name},
-                "to": [{"email": recipient}],
-                "replyTo": {"email": smtp_user, "name": from_name},
-                "subject": subject,
-                "htmlContent": body_html,
-                "textContent": body_text
-            }
-            res = requests.post("https://api.brevo.com/v3/smtp/email", json=payload, headers=headers, timeout=10)
-            if res.status_code in [200, 201, 202]:
-                return True
-            raise Exception(f"Brevo API Error: {res.text}")
-
-        # Fallback to standard SMTP
-        smtp_port = int(config.get("SMTP_PORT", 587))
         if smtp_port == 465:
-            server = smtplib.SMTP_SSL(config.get("SMTP_SERVER"), smtp_port, timeout=5)
+            server = smtplib.SMTP_SSL(smtp_server, smtp_port, timeout=5)
         else:
-            server = smtplib.SMTP(config.get("SMTP_SERVER"), smtp_port, timeout=5)
+            server = smtplib.SMTP(smtp_server, smtp_port, timeout=5)
             server.starttls()
             
         server.login(smtp_user, smtp_pass)
         
         msg = MIMEMultipart("alternative")
         msg["Subject"] = subject
-        msg["From"] = f"{from_name} <{smtp_user}>"
+        msg["From"] = f"Admin <{smtp_user}>"
         msg["To"] = recipient
         msg["Reply-To"] = smtp_user
         msg["MIME-Version"] = "1.0"
         
+        body_text = generate_clean_plaintext(body_html)
         msg.attach(MIMEText(body_text, "plain", "utf-8"))
         msg.attach(MIMEText(body_html, "html", "utf-8"))
         
@@ -579,184 +553,42 @@ def send_verification_email(email: str, code: str):
     Sends a 6-digit verification code to the user.
     If SMTP credentials are not configured, it just prints it to the console.
     """
-    config = get_system_smtp_config()
-    if not config.get("SMTP_USERNAME") or not config.get("SMTP_PASSWORD") or config.get("SMTP_PASSWORD") == "your_app_password_here":
+    if not SMTP_USERNAME or not SMTP_PASSWORD:
         print(f"*** MOCK EMAIL: Verification code for {email} is {code} ***")
         return True
 
     subject = "Verify your account"
     body_html = f"""
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
-            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        </style>
-    </head>
-    <body style="margin: 0; padding: 0; background-color: #0f172a; font-family: 'Inter', Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: #f8fafc;">
-        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #0f172a; padding: 60px 20px;">
-            <tr>
-                <td align="center">
-                    <table width="100%" max-width="600" border="0" cellspacing="0" cellpadding="0" style="max-width: 600px; background-color: #1e293b; border-radius: 16px; border: 1px solid #334155; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); overflow: hidden;">
-                        
-                        <!-- Header -->
-                        <tr>
-                            <td align="center" style="padding: 40px 40px 30px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-bottom: 1px solid #334155;">
-                                <h1 style="color: #a855f7; font-size: 22px; margin: 0 0 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;">XComic</h1>
-                                <h2 style="color: #f8fafc; font-size: 28px; margin: 0; font-weight: 600; letter-spacing: -0.5px;">Account Verification</h2>
-                            </td>
-                        </tr>
-                        
-                        <!-- Body -->
-                        <tr>
-                            <td style="padding: 40px;">
-                                <p style="color: #94a3b8; font-size: 16px; line-height: 26px; margin: 0 0 30px;">Welcome aboard! We're excited to have you.</p>
-                                <p style="color: #94a3b8; font-size: 16px; line-height: 26px; margin: 0 0 30px;">To complete your registration and secure your account, please use the verification code below:</p>
-                                
-                                <!-- Code Box -->
-                                <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 30px;">
-                                    <tr>
-                                        <td align="center">
-                                            <div style="background: linear-gradient(145deg, #1e293b, #0f172a); border: 1px solid #a855f7; border-radius: 12px; padding: 24px; display: inline-block; box-shadow: 0 0 20px rgba(168, 85, 247, 0.1);">
-                                                <span style="color: #a855f7; font-size: 42px; font-weight: 700; letter-spacing: 12px; font-family: monospace; margin-left: 12px;">{code}</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </table>
-                                
-                                <p style="color: #64748b; font-size: 15px; line-height: 24px; margin: 0 0 30px;">This code is valid for a limited time. If you didn't create an account with us, please safely ignore this email.</p>
-                                
-                                <!-- Footer Divider -->
-                                <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                                    <tr>
-                                        <td style="border-top: 1px solid #334155; padding-top: 30px; text-align: center;">
-                                            <p style="color: #64748b; font-size: 13px; line-height: 20px; margin: 0 0 10px;">XComic &bull; Elegant Email Marketing</p>
-                                            <p style="color: #475569; font-size: 12px; line-height: 18px; margin: 0;">&copy; XComic. All rights reserved.</p>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-        </table>
-    </body>
-    </html>
-    """
-    return _send_system_email(subject, body_html, email)
-
-def send_new_ticket_notification(user_email: str, subject: str, message: str):
-    """Sends a notification to the admin (system SMTP email) that a new ticket was created."""
-    config = get_system_smtp_config()
-    admin_email = config.get("SMTP_USERNAME")
-    if not admin_email:
-        return False
-        
-    email_subject = f"New Support Ticket: {subject}"
-    body_html = f"""
-    <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 8px;">
-        <h2 style="color: #4F46E5;">New Support Ticket</h2>
-        <p><strong>From:</strong> {user_email}</p>
-        <p><strong>Subject:</strong> {subject}</p>
-        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
-        <p style="white-space: pre-wrap; color: #333;">{message}</p>
-        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
-        <p style="font-size: 12px; color: #777;">You can reply to this ticket from your Admin Dashboard.</p>
-    </div>
-    """
-    return _send_system_email(email_subject, body_html, admin_email)
-
-def send_ticket_reply_notification(recipient_email: str, subject: str, reply_message: str):
-    """Sends a notification to the client user that the admin has replied to their ticket."""
-    email_subject = f"Re: {subject} (Support Ticket Update)"
-    body_html = f"""
-    <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 8px;">
-        <h2 style="color: #4F46E5;">Support Ticket Update</h2>
-        <p>Hi there,</p>
-        <p>Our support team has replied to your ticket: <strong>{subject}</strong></p>
-        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
-        <div style="background-color: #f9fafb; padding: 15px; border-radius: 6px; border-left: 4px solid #4F46E5;">
-            <p style="white-space: pre-wrap; margin: 0; color: #374151;">{reply_message}</p>
+    <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 500px; margin: 0 auto; border: 1px solid #ddd; border-radius: 8px;">
+        <h2 style="color: #4F46E5; text-align: center;">Account Verification</h2>
+        <p>Thank you for registering. Please use the following 6-digit code to verify your email address:</p>
+        <div style="background: #F3F4F6; padding: 15px; text-align: center; font-size: 24px; font-weight: bold; letter-spacing: 5px; border-radius: 6px; margin: 20px 0;">
+            {code}
         </div>
-        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
-        <p style="font-size: 13px; color: #6b7280;">You can view the full history and reply from your dashboard.</p>
+        <p>If you did not request this, please ignore this email.</p>
     </div>
     """
-    return _send_system_email(email_subject, body_html, recipient_email)
+    # Since it's a single email, we can reuse our bulk send logic or write a simpler one
+    return _send_system_email(subject, body_html, email)
 
 def send_password_reset_email(email: str, code: str):
     """
     Sends a 6-digit password reset code to the user.
     """
-    config = get_system_smtp_config()
-    if not config.get("SMTP_USERNAME") or not config.get("SMTP_PASSWORD") or config.get("SMTP_PASSWORD") == "your_app_password_here":
+    if not SMTP_PASSWORD or not SMTP_USERNAME:
         print(f"*** MOCK EMAIL: Password reset code for {email} is {code} ***")
         return True
 
     subject = "Reset your password"
     body_html = f"""
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
-            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        </style>
-    </head>
-    <body style="margin: 0; padding: 0; background-color: #0f172a; font-family: 'Inter', Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: #f8fafc;">
-        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #0f172a; padding: 60px 20px;">
-            <tr>
-                <td align="center">
-                    <table width="100%" max-width="600" border="0" cellspacing="0" cellpadding="0" style="max-width: 600px; background-color: #1e293b; border-radius: 16px; border: 1px solid #334155; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); overflow: hidden;">
-                        
-                        <!-- Header -->
-                        <tr>
-                            <td align="center" style="padding: 40px 40px 30px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-bottom: 1px solid #334155;">
-                                <h1 style="color: #38bdf8; font-size: 22px; margin: 0 0 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;">XComic</h1>
-                                <h2 style="color: #f8fafc; font-size: 28px; margin: 0; font-weight: 600; letter-spacing: -0.5px;">Password Reset</h2>
-                            </td>
-                        </tr>
-                        
-                        <!-- Body -->
-                        <tr>
-                            <td style="padding: 40px;">
-                                <p style="color: #94a3b8; font-size: 16px; line-height: 26px; margin: 0 0 30px;">Hello,</p>
-                                <p style="color: #94a3b8; font-size: 16px; line-height: 26px; margin: 0 0 30px;">We received a request to reset the password for your account. Please use the verification code below to proceed.</p>
-                                
-                                <!-- Code Box -->
-                                <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 30px;">
-                                    <tr>
-                                        <td align="center">
-                                            <div style="background: linear-gradient(145deg, #1e293b, #0f172a); border: 1px solid #38bdf8; border-radius: 12px; padding: 24px; display: inline-block; box-shadow: 0 0 20px rgba(56, 189, 248, 0.1);">
-                                                <span style="color: #38bdf8; font-size: 42px; font-weight: 700; letter-spacing: 12px; font-family: monospace; margin-left: 12px;">{code}</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </table>
-                                
-                                <p style="color: #64748b; font-size: 15px; line-height: 24px; margin: 0 0 30px;">This code will expire in a few minutes. If you didn't request a password reset, you can safely ignore this email and your password will remain unchanged.</p>
-                                
-                                <!-- Footer Divider -->
-                                <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                                    <tr>
-                                        <td style="border-top: 1px solid #334155; padding-top: 30px; text-align: center;">
-                                            <p style="color: #64748b; font-size: 13px; line-height: 20px; margin: 0 0 10px;">XComic &bull; Elegant Email Marketing</p>
-                                            <p style="color: #475569; font-size: 12px; line-height: 18px; margin: 0;">&copy; XComic. All rights reserved.</p>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-        </table>
-    </body>
-    </html>
+    <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 500px; margin: 0 auto; border: 1px solid #ddd; border-radius: 8px;">
+        <h2 style="color: #4F46E5; text-align: center;">Password Reset</h2>
+        <p>We received a request to reset your password. Please use the following 6-digit code to reset it:</p>
+        <div style="background: #F3F4F6; padding: 15px; text-align: center; font-size: 24px; font-weight: bold; letter-spacing: 5px; border-radius: 6px; margin: 20px 0;">
+            {code}
+        </div>
+        <p>If you did not request this, please ignore this email.</p>
+    </div>
     """
     return _send_system_email(subject, body_html, email)
 

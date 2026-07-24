@@ -506,7 +506,7 @@
                     } else {
                         alert('Login failed. Please check your credentials.');
                     }
-                } else {
+                } else if (mode === 'signup') {
                     const confirmPass = document.getElementById('confirmPasswordInput').value;
                     if(pass !== confirmPass) {
                          alert("Passwords do not match!");

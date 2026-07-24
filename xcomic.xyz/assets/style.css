@@ -80,18 +80,17 @@ body {
     font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
     background: var(--bg);
     color: var(--text);
-    height: 100%;
+    min-height: 100vh;
     display: block;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overflow: hidden;
+    overflow-x: hidden;
 }
 
-
-.sidebar::-webkit-scrollbar { width: 8px; height: 8px; }
-.sidebar::-webkit-scrollbar-track { background: transparent; }
-.sidebar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
-.sidebar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
 ::selection { background: rgba(79, 70, 229, 0.15); color: var(--accent); }
 
@@ -101,16 +100,18 @@ body {
 #app-page {
     display: none;
     width: 100%;
+    min-height: 100vh;
     background: var(--bg);
     position: relative;
 }
-#app-page.on { display: flex; height: 100vh; overflow: hidden; }
+#app-page.on { display: flex; }
 
 /* ============================================================
    SIDEBAR
    ============================================================ */
 .sidebar {
     width: 260px;
+    min-height: 100vh;
     padding: 32px 20px;
     display: flex;
     flex-direction: column;
@@ -120,7 +121,6 @@ body {
     z-index: 100;
     flex-shrink: 0;
     overflow-y: auto;
-    overflow-x: hidden;
 }
 
 .logo {
@@ -181,10 +181,8 @@ nav {
 .main-content {
     flex: 1;
     padding: 48px 56px;
-    overflow-y: auto;
-    overflow-x: hidden;
     position: relative; z-index: 1;
-    height: 100%;
+    min-height: 100vh;
 }
 
 /* ============================================================

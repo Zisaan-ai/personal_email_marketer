@@ -309,7 +309,7 @@
         }
 
         /* TOGGLE STATES */
-        .signup-only, .verify-only { display: none; }
+        .signup-only, .verify-only, .forgot-only, .reset-only { display: none; }
         
         html.is-signup .signup-only { display: block; }
         html.is-signup .login-only { display: none; }
@@ -321,6 +321,17 @@
         html.is-verify .social-login { display: none; }
         html.is-verify .divider { display: none; }
         html.is-verify input[type="email"] { pointer-events: none; opacity: 0.7; }
+
+        html.is-forgot .forgot-only { display: block; }
+        html.is-forgot .login-only, html.is-forgot .signup-only, html.is-forgot .verify-only, html.is-forgot .reset-only { display: none; }
+        html.is-forgot .password-group { display: none; }
+        html.is-forgot .social-login, html.is-forgot .divider { display: none; }
+
+        html.is-reset .reset-only { display: block; }
+        html.is-reset .login-only, html.is-reset .signup-only, html.is-reset .verify-only, html.is-reset .forgot-only { display: none; }
+        html.is-reset .password-group { display: none; }
+        html.is-reset .social-login, html.is-reset .divider { display: none; }
+        html.is-reset input[type="email"] { pointer-events: none; opacity: 0.7; }
     </style>
 
     <script>
@@ -351,6 +362,12 @@
             
             <h1 class="verify-only">Check your email</h1>
             <p class="verify-only">We sent a verification code to your email address.</p>
+            
+            <h1 class="forgot-only">Reset Password</h1>
+            <p class="forgot-only">Enter your email and we'll send a code. <br><a href="#" onclick="toggleMode('login'); return false;">Back to login</a></p>
+
+            <h1 class="reset-only">New Password</h1>
+            <p class="reset-only">Enter the reset code and your new password.</p>
         </div>
 
         <div class="social-login">
@@ -384,7 +401,7 @@
             <div class="form-group password-group">
                 <label>
                     Password
-                    <a href="#" class="login-only">Forgot password?</a>
+                    <a href="#" class="login-only" onclick="toggleMode('forgot'); return false;">Forgot password?</a>
                 </label>
                 <div class="password-wrapper">
                     <input type="password" id="passwordInput" placeholder="••••••••" required>
@@ -408,10 +425,24 @@
                     <input type="password" id="confirmPasswordInput" placeholder="••••••••">
                 </div>
             </div>
+            
+            <div class="form-group reset-only">
+                <label>Reset Code</label>
+                <input type="text" id="resetCodeInput" placeholder="6-digit code">
+            </div>
+
+            <div class="form-group reset-only">
+                <label>New Password</label>
+                <div class="password-wrapper">
+                    <input type="password" id="newPasswordInput" placeholder="••••••••">
+                </div>
+            </div>
 
             <button type="submit" class="btn-submit login-only">Sign In</button>
             <button type="submit" class="btn-submit signup-only">Create Account</button>
             <button type="submit" class="btn-submit verify-only">Verify Email</button>
+            <button type="submit" class="btn-submit forgot-only">Send Reset Code</button>
+            <button type="submit" class="btn-submit reset-only">Save New Password</button>
         </form>
     </div>
 
@@ -435,15 +466,26 @@
     <script>
         // Check URL for mode
         function toggleMode(newMode) {
-            document.documentElement.classList.remove('is-signup', 'is-verify');
+            document.documentElement.classList.remove('is-signup', 'is-verify', 'is-forgot', 'is-reset');
             if (newMode === 'signup') {
                 document.documentElement.classList.add('is-signup');
                 window.history.pushState({}, '', '?mode=signup');
+                document.getElementById('passwordInput').setAttribute('required', 'required');
             } else if (newMode === 'verify') {
                 document.documentElement.classList.add('is-verify');
                 window.history.pushState({}, '', '?mode=verify');
+                document.getElementById('passwordInput').removeAttribute('required');
+            } else if (newMode === 'forgot') {
+                document.documentElement.classList.add('is-forgot');
+                window.history.pushState({}, '', '?mode=forgot');
+                document.getElementById('passwordInput').removeAttribute('required');
+            } else if (newMode === 'reset') {
+                document.documentElement.classList.add('is-reset');
+                window.history.pushState({}, '', '?mode=reset');
+                document.getElementById('passwordInput').removeAttribute('required');
             } else {
                 window.history.pushState({}, '', '?mode=login');
+                document.getElementById('passwordInput').setAttribute('required', 'required');
             }
         }
     
@@ -474,12 +516,16 @@
             let mode = 'login';
             if (document.documentElement.classList.contains('is-signup')) mode = 'signup';
             if (document.documentElement.classList.contains('is-verify')) mode = 'verify';
+            if (document.documentElement.classList.contains('is-forgot')) mode = 'forgot';
+            if (document.documentElement.classList.contains('is-reset')) mode = 'reset';
             
             const email = document.getElementById('emailInput').value;
             const pass = document.getElementById('passwordInput').value;
             let btn = document.querySelector('.btn-submit.login-only');
             if (mode === 'signup') btn = document.querySelector('.btn-submit.signup-only');
             if (mode === 'verify') btn = document.querySelector('.btn-submit.verify-only');
+            if (mode === 'forgot') btn = document.querySelector('.btn-submit.forgot-only');
+            if (mode === 'reset') btn = document.querySelector('.btn-submit.reset-only');
             
             const origText = btn.textContent;
             btn.textContent = 'Please wait...';
@@ -547,6 +593,42 @@
                     } else {
                         const data = await res.json();
                         alert(data.detail || 'Verification failed. Please check the code.');
+                    }
+                } else if (mode === 'forgot') {
+                    const res = await fetch(API + '/auth/forgot-password', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: email.trim() })
+                    });
+                    
+                    if (res.ok) {
+                        alert("If your email is registered, you will receive a reset code shortly.");
+                        toggleMode('reset');
+                    } else {
+                        alert("Failed to request password reset.");
+                    }
+                } else if (mode === 'reset') {
+                    const code = document.getElementById('resetCodeInput').value;
+                    const newPass = document.getElementById('newPasswordInput').value;
+                    if (!newPass || !code) {
+                        alert("Code and new password are required!");
+                        btn.textContent = origText;
+                        btn.disabled = false;
+                        return;
+                    }
+                    const res = await fetch(API + '/auth/reset-password', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: email.trim(), code: code.trim(), new_password: newPass })
+                    });
+                    
+                    if (res.ok) {
+                        alert("Password has been successfully reset! Please log in with your new password.");
+                        toggleMode('login');
+                        document.getElementById('passwordInput').value = '';
+                    } else {
+                        const data = await res.json();
+                        alert(data.detail || 'Failed to reset password. Please check the code.');
                     }
                 }
             } catch(e) {

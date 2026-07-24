@@ -309,10 +309,18 @@
         }
 
         /* TOGGLE STATES */
-        .signup-only { display: none; }
+        .signup-only, .verify-only { display: none; }
         
         html.is-signup .signup-only { display: block; }
         html.is-signup .login-only { display: none; }
+        
+        html.is-verify .verify-only { display: block; }
+        html.is-verify .login-only { display: none; }
+        html.is-verify .signup-only { display: none; }
+        html.is-verify .password-group { display: none; }
+        html.is-verify .social-login { display: none; }
+        html.is-verify .divider { display: none; }
+        html.is-verify input[type="email"] { pointer-events: none; opacity: 0.7; }
     </style>
 
     <script>
@@ -340,6 +348,9 @@
 
             <h1 class="signup-only">Create your account</h1>
             <p class="signup-only">Already have an account? <a href="#" onclick="toggleMode('login'); return false;">Log in</a></p>
+            
+            <h1 class="verify-only">Check your email</h1>
+            <p class="verify-only">We sent a verification code to your email address.</p>
         </div>
 
         <div class="social-login">
@@ -361,10 +372,16 @@
 
             <div class="form-group">
                 <label>Email Address</label>
-                <input type="email" placeholder="you@company.com" required>
+                <input type="email" id="emailInput" placeholder="you@company.com" required>
             </div>
 
-            <div class="form-group">
+            <div class="form-group verify-only">
+                <label>Verification Code</label>
+                <input type="text" id="verifyCodeInput" placeholder="6-digit code">
+                <p style="font-size: 13px; color: #94a3b8; margin-top: 6px;">Check your inbox for the code.</p>
+            </div>
+
+            <div class="form-group password-group">
                 <label>
                     Password
                     <a href="#" class="login-only">Forgot password?</a>
@@ -394,6 +411,7 @@
 
             <button type="submit" class="btn-submit login-only">Sign In</button>
             <button type="submit" class="btn-submit signup-only">Create Account</button>
+            <button type="submit" class="btn-submit verify-only">Verify Email</button>
         </form>
     </div>
 
@@ -417,11 +435,14 @@
     <script>
         // Check URL for mode
         function toggleMode(newMode) {
+            document.documentElement.classList.remove('is-signup', 'is-verify');
             if (newMode === 'signup') {
                 document.documentElement.classList.add('is-signup');
                 window.history.pushState({}, '', '?mode=signup');
+            } else if (newMode === 'verify') {
+                document.documentElement.classList.add('is-verify');
+                window.history.pushState({}, '', '?mode=verify');
             } else {
-                document.documentElement.classList.remove('is-signup');
                 window.history.pushState({}, '', '?mode=login');
             }
         }
@@ -450,11 +471,15 @@
         const API = '/api'; 
         document.getElementById('authForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const mode = new URLSearchParams(window.location.search).get('mode') || 'login';
+            let mode = 'login';
+            if (document.documentElement.classList.contains('is-signup')) mode = 'signup';
+            if (document.documentElement.classList.contains('is-verify')) mode = 'verify';
             
-            const email = document.querySelector('input[type="email"]').value;
+            const email = document.getElementById('emailInput').value;
             const pass = document.getElementById('passwordInput').value;
-            const btn = document.querySelector(mode === 'login' ? '.btn-submit.login-only' : '.btn-submit.signup-only');
+            let btn = document.querySelector('.btn-submit.login-only');
+            if (mode === 'signup') btn = document.querySelector('.btn-submit.signup-only');
+            if (mode === 'verify') btn = document.querySelector('.btn-submit.verify-only');
             
             const origText = btn.textContent;
             btn.textContent = 'Please wait...';
@@ -497,11 +522,31 @@
                     });
                     
                     if (res.ok) {
-                        alert("Account created! Please log in.");
-                        toggleMode('login');
+                        // Switch to verification mode
+                        toggleMode('verify');
+                        document.getElementById('passwordInput').removeAttribute('required');
                     } else {
                         const data = await res.json();
                         alert(data.detail || 'Signup failed.');
+                    }
+                } else if (mode === 'verify') {
+                    const code = document.getElementById('verifyCodeInput').value;
+                    const res = await fetch(API + '/auth/verify', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: email.trim(), code: code.trim() })
+                    });
+                    
+                    if (res.ok) {
+                        const data = await res.json();
+                        localStorage.setItem('token', data.access_token);
+                        localStorage.setItem('xcomic_token', data.access_token);
+                        localStorage.setItem('is_admin', data.is_admin ? 'true' : 'false');
+                        alert("Email verified successfully! Logging you in...");
+                        window.location.href = 'index.html';
+                    } else {
+                        const data = await res.json();
+                        alert(data.detail || 'Verification failed. Please check the code.');
                     }
                 }
             } catch(e) {

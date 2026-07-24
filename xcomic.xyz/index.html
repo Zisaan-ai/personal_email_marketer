@@ -1217,7 +1217,7 @@
             var style = document.createElement('style');
             if (token) {
                 // Logged in: Hide landing page and show app page
-                style.innerHTML = '#landing-page { display: none !important; } #app-page { display: block !important; }';
+                style.innerHTML = '#landing-page { display: none !important; } #app-page { display: flex !important; }';
             } else {
                 // Guest: Show landing page and hide app page
                 style.innerHTML = '#app-page { display: none !important; } #landing-page { display: block !important; }';

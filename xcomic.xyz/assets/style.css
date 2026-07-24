@@ -182,8 +182,13 @@ nav {
 .main-content {
     flex: 1;
     padding: 48px 56px;
+    overflow-y: auto;
     position: relative; z-index: 1;
     min-height: 100vh;
+    scrollbar-width: none; /* Firefox - hide scrollbar */
+}
+.main-content::-webkit-scrollbar {
+    display: none; /* Chrome/Edge - hide scrollbar */
 }
 
 /* ============================================================

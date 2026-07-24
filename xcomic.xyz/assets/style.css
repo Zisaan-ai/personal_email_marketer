@@ -104,7 +104,7 @@ body {
     background: var(--bg);
     position: relative;
 }
-#app-page.on { display: flex; }
+#app-page.on { display: flex; height: 100vh; overflow: hidden; }
 
 /* ============================================================
    SIDEBAR
@@ -182,8 +182,9 @@ nav {
     flex: 1;
     padding: 48px 56px;
     overflow-y: auto;
+    overflow-x: hidden;
     position: relative; z-index: 1;
-    min-height: 100vh;
+    height: 100%;
 }
 
 /* ============================================================

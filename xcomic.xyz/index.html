@@ -32,13 +32,15 @@
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html {
-        scroll-behavior: smooth;
+    html, body {
+        height: 100%;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
     }
     body {
         font-family: 'Plus Jakarta Sans', sans-serif;
         -webkit-font-smoothing: antialiased;
-        overflow-x: hidden;
     }
 
 
@@ -442,12 +444,14 @@
     #landing-page {
         display: block;
         width: 100%;
-        min-height: 100vh;
+        height: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
         background: #060d1f;
         color: #f1f5f9;
         font-family: 'Plus Jakarta Sans', sans-serif;
         position: relative;
-        overflow-x: hidden;
+        scroll-behavior: smooth;
     }
     #landing-page.hidden { display: none !important; }
 
@@ -1251,9 +1255,9 @@
             <span>XComic</span>
         </div>
         <div class="landing-nav-links">
-            <a href="#features">Features</a>
-            <a href="#pricing">Pricing</a>
-            <a href="#affiliate">Affiliate</a>
+            <a onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})" style="cursor:pointer">Features</a>
+            <a onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})" style="cursor:pointer">Pricing</a>
+            <a onclick="document.getElementById('affiliate').scrollIntoView({behavior:'smooth'})" style="cursor:pointer">Affiliate</a>
             <button class="landing-login-btn" onclick="LANDING.goToLogin()">Sign In</button>
             <button class="landing-signup-btn" onclick="LANDING.goToSignup()">Get Started</button>
         </div>
@@ -1750,9 +1754,9 @@
         <p>&copy; 2026 XComic. All rights reserved.</p>
         <div class="landing-footer-links">
             <a onclick="LANDING.goToLogin()">Sign In</a>
-            <a href="#features">Features</a>
-            <a href="#pricing">Pricing</a>
-            <a href="#affiliate">Affiliate</a>
+            <a onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})" style="cursor:pointer">Features</a>
+            <a onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})" style="cursor:pointer">Pricing</a>
+            <a onclick="document.getElementById('affiliate').scrollIntoView({behavior:'smooth'})" style="cursor:pointer">Affiliate</a>
         </div>
     </div>
 </div>

@@ -5796,7 +5796,7 @@ window.checkSpamScore = async function() {
 
                 msg = `Spam Score: ${data.score}/10 (${data.rating})`;
 
-                alert(msg);
+                showToast(msg, (data.score >= 7 ? 'success' : 'warning'));
 
             } else if (data.score >= 7) {
 
@@ -5806,7 +5806,7 @@ window.checkSpamScore = async function() {
 
                 if (data.warnings && data.warnings.length > 0) msg += ` | ${data.warnings[0]}`;
 
-                alert(msg);
+                showToast(msg, (data.score >= 7 ? 'success' : 'warning'));
 
             } else {
 

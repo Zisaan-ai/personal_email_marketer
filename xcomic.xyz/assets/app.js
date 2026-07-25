@@ -474,121 +474,56 @@ async function apiCall(endpoint, method = 'GET', body = null) {
 
 
 function showToast(message, type) {
-
-
-
     var toast = document.getElementById('toast');
-
-
-
     var msg = document.getElementById('toast-msg');
-
-
-
     if (!toast || !msg) return;
-
-
-
-    // clear any existing timeout
-
-
 
     if (window._toastTimer) clearTimeout(window._toastTimer);
 
-
-
     var icon = type === 'error' ? '&#10006;' : type === 'warning' ? '&#9888;' : '&#10003;';
+    var bg = type === 'error' ? 'rgba(220, 38, 38, 0.9)' 
+           : type === 'warning' ? 'rgba(217, 119, 6, 0.9)' 
+           : 'rgba(16, 185, 129, 0.9)';
 
-
-
-    var bg = type === 'error' ? 'linear-gradient(135deg,#dc2626,#b91c1c)' 
-
-
-
-           : type === 'warning' ? 'linear-gradient(135deg,#d97706,#b45309)'
-
-
-
-           : 'linear-gradient(135deg,#059669,#047857)';
-
-
-
+    // Premium Glassmorphism Look
+    toast.style.position = 'fixed';
+    toast.style.top = '-100px';
+    toast.style.left = '50%';
+    toast.style.transform = 'translateX(-50%)';
+    toast.style.zIndex = '99999';
     toast.style.background = bg;
-
-
-
-    toast.style.boxShadow = '0 8px 32px rgba(0,0,0,0.25)';
-
-
-
-    toast.style.borderRadius = '12px';
-
-
-
-    toast.style.padding = '14px 20px';
-
-
-
+    toast.style.backdropFilter = 'blur(10px)';
+    toast.style.WebkitBackdropFilter = 'blur(10px)';
+    toast.style.boxShadow = '0 10px 40px rgba(0,0,0,0.2)';
+    toast.style.borderRadius = '30px';
+    toast.style.padding = '12px 24px';
     toast.style.display = 'flex';
-
-
-
     toast.style.alignItems = 'center';
+    toast.style.gap = '12px';
+    toast.style.minWidth = '300px';
+    toast.style.maxWidth = '500px';
+    toast.style.color = '#fff';
+    toast.style.border = '1px solid rgba(255,255,255,0.2)';
+    toast.style.transition = 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
+    toast.style.fontFamily = "'Inter', sans-serif";
 
+    msg.innerHTML = '<span style="font-size:18px; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.2); width:28px; height:28px; border-radius:50%;">' + icon + '</span><span style="font-size:14px;font-weight:600;letter-spacing:0.3px;">' + message + '</span>';
+    
+    msg.style.display = 'flex';
+    msg.style.alignItems = 'center';
+    msg.style.gap = '12px';
 
+    // Show animation
+    setTimeout(function() {
+        toast.style.top = '32px';
+        toast.style.opacity = '1';
+    }, 10);
 
-    toast.style.gap = '10px';
-
-
-
-    toast.style.minWidth = '260px';
-
-
-
-    toast.style.maxWidth = '420px';
-
-
-
-    msg.innerHTML = '<span style="font-size:16px;">' + icon + '</span><span style="font-size:14px;font-weight:500;">' + message + '</span>';
-
-
-
-    toast.style.bottom = '24px';
-
-
-
-    toast.style.opacity = '1';
-
-
-
-    toast.style.transform = 'translateY(0)';
-
-
-
-    toast.style.transition = 'all 0.3s cubic-bezier(0.34,1.56,0.64,1)';
-
-
-
+    // Hide animation
     window._toastTimer = setTimeout(function() {
-
-
-
+        toast.style.top = '-100px';
         toast.style.opacity = '0';
-
-
-
-        toast.style.transform = 'translateY(20px)';
-
-
-
-        setTimeout(function() { toast.style.bottom = '-200px'; }, 300);
-
-
-
-    }, 3500);
-
-
-
+    }, 4000);
 }
 
 
@@ -11858,7 +11793,7 @@ window.checkSpamScore = async function() {
 
 
 
-                alert(msg);
+                showToast(msg, (data.score >= 7 ? 'success' : 'warning'));
 
 
 
@@ -11878,7 +11813,7 @@ window.checkSpamScore = async function() {
 
 
 
-                alert(msg);
+                showToast(msg, (data.score >= 7 ? 'success' : 'warning'));
 
 
 

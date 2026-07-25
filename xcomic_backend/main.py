@@ -4003,6 +4003,7 @@ class SMTPSettingsRequest(BaseModel):
     smtp_pass: str = ""
     smtp_port: int = 587
     from_name: str = ""
+    from_email: str = ""
 
 @app.post("/api/settings/smtp")
 def save_smtp_settings(req: SMTPSettingsRequest, current_user: database.User = Depends(auth.get_current_user)):
@@ -4030,7 +4031,8 @@ def save_smtp_settings(req: SMTPSettingsRequest, current_user: database.User = D
         "SMTP_PORT": False,
         "SMTP_USERNAME": False,
         "SMTP_PASSWORD": False,
-        "SMTP_FROM_NAME": False
+        "SMTP_FROM_NAME": False,
+        "SMTP_FROM_EMAIL": False
     }
 
     new_values = {
@@ -4038,7 +4040,8 @@ def save_smtp_settings(req: SMTPSettingsRequest, current_user: database.User = D
         "SMTP_PORT": str(req.smtp_port),
         "SMTP_USERNAME": req.smtp_user,
         "SMTP_PASSWORD": req.smtp_pass,
-        "SMTP_FROM_NAME": req.from_name
+        "SMTP_FROM_NAME": req.from_name,
+        "SMTP_FROM_EMAIL": req.from_email
     }
 
     for i, line in enumerate(env_lines):
@@ -4076,6 +4079,7 @@ def get_smtp_settings(current_user: database.User = Depends(auth.get_current_use
         "smtp_host": env_dict.get("SMTP_SERVER", ""),
         "smtp_port": env_dict.get("SMTP_PORT", "587"),
         "from_name": env_dict.get("SMTP_FROM_NAME", "System Admin"),
+        "from_email": env_dict.get("SMTP_FROM_EMAIL", "support@xcomic.xyz"),
         "is_active": True
     }
 

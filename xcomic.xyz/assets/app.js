@@ -5211,8 +5211,8 @@ function setupSettings() {
                 body.smtp_port = parseInt(document.getElementById('smtp-port').value);
 
                 body.from_name = document.getElementById('smtp-from-name').value;
-
-            }
+body.from_email = document.getElementById('smtp-from-email') ? document.getElementById('smtp-from-email').value : '';
+}
 
 
 

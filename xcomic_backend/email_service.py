@@ -389,6 +389,11 @@ def send_single_email(subject: str, body_html: str, recipient: str, account=None
     if not active_pass:
         print("SMTP Password not configured.")
         return False
+
+    # FIX: If body_html is plain text, convert newlines to <br> so it renders correctly in Inbox
+    if '<html' not in body_html.lower() and '<p>' not in body_html.lower() and '<br' not in body_html.lower() and '<div' not in body_html.lower():
+        body_html = body_html.replace('
+', '<br>')
         
     # FIX: If body_html is plain text, convert newlines to <br> so it renders correctly in Inbox
     if '<html' not in body_html.lower() and '<p>' not in body_html.lower() and '<br' not in body_html.lower() and '<div' not in body_html.lower():

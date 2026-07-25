@@ -4976,8 +4976,11 @@ function setupSequenceBuilder() {
             }
 
             const res = await apiCall('/campaigns/send', 'POST', payload);
-
-            if (res.ok) showToast('Draft saved successfully!', 'success');
+    if (res.ok) {
+        const draftData = await res.json();
+        window.currentCampaignId = draftData.campaign_id;
+        showToast('Draft saved successfully!', 'success');
+    }
 
             else { const d = await res.json(); showToast(d.detail || 'Failed to save draft', 'error'); }
 

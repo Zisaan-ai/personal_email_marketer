@@ -58,7 +58,7 @@ def process_spintax(text: str) -> str:
 # ============================================================
 # PERSONALIZATION - Merge tag replacement
 # ============================================================
-def personalize_content(text: str, lead_name: str = "", lead_company: str = "") -> str:
+def personalize_content(text: str, lead_name: str = "", lead_company: str = "", sender_name: str = "") -> str:
     """Replace merge tags like {{name}}, {{firstName}}, {{company}} with actual lead data."""
     if not text:
         return text
@@ -76,6 +76,9 @@ def personalize_content(text: str, lead_name: str = "", lead_company: str = "") 
         "{{last_name}}": last_name or "",
         "{{company}}": lead_company or "your company",
         "{{Company}}": lead_company or "Your Company",
+        "{{Your Name}}": sender_name or "",
+        "{{your_name}}": sender_name or "",
+        "{{Sender Name}}": sender_name or "",
     }
     
     for tag, value in replacements.items():
@@ -395,8 +398,9 @@ def send_single_email(subject: str, body_html: str, recipient: str, account=None
         body_html = body_html.replace('\n', '<br>')
 
     # DELIVERABILITY FIX: Personalize content with merge tags
-    body_html = personalize_content(body_html, lead_name, lead_company)
-    subject = personalize_content(subject, lead_name, lead_company)
+    
+    body_html = personalize_content(body_html, lead_name, lead_company, sender_name)
+    subject = personalize_content(subject, lead_name, lead_company, sender_name)
 
     # Inject unsubscribe link in body if enabled
     if use_unsubscribe:

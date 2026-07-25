@@ -3779,10 +3779,74 @@ def get_settings(current_user: database.User = Depends(auth.get_current_user), d
 @app.post("/api/settings/verify_key")
 
 def verify_api_key(req: VerifyKeyRequest, current_user: database.User = Depends(auth.get_current_user)):
-
     key = req.api_key.strip()
     if not key:
         return {"status": "invalid"}
+    
+    if key == "true":
+        if req.provider == "gemini":
+            key = current_user.gemini_api_key or ""
+        elif req.provider == "groq":
+            key = current_user.groq_api_key or ""
+        elif req.provider == "openai":
+            key = current_user.openai_api_key or ""
+        elif req.provider == "anthropic":
+            key = current_user.anthropic_api_key or ""
+        elif req.provider == "deepseek":
+            key = current_user.deepseek_api_key or ""
+
+    if not key:
+        return {"status": "invalid"}
+    
+    import requests
+    
+    is_valid = False
+
+    try:
+        if req.provider == "gemini" and key.startswith("AIza"):
+            url = f"https://generativelanguage.googleapis.com/v1beta/models?key={key}"
+            res = requests.get(url, timeout=5)
+            if res.status_code == 200:
+                is_valid = True
+
+        elif req.provider == "groq" and key.startswith("gsk_"):
+            url = "https://api.groq.com/openai/v1/models"
+            headers = {"Authorization": f"Bearer {key}"}
+            res = requests.get(url, headers=headers, timeout=5)
+            if res.status_code == 200:
+                is_valid = True
+
+        elif req.provider == "openai" and key.startswith("sk-"):
+            url = "https://api.openai.com/v1/models"
+            headers = {"Authorization": f"Bearer {key}"}
+            res = requests.get(url, headers=headers, timeout=5)
+            if res.status_code == 200:
+                is_valid = True
+
+        elif req.provider == "anthropic" and key.startswith("sk-ant-"):
+            # Anthropic doesn't have a simple models endpoint in the same way, we can check basic auth by making a small invalid request and checking if it's 401
+            url = "https://api.anthropic.com/v1/messages"
+            headers = {"x-api-key": key, "anthropic-version": "2023-06-01"}
+            res = requests.post(url, headers=headers, json={"max_tokens": 1, "messages": [{"role": "user", "content": "hi"}]}, timeout=5)
+            if res.status_code != 401:
+                is_valid = True
+
+        elif req.provider == "deepseek" and key.startswith("sk-"):
+            url = "https://api.deepseek.com/models"
+            headers = {"Authorization": f"Bearer {key}"}
+            res = requests.get(url, headers=headers, timeout=5)
+            if res.status_code == 200:
+                is_valid = True
+
+        elif req.provider not in ["gemini", "groq", "openai", "anthropic", "deepseek"]:
+            is_valid = True
+    except Exception as e:
+        print(f"API Key Validation Error ({req.provider}):", e)
+        is_valid = False
+
+    if is_valid:
+        return {"status": "valid"}
+    return {"status": "invalid"}
     
     if key == "true":
         if req.provider == "gemini":

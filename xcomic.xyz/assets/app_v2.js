@@ -6073,7 +6073,13 @@ window.previewInbox = function(subjectId, bodyId) {
 
         doc.open();
 
-        doc.write(bodyText);
+        let renderText = bodyText;
+if (!renderText.includes('<html') && !renderText.includes('<body') && !renderText.includes('<p>') && !renderText.includes('<br>')) {
+    renderText = renderText.replace(/\n/g, '<br>');
+}
+// Add a clean font family for the preview
+renderText = '<div style="font-family: sans-serif; font-size: 14px; line-height: 1.5; color: #333; padding: 10px;">' + renderText + '</div>';
+doc.write(renderText);
 
         doc.close();
 

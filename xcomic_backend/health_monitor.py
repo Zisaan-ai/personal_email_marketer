@@ -20,44 +20,45 @@ import database
 # ============================================================
 def calculate_health_score(account) -> int:
     """
-    Calculate health score (0-100) based on account metrics.
+    Calculate health/trust score (0-100) based on account maturity.
     
-    Formula:
-    - Start at 100
-    - Subtract bounce rate penalty (up to 80 points)
-    - Subtract bounce streak penalty (up to 30 points)
-    - Add open rate bonus (up to 15 points)
-    - Add reply rate bonus (up to 10 points)
+    Starts at 0 and grows with:
+    - Age (up to 30 points, 1 point per day)
+    - Volume (up to 40 points, 1 point per 2 emails sent)
+    - Engagement (up to 30 points, 1 per open, 3 per reply)
+    - Penalized heavily by bounces.
     """
     total_sent = account.total_sent or 0
     total_bounced = account.total_bounced or 0
     total_opened = account.total_opened or 0
     total_replied = account.total_replied or 0
-    bounce_streak = account.bounce_streak or 0
 
-    if total_sent == 0:
-        return 0  # New account, starts at 0 health initially
+    import datetime
+    # Age score (max 30)
+    days_active = 0
+    if account.created_at:
+        days_active = (datetime.datetime.utcnow() - account.created_at).days
+    age_score = min(days_active * 1, 30)
 
-    # Start at 100 as per the formula definition
-    base_score = 100
+    # Volume score (max 40)
+    # 1 point per 2 successful emails
+    volume_score = min(total_sent * 0.5, 40)
 
-    # Bounce rate penalty (heaviest weight - up to 80 points)
-    bounce_rate = total_bounced / total_sent
-    bounce_penalty = bounce_rate * 80
+    # Engagement score (max 30)
+    engagement_score = min((total_opened * 1) + (total_replied * 3), 30)
 
-    # Consecutive bounce streak penalty (up to 30 points)
-    streak_penalty = min(bounce_streak * 5, 30)
+    score = age_score + volume_score + engagement_score
 
-    # Open rate bonus (up to 15 points)
-    open_rate = total_opened / total_sent
-    open_bonus = min(open_rate * 20, 15)
+    # Penalties for bounces
+    if total_sent > 0:
+        bounce_rate = total_bounced / total_sent
+        penalty = bounce_rate * 300  # e.g., 5% bounce rate = 15 points penalty
+        score -= penalty
+        
+    # Extra penalty for streak
+    if getattr(account, 'bounce_streak', 0):
+        score -= account.bounce_streak * 2
 
-    # Reply rate bonus (up to 10 points)
-    reply_rate = total_replied / total_sent
-    reply_bonus = min(reply_rate * 40, 10)
-
-    # Calculate final score
-    score = base_score - bounce_penalty - streak_penalty + open_bonus + reply_bonus
     return max(0, min(100, int(score)))
 
 def calculate_provider_reputation(db, account_id: str, provider_name: str) -> dict:

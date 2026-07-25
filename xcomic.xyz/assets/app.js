@@ -11858,7 +11858,7 @@ window.checkSpamScore = async function() {
 
 
 
-                showToast(msg, 'success');
+                alert(msg);
 
 
 
@@ -11878,7 +11878,7 @@ window.checkSpamScore = async function() {
 
 
 
-                showToast(msg, 'success');
+                alert(msg);
 
 
 

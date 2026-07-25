@@ -392,31 +392,16 @@ def send_single_email(subject: str, body_html: str, recipient: str, account=None
 
     # FIX: If body_html is plain text, convert newlines to <br> so it renders correctly in Inbox
     if '<html' not in body_html.lower() and '<p>' not in body_html.lower() and '<br' not in body_html.lower() and '<div' not in body_html.lower():
-        body_html = body_html.replace('
-', '<br>')
-        
-    # FIX: If body_html is plain text, convert newlines to <br> so it renders correctly in Inbox
-    if '<html' not in body_html.lower() and '<p>' not in body_html.lower() and '<br' not in body_html.lower() and '<div' not in body_html.lower():
         body_html = body_html.replace('\n', '<br>')
 
-        
-    active_server = account.smtp_server
-    active_port = account.smtp_port
-    active_user = account.smtp_username
-    active_pass = account.smtp_password
-
-    if not active_pass:
-        print("SMTP Password not configured.")
-        return False
-    
     # DELIVERABILITY FIX: Personalize content with merge tags
     body_html = personalize_content(body_html, lead_name, lead_company)
     subject = personalize_content(subject, lead_name, lead_company)
-    
+
     # Inject unsubscribe link in body if enabled
     if use_unsubscribe:
         body_html = inject_unsubscribe(body_html, recipient)
-    
+
     # Generate clean plain-text (CRITICAL for spam filters)
     body_text = generate_clean_plaintext(body_html)
 
@@ -424,10 +409,10 @@ def send_single_email(subject: str, body_html: str, recipient: str, account=None
     spun_subject = process_spintax(subject)
     spun_html = process_spintax(body_html)
     spun_text = process_spintax(body_text)
-    
+
     # Generate unsubscribe URL for headers
     unsub_url = _get_unsubscribe_url(recipient)
-    
+
     sender_name = getattr(account, 'name', '') if account else ''
 
     try:
@@ -440,219 +425,49 @@ def send_single_email(subject: str, body_html: str, recipient: str, account=None
                 "content-type": "application/json"
             }
             payload = {
-                "sender": {"email": active_user, "name": sender_name or 'Admin'},
-                "to": [{"email": recipient}],
-                "replyTo": {"email": active_user, "name": sender_name or 'Admin'},
+                "sender": {"name": sender_name or active_user, "email": active_user},
+                "to": [{"email": recipient, "name": lead_name or recipient.split('@')[0]}],
                 "subject": spun_subject,
                 "htmlContent": spun_html,
-                "textContent": spun_text,
-                "headers": {
-                    "List-Unsubscribe": f"<{unsub_url}>, <mailto:{active_user}?subject=Unsubscribe>",
+                "textContent": spun_text
+            }
+            if use_unsubscribe:
+                payload["headers"] = {
+                    "List-Unsubscribe": f"<{unsub_url}>",
                     "List-Unsubscribe-Post": "List-Unsubscribe=One-Click"
                 }
-            }
-            res = requests.post("https://api.brevo.com/v3/smtp/email", json=payload, headers=headers, timeout=10)
-            if res.status_code in [200, 201, 202]:
+            resp = requests.post("https://api.brevo.com/v3/smtp/email", headers=headers, json=payload, timeout=20)
+            if resp.status_code in [200, 201, 202]:
                 return True
-            raise Exception(f"Brevo Error: {res.text}")
-            
-        # App Script
-        if active_pass.startswith("https://script.google.com/"):
-            import requests
-            payload = {
-                "recipient": recipient,
-                "subject": spun_subject,
-                "body_html": spun_html,
-                "body_text": spun_text
-            }
-            res = requests.post(active_pass, json=payload, timeout=15)
-            if res.status_code in [200, 201, 202]:
-                return True
-            raise Exception(f"AppScript Error: {res.text}")
+            else:
+                print(f"Brevo API error: {resp.text}")
+                return False
 
-        # Standard SMTP - with FULL deliverability headers
-        if int(active_port) == 465:
-            server = smtplib.SMTP_SSL(active_server, int(active_port), timeout=10)
+        # Regular SMTP
         else:
-            server = smtplib.SMTP(active_server, int(active_port), timeout=10)
-            server.starttls()
+            import smtplib
+            from email.mime.text import MIMEText
+            from email.mime.multipart import MIMEMultipart
+
+            msg = MIMEMultipart('alternative')
+            msg['Subject'] = spun_subject
+            msg['From'] = f"{sender_name} <{active_user}>" if sender_name else active_user
+            msg['To'] = recipient
             
-        server.login(active_user, active_pass)
-        
-        msg = MIMEMultipart("alternative")
-        
-        # CORE HEADERS
-        msg['Subject'] = spun_subject
-        msg['From'] = f"{sender_name} <{active_user}>" if sender_name else active_user
-        msg['To'] = f"{lead_name} <{recipient}>" if lead_name else recipient
-        msg['Reply-To'] = f"{sender_name} <{active_user}>" if sender_name else active_user
-        msg['Date'] = formatdate(localtime=True)
-        msg['Message-ID'] = make_msgid(domain=active_user.split('@')[-1] if '@' in active_user else 'localhost')
-        msg['MIME-Version'] = '1.0'
-        
-        # RFC 8058 ONE-CLICK UNSUBSCRIBE (Required by Gmail/Yahoo since Feb 2024)
-        msg['List-Unsubscribe'] = f"<{unsub_url}>, <mailto:{active_user}?subject=Unsubscribe>"
-        msg['List-Unsubscribe-Post'] = 'List-Unsubscribe=One-Click'
-        
-        # Attach plain-text FIRST (important for multipart/alternative)
-        part1 = MIMEText(spun_text, "plain", "utf-8")
-        part2 = MIMEText(spun_html, "html", "utf-8")
-        msg.attach(part1)
-        msg.attach(part2)
-        
-        server.send_message(msg)
-        return True
+            if use_unsubscribe:
+                msg.add_header('List-Unsubscribe', f"<{unsub_url}>")
+                msg.add_header('List-Unsubscribe-Post', 'List-Unsubscribe=One-Click')
+
+            msg.attach(MIMEText(spun_text, 'plain', 'utf-8'))
+            msg.attach(MIMEText(spun_html, 'html', 'utf-8'))
+
+            with smtplib.SMTP(active_server, active_port, timeout=20) as server:
+                server.ehlo()
+                server.starttls()
+                server.login(active_user, active_pass)
+                server.send_message(msg)
+            return True
+
     except Exception as e:
-        print(f"Failed to send to {recipient}: {e}")
+        print(f"Error sending email: {str(e)}")
         return False
-    finally:
-        if 'server' in locals() and server is not None:
-            try:
-                server.quit()
-            except:
-                pass
-
-def _send_system_email(subject: str, body_html: str, recipient: str) -> bool:
-    """Sends a system email (like auth/verification) using .env credentials."""
-    from dotenv import dotenv_values
-    
-    # Dynamically load from .env file to catch updates without restart
-    env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
-    config = dotenv_values(env_path)
-    
-    smtp_pass = config.get("SMTP_PASSWORD") or os.getenv("SMTP_PASSWORD")
-    if not smtp_pass or smtp_pass == "your_app_password_here":
-        print(f"SMTP Config error: No password found. Mocking send to {recipient}.")
-        return False
-        
-    smtp_server = config.get("SMTP_SERVER") or os.getenv("SMTP_SERVER") or "smtp.gmail.com"
-    try:
-        smtp_port = int(config.get("SMTP_PORT") or os.getenv("SMTP_PORT") or 587)
-    except:
-        smtp_port = 587
-        
-    smtp_user = config.get("SMTP_USERNAME") or os.getenv("SMTP_USERNAME")
-    if smtp_user == "your_email@gmail.com":
-        smtp_user = ""
-        
-    try:
-        if smtp_port == 465:
-            server = smtplib.SMTP_SSL(smtp_server, smtp_port, timeout=5)
-        else:
-            server = smtplib.SMTP(smtp_server, smtp_port, timeout=5)
-            server.starttls()
-            
-        server.login(smtp_user, smtp_pass)
-        
-        smtp_from = config.get("SMTP_FROM_EMAIL") or os.getenv("SMTP_FROM_EMAIL") or "support@xcomic.xyz"
-        msg = MIMEMultipart("alternative")
-        msg["Subject"] = subject
-        msg["From"] = f"XComic Support <{smtp_from}>"
-        msg["To"] = recipient
-        msg["Reply-To"] = smtp_from
-        msg["MIME-Version"] = "1.0"
-        
-        body_text = generate_clean_plaintext(body_html)
-        msg.attach(MIMEText(body_text, "plain", "utf-8"))
-        msg.attach(MIMEText(body_html, "html", "utf-8"))
-        
-        server.sendmail(smtp_from, [recipient], msg.as_string())
-        return True
-    except Exception as e:
-        print(f"System Email failed: {e}")
-        return False
-    finally:
-        if 'server' in locals() and server is not None:
-            try:
-                server.quit()
-            except:
-                pass
-
-def send_verification_email(email: str, code: str):
-    """
-    Sends a 6-digit verification code to the user.
-    If SMTP credentials are not configured, it just prints it to the console.
-    """
-
-    subject = "Verify your account"
-    body_html = f"""
-    <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 30px; max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
-        <div style="text-align: center; margin-bottom: 25px;">
-            <h2 style="color: #111827; margin: 0; font-size: 24px; font-weight: 700;">Account Verification</h2>
-        </div>
-        <p style="color: #374151; font-size: 16px; line-height: 1.6; margin-bottom: 25px;">
-            Thank you for registering with XComic. To complete your account setup and ensure the security of your account, please verify your email address using the authorization code below:
-        </p>
-        <div style="background: #f3f4f6; padding: 20px; text-align: center; font-size: 32px; font-weight: 800; letter-spacing: 8px; color: #4f46e5; border-radius: 8px; margin: 30px 0;">
-            {code}
-        </div>
-        <p style="color: #6b7280; font-size: 14px; line-height: 1.6; margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 20px;">
-            If you did not initiate this request, please disregard this email. No further action is required.
-        </p>
-        <div style="margin-top: 30px;">
-            <p style="color: #374151; font-size: 16px; margin: 0;">Best regards,</p>
-            <p style="color: #111827; font-size: 18px; font-weight: 600; margin: 5px 0 0 0;">The XComic Team</p>
-            <p style="color: #6b7280; font-size: 14px; margin: 5px 0 0 0;">support@xcomic.xyz | <a href="https://xcomic.xyz" style="color: #4f46e5; text-decoration: none;">xcomic.xyz</a></p>
-        </div>
-    </div>
-    """
-    # Since it's a single email, we can reuse our bulk send logic or write a simpler one
-    return _send_system_email(subject, body_html, email)
-
-def send_password_reset_email(email: str, code: str):
-    """
-    Sends a 6-digit password reset code to the user.
-    """
-
-    subject = "Reset your password"
-    body_html = f"""
-    <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 30px; max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
-        <div style="text-align: center; margin-bottom: 25px;">
-            <h2 style="color: #111827; margin: 0; font-size: 24px; font-weight: 700;">Password Reset Request</h2>
-        </div>
-        <p style="color: #374151; font-size: 16px; line-height: 1.6; margin-bottom: 25px;">
-            We received a request to reset the password associated with your XComic account. Please use the following 6-digit verification code to proceed with the reset process:
-        </p>
-        <div style="background: #f3f4f6; padding: 20px; text-align: center; font-size: 32px; font-weight: 800; letter-spacing: 8px; color: #4f46e5; border-radius: 8px; margin: 30px 0;">
-            {code}
-        </div>
-        <p style="color: #6b7280; font-size: 14px; line-height: 1.6; margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 20px;">
-            If you did not request a password reset, please ignore this email. Your account remains secure and your current password has not been changed.
-        </p>
-        <div style="margin-top: 30px;">
-            <p style="color: #374151; font-size: 16px; margin: 0;">Best regards,</p>
-            <p style="color: #111827; font-size: 18px; font-weight: 600; margin: 5px 0 0 0;">The XComic Team</p>
-            <p style="color: #6b7280; font-size: 14px; margin: 5px 0 0 0;">support@xcomic.xyz | <a href="https://xcomic.xyz" style="color: #4f46e5; text-decoration: none;">xcomic.xyz</a></p>
-        </div>
-    </div>
-    """
-    return _send_system_email(subject, body_html, email)
-
-import imaplib
-
-def verify_smtp_credentials(server: str, port: int, user: str, password: str) -> dict:
-    try:
-        if port == 465:
-            smtp = smtplib.SMTP_SSL(server, port, timeout=10)
-        else:
-            smtp = smtplib.SMTP(server, port, timeout=10)
-            smtp.starttls()
-        
-        smtp.login(user, password)
-        smtp.quit()
-        return {'status': 'success'}
-    except smtplib.SMTPAuthenticationError:
-        return {'status': 'error', 'detail': 'SMTP Authentication failed. Check username and password.'}
-    except Exception as e:
-        return {'status': 'error', 'detail': f'SMTP Error: {str(e)}'}
-
-def verify_imap_credentials(server: str, port: int, user: str, password: str) -> dict:
-    try:
-        imap = imaplib.IMAP4_SSL(server, port, timeout=10)
-        imap.login(user, password)
-        imap.logout()
-        return {'status': 'success'}
-    except imaplib.IMAP4.error as e:
-        return {'status': 'error', 'detail': f'IMAP Authentication failed: {str(e)}'}
-    except Exception as e:
-        return {'status': 'error', 'detail': f'IMAP Error: {str(e)}'}

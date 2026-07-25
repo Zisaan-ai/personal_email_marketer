@@ -206,12 +206,6 @@ const ACCOUNTS = {
             if (passNote) passNote.style.display = 'flex';
             if (passLabel) passLabel.textContent = 'App Password (16-digit Google/Microsoft App Password)';
             customSettings.style.display = 'none';
-        } else if (provider === 'brevo') {
-            if (passNote) passNote.style.display = 'none';
-            if (passLabel) passLabel.textContent = 'Brevo SMTP Master Password (or SMTP Key)';
-            customSettings.style.display = 'block';
-            document.getElementById('acc-smtp-server').value = 'smtp-relay.brevo.com';
-            document.getElementById('acc-smtp-port').value = '587';
         } else if (provider === 'custom') {
             if (passNote) passNote.style.display = 'none';
             if (passLabel) passLabel.textContent = 'Main Password (or SMTP/IMAP Password)';
@@ -246,9 +240,7 @@ const ACCOUNTS = {
         if (document.getElementById('acc-imap-password')) document.getElementById('acc-imap-password').value = '';
         
         // Determine Provider
-        if (acc.smtp_server === 'smtp-relay.brevo.com') {
-            document.getElementById('acc-provider').value = 'brevo';
-        } else if (acc.smtp_server === 'smtp.gmail.com') {
+        if (acc.smtp_server === 'smtp.gmail.com') {
             document.getElementById('acc-provider').value = 'google';
         } else if (acc.smtp_server === 'smtp-mail.outlook.com') {
             document.getElementById('acc-provider').value = 'microsoft';

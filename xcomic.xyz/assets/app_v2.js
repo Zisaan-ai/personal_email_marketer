@@ -3505,13 +3505,13 @@ function setupCampaignBuilder() {
 
                         showToast('Image uploaded successfully');
 
-                    } else alert('Upload failed: ' + (data.detail || 'Unknown error'));
+                    } else showToast('Upload failed: ' + (data.detail || 'Unknown error'), 'error');
 
                 } catch (err) {
 
                     console.error(err);
 
-                    alert('Error uploading image');
+                    showToast('Error uploading image', 'error');
 
                     document.getElementById('btn-upload-image').disabled = false;
 
@@ -3771,13 +3771,13 @@ function setupCampaignBuilder() {
 
                         showToast('Thumbnail uploaded successfully');
 
-                    } else alert('Upload failed: ' + (data.detail || 'Unknown error'));
+                    } else showToast('Upload failed: ' + (data.detail || 'Unknown error'), 'error');
 
                 } catch (err) {
 
                     console.error(err);
 
-                    alert('Error uploading thumbnail');
+                    showToast('Error uploading thumbnail', 'error');
 
                     document.getElementById('btn-upload-thumb').disabled = false;
 
@@ -6655,12 +6655,12 @@ window.handleGalleryUpload = function(event) {
         if (data.status === 'success') {
             fetchGalleryImages();
         } else {
-            alert('Upload failed: ' + (data.detail || 'Unknown error'));
+            showToast('Upload failed: ' + (data.detail || 'Unknown error'), 'error');
         }
     })
     .catch(err => {
         status.style.display = 'none';
-        alert('Upload error');
+        showToast('Upload error', 'error');
     });
 };
 

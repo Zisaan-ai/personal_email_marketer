@@ -5304,19 +5304,19 @@ body.from_email = document.getElementById('smtp-from-email') ? document.getEleme
 
 
                 if (geminiKey) {
-                    try { const r = await apiCall('/settings/gemini', 'POST', { gemini_api_key: geminiKey }); window.loadedAIKeys['gemini'] = geminiKey; document.getElementById('gemini-api-key').value = ''; window.updateInputState('gemini-api-key', true); alert('Gemini key saved!'); } catch(e) { alert('Failed to save Gemini key: ' + e.message); }
+                    try { const r = await apiCall('/settings/gemini', 'POST', { gemini_api_key: geminiKey }); window.loadedAIKeys['gemini'] = geminiKey; document.getElementById('gemini-api-key').value = ''; window.updateInputState('gemini-api-key', true); showToast('Gemini key saved!', 'success'); } catch(e) { showToast('Failed to save Gemini key: ' + e.message, 'error'); }
                 }
                 if (groqKey) {
-                    try { const r = await apiCall('/settings/groq', 'POST', { groq_api_key: groqKey }); window.loadedAIKeys['groq'] = groqKey; document.getElementById('groq-api-key').value = ''; window.updateInputState('groq-api-key', true); alert('Groq key saved!'); } catch(e) { alert('Failed to save Groq key: ' + e.message); }
+                    try { const r = await apiCall('/settings/groq', 'POST', { groq_api_key: groqKey }); window.loadedAIKeys['groq'] = groqKey; document.getElementById('groq-api-key').value = ''; window.updateInputState('groq-api-key', true); showToast('Groq key saved!', 'success'); } catch(e) { showToast('Failed to save Groq key: ' + e.message, 'error'); }
                 }
                 if (openaiKey) {
-                    try { const r = await apiCall('/settings/openai', 'POST', { openai_api_key: openaiKey }); window.loadedAIKeys['openai'] = openaiKey; document.getElementById('openai-api-key').value = ''; window.updateInputState('openai-api-key', true); alert('OpenAI key saved!'); } catch(e) { alert('Failed to save OpenAI key: ' + e.message); }
+                    try { const r = await apiCall('/settings/openai', 'POST', { openai_api_key: openaiKey }); window.loadedAIKeys['openai'] = openaiKey; document.getElementById('openai-api-key').value = ''; window.updateInputState('openai-api-key', true); showToast('OpenAI key saved!', 'success'); } catch(e) { showToast('Failed to save OpenAI key: ' + e.message, 'error'); }
                 }
                 if (anthropicKey) {
-                    try { const r = await apiCall('/settings/anthropic', 'POST', { anthropic_api_key: anthropicKey }); window.loadedAIKeys['anthropic'] = anthropicKey; document.getElementById('anthropic-api-key').value = ''; window.updateInputState('anthropic-api-key', true); alert('Anthropic key saved!'); } catch(e) { alert('Failed to save Anthropic key: ' + e.message); }
+                    try { const r = await apiCall('/settings/anthropic', 'POST', { anthropic_api_key: anthropicKey }); window.loadedAIKeys['anthropic'] = anthropicKey; document.getElementById('anthropic-api-key').value = ''; window.updateInputState('anthropic-api-key', true); showToast('Anthropic key saved!', 'success'); } catch(e) { showToast('Failed to save Anthropic key: ' + e.message, 'error'); }
                 }
                 if (deepseekKey) {
-                    try { const r = await apiCall('/settings/deepseek', 'POST', { deepseek_api_key: deepseekKey }); window.loadedAIKeys['deepseek'] = deepseekKey; document.getElementById('deepseek-api-key').value = ''; window.updateInputState('deepseek-api-key', true); alert('DeepSeek key saved!'); } catch(e) { alert('Failed to save DeepSeek key: ' + e.message); }
+                    try { const r = await apiCall('/settings/deepseek', 'POST', { deepseek_api_key: deepseekKey }); window.loadedAIKeys['deepseek'] = deepseekKey; document.getElementById('deepseek-api-key').value = ''; window.updateInputState('deepseek-api-key', true); showToast('DeepSeek key saved!', 'success'); } catch(e) { showToast('Failed to save DeepSeek key: ' + e.message, 'error'); }
                 }
                 verifyAllAIKeys();
 
@@ -5431,7 +5431,7 @@ body.from_email = document.getElementById('smtp-from-email') ? document.getEleme
                 b.style.color = '#ef4444';
             }
         });
-        alert('Server is failing to load API keys! Error: ' + e.message + '\nPlease check cPanel Error Logs!');
+        showToast('Server is failing to load API keys! Error: ' + e.message, 'error');
     });
 
 
@@ -6912,7 +6912,7 @@ function setupCampaignBuilder() {
 
 
 
-                    } else alert('Upload failed: ' + (data.detail || 'Unknown error'));
+                    } else showToast('Upload failed: ' + (data.detail || 'Unknown error'), 'error');
 
 
 
@@ -6924,7 +6924,7 @@ function setupCampaignBuilder() {
 
 
 
-                    alert('Error uploading image');
+                    showToast('Error uploading image', 'error');
 
 
 
@@ -7444,7 +7444,7 @@ function setupCampaignBuilder() {
 
 
 
-                    } else alert('Upload failed: ' + (data.detail || 'Unknown error'));
+                    } else showToast('Upload failed: ' + (data.detail || 'Unknown error'), 'error');
 
 
 
@@ -7456,7 +7456,7 @@ function setupCampaignBuilder() {
 
 
 
-                    alert('Error uploading thumbnail');
+                    showToast('Error uploading thumbnail', 'error');
 
 
 
@@ -10187,7 +10187,7 @@ window.SUPPORT = {
         var subject = document.getElementById('support-subject');
         var message = document.getElementById('support-message');
         if (!subject.value.trim() || !message.value.trim()) {
-            alert('Please enter a subject and message.');
+            showToast('Please enter a subject and message.', 'warning');
             return;
         }
         var origText = btn.innerHTML;
@@ -10208,14 +10208,14 @@ window.SUPPORT = {
                 subject.value = '';
                 message.value = '';
                 SUPPORT.loadSupportTickets();
-                alert('Ticket created successfully.');
+                showToast('Ticket created successfully.', 'success');
             } else {
                 let err = await res.json();
-                alert('Failed to create ticket: ' + (err.detail || 'Unknown error'));
+                showToast('Failed to create ticket: ' + (err.detail || 'Unknown error'), 'error');
             }
         } catch (e) {
             console.error(e);
-            alert('An error occurred.');
+            showToast('An error occurred.', 'error');
         } finally {
             btn.innerHTML = origText;
             btn.disabled = false;
@@ -10333,18 +10333,18 @@ viewTicket: async function(ticketId) {
                 // scroll to bottom
                 setTimeout(() => { chatContainer.scrollTop = chatContainer.scrollHeight; }, 100);
             } else {
-                alert('Failed to load ticket details.');
+                showToast('Failed to load ticket details.', 'error');
             }
         } catch (e) {
             console.error('Error viewing ticket', e);
-            alert('An error occurred loading the ticket.');
+            showToast('An error occurred loading the ticket.', 'error');
         }
     },
     replyToTicket: async function(btn) {
         var message = document.getElementById('support-reply-message');
         var ticketId = document.getElementById('support-active-ticket-id').value;
         if (!message.value.trim() || !ticketId) {
-            alert('Please enter a reply.');
+            showToast('Please enter a reply.', 'warning');
             return;
         }
         var origText = btn.innerHTML;
@@ -10366,11 +10366,11 @@ viewTicket: async function(ticketId) {
                 SUPPORT.loadAdminTickets();
                 SUPPORT.checkUnreadTickets();
             } else {
-                alert('Failed to send reply.');
+                showToast('Failed to send reply.', 'error');
             }
         } catch(e) {
             console.error(e);
-            alert('An error occurred.');
+            showToast('An error occurred.', 'error');
         } finally {
             btn.innerHTML = origText;
             btn.disabled = false;
@@ -10390,8 +10390,8 @@ viewTicket: async function(ticketId) {
                 SUPPORT.loadAdminTickets();
                 SUPPORT.loadSupportTickets();
                 SUPPORT.checkUnreadTickets();
-            } else { alert('Failed to resolve ticket.'); }
-        } catch(e) { alert('Error resolving ticket.'); }
+            } else { showToast('Failed to resolve ticket.', 'error'); }
+        } catch(e) { showToast('Error resolving ticket.', 'error'); }
     },
     deleteTicket: async function() {
         let ticketId = document.getElementById('support-active-ticket-id').value;
@@ -10406,8 +10406,8 @@ viewTicket: async function(ticketId) {
                 document.getElementById('support-view-modal').style.display = 'none';
                 SUPPORT.loadAdminTickets();
                 SUPPORT.checkUnreadTickets();
-            } else { alert('Failed to delete ticket.'); }
-        } catch(e) { alert('Error deleting ticket.'); }
+            } else { showToast('Failed to delete ticket.', 'error'); }
+        } catch(e) { showToast('Error deleting ticket.', 'error'); }
     },
     checkUnreadTickets: async function() {
         try {
@@ -13555,7 +13555,7 @@ window.handleGalleryUpload = function(event) {
 
         } else {
 
-            alert('Upload failed: ' + (data.detail || 'Unknown error'));
+            showToast('Upload failed: ' + (data.detail || 'Unknown error'), 'error');
 
         }
 
@@ -13565,7 +13565,7 @@ window.handleGalleryUpload = function(event) {
 
         status.style.display = 'none';
 
-        alert('Upload error');
+        showToast('Upload error', 'error');
 
     });
 

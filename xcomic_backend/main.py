@@ -3030,7 +3030,7 @@ def create_sending_account(acc: SendingAccountCreate, current_user: database.Use
 
             raise HTTPException(status_code=400, detail="IMAP server and password are required for Warmup.")
 
-        imap_check = email_service.verify_imap_credentials(acc.imap_server, acc.imap_port, acc.smtp_username, acc.imap_password)
+        imap_check = email_service.verify_imap_credentials(acc.imap_server, acc.imap_port, acc.email, acc.imap_password)
 
         if imap_check['status'] != 'success':
 

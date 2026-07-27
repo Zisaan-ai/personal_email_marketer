@@ -1962,7 +1962,7 @@ def get_smtp_settings(current_user: database.User = Depends(auth.get_current_use
                     env_dict[k.strip()] = v.strip()
     return {
         "has_account": bool(env_dict.get("SMTP_USERNAME")),
-        "email": env_dict.get("SMTP_USERNAME", ""),
+        "smtp_username": env_dict.get("SMTP_USERNAME", ""),
         "smtp_host": env_dict.get("SMTP_SERVER", ""),
         "smtp_port": env_dict.get("SMTP_PORT", "587"),
         "from_name": env_dict.get("SMTP_FROM_NAME", "System Admin"),

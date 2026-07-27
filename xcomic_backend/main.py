@@ -1999,6 +1999,7 @@ def test_smtp_settings(req: Optional[SMTPTestRequest] = None, current_user: data
         raise HTTPException(status_code=400, detail=f"SMTP Error: {str(e)}")
 # --- UNSUBSCRIBE ENDPOINTS ---
 @app.get('/unsubscribe/{token}')
+@app.get('/api/unsubscribe/{token}')
 def unsubscribe(token: str, db: Session = Depends(database.get_db)):
     try:
         email = base64.b64decode(token).decode('utf-8')
@@ -2007,8 +2008,7 @@ def unsubscribe(token: str, db: Session = Depends(database.get_db)):
             new_unsub = database.UnsubscribeList(email=email)
             db.add(new_unsub)
             db.commit()
-            # db.commit()
-        return Response(content="<html><body style='font-family:sans-serif;text-align:center;padding:50px;'><h2>Unsubscribed Successfully</h2><p>You will no longer receive emails from us.</p></body></html>", media_type='text/html')
+        return Response(content="<html><body style='font-family:sans-serif;text-align:center;padding:50px;background:#0f172a;color:#fff;'><h2 style='color:#10b981;'>Unsubscribed Successfully</h2><p>You will no longer receive emails from us.</p></body></html>", media_type='text/html')
     except:
         raise HTTPException(status_code=400, detail='Invalid token')
 @app.get('/api/unsubscribes')
@@ -2696,6 +2696,7 @@ def save_deepseek_key(req: DeepSeekKeyRequest, current_user: database.User = Dep
     return {"ok": True, "message": "DeepSeek API key saved"}
 # --- UNSUBSCRIBE ENDPOINTS ---
 @app.get('/unsubscribe/{token}')
+@app.get('/api/unsubscribe/{token}')
 def unsubscribe(token: str, db: Session = Depends(database.get_db)):
     try:
         email = base64.b64decode(token).decode('utf-8')
@@ -2704,8 +2705,7 @@ def unsubscribe(token: str, db: Session = Depends(database.get_db)):
             new_unsub = database.UnsubscribeList(email=email)
             db.add(new_unsub)
             db.commit()
-            # db.commit()
-        return Response(content="<html><body style='font-family:sans-serif;text-align:center;padding:50px;'><h2>Unsubscribed Successfully</h2><p>You will no longer receive emails from us.</p></body></html>", media_type='text/html')
+        return Response(content="<html><body style='font-family:sans-serif;text-align:center;padding:50px;background:#0f172a;color:#fff;'><h2 style='color:#10b981;'>Unsubscribed Successfully</h2><p>You will no longer receive emails from us.</p></body></html>", media_type='text/html')
     except:
         raise HTTPException(status_code=400, detail='Invalid token')
 @app.get('/api/unsubscribes')

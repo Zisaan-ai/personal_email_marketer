@@ -254,7 +254,7 @@ def inject_unsubscribe(body_html: str, recipient: str) -> str:
 
         token = base64.b64encode(recipient.encode('utf-8')).decode('utf-8')
 
-        unsub_link = f"{base_url}/unsubscribe/{token}"
+        unsub_link = f"{base_url}/api/unsubscribe/{token}"
 
         unsub_html = f'<br><br><hr><p style="font-size:12px; color:#666;">If you no longer wish to receive these emails, you can <a href="{unsub_link}">unsubscribe here</a>.</p>'
 
@@ -280,7 +280,7 @@ def _get_unsubscribe_url(recipient: str) -> str:
 
     token = base64.b64encode(recipient.encode('utf-8')).decode('utf-8')
 
-    return f"{base_url}/unsubscribe/{token}"
+    return f"{base_url}/api/unsubscribe/{token}"
 
 
 

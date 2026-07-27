@@ -1033,7 +1033,7 @@ def _send_system_email(recipient: str, subject: str, body_html: str) -> bool:
 
 def send_verification_email(email: str, code: str) -> bool:
     subject = "Verify your XComic account"
-    body = f"""<!DOCTYPE html>
+    body = """<!DOCTYPE html>
 <html>
 <head>
 <style>
@@ -1060,7 +1060,7 @@ def send_verification_email(email: str, code: str) -> bool:
     <p>Thanks for getting started with XComic! To complete your sign up, please enter the following verification code in your browser:</p>
     
     <div class="code-box">
-      <p class="code">{code}</p>
+      <p class="code">_CODE_</p>
     </div>
     
     <p style="margin-bottom: 0;">If you didn't attempt to sign up for XComic, you can safely ignore this email.</p>
@@ -1071,12 +1071,12 @@ def send_verification_email(email: str, code: str) -> bool:
   </div>
 </div>
 </body>
-</html>"""
+</html>""".replace("_CODE_", code)
     return _send_system_email(email, subject, body)
 
 def send_password_reset_email(email: str, code: str) -> bool:
     subject = "Reset your XComic password"
-    body = f"""<!DOCTYPE html>
+    body = """<!DOCTYPE html>
 <html>
 <head>
 <style>
@@ -1103,7 +1103,7 @@ def send_password_reset_email(email: str, code: str) -> bool:
     <p>We received a request to reset the password for your XComic account. Enter the following code to securely reset your password:</p>
     
     <div class="code-box">
-      <p class="code">{code}</p>
+      <p class="code">_CODE_</p>
     </div>
     
     <p style="margin-bottom: 0;">If you didn't request a password reset, you can safely ignore this email. Your password will remain unchanged.</p>
@@ -1114,5 +1114,5 @@ def send_password_reset_email(email: str, code: str) -> bool:
   </div>
 </div>
 </body>
-</html>"""
+</html>""".replace("_CODE_", code)
     return _send_system_email(email, subject, body)

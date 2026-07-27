@@ -980,3 +980,63 @@ def send_single_email(subject: str, body_html: str, recipient: str, account=None
 
         return False
 
+
+
+# ============================================================
+# SYSTEM EMAILS (Verification, Password Reset)
+# ============================================================
+
+def _get_system_smtp_config():
+    env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+    env_dict = {}
+    if os.path.exists(env_path):
+        with open(env_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                if '=' in line and not line.startswith('#'):
+                    k, v = line.strip().split('=', 1)
+                    env_dict[k.strip()] = v.strip()
+    return env_dict
+
+def _send_system_email(recipient: str, subject: str, body_html: str) -> bool:
+    import smtplib
+    from email.mime.text import MIMEText
+    from email.mime.multipart import MIMEMultipart
+    
+    config = _get_system_smtp_config()
+    server = config.get("SMTP_SERVER")
+    port = config.get("SMTP_PORT", "587")
+    user = config.get("SMTP_USERNAME")
+    password = config.get("SMTP_PASSWORD")
+    from_name = config.get("SMTP_FROM_NAME", "System Admin")
+    from_email = config.get("SMTP_FROM_EMAIL", "support@xcomic.xyz")
+    
+    if not server or not user or not password:
+        print("System SMTP not configured properly.")
+        return False
+        
+    msg = MIMEMultipart("alternative")
+    msg['Subject'] = subject
+    msg['From'] = f"{from_name} <{from_email}>"
+    msg['To'] = recipient
+    msg.attach(MIMEText(body_html, "html"))
+    
+    try:
+        with smtplib.SMTP(server, int(port), timeout=15) as s:
+            s.ehlo()
+            s.starttls()
+            s.login(user, password)
+            s.send_message(msg)
+        return True
+    except Exception as e:
+        print(f"Failed to send system email: {e}")
+        return False
+
+def send_verification_email(email: str, code: str) -> bool:
+    subject = "Verify your XComic account"
+    body = f"<html><body style='font-family: Arial, sans-serif;'><div style='max-width:500px;margin:auto;padding:20px;border:1px solid #eaeaea;border-radius:10px;'><h3>XComic Verification</h3><p>Your email verification code is:</p><h2 style='color:#6366f1;letter-spacing:2px;'>{code}</h2><p>Please enter this code on the verification page.</p></div></body></html>"
+    return _send_system_email(email, subject, body)
+
+def send_password_reset_email(email: str, code: str) -> bool:
+    subject = "XComic Password Reset"
+    body = f"<html><body style='font-family: Arial, sans-serif;'><div style='max-width:500px;margin:auto;padding:20px;border:1px solid #eaeaea;border-radius:10px;'><h3>Password Reset</h3><p>Your password reset code is:</p><h2 style='color:#ef4444;letter-spacing:2px;'>{code}</h2><p>If you didn't request this, you can ignore this email.</p></div></body></html>"
+    return _send_system_email(email, subject, body)

@@ -1033,10 +1033,86 @@ def _send_system_email(recipient: str, subject: str, body_html: str) -> bool:
 
 def send_verification_email(email: str, code: str) -> bool:
     subject = "Verify your XComic account"
-    body = f"<html><body style='font-family: Arial, sans-serif;'><div style='max-width:500px;margin:auto;padding:20px;border:1px solid #eaeaea;border-radius:10px;'><h3>XComic Verification</h3><p>Your email verification code is:</p><h2 style='color:#6366f1;letter-spacing:2px;'>{code}</h2><p>Please enter this code on the verification page.</p></div></body></html>"
+    body = f"""<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9fafb; margin: 0; padding: 0; }
+  .container { max-width: 500px; margin: 40px auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border: 1px solid #f3f4f6; }
+  .header { background: #0f172a; padding: 24px; text-align: center; }
+  .content { padding: 32px; color: #374151; line-height: 1.6; font-size: 15px; }
+  .h1 { font-size: 20px; font-weight: 600; color: #111827; margin-bottom: 16px; margin-top: 0; }
+  .code-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; text-align: center; margin: 24px 0; }
+  .code { font-size: 32px; font-weight: 700; color: #4f46e5; letter-spacing: 6px; margin: 0; }
+  .footer { background: #f8fafc; padding: 24px; text-align: center; border-top: 1px solid #f1f5f9; }
+  .signature { font-size: 14px; font-weight: 700; color: #334155; margin-bottom: 4px; }
+  .copyright { font-size: 12px; color: #94a3b8; margin: 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div style="color: #ffffff; font-size: 24px; font-weight: 800; letter-spacing: 1px;">XComic</div>
+  </div>
+  <div class="content">
+    <h1 class="h1">Verify your email address</h1>
+    <p style="margin-top: 0;">Hi there,</p>
+    <p>Thanks for getting started with XComic! To complete your sign up, please enter the following verification code in your browser:</p>
+    
+    <div class="code-box">
+      <p class="code">{code}</p>
+    </div>
+    
+    <p style="margin-bottom: 0;">If you didn't attempt to sign up for XComic, you can safely ignore this email.</p>
+  </div>
+  <div class="footer">
+    <div class="signature">The XComic Team</div>
+    <p class="copyright">&copy; 2026 XComic. All rights reserved.</p>
+  </div>
+</div>
+</body>
+</html>"""
     return _send_system_email(email, subject, body)
 
 def send_password_reset_email(email: str, code: str) -> bool:
-    subject = "XComic Password Reset"
-    body = f"<html><body style='font-family: Arial, sans-serif;'><div style='max-width:500px;margin:auto;padding:20px;border:1px solid #eaeaea;border-radius:10px;'><h3>Password Reset</h3><p>Your password reset code is:</p><h2 style='color:#ef4444;letter-spacing:2px;'>{code}</h2><p>If you didn't request this, you can ignore this email.</p></div></body></html>"
+    subject = "Reset your XComic password"
+    body = f"""<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9fafb; margin: 0; padding: 0; }
+  .container { max-width: 500px; margin: 40px auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border: 1px solid #f3f4f6; }
+  .header { background: #0f172a; padding: 24px; text-align: center; }
+  .content { padding: 32px; color: #374151; line-height: 1.6; font-size: 15px; }
+  .h1 { font-size: 20px; font-weight: 600; color: #111827; margin-bottom: 16px; margin-top: 0; }
+  .code-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; text-align: center; margin: 24px 0; }
+  .code { font-size: 32px; font-weight: 700; color: #4f46e5; letter-spacing: 6px; margin: 0; }
+  .footer { background: #f8fafc; padding: 24px; text-align: center; border-top: 1px solid #f1f5f9; }
+  .signature { font-size: 14px; font-weight: 700; color: #334155; margin-bottom: 4px; }
+  .copyright { font-size: 12px; color: #94a3b8; margin: 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div style="color: #ffffff; font-size: 24px; font-weight: 800; letter-spacing: 1px;">XComic</div>
+  </div>
+  <div class="content">
+    <h1 class="h1">Reset your password</h1>
+    <p style="margin-top: 0;">Hi there,</p>
+    <p>We received a request to reset the password for your XComic account. Enter the following code to securely reset your password:</p>
+    
+    <div class="code-box">
+      <p class="code">{code}</p>
+    </div>
+    
+    <p style="margin-bottom: 0;">If you didn't request a password reset, you can safely ignore this email. Your password will remain unchanged.</p>
+  </div>
+  <div class="footer">
+    <div class="signature">The XComic Team</div>
+    <p class="copyright">&copy; 2026 XComic. All rights reserved.</p>
+  </div>
+</div>
+</body>
+</html>"""
     return _send_system_email(email, subject, body)

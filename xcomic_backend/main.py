@@ -970,14 +970,17 @@ def _run_campaign(db, campaign_id):
     delay_max = campaign.delay_max if campaign.delay_max is not None else 90
     _last_domain_used = [None]  # Track for multi-domain rotation
     def is_within_sending_window(acc_doc):
-        """Check if current time is within the account's sending window."""
+        """Check if current time is within the account's sending window, using user's timezone."""
         try:
-            tz = pytz.timezone(acc_doc.send_window_timezone or "UTC")
+            # Use account's send_window_timezone — which is now auto-set from user's global timezone
+            tz_str = acc_doc.send_window_timezone or "UTC"
+            tz = pytz.timezone(tz_str)
             now_hour = datetime.now(tz).hour
+            # Default: 0 to 24 means always active (no restriction)
             start = acc_doc.send_window_start if acc_doc.send_window_start is not None else 0
             end = acc_doc.send_window_end if acc_doc.send_window_end is not None else 24
             if start == 0 and end == 24:
-                return True  # No window restriction
+                return True  # No window restriction — send anytime
             return start <= now_hour < end
         except Exception:
             return True  # If timezone is invalid, allow sending
@@ -1686,20 +1689,35 @@ def get_inbox_test_results(acc_id: str, current_user: database.User = Depends(au
     } for t in tests]
 # --- Sending Window Configuration ---
 class SendWindowRequest(BaseModel):
-    send_window_start: int = 9
-    send_window_end: int = 17
-    send_window_timezone: str = "UTC"
+    send_window_start: int = 0   # Default: 0 = start of day (24hr active)
+    send_window_end: int = 24    # Default: 24 = end of day (24hr active)
+    send_window_timezone: Optional[str] = None  # If None, auto-use user's own timezone
 @app.post("/api/sending-accounts/{acc_id}/send-window")
 def update_send_window(acc_id: str, req: SendWindowRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    """Update sending window for an account."""
+    """Update sending window for an account.
+    - Default window: 0-24 (always active, no restriction)
+    - Timezone: uses user's own global timezone setting
+    - User can set custom start/end hours (e.g. 9-17 for 9am-5pm in their timezone)
+    """
     acc = db.query(database.SendingAccount).filter(database.SendingAccount.id == acc_id, database.SendingAccount.user_id == str(current_user.id)).first()
     if not acc:
         raise HTTPException(status_code=404, detail="Account not found")
     acc.send_window_start = req.send_window_start
     acc.send_window_end = req.send_window_end
-    acc.send_window_timezone = req.send_window_timezone
+    # Use explicitly provided timezone, or fall back to user's own global timezone
+    if req.send_window_timezone:
+        acc.send_window_timezone = req.send_window_timezone
+    else:
+        # User's timezone is stored on the User model itself
+        acc.send_window_timezone = current_user.timezone or "UTC"
     db.commit()
-    return {"status": "success"}
+    return {
+        "status": "success",
+        "send_window_start": acc.send_window_start,
+        "send_window_end": acc.send_window_end,
+        "send_window_timezone": acc.send_window_timezone,
+        "note": "0-24 means always active (no restriction)" if acc.send_window_start == 0 and acc.send_window_end == 24 else f"Sending only between {acc.send_window_start}:00 and {acc.send_window_end}:00 {acc.send_window_timezone}"
+    }
 # --- Custom Tracking Domain ---
 class TrackingDomainRequest(BaseModel):
     custom_tracking_domain: Optional[str] = None

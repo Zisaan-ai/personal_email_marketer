@@ -2007,6 +2007,9 @@ window.editCampaign = function(id) {
 
             .then(leads => {
 
+                // Store campaign ID so X button can delete from backend even if currentCampaignId changes
+                window.vbLeadsCampaignId = id;
+
                 if (leads && leads.length > 0) {
 
                     const leadsText = leads.map(l => `${l.email}${l.name ? ', ' + l.name : ''}${l.company ? ', ' + l.company : ''}`).join('\n');
@@ -7676,8 +7679,9 @@ window.clearLeads = function(id) {
     showToast('All leads deleted!', 'info');
 
     // Also delete from backend DB if editing an existing campaign
-    if (window.currentCampaignId) {
-        apiCall('/campaigns/' + window.currentCampaignId + '/leads', 'DELETE').catch(function() {});
+    var campaignIdForClear = window.currentCampaignId || window.vbLeadsCampaignId;
+    if (campaignIdForClear) {
+        apiCall('/campaigns/' + campaignIdForClear + '/leads', 'DELETE').catch(function() {});
     }
 
 };
@@ -7793,8 +7797,9 @@ window.removeLeadItem = function(id, index) {
     window.renderLeadsList(id);
 
     // Also delete from backend DB if editing an existing campaign
-    if (window.currentCampaignId && deletedEmail) {
-        apiCall('/campaigns/' + window.currentCampaignId + '/leads/remove', 'POST', { email: deletedEmail }).catch(function() {});
+    var campaignIdForDelete = window.currentCampaignId || window.vbLeadsCampaignId;
+    if (campaignIdForDelete && deletedEmail) {
+        apiCall('/campaigns/' + campaignIdForDelete + '/leads/remove', 'POST', { email: deletedEmail }).catch(function() {});
     }
 
 };

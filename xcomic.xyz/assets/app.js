@@ -8275,7 +8275,7 @@ window.renderSendingAccountsSelector = async function(containerId, selectedIdsSt
 
                 <label class="account-item-lbl" data-search="${searchStr}" style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px; padding:6px; border-radius:4px; transition:background 0.2s;" onmouseover="this.style.background='rgba(0,0,0,0.03)'" onmouseout="this.style.background='transparent'">
 
-                    <input type="checkbox" class="sender-acc-checkbox" value="${acc.id}" ${isChecked} style="width:auto; margin:0;" onchange="window.autoSaveSenderIds && window.autoSaveSenderIds('${containerId}')">
+                    <input type="checkbox" class="sender-acc-checkbox" value="${acc.id}" ${isChecked} style="width:auto; margin:0;" >
 
                     <div>
 

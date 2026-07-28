@@ -129,7 +129,11 @@ def _auto_resume_stuck_campaigns():
             threading.Thread(target=process_isolated_campaign, args=(str(c.id),)).start()
     finally:
         db.close()
+<<<<<<< Updated upstream
 def _scheduler_start_scheduled_campaigns():
+=======
+def _scheduler_start_scheduled_campaigns(sync=False):
+>>>>>>> Stashed changes
     db = database.SessionLocal()
     try:
         from datetime import datetime

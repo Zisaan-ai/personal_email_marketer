@@ -552,9 +552,9 @@ window.renderAnalyticsInfo = async function(c, prefix) {
 
         
 
-        let startTime = c.start_hour !== undefined ? c.start_hour + ':00' : '00:00';
+        let startTime = (c.start_hour !== undefined && c.start_hour !== null) ? c.start_hour + ':00' : '00:00';
 
-        let endTime = c.end_hour !== undefined ? c.end_hour + ':00' : '23:59';
+        let endTime = (c.end_hour !== undefined && c.end_hour !== null) ? c.end_hour + ':00' : '23:59';
 
         schedText += `<strong>Time:</strong> ${startTime} - ${endTime} (${c.timezone || 'UTC'})<br>`;
 
@@ -590,7 +590,14 @@ window.renderAnalyticsInfo = async function(c, prefix) {
 
                 const accounts = await res.json();
 
-                const selectedIds = c.selected_sender_ids ? c.selected_sender_ids.split(',').map(s => s.trim()) : [];
+                let selectedIds = [];
+    if (c.selected_sender_ids) {
+        try {
+            selectedIds = JSON.parse(c.selected_sender_ids);
+        } catch(e) {
+            selectedIds = c.selected_sender_ids.split(',').map(s => s.trim());
+        }
+    }
 
                 if (selectedIds.length === 0) {
 
@@ -2445,6 +2452,8 @@ window.saveCampaignOptions = async function(prefix = 'cold') {
                     if (payload.max_emails_per_day !== undefined) window.lastFetchedCampaigns[idx].max_emails_per_day = payload.max_emails_per_day;
 
                     if (payload.daily_ramp_up !== undefined) window.lastFetchedCampaigns[idx].daily_ramp_up = payload.daily_ramp_up;
+
+                if (payload.selected_sender_ids !== undefined) window.lastFetchedCampaigns[idx].selected_sender_ids = payload.selected_sender_ids;
 
                 }
 
@@ -6880,7 +6889,11 @@ async function renderNewsletterList() {
 
     tbody.innerHTML = '';
 
+<<<<<<< Updated upstream
     const campaigns = window.lastFetchedBulkCampaigns || [];
+=======
+    const campaigns = (window.lastFetchedCampaigns || []).filter(c => c.type === 'newsletter');
+>>>>>>> Stashed changes
 
     
 
@@ -8266,7 +8279,7 @@ window.renderSendingAccountsSelector = async function(containerId, selectedIdsSt
 
                 <label class="account-item-lbl" data-search="${searchStr}" style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px; padding:6px; border-radius:4px; transition:background 0.2s;" onmouseover="this.style.background='rgba(0,0,0,0.03)'" onmouseout="this.style.background='transparent'">
 
-                    <input type="checkbox" class="sender-acc-checkbox" value="${acc.id}" ${isChecked} style="width:auto; margin:0;">
+                    <input type="checkbox" class="sender-acc-checkbox" value="${acc.id}" ${isChecked} style="width:auto; margin:0;" onchange="window.autoSaveSenderIds && window.autoSaveSenderIds('${containerId}')">
 
                     <div>
 
@@ -8302,10 +8315,27 @@ window.getSelectedSenderIds = function(containerId) {
 
     const checked = Array.from(container.querySelectorAll('.sender-acc-checkbox:checked')).map(cb => cb.value);
 
-    return checked.length > 0 ? JSON.stringify(checked) : null;
+    return JSON.stringify(checked);
 
 };
 
+<<<<<<< Updated upstream
+=======
+window.autoSaveSenderIds = async function(containerId) {
+    if (!window.currentCampaignId) return;
+    const selectedIds = window.getSelectedSenderIds(containerId);
+    try {
+        const res = await apiCall('/campaigns/' + window.currentCampaignId + '/save-options', 'POST', { selected_sender_ids: selectedIds });
+        if (res && res.ok) {
+            if (window.lastFetchedCampaigns) {
+                const idx = window.lastFetchedCampaigns.findIndex(function(x) { return x.id === window.currentCampaignId; });
+                if (idx !== -1) window.lastFetchedCampaigns[idx].selected_sender_ids = selectedIds;
+            }
+        }
+    } catch(e) {}
+};
+
+>>>>>>> Stashed changes
 window.filterAccounts = function(input, containerId) {
 
     const term = input.value.toLowerCase();

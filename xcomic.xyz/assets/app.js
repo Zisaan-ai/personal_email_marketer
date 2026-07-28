@@ -7799,7 +7799,20 @@ window.removeLeadItem = function(id, index) {
     // Also delete from backend DB if editing an existing campaign
     var campaignIdForDelete = window.currentCampaignId || window.vbLeadsCampaignId;
     if (campaignIdForDelete && deletedEmail) {
-        apiCall('/campaigns/' + campaignIdForDelete + '/leads/remove', 'POST', { email: deletedEmail }).catch(function() {});
+        apiCall('/campaigns/' + campaignIdForDelete + '/remove-lead', 'POST', { email: deletedEmail })
+            .then(async res => {
+                if (res.ok) {
+                    showToast('Lead deleted from DB', 'success');
+                } else {
+                    const text = await res.text();
+                    showToast('Failed to delete lead from DB: ' + text, 'error');
+                }
+            })
+            .catch(function(err) {
+                showToast('Error deleting lead from DB', 'error');
+            });
+    } else {
+        showToast('No campaign ID or email found for DB delete. ID: ' + campaignIdForDelete + ' Email: ' + deletedEmail, 'error');
     }
 
 };

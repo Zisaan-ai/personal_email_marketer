@@ -882,7 +882,7 @@ def delete_campaign_lead(campaign_id: str, lead_id: str, current_user: database.
 class RemoveLeadByEmailRequest(BaseModel):
     email: str
 
-@app.post("/api/campaigns/{campaign_id}/leads/remove")
+@app.post("/api/campaigns/{campaign_id}/remove-lead")
 def remove_campaign_lead_by_email(campaign_id: str, req: RemoveLeadByEmailRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     """Remove a single lead from a campaign by email."""
     campaign = db.query(database.Campaign).filter(database.Campaign.id == campaign_id).first()

@@ -6889,11 +6889,7 @@ async function renderNewsletterList() {
 
     tbody.innerHTML = '';
 
-<<<<<<< Updated upstream
-    const campaigns = window.lastFetchedBulkCampaigns || [];
-=======
     const campaigns = (window.lastFetchedCampaigns || []).filter(c => c.type === 'newsletter');
->>>>>>> Stashed changes
 
     
 
@@ -8319,8 +8315,6 @@ window.getSelectedSenderIds = function(containerId) {
 
 };
 
-<<<<<<< Updated upstream
-=======
 window.autoSaveSenderIds = async function(containerId) {
     if (!window.currentCampaignId) return;
     const selectedIds = window.getSelectedSenderIds(containerId);
@@ -8335,7 +8329,6 @@ window.autoSaveSenderIds = async function(containerId) {
     } catch(e) {}
 };
 
->>>>>>> Stashed changes
 window.filterAccounts = function(input, containerId) {
 
     const term = input.value.toLowerCase();

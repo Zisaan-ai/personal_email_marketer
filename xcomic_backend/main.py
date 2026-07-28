@@ -71,16 +71,15 @@ def auto_reset_daily_counts(db):
             for acc, today_user in needs_reset:
                 acc.sent_today = 0
                 acc.sent_today_date = today_user
-                # Reset warmup limits as well
-                if acc.warmup_enabled:
-                    acc.warmup_sent_today = 0
-                    if getattr(acc, "smart_warmup_enabled", False):
-                        import health_monitor
-                        acc.warmup_daily_limit = health_monitor.suggest_warmup_limit(acc)
-                    else:
-                        current_limit = acc.warmup_daily_limit or 0
-                        increment = int(acc.warmup_increment_per_day or 0)
-                        acc.warmup_daily_limit = min(50, current_limit + increment)
+                # Reset warmup limits as well (always do this regardless of warmup_enabled)
+                acc.warmup_sent_today = 0
+                if getattr(acc, "smart_warmup_enabled", False):
+                    import health_monitor
+                    acc.warmup_daily_limit = health_monitor.suggest_warmup_limit(acc)
+                else:
+                    current_limit = acc.warmup_daily_limit or 0
+                    increment = int(acc.warmup_increment_per_day or 0)
+                    acc.warmup_daily_limit = min(50, current_limit + increment)
             db.commit()
             print(f"[Daily Reset] Reset sent_today for {len(needs_reset)} accounts based on their local timezones.")
     except Exception as e:
@@ -904,7 +903,13 @@ def _run_campaign(db, campaign_id):
     if not campaign:
         return
     now = datetime.utcnow()
-    today_str = datetime.now(pytz.timezone('Asia/Dhaka')).strftime("%Y-%m-%d")
+    user_tz = campaign.timezone or "UTC"
+    if not campaign.timezone:
+        user = db.query(database.User).filter(database.User.id == campaign.user_id).first()
+        if user and getattr(user, 'timezone', None):
+            user_tz = user.timezone
+    
+    today_str = datetime.now(pytz.timezone(user_tz)).strftime("%Y-%m-%d")
     # Check Campaign-level Date & Ramp Up
     if campaign.sent_today_date != today_str:
         campaign.sent_today_campaign = 0
@@ -1138,7 +1143,7 @@ def _run_campaign(db, campaign_id):
                 lead.sending_account_id = str(acc.id)
                 db_session.query(database.SendingAccount).filter(database.SendingAccount.id == acc.id).update({
                     "sent_today": database.SendingAccount.sent_today + 1,
-                    "sent_today_date": datetime.now(pytz.timezone('Asia/Dhaka')).strftime("%Y-%m-%d")
+                    "sent_today_date": today_str
                 })
                 db_session.query(database.Campaign).filter(database.Campaign.id == campaign_id).update({
                     "sent_today_campaign": database.Campaign.sent_today_campaign + 1

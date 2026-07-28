@@ -2391,7 +2391,7 @@ function loadScheduleTab(campaignId) {
 
 window.saveCampaignOptions = async function(prefix = 'cold') {
 
-    if (!window.currentCampaignId) { showToast('No campaign selected', 'error'); return; }
+    if (!window.currentCampaignId) { showToast('Please select a campaign first to edit options', 'warning'); return; }
 
     const btn = document.getElementById(`${prefix}-save-options-btn`);
 
@@ -8324,6 +8324,32 @@ window.autoSaveSenderIds = async function(containerId) {
             if (window.lastFetchedCampaigns) {
                 const idx = window.lastFetchedCampaigns.findIndex(function(x) { return x.id === window.currentCampaignId; });
                 if (idx !== -1) window.lastFetchedCampaigns[idx].selected_sender_ids = selectedIds;
+            }
+        }
+    } catch(e) {}
+};
+
+window.autoSaveCampaignOption = async function(el, prefix) {
+    if (!window.currentCampaignId) return; // will be saved on launch
+    var payload = {};
+    var id = el.id;
+    if (id.indexOf('track-opens') !== -1) payload.track_opens = el.value === '1';
+    else if (id.indexOf('track-clicks') !== -1) payload.track_clicks = el.value === '1';
+    else if (id.indexOf('use-unsubscribe') !== -1) payload.use_unsubscribe = el.value === '1';
+    else if (id.indexOf('max-emails') !== -1) payload.max_emails_per_day = parseInt(el.value) || 50;
+    else if (id.indexOf('ramp-up') !== -1) payload.daily_ramp_up = parseInt(el.value) || 0;
+    if (Object.keys(payload).length === 0) return;
+    try {
+        var res = await apiCall('/campaigns/' + window.currentCampaignId + '/save-options', 'POST', payload);
+        if (res && res.ok) {
+            if (window.lastFetchedCampaigns) {
+                var idx = window.lastFetchedCampaigns.findIndex(function(x) { return x.id === window.currentCampaignId; });
+                if (idx !== -1) {
+                    var keys = Object.keys(payload);
+                    for (var k = 0; k < keys.length; k++) {
+                        window.lastFetchedCampaigns[idx][keys[k]] = payload[keys[k]];
+                    }
+                }
             }
         }
     } catch(e) {}

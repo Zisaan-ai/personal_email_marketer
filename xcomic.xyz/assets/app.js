@@ -7657,7 +7657,7 @@ window.saveLeads = function(id) {
 
 window.clearLeads = function(id) {
 
-    if(!confirm('Are you sure you want to clear all leads?')) return;
+    if(!confirm('Are you sure you want to delete all leads? This cannot be undone.')) return;
 
     const el = document.getElementById(id);
 
@@ -7673,7 +7673,12 @@ window.clearLeads = function(id) {
 
     }
 
-    showToast('Leads cleared!', 'info');
+    showToast('All leads deleted!', 'info');
+
+    // Also delete from backend DB if editing an existing campaign
+    if (window.currentCampaignId) {
+        apiCall('/campaigns/' + window.currentCampaignId + '/leads', 'DELETE').catch(function() {});
+    }
 
 };
 
@@ -7773,19 +7778,24 @@ window.removeLeadItem = function(id, index) {
 
     if (!textarea) return;
 
-    
-
     const lines = textarea.value.split('\n').filter(l => l.trim() !== '');
+
+    // Extract email before splicing
+    const deletedLine = lines[index] || '';
+    const deletedEmail = deletedLine.split(',')[0].trim();
 
     lines.splice(index, 1);
 
     textarea.value = lines.join('\n');
 
-    
-
     localStorage.setItem('saved_leads_' + id, textarea.value);
 
     window.renderLeadsList(id);
+
+    // Also delete from backend DB if editing an existing campaign
+    if (window.currentCampaignId && deletedEmail) {
+        apiCall('/campaigns/' + window.currentCampaignId + '/leads/remove', 'POST', { email: deletedEmail }).catch(function() {});
+    }
 
 };
 

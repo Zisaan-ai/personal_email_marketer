@@ -878,6 +878,39 @@ def delete_campaign_lead(campaign_id: str, lead_id: str, current_user: database.
     db.delete(lead)
     db.commit()
     return {"status": "success"}
+
+class RemoveLeadByEmailRequest(BaseModel):
+    email: str
+
+@app.post("/api/campaigns/{campaign_id}/leads/remove")
+def remove_campaign_lead_by_email(campaign_id: str, req: RemoveLeadByEmailRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    """Remove a single lead from a campaign by email."""
+    campaign = db.query(database.Campaign).filter(database.Campaign.id == campaign_id).first()
+    if not campaign:
+        raise HTTPException(status_code=404, detail="Campaign not found")
+    if campaign.user_id != str(current_user.id) and not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    lead = db.query(database.CampaignLead).filter(
+        database.CampaignLead.campaign_id == campaign_id,
+        database.CampaignLead.email == req.email.strip()
+    ).first()
+    if lead:
+        db.delete(lead)
+        db.commit()
+    return {"status": "success"}
+
+@app.delete("/api/campaigns/{campaign_id}/leads")
+def delete_all_campaign_leads(campaign_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    """Delete ALL leads from a campaign."""
+    campaign = db.query(database.Campaign).filter(database.Campaign.id == campaign_id).first()
+    if not campaign:
+        raise HTTPException(status_code=404, detail="Campaign not found")
+    if campaign.user_id != str(current_user.id) and not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    db.query(database.CampaignLead).filter(database.CampaignLead.campaign_id == campaign_id).delete()
+    db.commit()
+    return {"status": "success", "message": "All leads deleted"}
+
 def process_isolated_campaign(campaign_id: str):
     """Background task: send all leads for a campaign with unsubscribe check & proper DB persistence."""
     with campaign_thread_lock:

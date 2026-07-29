@@ -5307,7 +5307,9 @@ function setupSettings() {
             testBtn.innerHTML = '<i class="fa-solid fa-plug" style="margin-right:6px;"></i>Test Connection';
 
             testBtn.disabled = false;
-        });
+
+
+
     }
 
 
@@ -10600,7 +10602,7 @@ async function loadUnsubscribes() {
 
 
 
-            tbody.innerHTML = `<tr><td colspan="3" style="padding:20px; text-align:center; color:var(--text-muted);">No unsubscribes yet</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="2" style="padding:20px; text-align:center; color:var(--text-muted);">No unsubscribes yet</td></tr>`;
 
 
 
@@ -10613,46 +10615,48 @@ async function loadUnsubscribes() {
 
 
         data.forEach(item => {
+
+
+
             const tr = document.createElement('tr');
+
+
+
             tr.innerHTML = `
+
+
+
                 <td style="padding:16px 24px; font-weight:600; color:var(--text);">${escapeHtml(item.email)}</td>
+
+
+
                 <td style="padding:16px 24px; color:var(--text-muted); font-size:13px;">${new Date(item.unsubscribed_at).toLocaleString()}</td>
-                <td style="padding:16px 24px; display: flex; gap: 8px; align-items: center;">
-                    <button onclick="removeUnsubscribe('${escapeHtml(item.email)}', this)" class="btn" style="padding:6px 12px; font-size:12px; color:#ef4444; border-color:#fecaca; background: transparent;"><i class="fa-solid fa-trash"></i> Remove</button>
-                </td>
+
+
+
             `;
+
+
+
             tbody.appendChild(tr);
+
+
+
         });
+
+
 
     } catch(e) { console.error(e); }
 
+
+
 }
 
-async function removeUnsubscribe(email, btn) {
-    if (!confirm(`Are you sure you want to remove ${email} from the unsubscribe list? They will be able to receive emails again.`)) return;
 
-    const oldHtml = btn.innerHTML;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-    btn.disabled = true;
 
-    try {
-        const res = await apiCall(`/unsubscribes/${encodeURIComponent(email)}`, 'DELETE');
-        if (res.ok) {
-            showToast("Removed from unsubscribe list", "success");
-            loadUnsubscribes();
-        } else {
-            const data = await res.json();
-            showToast(data.detail || "Failed to remove email", "error");
-            btn.innerHTML = oldHtml;
-            btn.disabled = false;
-        }
-    } catch (e) {
-        console.error(e);
-        showToast("Error removing email", "error");
-        btn.innerHTML = oldHtml;
-        btn.disabled = false;
-    }
-}
+
+
+
 
 async function loadReplies() {
 
@@ -13888,19 +13892,4 @@ window.deleteCampaignLead = async function(campaignId, leadId, btn) {
 
     }
 
-};
-
-window.removeUnsubscribe = async function(email) {
-    if(!confirm('Are you sure you want to remove ' + email + ' from the unsubscribe list?')) return;
-    try {
-        const res = await apiCall('/unsubscribes/' + encodeURIComponent(email), 'DELETE');
-        if (res.ok) {
-            showToast('Email removed from unsubscribe list', 'success');
-            loadUnsubscribes();
-        } else {
-            showToast('Failed to remove email', 'error');
-        }
-    } catch(e) {
-        showToast('Error removing email', 'error');
-    }
 };

@@ -339,6 +339,8 @@ def _safe_add_column(table_name: str, column_name: str, column_type: str, defaul
 def run_migrations():
     """Run safe migrations for new columns on existing tables."""
     try:
+        _safe_add_column("users", "gemini_api_key", "VARCHAR", None)
+        _safe_add_column("users", "groq_api_key", "VARCHAR", None)
         _safe_add_column("users", "openai_api_key", "VARCHAR", None)
         _safe_add_column("users", "anthropic_api_key", "VARCHAR", None)
         _safe_add_column("users", "deepseek_api_key", "VARCHAR", None)

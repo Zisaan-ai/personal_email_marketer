@@ -581,6 +581,12 @@ class ScheduleUpdate(BaseModel):
     timezone: Optional[str] = None
     delay_min: Optional[int] = None
     delay_max: Optional[int] = None
+    track_opens: Optional[bool] = None
+    track_clicks: Optional[bool] = None
+    use_unsubscribe: Optional[bool] = None
+    max_emails_per_day: Optional[int] = None
+    daily_ramp_up: Optional[int] = None
+    selected_sender_ids: Optional[str] = None
 @app.post("/api/campaigns/{campaign_id}/save-schedule")
 def save_campaign_schedule(campaign_id: str, schedule: ScheduleUpdate, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     camp = db.query(database.Campaign).filter(database.Campaign.id == campaign_id, database.Campaign.user_id == str(current_user.id)).first()
@@ -594,6 +600,20 @@ def save_campaign_schedule(campaign_id: str, schedule: ScheduleUpdate, current_u
         camp.delay_min = schedule.delay_min
     if schedule.delay_max is not None:
         camp.delay_max = schedule.delay_max
+    
+    if schedule.track_opens is not None:
+        camp.track_opens = schedule.track_opens
+    if schedule.track_clicks is not None:
+        camp.track_clicks = schedule.track_clicks
+    if schedule.use_unsubscribe is not None:
+        camp.use_unsubscribe = schedule.use_unsubscribe
+    if schedule.max_emails_per_day is not None:
+        camp.max_emails_per_day = schedule.max_emails_per_day
+    if schedule.daily_ramp_up is not None:
+        camp.daily_ramp_up = schedule.daily_ramp_up
+    if schedule.selected_sender_ids is not None:
+        camp.selected_sender_ids = schedule.selected_sender_ids
+        
     db.commit()
     return {"status": "success"}
 class CampaignOptionsUpdate(BaseModel):
@@ -1707,15 +1727,25 @@ def update_send_window(acc_id: str, req: SendWindowRequest, current_user: databa
     acc = db.query(database.SendingAccount).filter(database.SendingAccount.id == acc_id, database.SendingAccount.user_id == str(current_user.id)).first()
     if not acc:
         raise HTTPException(status_code=404, detail="Account not found")
+
+    if req.send_window_start < 0 or req.send_window_start > 24 or req.send_window_end < 0 or req.send_window_end > 24:
+        raise HTTPException(status_code=400, detail="Window hours must be between 0 and 24.")
+
+    if req.send_window_start >= req.send_window_end and not (req.send_window_start == 0 and req.send_window_end == 24):
+        raise HTTPException(status_code=400, detail="Start hour must be before end hour.")
+
     acc.send_window_start = req.send_window_start
     acc.send_window_end = req.send_window_end
+    
     # Use explicitly provided timezone, or fall back to user's own global timezone
     if req.send_window_timezone:
         acc.send_window_timezone = req.send_window_timezone
     else:
         # User's timezone is stored on the User model itself
         acc.send_window_timezone = current_user.timezone or "UTC"
+
     db.commit()
+    
     return {
         "status": "success",
         "send_window_start": acc.send_window_start,
@@ -1723,38 +1753,44 @@ def update_send_window(acc_id: str, req: SendWindowRequest, current_user: databa
         "send_window_timezone": acc.send_window_timezone,
         "note": "0-24 means always active (no restriction)" if acc.send_window_start == 0 and acc.send_window_end == 24 else f"Sending only between {acc.send_window_start}:00 and {acc.send_window_end}:00 {acc.send_window_timezone}"
     }
+
 # --- Custom Tracking Domain ---
 class TrackingDomainRequest(BaseModel):
     custom_tracking_domain: Optional[str] = None
+
 @app.post("/api/sending-accounts/{acc_id}/tracking-domain")
 def update_tracking_domain(acc_id: str, req: TrackingDomainRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     """Update custom tracking domain for an account."""
     acc = db.query(database.SendingAccount).filter(database.SendingAccount.id == acc_id, database.SendingAccount.user_id == str(current_user.id)).first()
     if not acc:
         raise HTTPException(status_code=404, detail="Account not found")
+    
     acc.custom_tracking_domain = req.custom_tracking_domain
     db.commit()
     return {"status": "success"}
-# NOTE: BUG-45 FIX - Duplicate unprotected AI endpoints removed.
-# The authenticated versions are defined above at /api/ai/chat, /api/ai/generate,
-# /api/ai/optimize-subject, /api/ai/generate-icebreakers, /api/ai/autopilot
+
 # --- SETTINGS ENDPOINTS ---
 class VerifyKeyRequest(BaseModel):
     provider: str
     api_key: str
+
 class GeminiKeyRequest(BaseModel):
     gemini_api_key: str
+
 class GroqKeyRequest(BaseModel):
     groq_api_key: str
+
 class OpenAIKeyRequest(BaseModel):
     openai_api_key: str
+
 class AnthropicKeyRequest(BaseModel):
     anthropic_api_key: str
+
 class DeepSeekKeyRequest(BaseModel):
     deepseek_api_key: str
+
 @app.get("/api/settings/all")
 def get_settings(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    print(f"[DEBUG_USER] get_settings called by user: {current_user.email}", flush=True)
     return {
         "has_gemini_api_key": bool(current_user.gemini_api_key),
         "has_groq_api_key": bool(current_user.groq_api_key),
@@ -1762,11 +1798,13 @@ def get_settings(current_user: database.User = Depends(auth.get_current_user), d
         "has_anthropic_api_key": bool(current_user.anthropic_api_key),
         "has_deepseek_api_key": bool(current_user.deepseek_api_key),
     }
+
 @app.post("/api/settings/verify_key")
 def verify_api_key(req: VerifyKeyRequest, current_user: database.User = Depends(auth.get_current_user)):
     key = req.api_key.strip()
     if not key:
         return {"status": "invalid"}
+    
     if key == "true":
         if req.provider == "gemini":
             key = current_user.gemini_api_key or ""
@@ -1778,8 +1816,10 @@ def verify_api_key(req: VerifyKeyRequest, current_user: database.User = Depends(
             key = current_user.anthropic_api_key or ""
         elif req.provider == "deepseek":
             key = current_user.deepseek_api_key or ""
+            
     if not key:
         return {"status": "invalid"}
+    
     import requests
     is_valid = False
     try:
@@ -1801,10 +1841,9 @@ def verify_api_key(req: VerifyKeyRequest, current_user: database.User = Depends(
             if res.status_code == 200:
                 is_valid = True
         elif req.provider == "anthropic" and key.startswith("sk-ant-"):
-            # Anthropic doesn't have a simple models endpoint in the same way, we can check basic auth by making a small invalid request and checking if it's 401
             url = "https://api.anthropic.com/v1/messages"
             headers = {"x-api-key": key, "anthropic-version": "2023-06-01"}
-            res = requests.post(url, headers=headers, json={"max_tokens": 1, "messages": [{"role": "user", "content": "hi"}]}, timeout=5)
+            res = requests.post(url, headers=headers, json={"max_tokens": 1, "messages": [{"role": "user", "content": "hi"}]} , timeout=5)
             if res.status_code != 401:
                 is_valid = True
         elif req.provider == "deepseek" and key.startswith("sk-"):
@@ -1818,83 +1857,59 @@ def verify_api_key(req: VerifyKeyRequest, current_user: database.User = Depends(
     except Exception as e:
         print(f"API Key Validation Error ({req.provider}):", e)
         is_valid = False
+    
     if is_valid:
         return {"status": "valid"}
     return {"status": "invalid"}
-    if key == "true":
-        if req.provider == "gemini":
-            key = current_user.gemini_api_key or ""
-        elif req.provider == "groq":
-            key = current_user.groq_api_key or ""
-        elif req.provider == "openai":
-            key = current_user.openai_api_key or ""
-        elif req.provider == "anthropic":
-            key = current_user.anthropic_api_key or ""
-        elif req.provider == "deepseek":
-            key = current_user.deepseek_api_key or ""
-    if not key:
-        return {"status": "invalid"}
-    is_valid = False
-    if req.provider == "gemini" and key.startswith("AIza"):
-        is_valid = True
-    elif req.provider == "groq" and key.startswith("gsk_"):
-        is_valid = True
-    elif req.provider == "openai" and key.startswith("sk-"):
-        is_valid = True
-    elif req.provider == "anthropic" and key.startswith("sk-ant-"):
-        is_valid = True
-    elif req.provider == "deepseek" and key.startswith("sk-"):
-        is_valid = True
-    elif req.provider not in ["gemini", "groq", "openai", "anthropic", "deepseek"]:
-        pass
-    else:
-        is_valid = True 
-    if is_valid:
-        return {"status": "valid"}
-    return {"status": "invalid"}
+
 @app.post("/api/settings/gemini")
 def save_gemini_key(req: GeminiKeyRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     current_user.gemini_api_key = req.gemini_api_key
     db.commit()
     os.environ["GEMINI_API_KEY"] = req.gemini_api_key
     return {"ok": True, "message": "Gemini API key saved"}
+
 @app.post("/api/settings/groq")
 def save_groq_key(req: GroqKeyRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     current_user.groq_api_key = req.groq_api_key
     db.commit()
     os.environ["GROQ_API_KEY"] = req.groq_api_key
     return {"ok": True, "message": "Groq API key saved"}
+
 @app.post("/api/settings/openai")
 def save_openai_key(req: OpenAIKeyRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     current_user.openai_api_key = req.openai_api_key
     db.commit()
     os.environ["OPENAI_API_KEY"] = req.openai_api_key
     return {"ok": True, "message": "OpenAI API key saved"}
+
 @app.post("/api/settings/anthropic")
 def save_anthropic_key(req: AnthropicKeyRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     current_user.anthropic_api_key = req.anthropic_api_key
     db.commit()
     os.environ["ANTHROPIC_API_KEY"] = req.anthropic_api_key
     return {"ok": True, "message": "Anthropic API key saved"}
+
 @app.post("/api/settings/deepseek")
 def save_deepseek_key(req: DeepSeekKeyRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     current_user.deepseek_api_key = req.deepseek_api_key
     db.commit()
     os.environ["DEEPSEEK_API_KEY"] = req.deepseek_api_key
     return {"ok": True, "message": "DeepSeek API key saved"}
+
 class TimezoneRequest(BaseModel):
     timezone: str
+
 @app.get("/api/settings/timezone")
 def get_timezone(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     return {"timezone": current_user.timezone or "Asia/Dhaka"}
+
 @app.post("/api/settings/timezone")
 def update_timezone(req: TimezoneRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    if req.timezone not in pytz.all_timezones:
-        raise HTTPException(status_code=400, detail="Invalid timezone")
     current_user.timezone = req.timezone
     db.commit()
-    return {"ok": True, "message": "Timezone updated", "timezone": current_user.timezone}
-# --- SETTINGS SMTP ENDPOINT ---
+    return {"status": "success"}
+
 class SMTPTestRequest(BaseModel):
     smtp_host: Optional[str] = None
     smtp_port: Optional[int] = None

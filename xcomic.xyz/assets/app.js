@@ -553,7 +553,7 @@ function showToast(message, type) {
 
 
 
-    toast.style.bottom = '24px';
+    toast.style.top = "20px"; style.bottom = "auto";
 
 
 
@@ -581,7 +581,7 @@ function showToast(message, type) {
 
 
 
-        setTimeout(function() { toast.style.bottom = '-200px'; }, 300);
+        setTimeout(function() { toast.style.top = "20px"; style.bottom = "auto"; }, 300);
 
 
 
@@ -13890,17 +13890,3 @@ window.deleteCampaignLead = async function(campaignId, leadId, btn) {
 
 };
 
-window.removeUnsubscribe = async function(email) {
-    if(!confirm('Are you sure you want to remove ' + email + ' from the unsubscribe list?')) return;
-    try {
-        const res = await apiCall('/unsubscribes/' + encodeURIComponent(email), 'DELETE');
-        if (res.ok) {
-            showToast('Email removed from unsubscribe list', 'success');
-            loadUnsubscribes();
-        } else {
-            showToast('Failed to remove email', 'error');
-        }
-    } catch(e) {
-        showToast('Error removing email', 'error');
-    }
-};

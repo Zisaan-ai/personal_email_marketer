@@ -24206,13 +24206,12 @@
             if (pName) pName.innerText = plan;
             if (pPrice) pPrice.innerText = '$' + price;
             
-            var paddleOpened = false;
-            if (typeof Paddle !== 'undefined' && typeof Paddle.Checkout !== 'undefined') {
-                let priceId = '';
-                if (plan === 'Starter') priceId = 'pri_01kz1fwdrmswb6c1ytevea2zd4';
-                else if (plan === 'Professional') priceId = 'pri_01kz1fxmmpdpk5v8h0b0y0k8qd';
-                else priceId = 'pri_01kz1fz3n7mq0mpv6nhabycqzk';
+            let priceId = '';
+            if (plan === 'Starter') priceId = 'pri_01kz1fwdrmswb6c1ytevea2zd4';
+            else if (plan === 'Professional') priceId = 'pri_01kz1fxmmpdpk5v8h0b0y0k8qd';
+            else priceId = 'pri_01kz1fz3n7mq0mpv6nhabycqzk';
 
+            if (typeof Paddle !== 'undefined' && typeof Paddle.Checkout !== 'undefined') {
                 try {
                     Paddle.Checkout.open({
                         items: [{ priceId: priceId, quantity: 1 }],
@@ -24220,13 +24219,14 @@
                             user_id: window.APP && window.APP.user ? window.APP.user.id : ''
                         }
                     });
-                    paddleOpened = true;
+                    return;
                 } catch(e) {
                     console.warn("Paddle Checkout open warning:", e);
                 }
             }
 
-            if (!paddleOpened && modal) {
+            // If direct Paddle.Checkout failed to pop up, open the checkout modal
+            if (modal) {
                 modal.style.display = 'flex';
                 modal.classList.add('active');
             }
@@ -24248,30 +24248,26 @@
 
         processPayment: function() {
             var pName = document.getElementById('pm-plan-name')?.innerText || 'Starter';
-            var pPrice = document.getElementById('pm-plan-price')?.innerText || '$29';
-            var token = typeof getToken === 'function' ? getToken() : localStorage.getItem('token');
+            var priceId = '';
+            if (pName === 'Starter') priceId = 'pri_01kz1fwdrmswb6c1ytevea2zd4';
+            else if (pName === 'Professional' || pName === 'Pro') priceId = 'pri_01kz1fxmmpdpk5v8h0b0y0k8qd';
+            else priceId = 'pri_01kz1fz3n7mq0mpv6nhabycqzk';
 
-            if (token) {
-                fetch('/api/support/tickets', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + token
-                    },
-                    body: JSON.stringify({
-                        subject: 'Plan Upgrade Request: ' + pName + ' (' + pPrice + ')',
-                        message: 'User requested plan upgrade to ' + pName + ' (' + pPrice + '/mo).'
-                    })
-                }).then(function() {
-                    alert('Your upgrade request for ' + pName + ' (' + pPrice + ') has been submitted! Admin will activate your account shortly.');
+            if (typeof Paddle !== 'undefined' && typeof Paddle.Checkout !== 'undefined') {
+                try {
+                    Paddle.Checkout.open({
+                        items: [{ priceId: priceId, quantity: 1 }],
+                        customData: {
+                            user_id: window.APP && window.APP.user ? window.APP.user.id : ''
+                        }
+                    });
                     LANDING.closePayment();
-                }).catch(function() {
-                    alert('Your upgrade request for ' + pName + ' (' + pPrice + ') has been submitted!');
-                    LANDING.closePayment();
-                });
+                    return;
+                } catch(e) {
+                    alert("Paddle Checkout Error: " + e.message);
+                }
             } else {
-                alert('Please log in first to purchase the ' + pName + ' plan.');
-                LANDING.closePayment();
+                alert("Paddle Payment Gateway is loading or client token needs to be configured.");
             }
         }
 

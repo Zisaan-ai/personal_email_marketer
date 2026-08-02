@@ -20209,6 +20209,40 @@
 
 
             <div id="admin-section-payment" class="admin-section" style="display: none; margin-top: 16px;">
+                <!-- ADMIN USER SUBSCRIPTION CONTROL TABLE -->
+                <div class="glass" style="padding:24px; border-radius:16px; margin-bottom:24px;">
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; padding-bottom:16px; border-bottom:1px solid var(--border);">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <div style="width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#6366f1,#a855f7);display:flex;align-items:center;justify-content:center;">
+                                <i class="fa-solid fa-users-gear" style="color:#fff; font-size:18px;"></i>
+                            </div>
+                            <div>
+                                <h2 style="font-size:18px; font-weight:700; margin:0; color:var(--text);">User Subscriptions & Access Control</h2>
+                                <p style="font-size:13px; color:var(--text-muted); margin:4px 0 0 0;">Manage and override plan access, upgrade users, or set custom plans manually.</p>
+                            </div>
+                        </div>
+                        <button onclick="if(window.loadAdminUsers) window.loadAdminUsers();" class="btn" style="padding:8px 14px; font-size:12px; border:1px solid var(--border); background:var(--bg); color:var(--text); border-radius:8px; cursor:pointer;">
+                            <i class="fa-solid fa-rotate" style="margin-right:6px;"></i>Refresh Users
+                        </button>
+                    </div>
+
+                    <div style="overflow-x:auto;">
+                        <table style="width:100%; text-align:left; border-collapse:collapse;">
+                            <thead>
+                                <tr style="border-bottom:1px solid var(--border); font-size:12px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">
+                                    <th style="padding:10px 14px;">User Email</th>
+                                    <th style="padding:10px 14px;">Current Plan</th>
+                                    <th style="padding:10px 14px;">Account Role</th>
+                                    <th style="padding:10px 14px;">Admin Plan Override</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-payment-users-body">
+                                <tr><td colspan="4" style="text-align:center; padding:24px; color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin" style="margin-right:8px;"></i>Loading user subscriptions...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <!-- PADDLE PAYMENT GATEWAY MANAGEMENT -->
                 <div class="glass" style="padding:28px; border-radius:16px; margin-bottom:24px;">
                     <div style="display:flex; align-items:center; gap:14px; margin-bottom:24px; padding-bottom:20px; border-bottom:1px solid var(--border);">
@@ -20216,8 +20250,8 @@
                             <i class="fa-solid fa-credit-card" style="color:#fff; font-size:20px;"></i>
                         </div>
                         <div>
-                            <h2 style="font-size:20px; font-weight:700; margin:0; color:var(--text);">Paddle Payment Gateway</h2>
-                            <p style="font-size:13px; color:var(--text-muted); margin:4px 0 0 0;">Manage your Paddle environment, client token, and subscription pricing.</p>
+                            <h2 style="font-size:20px; font-weight:700; margin:0; color:var(--text);">Paddle Payment Gateway Credentials</h2>
+                            <p style="font-size:13px; color:var(--text-muted); margin:4px 0 0 0;">Configure Paddle client token, environment mode, and plan price IDs for automated payments.</p>
                         </div>
                     </div>
 
@@ -20259,11 +20293,8 @@
 
                     <!-- Actions -->
                     <div style="display:flex; gap:12px;">
-                        <button id="adm-save-paddle-btn" class="btn primary" style="flex:1; padding:12px; border-radius:10px; justify-content:center; font-weight:600;">
-                            <i class="fa-solid fa-floppy-disk" style="margin-right:8px;"></i>Save Configuration
-                        </button>
-                        <button id="adm-test-paddle-btn" class="btn" style="padding:12px 20px; border-radius:10px; justify-content:center; border:1px solid var(--border); background:var(--bg); color:var(--text); cursor:pointer; font-weight:600;">
-                            <i class="fa-solid fa-vial" style="margin-right:8px; color:#10b981;"></i>Test Checkout
+                        <button id="adm-save-paddle-btn" class="btn primary" style="width:100%; padding:12px; border-radius:10px; justify-content:center; font-weight:600;">
+                            <i class="fa-solid fa-floppy-disk" style="margin-right:8px;"></i>Save Gateway Credentials
                         </button>
                     </div>
                     <div id="adm-paddle-status" style="display:none; margin-top:12px; padding:10px 14px; border-radius:8px; font-size:13px;"></div>

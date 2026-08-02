@@ -472,121 +472,45 @@ async function apiCall(endpoint, method = 'GET', body = null) {
 
 
 function showToast(message, type) {
-
-
-
     var toast = document.getElementById('toast');
-
-
-
     var msg = document.getElementById('toast-msg');
-
-
-
     if (!toast || !msg) return;
-
-
-
-    // clear any existing timeout
-
-
 
     if (window._toastTimer) clearTimeout(window._toastTimer);
 
-
-
     var icon = type === 'error' ? '&#10006;' : type === 'warning' ? '&#9888;' : '&#10003;';
-
-
-
     var bg = type === 'error' ? 'linear-gradient(135deg,#dc2626,#b91c1c)' 
-
-
-
            : type === 'warning' ? 'linear-gradient(135deg,#d97706,#b45309)'
-
-
-
            : 'linear-gradient(135deg,#059669,#047857)';
 
-
-
     toast.style.background = bg;
-
-
-
-    toast.style.boxShadow = '0 8px 32px rgba(0,0,0,0.25)';
-
-
-
+    toast.style.color = '#ffffff';
+    toast.style.boxShadow = '0 10px 30px rgba(0,0,0,0.3)';
     toast.style.borderRadius = '12px';
-
-
-
-    toast.style.padding = '14px 20px';
-
-
-
+    toast.style.padding = '14px 22px';
     toast.style.display = 'flex';
-
-
-
     toast.style.alignItems = 'center';
-
-
-
     toast.style.gap = '10px';
+    toast.style.minWidth = '280px';
+    toast.style.maxWidth = '450px';
+    toast.style.position = 'fixed';
+    toast.style.top = '24px';
+    toast.style.right = '24px';
+    toast.style.bottom = 'auto';
+    toast.style.left = 'auto';
+    toast.style.zIndex = '9999999';
 
-
-
-    toast.style.minWidth = '260px';
-
-
-
-    toast.style.maxWidth = '420px';
-
-
-
-    msg.innerHTML = '<span style="font-size:16px;">' + icon + '</span><span style="font-size:14px;font-weight:500;">' + message + '</span>';
-
-
-
-    toast.style.bottom = '24px';
-
-
+    msg.innerHTML = '<span style="font-size:16px;">' + icon + '</span><span style="font-size:14px;font-weight:600;color:#fff;">' + message + '</span>';
 
     toast.style.opacity = '1';
-
-
-
     toast.style.transform = 'translateY(0)';
-
-
-
     toast.style.transition = 'all 0.3s cubic-bezier(0.34,1.56,0.64,1)';
 
-
-
     window._toastTimer = setTimeout(function() {
-
-
-
         toast.style.opacity = '0';
-
-
-
-        toast.style.transform = 'translateY(20px)';
-
-
-
-        setTimeout(function() { toast.style.bottom = '-200px'; }, 300);
-
-
-
+        toast.style.transform = 'translateY(-20px)';
+        setTimeout(function() { toast.style.display = 'none'; }, 300);
     }, 3500);
-
-
-
 }
 
 

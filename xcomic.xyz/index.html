@@ -4922,10 +4922,11 @@
         };
 
         try {
-            if (typeof Paddle !== 'undefined') {
+            var token = window.PADDLE_CONFIG ? window.PADDLE_CONFIG.clientToken : '';
+            if (typeof Paddle !== 'undefined' && token && !token.includes('test_c2c1f7b673c15e7a705b10c5bf7')) {
                 Paddle.Environment.set(window.PADDLE_CONFIG.environment);
                 Paddle.Initialize({ 
-                    token: window.PADDLE_CONFIG.clientToken
+                    token: token
                 });
             }
         } catch(e) { console.warn("Paddle init error:", e); }
@@ -24221,10 +24222,13 @@
             if (pPrice) pPrice.innerText = '$' + price;
             
             let cfg = window.PADDLE_CONFIG || {};
+            let clientToken = cfg.clientToken || '';
             let priceIds = cfg.priceIds || {};
             let priceId = priceIds[plan] || priceIds['Starter'] || 'pri_01kz1fwdrmswb6c1ytevea2zd4';
 
-            if (typeof Paddle !== 'undefined' && typeof Paddle.Checkout !== 'undefined') {
+            var isRealToken = clientToken && !clientToken.includes('test_c2c1f7b673c15e7a705b10c5bf7') && clientToken.length > 20;
+
+            if (isRealToken && typeof Paddle !== 'undefined' && typeof Paddle.Checkout !== 'undefined') {
                 try {
                     Paddle.Checkout.open({
                         items: [{ priceId: priceId, quantity: 1 }],

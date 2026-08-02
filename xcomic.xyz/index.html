@@ -4911,10 +4911,24 @@
 
     <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
     <script>
-        Paddle.Environment.set('sandbox');
-        Paddle.Initialize({ 
-            token: 'test_c2c1f7b673c15e7a705b10c5bf7', // Replace with your client token
-        });
+        window.PADDLE_CONFIG = {
+            environment: 'sandbox', // Use 'sandbox' or 'production'
+            clientToken: 'test_c2c1f7b673c15e7a705b10c5bf7', // Replace with your Paddle Client Token
+            priceIds: {
+                Starter: 'pri_01kz1fwdrmswb6c1ytevea2zd4',
+                Professional: 'pri_01kz1fxmmpdpk5v8h0b0y0k8qd',
+                Enterprise: 'pri_01kz1fz3n7mq0mpv6nhabycqzk'
+            }
+        };
+
+        try {
+            if (typeof Paddle !== 'undefined') {
+                Paddle.Environment.set(window.PADDLE_CONFIG.environment);
+                Paddle.Initialize({ 
+                    token: window.PADDLE_CONFIG.clientToken
+                });
+            }
+        } catch(e) { console.warn("Paddle init error:", e); }
     </script>
 </head>
 
@@ -24206,10 +24220,9 @@
             if (pName) pName.innerText = plan;
             if (pPrice) pPrice.innerText = '$' + price;
             
-            let priceId = '';
-            if (plan === 'Starter') priceId = 'pri_01kz1fwdrmswb6c1ytevea2zd4';
-            else if (plan === 'Professional') priceId = 'pri_01kz1fxmmpdpk5v8h0b0y0k8qd';
-            else priceId = 'pri_01kz1fz3n7mq0mpv6nhabycqzk';
+            let cfg = window.PADDLE_CONFIG || {};
+            let priceIds = cfg.priceIds || {};
+            let priceId = priceIds[plan] || priceIds['Starter'] || 'pri_01kz1fwdrmswb6c1ytevea2zd4';
 
             if (typeof Paddle !== 'undefined' && typeof Paddle.Checkout !== 'undefined') {
                 try {
@@ -24225,7 +24238,6 @@
                 }
             }
 
-            // If direct Paddle.Checkout failed to pop up, open the checkout modal
             if (modal) {
                 modal.style.display = 'flex';
                 modal.classList.add('active');

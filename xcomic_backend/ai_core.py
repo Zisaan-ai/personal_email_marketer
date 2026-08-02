@@ -169,7 +169,7 @@ def handle_ai_error(e: Exception) -> dict:
 
 def generate_email_content(prompt: str, user=None) -> dict:
     try:
-        system_prompt = "You are an expert cold email copywriter. Write a highly converting cold email based on instructions. Output ONLY the HTML body of the email. Do not wrap in markdown tags like ```html."
+        system_prompt = "You are an expert cold email copywriter. Write a highly converting cold email based on instructions. Output ONLY the HTML body of the email. Do not wrap in markdown tags like ```html.\nCRITICAL LANGUAGE RULE: If the user instructions are in a regional language or phonetic spelling (like Banglish, Pinyin, Hinglish), you MUST generate the email content in that exact same language/style."
         full_prompt = f"Make it short, punchy, and use Spintax (e.g. {{Hi|Hello}} {{Name|Friend}}) for variation.\n\nUser instructions: {prompt}\n{extract_url_content(prompt)}"
         text = _call_ai_api(full_prompt, user, system_prompt=system_prompt).strip()
         
@@ -215,7 +215,7 @@ def analyze_reply_sentiment(text: str, user=None) -> str:
 
 def generate_autopilot_campaign(prompt: str, user=None) -> dict:
     try:
-        system_prompt = "You are an expert email marketing copywriter."
+        system_prompt = "You are an expert email marketing copywriter.\nCRITICAL LANGUAGE RULE: If the user input is in a regional language or phonetic spelling (like Banglish, Pinyin, Hinglish), you MUST generate the entire campaign content in that exact same language/style."
         full_prompt = f"Based on the following description, generate a full cold email campaign. You must return ONLY a valid JSON object with keys: 'subject_a', 'body_a', 'subject_b', 'body_b'. Use spintax for everything. Do not use markdown blocks like ```json around the output, just raw JSON.\n\nUser Input: {prompt}\n{extract_url_content(prompt)}"
         text = _call_ai_api(full_prompt, user, system_prompt=system_prompt).strip()
         
@@ -251,7 +251,7 @@ def chat_with_assistant(message: str, history: list = None, user=None) -> str:
 
 def draft_reply_to_email(client_message: str, user=None) -> str:
     try:
-        prompt = f"You are an expert sales assistant. Read the following reply from a client and draft a polite, professional response. If they are interested, try to book a meeting or offer more details. If they have a question, answer it logically. If they are not interested, politely thank them. Output ONLY the email body (no subject line). Do NOT wrap in markdown like ```html.\n\nClient's Reply:\n{client_message}"
+        prompt = f"You are an expert sales assistant. Read the following reply from a client and draft a polite, professional response. If they are interested, try to book a meeting or offer more details. If they have a question, answer it logically. If they are not interested, politely thank them. Output ONLY the email body (no subject line). Do NOT wrap in markdown like ```html.\nCRITICAL LANGUAGE RULE: You MUST write the draft in the EXACT same language and style (including phonetic spellings like Banglish or Pinyin) that the client used in their reply.\n\nClient's Reply:\n{client_message}"
         text = _call_ai_api(prompt, user).strip()
         
         if text.startswith("```html"): text = text[7:]

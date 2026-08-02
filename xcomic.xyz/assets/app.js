@@ -5034,7 +5034,7 @@ async function loadSmtpStatus() {
         if (res.ok) {
             const data = await res.json();
             if (data.has_account) {
-                statusEl.innerHTML = `✅ <strong>Saved Account:</strong> ${data.email} &nbsp;|&nbsp; Host: ${data.smtp_host}:${data.smtp_port} &nbsp;|&nbsp; Name: ${data.from_name || '-'}`;
+                statusEl.innerHTML = `✅ <strong>Saved Account:</strong> ${data.smtp_username} &nbsp;|&nbsp; Host: ${data.smtp_host}:${data.smtp_port} &nbsp;|&nbsp; Name: ${data.from_name || '-'}`;
                 statusEl.style.cssText = 'display:block; margin-top:20px; padding:14px 18px; border-radius:10px; background:#f0fdf4; color:#16a34a; border:1px solid #bbf7d0; font-size:14px;';
             } else {
                 statusEl.textContent = '⚠️ No email account saved yet. Fill the form below and click Save Changes.';
@@ -8106,7 +8106,7 @@ function setupCampaignBuilder() {
 
 
 
-    if (saveNewsletterDraftBtn) saveNewsletterDraftBtn.addEventListener('click', async () => {
+    if (saveNewsletterDraftBtn) saveNewsletterDraftBtn.onclick = async () => {
 
 
 
@@ -8352,7 +8352,7 @@ function setupCampaignBuilder() {
 
 
 
-    });
+    };
 
 
 
@@ -8368,7 +8368,7 @@ function setupCampaignBuilder() {
 
 
 
-    if (sendBtn) sendBtn.addEventListener('click', async () => {
+    if (sendBtn) sendBtn.onclick = async () => {
 
 
 
@@ -8684,7 +8684,7 @@ function setupCampaignBuilder() {
 
 
 
-    });
+    };
 
 
 
@@ -9920,7 +9920,7 @@ function setupABTest() {
 
 
 
-    sendBtn.addEventListener('click', async () => {
+    sendBtn.onclick = async () => {
 
 
 
@@ -10060,7 +10060,7 @@ function setupABTest() {
 
 
 
-    });
+    };
 
 
 

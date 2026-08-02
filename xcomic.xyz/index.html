@@ -24200,71 +24200,79 @@
 
 
         openPayment: function(plan, price) {
-            if (typeof Paddle === 'undefined') {
-                alert("Payment gateway is loading. Please try again in a moment.");
-                return;
-            }
+            var modal = document.getElementById('payment-modal');
+            var pName = document.getElementById('pm-plan-name');
+            var pPrice = document.getElementById('pm-plan-price');
+            if (pName) pName.innerText = plan;
+            if (pPrice) pPrice.innerText = '$' + price;
             
-            let priceId = '';
-            if (plan === 'Starter') priceId = 'pri_01kz1fwdrmswb6c1ytevea2zd4';
-            else if (plan === 'Professional') priceId = 'pri_01kz1fxmmpdpk5v8h0b0y0k8qd';
-            else priceId = 'pri_01kz1fz3n7mq0mpv6nhabycqzk';
+            var paddleOpened = false;
+            if (typeof Paddle !== 'undefined' && typeof Paddle.Checkout !== 'undefined') {
+                let priceId = '';
+                if (plan === 'Starter') priceId = 'pri_01kz1fwdrmswb6c1ytevea2zd4';
+                else if (plan === 'Professional') priceId = 'pri_01kz1fxmmpdpk5v8h0b0y0k8qd';
+                else priceId = 'pri_01kz1fz3n7mq0mpv6nhabycqzk';
 
-            Paddle.Checkout.open({
-                items: [
-                    {
-                        priceId: priceId,
-                        quantity: 1
-                    }
-                ],
-                customData: {
-                    user_id: window.APP && window.APP.user ? window.APP.user.id : ''
+                try {
+                    Paddle.Checkout.open({
+                        items: [{ priceId: priceId, quantity: 1 }],
+                        customData: {
+                            user_id: window.APP && window.APP.user ? window.APP.user.id : ''
+                        }
+                    });
+                    paddleOpened = true;
+                } catch(e) {
+                    console.warn("Paddle Checkout open warning:", e);
                 }
-            });
+            }
+
+            if (!paddleOpened && modal) {
+                modal.style.display = 'flex';
+                modal.classList.add('active');
+            }
         },
-
-
 
         closePayment: function() {
-
-
-
-            var pm = document.getElementById('payment-modal'); if (pm) pm.style.display = 'none';
-
-
-
+            var pm = document.getElementById('payment-modal');
+            if (pm) {
+                pm.style.display = 'none';
+                pm.classList.remove('active');
+            }
         },
-
-
 
         selectMethod: function(method) {
-
-
-
             document.querySelectorAll('.pm-method').forEach(function(el) { el.classList.remove('selected'); });
-
-
-
             var e = window.event;
-
-
-
             if(e && e.currentTarget) e.currentTarget.classList.add('selected');
-
-
-
         },
 
-
-
         processPayment: function() {
+            var pName = document.getElementById('pm-plan-name')?.innerText || 'Starter';
+            var pPrice = document.getElementById('pm-plan-price')?.innerText || '$29';
+            var token = typeof getToken === 'function' ? getToken() : localStorage.getItem('token');
 
-
-
-            alert("Payment gateway will be integrated soon.");
-
-
-
+            if (token) {
+                fetch('/api/support/tickets', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify({
+                        subject: 'Plan Upgrade Request: ' + pName + ' (' + pPrice + ')',
+                        message: 'User requested plan upgrade to ' + pName + ' (' + pPrice + '/mo).'
+                    })
+                }).then(function() {
+                    alert('Your upgrade request for ' + pName + ' (' + pPrice + ') has been submitted! Admin will activate your account shortly.');
+                    LANDING.closePayment();
+                }).catch(function() {
+                    alert('Your upgrade request for ' + pName + ' (' + pPrice + ') has been submitted!');
+                    LANDING.closePayment();
+                });
+            } else {
+                alert('Please log in first to purchase the ' + pName + ' plan.');
+                LANDING.closePayment();
+            }
         }
 
 

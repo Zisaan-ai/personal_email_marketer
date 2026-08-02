@@ -13557,20 +13557,6 @@ window.loadAdminUsers = async function() {
                 <td style="display:flex;align-items:center;">${actionsHTML}</td>
             `;
 
-            const tbodyPayment = document.getElementById('admin-payment-users-body');
-            if (tbodyPayment) {
-                if (tbodyAll && tbodyAll.children.length === 1) tbodyPayment.innerHTML = '';
-                const pTr = document.createElement('tr');
-                pTr.style.borderBottom = '1px solid var(--border)';
-                pTr.innerHTML = `
-                    <td style="padding:12px 14px; font-weight:600; color:var(--text);">${escapeHtml(u.email)}</td>
-                    <td style="padding:12px 14px;">${planBadge}</td>
-                    <td style="padding:12px 14px;">${u.is_admin ? '<span style="color:#6366f1;font-weight:700;">Admin</span>' : `<span style="color:var(--text-muted);">User</span>`}</td>
-                    <td style="padding:12px 14px;">${changePlanSelect}</td>
-                `;
-                tbodyPayment.appendChild(pTr);
-            }
-
             if (tbodyAll) tbodyAll.appendChild(tr.cloneNode(true));
             if (tbodyFree && planBadgeText === 'FREE') tbodyFree.appendChild(tr.cloneNode(true));
             if (tbodyStarter && planBadgeText === 'STARTER') tbodyStarter.appendChild(tr.cloneNode(true));

@@ -7487,11 +7487,25 @@
 
 
 
-        <div class="pm-methods">
-            <div class="pm-method selected" onclick="LANDING.selectMethod('paddle')">
-                <div class="pm-method-left">
-                    <i class="fa-solid fa-credit-card" style="font-size:24px; color:#3b82f6;"></i>
-                    <div class="pm-method-name" style="margin-left:12px;">Paddle Checkout (Credit Card / PayPal)</div>
+        <div class="pm-methods" style="display:flex; flex-direction:column; gap:12px; margin-bottom:20px;">
+            <div class="pm-method selected" id="pm-method-paddle" onclick="LANDING.selectMethod('paddle')" style="padding:14px; border:1px solid var(--border); border-radius:12px; cursor:pointer; display:flex; align-items:center; justify-content:space-between; transition:all 0.2s;">
+                <div class="pm-method-left" style="display:flex; align-items:center;">
+                    <i class="fa-solid fa-credit-card" style="font-size:22px; color:#3b82f6;"></i>
+                    <div class="pm-method-name" style="margin-left:12px; text-align:left;">
+                        <strong style="display:block; font-size:14px; color:var(--text);">Paddle Checkout (Live / Overlay)</strong>
+                        <span style="font-size:11px; color:var(--text-muted); font-weight:normal;">Official Paddle Payment Window (Credit Card & PayPal)</span>
+                    </div>
+                </div>
+                <div class="pm-method-radio"></div>
+            </div>
+
+            <div class="pm-method" id="pm-method-sandbox" onclick="LANDING.selectMethod('sandbox')" style="padding:14px; border:1px solid var(--border); border-radius:12px; cursor:pointer; display:flex; align-items:center; justify-content:space-between; transition:all 0.2s;">
+                <div class="pm-method-left" style="display:flex; align-items:center;">
+                    <i class="fa-solid fa-flask-vial" style="font-size:22px; color:#10b981;"></i>
+                    <div class="pm-method-name" style="margin-left:12px; text-align:left;">
+                        <strong style="display:block; font-size:14px; color:var(--text);">Instant Sandbox Test (Development)</strong>
+                        <span style="font-size:11px; color:var(--text-muted); font-weight:normal;">Instant purchase simulation & plan activation</span>
+                    </div>
                 </div>
                 <div class="pm-method-radio"></div>
             </div>
@@ -24323,33 +24337,66 @@
         },
 
         selectMethod: function(method) {
+            window.selectedPaymentMethod = method;
             document.querySelectorAll('.pm-method').forEach(function(el) { el.classList.remove('selected'); });
-            var e = window.event;
-            if(e && e.currentTarget) e.currentTarget.classList.add('selected');
+            var target = document.getElementById('pm-method-' + method);
+            if (target) target.classList.add('selected');
         },
 
         processPayment: function() {
             var pName = document.getElementById('pm-plan-name')?.innerText || 'Starter';
+            var method = window.selectedPaymentMethod || 'paddle';
             let cfg = window.PADDLE_CONFIG || {};
             let priceIds = cfg.priceIds || {};
             let priceId = priceIds[pName] || priceIds['Starter'] || 'pri_01kz1fwdrmswb6c1ytevea2zd4';
 
-            if (typeof Paddle !== 'undefined' && typeof Paddle.Checkout !== 'undefined') {
-                try {
-                    Paddle.Checkout.open({
-                        items: [{ priceId: priceId, quantity: 1 }],
-                        customData: {
-                            user_id: window.APP && window.APP.user ? window.APP.user.id : ''
-                        }
-                    });
-                    LANDING.closePayment();
-                    return;
-                } catch(e) {
-                    alert("Paddle Checkout Error: " + e.message);
+            if (method === 'paddle') {
+                if (typeof Paddle !== 'undefined' && typeof Paddle.Checkout !== 'undefined') {
+                    try {
+                        Paddle.Checkout.open({
+                            items: [{ priceId: priceId, quantity: 1 }],
+                            customData: {
+                                user_id: window.APP && window.APP.user ? window.APP.user.id : ''
+                            }
+                        });
+                        LANDING.closePayment();
+                        return;
+                    } catch(e) {
+                        alert("Paddle Checkout Error: " + e.message + "\n\nTip: You can use Instant Sandbox Test Mode if your domain/token is not approved in Paddle Dashboard yet.");
+                        return;
+                    }
+                } else {
+                    alert("Paddle SDK is not initialized. Please ensure your Paddle Client Token is set in Admin > Payment Gateway.");
                     return;
                 }
             } else {
-                alert("Paddle SDK is not initialized. Please ensure your Paddle Client Token is set in Admin > Payment Gateway.");
+                // Instant Sandbox Test Mode
+                var token = typeof getToken === 'function' ? getToken() : localStorage.getItem('token');
+                if (token) {
+                    fetch('/api/payment/test-checkout', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + token
+                        },
+                        body: JSON.stringify({ plan: pName.toLowerCase() })
+                    })
+                    .then(async r => {
+                        const data = await r.json().catch(() => ({}));
+                        if (r.ok) {
+                            alert("🎉 " + (data.message || ("Payment Successful! Upgraded to " + pName)));
+                            LANDING.closePayment();
+                            location.reload();
+                        } else {
+                            alert("Payment error: " + (data.detail || data.message || "Payment failed. Please try again."));
+                        }
+                    })
+                    .catch(err => {
+                        alert("Connection error: " + err.message);
+                    });
+                } else {
+                    alert("Please log in first to complete payment.");
+                }
             }
         }
 

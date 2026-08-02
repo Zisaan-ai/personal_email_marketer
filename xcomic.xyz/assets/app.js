@@ -4743,23 +4743,15 @@ window.saveSchedule = async function() {
 
 function populateTimezones() {
 
-
-
     const schTimezone = document.getElementById('sch-timezone');
-
-
 
     const vbSchTimezone = document.getElementById('vb-sch-timezone');
 
-
-
-    
+    const userTimezone = document.getElementById('user-timezone');
 
 
 
     try {
-
-
 
         let timezones = [];
 
@@ -4779,43 +4771,23 @@ function populateTimezones() {
 
 
 
-        
-
-
-
         let html = '';
-
-
 
         timezones.forEach(tz => {
 
-
-
             const selected = (tz === userTz) ? 'selected' : '';
 
-
-
             html += `<option value="${tz}" ${selected}>${tz.replace('_', ' ')}</option>`;
-
-
 
         });
 
 
 
-        
-
-
-
         if (schTimezone) schTimezone.innerHTML = html;
-
-
 
         if (vbSchTimezone) vbSchTimezone.innerHTML = html;
 
-
-
-        
+        if (userTimezone) userTimezone.innerHTML = html;
 
 
 
@@ -4823,35 +4795,23 @@ function populateTimezones() {
 
             if (schTimezone) {
 
-                new Choices(schTimezone, {
-
-                    searchEnabled: true,
-
-                    itemSelectText: '',
-
-                    shouldSort: false
-
-                });
+                new Choices(schTimezone, { searchEnabled: true, itemSelectText: '', shouldSort: false });
 
             }
 
             if (vbSchTimezone) {
 
-                new Choices(vbSchTimezone, {
+                new Choices(vbSchTimezone, { searchEnabled: true, itemSelectText: '', shouldSort: false });
 
-                    searchEnabled: true,
+            }
 
-                    itemSelectText: '',
+            if (userTimezone) {
 
-                    shouldSort: false
-
-                });
+                new Choices(userTimezone, { searchEnabled: true, itemSelectText: '', shouldSort: false });
 
             }
 
         }
-
-
 
     } catch (e) {
 
@@ -5121,6 +5081,42 @@ function setupSettings() {
 
 
 
+
+    // --- Load existing Timezone & setup save handler ---
+    (async () => {
+        const userTzEl = document.getElementById('user-timezone');
+        if (userTzEl) {
+            try {
+                const res = await apiCall('/settings/timezone', 'GET');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.timezone) {
+                        userTzEl.value = data.timezone;
+                    }
+                }
+            } catch(e) {}
+        }
+    })();
+
+    const saveTzBtn = document.getElementById('save-timezone-btn');
+    if (saveTzBtn) {
+        saveTzBtn.addEventListener('click', async () => {
+            const tzVal = document.getElementById('user-timezone')?.value || 'Asia/Dhaka';
+            const statusEl = document.getElementById('timezone-status');
+            try {
+                const res = await apiCall('/settings/timezone', 'POST', { timezone: tzVal });
+                const data = await res.json();
+                if (statusEl) {
+                    statusEl.textContent = res.ok ? 'Timezone saved successfully!' : (data.detail || 'Error saving timezone');
+                    statusEl.className = res.ok ? 'alert success' : 'alert error';
+                    statusEl.style.display = 'block';
+                }
+                if (res.ok) showToast('Timezone saved!', 'success');
+            } catch(e) {
+                showToast('Error saving timezone: ' + e.message, 'error');
+            }
+        });
+    }
 
     const saveSmtpBtn = document.getElementById('save-smtp-btn');
 

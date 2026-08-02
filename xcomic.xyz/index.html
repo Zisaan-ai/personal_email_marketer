@@ -19616,11 +19616,10 @@
 
 
             <div class="admin-tabs" style="display: flex; gap: 16px; margin-bottom: 24px; border-bottom: 1px solid var(--border);">
-
-
-
                 <button id="tab-btn-users" class="admin-tab active" onclick="SUPPORT.switchAdminTab('users')" style="padding: 12px 24px; border: none; background: transparent; color: var(--primary); font-weight: 600; cursor: pointer; border-bottom: 2px solid var(--primary);">All Users</button>
                 <button id="tab-btn-free-users" class="admin-tab" onclick="SUPPORT.switchAdminTab('free-users')" style="padding: 12px 24px; border: none; background: transparent; color: var(--text-muted); font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent;">Free Users</button>
+                <button id="tab-btn-starter-users" class="admin-tab" onclick="SUPPORT.switchAdminTab('starter-users')" style="padding: 12px 24px; border: none; background: transparent; color: var(--text-muted); font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent;">Starter Users</button>
+                <button id="tab-btn-pro-users" class="admin-tab" onclick="SUPPORT.switchAdminTab('pro-users')" style="padding: 12px 24px; border: none; background: transparent; color: var(--text-muted); font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent;">Professional Users</button>
                 <button id="tab-btn-tickets" class="admin-tab" onclick="SUPPORT.switchAdminTab('tickets')" style="padding: 12px 24px; border: none; background: transparent; color: var(--text-muted); font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent;position:relative;">Support Tickets<span id="tab-tickets-unread-badge" style="display:none;position:absolute;top:4px;right:4px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;border-radius:50%;width:16px;height:16px;align-items:center;justify-content:center;line-height:1;">0</span></button>
                 <button id="tab-btn-email" class="admin-tab" onclick="SUPPORT.switchAdminTab('email')" style="padding: 12px 24px; border: none; background: transparent; color: var(--text-muted); font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent;">Email Delivery</button>
             </div>
@@ -19628,7 +19627,7 @@
             <div id="admin-section-users" class="admin-section" style="display: block;">
                 <div class="glass" style="padding:0;overflow:hidden;">
                     <table>
-                        <thead><tr><th>ID</th><th>User Email</th><th>Plan</th><th>Role</th><th style="width:180px;">Actions</th></tr></thead>
+                        <thead><tr><th>ID</th><th>User Email</th><th>Plan</th><th>Role</th><th style="width:260px;">Actions</th></tr></thead>
                         <tbody id="admin-users-body"></tbody>
                     </table>
                 </div>
@@ -19637,46 +19636,28 @@
             <div id="admin-section-free-users" class="admin-section" style="display: none;">
                 <div class="glass" style="padding:0;overflow:hidden;">
                     <table>
-                        <thead><tr><th>ID</th><th>User Email</th><th>Plan</th><th>Role</th><th style="width:180px;">Actions</th></tr></thead>
+                        <thead><tr><th>ID</th><th>User Email</th><th>Plan</th><th>Role</th><th style="width:260px;">Actions</th></tr></thead>
                         <tbody id="admin-free-users-body"></tbody>
                     </table>
                 </div>
             </div>
 
-
-
-
-
-
-
-            <div id="admin-section-users" class="admin-section" style="display: block;">
-
-
-
+            <div id="admin-section-starter-users" class="admin-section" style="display: none;">
                 <div class="glass" style="padding:0;overflow:hidden;">
-
-
-
                     <table>
-
-
-
-                        <thead><tr><th>ID</th><th>User Email</th><th>Role</th><th style="width:100px;">Actions</th></tr></thead>
-
-
-
-                        <tbody id="admin-users-body"></tbody>
-
-
-
+                        <thead><tr><th>ID</th><th>User Email</th><th>Plan</th><th>Role</th><th style="width:260px;">Actions</th></tr></thead>
+                        <tbody id="admin-starter-users-body"></tbody>
                     </table>
-
-
-
                 </div>
+            </div>
 
-
-
+            <div id="admin-section-pro-users" class="admin-section" style="display: none;">
+                <div class="glass" style="padding:0;overflow:hidden;">
+                    <table>
+                        <thead><tr><th>ID</th><th>User Email</th><th>Plan</th><th>Role</th><th style="width:260px;">Actions</th></tr></thead>
+                        <tbody id="admin-pro-users-body"></tbody>
+                    </table>
+                </div>
             </div>
 
 

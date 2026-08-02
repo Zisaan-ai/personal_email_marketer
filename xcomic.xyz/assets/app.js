@@ -5123,72 +5123,7 @@ function setupSettings() {
         });
     }
 
-    // --- Admin-Only Check for Paddle Settings Card ---
-    const paddleCard = document.getElementById('paddle-settings-card');
-    const currentUser = (window.APP && window.APP.user) ? window.APP.user : null;
-    const isAdminUser = currentUser && (currentUser.is_admin || (currentUser.email && currentUser.email.toLowerCase() === 'zmonemrahman@gmail.com'));
-    
-    if (paddleCard) {
-        paddleCard.style.display = isAdminUser ? 'block' : 'none';
-    }
 
-    // --- Load existing Paddle Settings ---
-    const paddleEnv = document.getElementById('paddle-env-mode');
-    const paddleToken = document.getElementById('paddle-client-token');
-    const paddleStarter = document.getElementById('paddle-price-starter');
-    const paddlePro = document.getElementById('paddle-price-pro');
-    const paddleEnterprise = document.getElementById('paddle-price-enterprise');
-
-    if (paddleToken) {
-        let cfg = window.PADDLE_CONFIG || {};
-        if (paddleEnv) paddleEnv.value = cfg.environment || 'sandbox';
-        paddleToken.value = cfg.clientToken || '';
-        if (paddleStarter) paddleStarter.value = cfg.priceIds?.Starter || '';
-        if (paddlePro) paddlePro.value = cfg.priceIds?.Professional || '';
-        if (paddleEnterprise) paddleEnterprise.value = cfg.priceIds?.Enterprise || '';
-    }
-
-    const savePaddleBtn = document.getElementById('save-paddle-settings-btn');
-    if (savePaddleBtn) {
-        savePaddleBtn.addEventListener('click', () => {
-            const env = document.getElementById('paddle-env-mode')?.value || 'sandbox';
-            const token = document.getElementById('paddle-client-token')?.value || '';
-            const starter = document.getElementById('paddle-price-starter')?.value || '';
-            const pro = document.getElementById('paddle-price-pro')?.value || '';
-            const enterprise = document.getElementById('paddle-price-enterprise')?.value || '';
-
-            window.PADDLE_CONFIG = {
-                environment: env,
-                clientToken: token,
-                priceIds: { Starter: starter, Professional: pro, Enterprise: enterprise }
-            };
-
-            try {
-                localStorage.setItem('PADDLE_CONFIG', JSON.stringify(window.PADDLE_CONFIG));
-                if (typeof Paddle !== 'undefined' && token) {
-                    Paddle.Environment.set(env);
-                    Paddle.Initialize({ token: token });
-                }
-            } catch(e) {}
-
-            const statusEl = document.getElementById('paddle-settings-status');
-            if (statusEl) {
-                statusEl.textContent = 'Paddle Settings saved successfully!';
-                statusEl.className = 'alert success';
-                statusEl.style.display = 'block';
-            }
-            showToast('Paddle configuration updated!', 'success');
-        });
-    }
-
-    const testPaddleBtn = document.getElementById('test-paddle-sandbox-btn');
-    if (testPaddleBtn) {
-        testPaddleBtn.addEventListener('click', () => {
-            if (typeof LANDING !== 'undefined' && LANDING.openPayment) {
-                LANDING.openPayment('Starter', 29);
-            }
-        });
-    }
 
     const saveSmtpBtn = document.getElementById('save-smtp-btn');
 
@@ -13553,6 +13488,9 @@ window.SUPPORT.switchAdminTab = function(tabId) {
     if (tabId === 'users' || tabId === 'free-users') {
         if (window.loadAdminUsers) window.loadAdminUsers();
     }
+    if (tabId === 'payment') {
+        if (window.loadPaddleAdminSettings) window.loadPaddleAdminSettings();
+    }
 };
 
 window.loadAdminUsers = async function() {
@@ -13630,3 +13568,66 @@ window.loadAdminUsers = async function() {
         console.error(e);
     }
 };
+
+// --- Paddle Admin Payment Gateway Handlers ---
+window.loadPaddleAdminSettings = function() {
+    var cfg = window.PADDLE_CONFIG || {};
+    var envEl = document.getElementById('adm-paddle-env');
+    var tokenEl = document.getElementById('adm-paddle-token');
+    var starterEl = document.getElementById('adm-price-starter');
+    var proEl = document.getElementById('adm-price-pro');
+    var enterpriseEl = document.getElementById('adm-price-enterprise');
+    if (envEl) envEl.value = cfg.environment || 'sandbox';
+    if (tokenEl) tokenEl.value = cfg.clientToken || '';
+    if (starterEl) starterEl.value = (cfg.priceIds && cfg.priceIds.Starter) || '';
+    if (proEl) proEl.value = (cfg.priceIds && cfg.priceIds.Professional) || '';
+    if (enterpriseEl) enterpriseEl.value = (cfg.priceIds && cfg.priceIds.Enterprise) || '';
+};
+
+(function() {
+    var saveBtn = document.getElementById('adm-save-paddle-btn');
+    if (saveBtn) {
+        saveBtn.addEventListener('click', function() {
+            var env = document.getElementById('adm-paddle-env').value || 'sandbox';
+            var token = document.getElementById('adm-paddle-token').value || '';
+            var starter = document.getElementById('adm-price-starter').value || '';
+            var pro = document.getElementById('adm-price-pro').value || '';
+            var enterprise = document.getElementById('adm-price-enterprise').value || '';
+
+            window.PADDLE_CONFIG = {
+                environment: env,
+                clientToken: token,
+                priceIds: { Starter: starter, Professional: pro, Enterprise: enterprise }
+            };
+
+            try {
+                localStorage.setItem('PADDLE_CONFIG', JSON.stringify(window.PADDLE_CONFIG));
+                // Re-initialize Paddle if token is valid
+                if (typeof Paddle !== 'undefined' && token && token.length > 10) {
+                    Paddle.Environment.set(env);
+                    Paddle.Initialize({ token: token });
+                }
+            } catch(e) { console.warn('Paddle save error:', e); }
+
+            var statusEl = document.getElementById('adm-paddle-status');
+            if (statusEl) {
+                statusEl.textContent = '✅ Paddle configuration saved successfully!';
+                statusEl.style.display = 'block';
+                statusEl.style.background = '#dcfce7';
+                statusEl.style.color = '#16a34a';
+                statusEl.style.border = '1px solid #bbf7d0';
+                setTimeout(function() { statusEl.style.display = 'none'; }, 4000);
+            }
+            if (typeof showToast === 'function') showToast('Paddle configuration saved!', 'success');
+        });
+    }
+
+    var testBtn = document.getElementById('adm-test-paddle-btn');
+    if (testBtn) {
+        testBtn.addEventListener('click', function() {
+            if (typeof LANDING !== 'undefined' && LANDING.openPayment) {
+                LANDING.openPayment('Starter', 29);
+            }
+        });
+    }
+})();

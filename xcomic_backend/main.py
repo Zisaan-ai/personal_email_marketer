@@ -384,7 +384,21 @@ def register(user: UserCreate, db: Session = Depends(database.get_db)):
     email_lower = user.email.strip().lower()
     db_user = db.query(database.User).filter(database.User.email.ilike(email_lower)).first()
     if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
+        if db_user.is_email_verified:
+            raise HTTPException(status_code=400, detail="Email already registered")
+        else:
+            # Resend verification code for unverified users
+            verification_code = ''.join(random.choices(string.digits, k=6))
+            try:
+                email_sent = email_service.send_verification_email(db_user.email, verification_code)
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=f"SMTP Error: {str(e)}")
+            if not email_sent:
+                raise HTTPException(status_code=500, detail="Failed to send verification email.")
+            db_user.hashed_password = auth.get_password_hash(user.password)
+            db_user.verification_code = verification_code
+            db.commit()
+            return {"status": "needs_verification", "message": "Verification code resent to email."}
     user_count = db.query(database.User).count()
     is_admin = (user_count == 0) or (email_lower == "zmonemrahman@gmail.com")
     is_approved = True

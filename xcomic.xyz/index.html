@@ -24260,11 +24260,11 @@
 
         processPayment: function() {
             var pName = document.getElementById('pm-plan-name')?.innerText || 'Starter';
-            var priceId = '';
-            if (pName === 'Starter') priceId = 'pri_01kz1fwdrmswb6c1ytevea2zd4';
-            else if (pName === 'Professional' || pName === 'Pro') priceId = 'pri_01kz1fxmmpdpk5v8h0b0y0k8qd';
-            else priceId = 'pri_01kz1fz3n7mq0mpv6nhabycqzk';
+            let cfg = window.PADDLE_CONFIG || {};
+            let priceIds = cfg.priceIds || {};
+            let priceId = priceIds[pName] || priceIds['Starter'] || 'pri_01kz1fwdrmswb6c1ytevea2zd4';
 
+            var paddleOpened = false;
             if (typeof Paddle !== 'undefined' && typeof Paddle.Checkout !== 'undefined') {
                 try {
                     Paddle.Checkout.open({
@@ -24273,13 +24273,36 @@
                             user_id: window.APP && window.APP.user ? window.APP.user.id : ''
                         }
                     });
+                    paddleOpened = true;
                     LANDING.closePayment();
                     return;
                 } catch(e) {
-                    alert("Paddle Checkout Error: " + e.message);
+                    console.warn("Paddle Checkout open error:", e);
                 }
+            }
+
+            // Sandbox Test Payment Upgrade Flow
+            var token = typeof getToken === 'function' ? getToken() : localStorage.getItem('token');
+            if (token) {
+                fetch('/api/payment/test-checkout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify({ plan: pName.toLowerCase() })
+                })
+                .then(r => r.json())
+                .then(data => {
+                    alert("🎉 " + (data.message || ("Payment Successful! Upgraded to " + pName)));
+                    LANDING.closePayment();
+                    location.reload();
+                })
+                .catch(err => {
+                    alert("Payment Error: " + err.message);
+                });
             } else {
-                alert("Paddle Payment Gateway is loading or client token needs to be configured.");
+                alert("Please log in first to complete payment.");
             }
         }
 

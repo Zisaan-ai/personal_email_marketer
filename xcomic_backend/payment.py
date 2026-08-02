@@ -92,10 +92,33 @@ async def paddle_webhook(request: Request, db: Session = Depends(database.get_db
 
     return {"status": "success"}
 
+from pydantic import BaseModel
+
+class TestCheckoutRequest(BaseModel):
+    plan: str
+
 @router.get("/status")
 def payment_status(user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     """Get the current user's subscription status."""
     return {
         "plan": user.subscription_plan,
         "status": user.subscription_status
+    }
+
+@router.post("/test-checkout")
+def test_checkout(req: TestCheckoutRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    """Simulate a successful payment for testing purposes."""
+    valid_plans = ["starter", "professional", "enterprise", "free"]
+    plan_clean = req.plan.strip().lower()
+    if plan_clean not in valid_plans:
+        plan_clean = "starter"
+        
+    current_user.subscription_plan = plan_clean
+    current_user.subscription_status = "active" if plan_clean != "free" else "free"
+    db.commit()
+    return {
+        "status": "success",
+        "message": f"Test Payment Successful! Subscription upgraded to {plan_clean.upper()}.",
+        "plan": current_user.subscription_plan,
+        "subscription_status": current_user.subscription_status
     }

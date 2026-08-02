@@ -480,7 +480,7 @@ def get_all_users(current_user: database.User = Depends(auth.get_current_user), 
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admin privileges required")
     users = db.query(database.User).all()
-    return [{"id": str(u.id), "email": u.email, "is_admin": u.is_admin, "is_approved": u.is_approved} for u in users]
+    return [{"id": str(u.id), "email": u.email, "is_admin": u.is_admin, "is_approved": u.is_approved, "is_email_verified": u.is_email_verified} for u in users]
 @app.post("/api/admin/users/{user_id}/approve")
 def approve_user(user_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     if not current_user.is_admin:

@@ -12736,15 +12736,14 @@ window.loadAdminUsers = async function() {
 
 
 
-            var statusHtml = u.is_approved
-
-
-
-                ? '<span style="color:#059669;font-weight:600;">&#10003; Approved</span>'
-
-
-
-                : '<button onclick="window.approveUser(\'' + u.id + '\')" style="background:#059669;color:#fff;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;">&#10003; Approve</button>';
+            var statusHtml = '';
+            if (u.is_email_verified === false) {
+                statusHtml = '<span style="color:#d97706;font-weight:600;font-size:13px;">&#9888; Inactive (Unverified)</span>';
+            } else if (u.is_approved) {
+                statusHtml = '<span style="color:#059669;font-weight:600;font-size:13px;">&#10003; Approved</span>';
+            } else {
+                statusHtml = '<button onclick="window.approveUser(\'' + u.id + '\')" style="background:#059669;color:#fff;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;">&#10003; Approve</button>';
+            };
 
 
 

@@ -5440,7 +5440,7 @@ body.from_email = document.getElementById('smtp-from-email') ? document.getEleme
                 b.style.color = '#ef4444';
             }
         });
-        alert('Server is failing to load API keys! Error: ' + e.message + '\nPlease check cPanel Error Logs!');
+        if (e.message !== 'Unauthorized' && getToken()) { alert('Server is failing to load API keys! Error: ' + e.message + '\nPlease check cPanel Error Logs!'); }
     });
 
 
@@ -10603,7 +10603,7 @@ async function sendAiReply(btn) {
 
 
 
-async function loadAdminUsers() {
+async function old_loadAdminUsers1() {
     try {
         const res = await fetch(`${API_URL}/admin/users`, { headers: { 'Authorization': `Bearer ${getToken()}` } });
         if (!res.ok) return;
@@ -12225,7 +12225,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
 
-window.loadAdminUsers = async function() {
+window.old_loadAdminUsers2 = async function() {
 
 
 
@@ -13486,5 +13486,77 @@ window.SUPPORT.switchAdminTab = function(tabId) {
 
     if (tabId === 'users' || tabId === 'free-users') {
         if (window.loadAdminUsers) window.loadAdminUsers();
+    }
+};
+
+window.loadAdminUsers = async function() {
+    try {
+        const res = await fetch(`${API_URL}/admin/users`, { headers: { 'Authorization': `Bearer ${getToken()}` } });
+        if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            showToast('Failed to load users: ' + (errData.detail || res.status), 'error');
+            return;
+        }
+        const users = await res.json();
+        
+        const tbodyAll = document.getElementById('admin-users-body');
+        const tbodyFree = document.getElementById('admin-free-users-body');
+        const tbodyStarter = document.getElementById('admin-starter-users-body');
+        const tbodyPro = document.getElementById('admin-pro-users-body');
+        
+        if (tbodyAll) tbodyAll.innerHTML = '';
+        if (tbodyFree) tbodyFree.innerHTML = '';
+        if (tbodyStarter) tbodyStarter.innerHTML = '';
+        if (tbodyPro) tbodyPro.innerHTML = '';
+
+        users.forEach(u => {
+            const tr = document.createElement('tr');
+            
+            const statusBadge = u.is_approved
+                ? `<span style="background:#dcfce7;color:#059669;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">✓ Approved</span>`
+                : `<span style="background:#fef9c3;color:#ca8a04;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">⏳ Pending</span>`;
+                
+            const planBadgeText = u.subscription_plan ? u.subscription_plan.toUpperCase() : 'FREE';
+            const planColor = planBadgeText === 'FREE' ? '#64748b' : '#3b82f6';
+            const planBg = planBadgeText === 'FREE' ? '#f1f5f9' : '#dbeafe';
+            const planBadge = `<span style="background:${planBg};color:${planColor};padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">${planBadgeText}</span>`;
+
+            let actionsHTML = '';
+            
+            let approveBtn = u.is_approved 
+                ? `<button class="btn" disabled style="padding:5px 14px;font-size:12px;opacity:0.5;background:#e2e8f0;color:#64748b;"><i class='fa-solid fa-check' style='margin-right:4px;'></i>Approved</button>`
+                : `<button class="btn primary" onclick="approveUser('${u.id}')" style="padding:5px 14px;font-size:12px;background:#059669;color:white;"><i class='fa-solid fa-check' style='margin-right:4px;'></i>Approve</button>`;
+                
+            let deleteBtn = u.is_admin 
+                ? `<button class="btn" disabled style="padding:5px 10px;font-size:12px;background:#e2e8f0;color:#64748b;margin-left:8px;" title="Cannot delete admin"><i class='fa-solid fa-trash'></i> Delete</button>`
+                : `<button class="btn danger" onclick="deleteUser('${u.id}')" style="padding:5px 10px;font-size:12px;background:#ef4444;color:white;margin-left:8px;"><i class='fa-solid fa-trash'></i> Delete</button>`;
+
+            let changePlanSelect = `
+                <select onchange="changeUserPlan('${u.id}', this.value)" style="margin-left:8px; padding:4px; font-size:12px; border-radius:4px; border:1px solid #cbd5e1; outline:none;">
+                    <option value="" disabled selected>Change Plan</option>
+                    <option value="free">Free</option>
+                    <option value="starter">Starter</option>
+                    <option value="professional">Professional</option>
+                </select>
+            `;
+            
+            actionsHTML = approveBtn + deleteBtn + changePlanSelect;
+
+            tr.innerHTML = `
+                <td>${u.id}</td>
+                <td>${escapeHtml(u.email)}</td>
+                <td>${planBadge}</td>
+                <td>${u.is_admin ? '<span style="color:#6366f1;font-weight:600;">Admin</span>' : `User ${statusBadge}`}</td>
+                <td style="display:flex;align-items:center;">${actionsHTML}</td>
+            `;
+
+            if (tbodyAll) tbodyAll.appendChild(tr.cloneNode(true));
+            if (tbodyFree && planBadgeText === 'FREE') tbodyFree.appendChild(tr.cloneNode(true));
+            if (tbodyStarter && planBadgeText === 'STARTER') tbodyStarter.appendChild(tr.cloneNode(true));
+            if (tbodyPro && planBadgeText === 'PROFESSIONAL') tbodyPro.appendChild(tr.cloneNode(true));
+        });
+    } catch(e) {
+        showToast('Error: ' + e.message, 'error');
+        console.error(e);
     }
 };

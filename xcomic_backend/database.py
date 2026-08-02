@@ -367,6 +367,8 @@ def run_migrations():
         
         # New: timezone for User
         _safe_add_column("users", "timezone", "VARCHAR", "Asia/Dhaka")
+        _safe_add_column("users", "is_approved", "BOOLEAN", False)
+        _safe_add_column("users", "is_email_verified", "BOOLEAN", False)
         _safe_add_column("users", "subscription_plan", "VARCHAR", "free")
         _safe_add_column("users", "subscription_status", "VARCHAR", "active")
         _safe_add_column("users", "paddle_customer_id", "VARCHAR", None)

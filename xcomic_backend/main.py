@@ -463,7 +463,7 @@ def verify_email(payload: VerifyEmail, db: Session = Depends(database.get_db)):
     user.is_email_verified = True
     user.verification_code = None
     db.commit()  # BUG-30 FIX: was missing for non-admin users
-    if user.email == "zmonemrahman@gmail.com":
+    if user.email.lower() == "zmonemrahman@gmail.com":
         user.is_admin = True
         user.is_approved = True
         db.commit()
@@ -478,7 +478,7 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
     user = db.query(database.User).filter(database.User.email.ilike(email_lower)).first()
     if not user or not auth.verify_password(form_data.password.strip(), user.hashed_password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password", headers={"WWW-Authenticate": "Bearer"})
-    if user.email == "zmonemrahman@gmail.com":
+    if user.email.lower() == "zmonemrahman@gmail.com":
         user.is_admin = True
         user.is_approved = True
         user.is_email_verified = True
@@ -519,7 +519,7 @@ def delete_user(user_id: str, current_user: database.User = Depends(auth.get_cur
     if not target_user:
         raise HTTPException(status_code=404, detail="User not found")
     # Protect the owner account â€” can NEVER be deleted
-    if target_user.email == "zmonemrahman@gmail.com":
+    if target_user.email.lower() == "zmonemrahman@gmail.com":
         raise HTTPException(status_code=403, detail="Owner account cannot be deleted")
     # Delete Media
     db.query(database.Media).filter(database.Media.user_id == user_id).delete()

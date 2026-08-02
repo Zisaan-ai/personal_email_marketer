@@ -729,7 +729,7 @@ def send_campaign(campaign: CampaignCreate, background_tasks: BackgroundTasks, c
     else:
         from datetime import datetime, timedelta
         import pytz
-        recent_cutoff = datetime.utcnow() - timedelta(seconds=10)
+        recent_cutoff = datetime.utcnow() - timedelta(minutes=10)
         duplicate = db.query(database.Campaign).filter(
             database.Campaign.user_id == str(current_user.id),
             database.Campaign.subject == campaign.subject,

@@ -9916,11 +9916,19 @@ function setupSequenceBuilder() {
 
 
 
-            if (res.ok) showToast('Draft saved successfully!', 'success');
+            if (res.ok) {
 
+                const data = await res.json();
 
+                if (data && data.campaign_id) {
 
-            else { const d = await res.json(); showToast(d.detail || 'Failed to save draft', 'error'); }
+                    window.currentCampaignId = data.campaign_id;
+
+                }
+
+                showToast('Draft saved successfully!', 'success');
+
+            } else { const d = await res.json(); showToast(d.detail || 'Failed to save draft', 'error'); }
 
 
 
@@ -10089,6 +10097,18 @@ function setupABTest() {
 
 
         const res = await apiCall('/campaigns/send', 'POST', payload);
+
+        if (res.ok) {
+
+            const data = await res.json();
+
+            if (data && data.campaign_id) {
+
+                window.currentCampaignId = data.campaign_id;
+
+            }
+
+        }
 
 
 

@@ -608,13 +608,21 @@ function showToast(message, type) {
 
 
 window.APP_INIT = function() {
-
-
+    try {
+        apiCall('/payment/status').then(async r => {
+            if (r.ok) {
+                const d = await r.json();
+                if (d.plan) {
+                    localStorage.setItem('user_plan', d.plan);
+                    if (typeof window.updateFeatureLocks === 'function') {
+                        window.updateFeatureLocks(d.plan);
+                    }
+                }
+            }
+        }).catch(() => {});
+    } catch(e) {}
 
     var _fns = [
-
-
-
         function() { fetchDashboard(); },
 
 

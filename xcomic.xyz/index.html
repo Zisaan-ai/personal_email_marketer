@@ -25398,17 +25398,58 @@
     <script>
         window.showUpgradeModal = function(reason) {
             if (reason === 'accounts') {
-                document.getElementById('upgrade-modal-title').innerText = "Account Limit Reached";
-                document.getElementById('upgrade-modal-desc').innerText = "The free plan allows a maximum of 2 sending accounts. Upgrade your plan to add more accounts.";
+                document.getElementById('upgrade-modal-title').innerText = "🔒 Account Limit Reached";
+                document.getElementById('upgrade-modal-desc').innerText = "You have reached the maximum sending accounts limit for your current plan. Upgrade to add more accounts!";
             } else if (reason === 'emails') {
-                document.getElementById('upgrade-modal-title').innerText = "Email Limit Reached";
-                document.getElementById('upgrade-modal-desc').innerText = "You have sent your free limit of 10 emails. Upgrade your plan to continue sending campaigns.";
+                document.getElementById('upgrade-modal-title').innerText = "🔒 Email Limit Reached";
+                document.getElementById('upgrade-modal-desc').innerText = "You have reached your plan limit for email sending. Upgrade your plan to continue sending campaigns!";
+            } else if (reason === 'replies' || reason === 'ai') {
+                document.getElementById('upgrade-modal-title').innerText = "🔒 AI Replies Feature Locked";
+                document.getElementById('upgrade-modal-desc').innerText = "AI Automated Inbox Replies & Sentiment Analysis are locked on Free & Starter plans. Upgrade to Professional or Enterprise to unlock!";
+            } else if (reason === 'templates') {
+                document.getElementById('upgrade-modal-title').innerText = "🔒 Premium Templates Locked";
+                document.getElementById('upgrade-modal-desc').innerText = "Advanced AI Newsletter Templates are locked on your current plan. Upgrade now to unlock all premium templates!";
             } else {
-                document.getElementById('upgrade-modal-title').innerText = "Upgrade Your Plan";
-                document.getElementById('upgrade-modal-desc').innerText = "Upgrade now to unlock more features and higher sending limits.";
+                document.getElementById('upgrade-modal-title').innerText = "🔒 Feature Locked";
+                document.getElementById('upgrade-modal-desc').innerText = "This feature is locked on your current plan. Upgrade now to unlock full access and higher limits!";
             }
             document.getElementById('upgrade-modal').style.display = 'flex';
         };
+
+        window.updateFeatureLocks = function(planOverride) {
+            var plan = (planOverride || localStorage.getItem('user_plan') || 'free').toLowerCase();
+
+            // Lock AI Replies for Free and Starter users
+            var repliesNav = document.querySelector('[data-target="replies-view"]');
+            if (repliesNav) {
+                var badge = repliesNav.querySelector('.plan-lock-badge');
+                if (!badge) {
+                    badge = document.createElement('span');
+                    badge.className = 'plan-lock-badge';
+                    badge.style.cssText = 'margin-left:auto; font-size:10px; font-weight:700; background:#fef08a; color:#ca8a04; padding:2px 6px; border-radius:10px; display:inline-flex; align-items:center; gap:3px;';
+                    repliesNav.appendChild(badge);
+                }
+                if (plan === 'free' || plan === 'starter') {
+                    badge.innerHTML = '<i class="fa-solid fa-lock"></i> PRO';
+                    badge.style.display = 'inline-flex';
+                    repliesNav.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        window.showUpgradeModal('replies');
+                        return false;
+                    };
+                } else {
+                    badge.style.display = 'none';
+                    repliesNav.onclick = function() { window.navTo('replies-view'); };
+                }
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof window.updateFeatureLocks === 'function') {
+                window.updateFeatureLocks();
+            }
+        });
     </script>
 </body>
 

@@ -13501,11 +13501,13 @@ window.loadAdminUsers = async function() {
         const tbodyFree = document.getElementById('admin-free-users-body');
         const tbodyStarter = document.getElementById('admin-starter-users-body');
         const tbodyPro = document.getElementById('admin-pro-users-body');
+        const tbodyEnterprise = document.getElementById('admin-enterprise-users-body');
         
         if (tbodyAll) tbodyAll.innerHTML = '';
         if (tbodyFree) tbodyFree.innerHTML = '';
         if (tbodyStarter) tbodyStarter.innerHTML = '';
         if (tbodyPro) tbodyPro.innerHTML = '';
+        if (tbodyEnterprise) tbodyEnterprise.innerHTML = '';
 
         users.forEach(u => {
             const tr = document.createElement('tr');
@@ -13515,8 +13517,8 @@ window.loadAdminUsers = async function() {
                 : `<span style="background:#fef9c3;color:#ca8a04;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">⏳ Pending</span>`;
                 
             const planBadgeText = u.subscription_plan ? u.subscription_plan.toUpperCase() : 'FREE';
-            const planColor = planBadgeText === 'FREE' ? '#64748b' : '#3b82f6';
-            const planBg = planBadgeText === 'FREE' ? '#f1f5f9' : '#dbeafe';
+            const planColor = planBadgeText === 'FREE' ? '#64748b' : (planBadgeText === 'ENTERPRISE' ? '#8b5cf6' : '#3b82f6');
+            const planBg = planBadgeText === 'FREE' ? '#f1f5f9' : (planBadgeText === 'ENTERPRISE' ? '#f3e8ff' : '#dbeafe');
             const planBadge = `<span style="background:${planBg};color:${planColor};padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">${planBadgeText}</span>`;
 
             let actionsHTML = '';
@@ -13535,6 +13537,7 @@ window.loadAdminUsers = async function() {
                     <option value="free">Free</option>
                     <option value="starter">Starter</option>
                     <option value="professional">Professional</option>
+                    <option value="enterprise">Enterprise</option>
                 </select>
             `;
             
@@ -13552,6 +13555,7 @@ window.loadAdminUsers = async function() {
             if (tbodyFree && planBadgeText === 'FREE') tbodyFree.appendChild(tr.cloneNode(true));
             if (tbodyStarter && planBadgeText === 'STARTER') tbodyStarter.appendChild(tr.cloneNode(true));
             if (tbodyPro && planBadgeText === 'PROFESSIONAL') tbodyPro.appendChild(tr.cloneNode(true));
+            if (tbodyEnterprise && planBadgeText === 'ENTERPRISE') tbodyEnterprise.appendChild(tr.cloneNode(true));
         });
     } catch(e) {
         showToast('Error: ' + e.message, 'error');

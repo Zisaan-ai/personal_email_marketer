@@ -16,7 +16,7 @@ window.SUPPORT.switchAdminTab = function(tabId) {
     const activeSection = document.getElementById('admin-section-' + tabId);
     if (activeSection) activeSection.style.display = 'block';
 
-    if (tabId === 'users' || tabId === 'free-users' || tabId === 'starter-users' || tabId === 'pro-users') {
+    if (tabId === 'users' || tabId === 'free-users' || tabId === 'starter-users' || tabId === 'pro-users' || tabId === 'enterprise-users') {
         if (typeof loadAdminUsers === 'function') {
             loadAdminUsers();
         } else if (window.loadAdminUsers) {

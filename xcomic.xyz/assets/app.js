@@ -4483,11 +4483,8 @@ window.saveSchedule = async function() {
 
 
 
-    const startVal = document.getElementById('sch-start-time')?.value || '00:00';
-
-
-
-    const endVal = document.getElementById('sch-end-time')?.value || '00:00';
+    const startVal = document.getElementById('sch-start-time')?.value || '12:00';
+    const endVal = document.getElementById('sch-end-time')?.value || '12:00';
 
 
 

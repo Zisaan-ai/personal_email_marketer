@@ -9391,7 +9391,7 @@ function setupSequenceBuilder() {
 
 
 
-    if (sendSeqBtn) sendSeqBtn.addEventListener('click', async () => {
+    if (sendSeqBtn) sendSeqBtn.onclick = async () => {
 
 
 
@@ -9657,7 +9657,7 @@ function setupSequenceBuilder() {
 
 
 
-    });
+    };
 
 
 
@@ -9669,7 +9669,7 @@ function setupSequenceBuilder() {
 
 
 
-    if (saveDraftBtn) saveDraftBtn.addEventListener('click', async () => {
+    if (saveDraftBtn) saveDraftBtn.onclick = async () => {
 
 
 
@@ -9885,7 +9885,7 @@ function setupSequenceBuilder() {
 
 
 
-    });
+    };
 
 
 

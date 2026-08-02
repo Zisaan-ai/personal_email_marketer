@@ -3507,6 +3507,23 @@
 
     #payment-modal.active { display: flex; animation: fadeIn 0.3s; }
 
+    /* GLOBAL UNIVERSAL MODAL OVERLAY FIX */
+    .modal-overlay, [id$="-modal"] {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        z-index: 999999 !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    .modal-overlay[style*="display: none"], [id$="-modal"][style*="display: none"] {
+        display: none !important;
+    }
+
 
 
     .pm-content {

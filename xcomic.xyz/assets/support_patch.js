@@ -23,4 +23,18 @@ window.SUPPORT.switchAdminTab = function(tabId) {
             window.loadAdminUsers();
         }
     }
+    if (tabId === 'payment') {
+        if (typeof loadPaddleAdminSettings === 'function') {
+            loadPaddleAdminSettings();
+        } else if (window.loadPaddleAdminSettings) {
+            window.loadPaddleAdminSettings();
+        }
+    }
+    if (tabId === 'email') {
+        if (typeof loadSmtpStatus === 'function') {
+            loadSmtpStatus();
+        } else if (window.loadSmtpStatus) {
+            window.loadSmtpStatus();
+        }
+    }
 };

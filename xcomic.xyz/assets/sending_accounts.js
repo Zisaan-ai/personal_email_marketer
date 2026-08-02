@@ -132,7 +132,7 @@ const ACCOUNTS = {
                     ${statsLine}
                 </td>
                 <td style="padding:16px 24px;">
-                    <div style="font-size:14px;">${acc.email}</div>
+                    <div style="font-size:14px;">${acc.email || '-'}</div>
                     ${domainBadges}
                 </td>
                 <td style="padding:16px 24px;">
@@ -152,7 +152,7 @@ const ACCOUNTS = {
                         </label>
                     </div>
                 </td>
-                <td style="padding:16px 24px;">${acc.sent_today}</td>
+                <td style="padding:16px 24px;">${acc.sent_today || 0}</td>
                 <td style="padding:16px 24px;">${healthBar}</td>
                 <td style="padding:16px 24px;">
                     ${statusBadge}

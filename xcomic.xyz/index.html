@@ -8482,7 +8482,7 @@
 
 
 
-            <a class="nav-item" id="logout-btn" style="cursor:pointer; color:#ef4444; margin-top: 12px;">
+            <a class="nav-item" id="logout-btn" style="cursor:pointer; color:#ef4444; margin-top: 12px;" onclick="localStorage.clear(); location.reload();">
 
 
 
@@ -24118,6 +24118,21 @@
 
 
             }
+
+            // Server-side admin verification on page load
+            if (_token) {
+                fetch('/api/admin/users', { headers: { 'Authorization': 'Bearer ' + _token } })
+                .then(function(r) {
+                    if (r.ok) {
+                        localStorage.setItem('is_admin', 'true');
+                        var n = document.getElementById('nav-admin'); if (n) n.style.display = 'flex';
+                        var edc = document.getElementById('admin-email-delivery-card'); if (edc) edc.style.display = 'block';
+                    } else {
+                        localStorage.setItem('is_admin', 'false');
+                    }
+                }).catch(function(){});
+            }
+
 
 
 

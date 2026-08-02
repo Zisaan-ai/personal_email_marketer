@@ -429,10 +429,8 @@ async function apiCall(endpoint, method = 'GET', body = null) {
 
 
 
-            // User was in the app, but token expired -> reload to kick them out
-
-
-
+            // User was in the app, but token expired -> clear and show login
+            try { localStorage.removeItem('token'); localStorage.removeItem('is_admin'); localStorage.removeItem('user'); } catch(e2) {}
             location.reload();
 
 

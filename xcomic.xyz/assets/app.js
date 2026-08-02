@@ -384,15 +384,21 @@ async function apiCall(endpoint, method = 'GET', body = null) {
         const token = getToken();
         const headers = { 'Authorization': `Bearer ${token}` };
         if (body) headers['Content-Type'] = 'application/json';
-        const res = await fetch(API_BASE + endpoint, {
+        if (method === 'GET') { endpoint += (endpoint.includes('?') ? '&' : '?') + 't=' + new Date().getTime(); }
+        const res = await fetch(API_URL + endpoint, {
             method,
             headers,
-            body: body ? JSON.stringify(body) : null
+            body: body ? JSON.stringify(body) : null,
+            cache: 'no-store'
         });
         if ((endpoint === '/campaigns/send' || endpoint.endsWith('/save-schedule')) && method === 'POST') {
             window._isSavingCampaign = false;
         }
-        if (res.status === 401) { logout(); throw new Error('Unauthorized'); }
+        if (res.status === 401) {
+            try { localStorage.removeItem('token'); localStorage.removeItem('is_admin'); localStorage.removeItem('user'); localStorage.removeItem('xcomic_token'); } catch(e) {}
+            var authPage = document.getElementById('auth-page');
+            if (authPage && authPage.classList.contains('hidden')) { location.reload(); } else { throw new Error('Unauthorized'); }
+        }
         return res;
     } catch (err) {
         if ((endpoint === '/campaigns/send' || endpoint.endsWith('/save-schedule')) && method === 'POST') {
@@ -13886,5 +13892,6 @@ window.deleteCampaignLead = async function(campaignId, leadId, btn) {
     }
 
 };
+
 
 

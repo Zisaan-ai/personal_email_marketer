@@ -4593,8 +4593,6 @@ window.saveSchedule = async function() {
 
                 }
 
-            }
-
                 showToast('Schedule saved! Draft created.', 'success');
 
             } else {

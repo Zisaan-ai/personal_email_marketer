@@ -265,6 +265,9 @@ class ResetPasswordRequest(BaseModel):
     email: str
     code: str
     new_password: str
+
+class DeleteUnsubscribeRequest(BaseModel):
+    email: str
 class CampaignLeadBase(BaseModel):
     name: Optional[str] = ""
     email: str
@@ -2068,6 +2071,15 @@ def delete_unsubscribe(email: str, current_user: database.User = Depends(auth.ge
 @app.delete('/api/unsubscribes/{email}')
 def remove_unsubscribe(email: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     unsub = db.query(database.UnsubscribeList).filter(database.UnsubscribeList.email == email).first()
+    if not unsub:
+        raise HTTPException(status_code=404, detail="Email not found in unsubscribe list")
+    db.delete(unsub)
+    db.commit()
+    return {"status": "ok", "message": "Removed from unsubscribe list"}
+
+@app.post('/api/unsubscribes/remove')
+def remove_unsubscribe_post(req: DeleteUnsubscribeRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    unsub = db.query(database.UnsubscribeList).filter(database.UnsubscribeList.email == req.email).first()
     if not unsub:
         raise HTTPException(status_code=404, detail="Email not found in unsubscribe list")
     db.delete(unsub)

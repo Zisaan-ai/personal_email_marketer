@@ -10632,7 +10632,7 @@ async function removeUnsubscribe(email, btn) {
     btn.disabled = true;
 
     try {
-        const res = await apiCall(`/unsubscribes/${encodeURIComponent(email)}`, 'DELETE');
+        const res = await apiCall(`/unsubscribes/remove`, 'POST', { email: email });
         if (res.ok) {
             showToast("Removed from unsubscribe list", "success");
             loadUnsubscribes();

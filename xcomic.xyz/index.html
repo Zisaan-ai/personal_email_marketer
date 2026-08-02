@@ -4933,10 +4933,10 @@
                 window.PADDLE_CONFIG = defaults;
             }
 
-            // Initialize Paddle.js if we have a real token
+            // Initialize Paddle.js
             try {
                 var token = window.PADDLE_CONFIG.clientToken || '';
-                if (typeof Paddle !== 'undefined' && token && token.length > 10) {
+                if (typeof Paddle !== 'undefined' && token) {
                     Paddle.Environment.set(window.PADDLE_CONFIG.environment);
                     Paddle.Initialize({ token: token });
                 }
@@ -24290,13 +24290,11 @@
             if (pPrice) pPrice.innerText = '$' + price;
             
             let cfg = window.PADDLE_CONFIG || {};
-            let clientToken = cfg.clientToken || '';
             let priceIds = cfg.priceIds || {};
             let priceId = priceIds[plan] || priceIds['Starter'] || 'pri_01kz1fwdrmswb6c1ytevea2zd4';
 
-            var isRealToken = clientToken && !clientToken.includes('test_c2c1f7b673c15e7a705b10c5bf7') && clientToken.length > 20;
-
-            if (isRealToken && typeof Paddle !== 'undefined' && typeof Paddle.Checkout !== 'undefined') {
+            // Try opening official Paddle Checkout overlay
+            if (typeof Paddle !== 'undefined' && typeof Paddle.Checkout !== 'undefined') {
                 try {
                     Paddle.Checkout.open({
                         items: [{ priceId: priceId, quantity: 1 }],
@@ -24306,7 +24304,7 @@
                     });
                     return;
                 } catch(e) {
-                    console.warn("Paddle Checkout open warning:", e);
+                    console.warn("Paddle Checkout open error:", e);
                 }
             }
 
@@ -24333,13 +24331,10 @@
         processPayment: function() {
             var pName = document.getElementById('pm-plan-name')?.innerText || 'Starter';
             let cfg = window.PADDLE_CONFIG || {};
-            let clientToken = cfg.clientToken || '';
             let priceIds = cfg.priceIds || {};
             let priceId = priceIds[pName] || priceIds['Starter'] || 'pri_01kz1fwdrmswb6c1ytevea2zd4';
 
-            var isRealToken = clientToken && !clientToken.includes('test_c2c1f7b673c15e7a705b10c5bf7') && clientToken.length > 20;
-
-            if (isRealToken && typeof Paddle !== 'undefined' && typeof Paddle.Checkout !== 'undefined') {
+            if (typeof Paddle !== 'undefined' && typeof Paddle.Checkout !== 'undefined') {
                 try {
                     Paddle.Checkout.open({
                         items: [{ priceId: priceId, quantity: 1 }],
@@ -24350,37 +24345,11 @@
                     LANDING.closePayment();
                     return;
                 } catch(e) {
-                    alert("Something went wrong with Paddle payment: " + e.message);
+                    alert("Paddle Checkout Error: " + e.message);
                     return;
                 }
-            }
-
-            // Sandbox Test Payment Upgrade Flow
-            var token = typeof getToken === 'function' ? getToken() : localStorage.getItem('token');
-            if (token) {
-                fetch('/api/payment/test-checkout', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + token
-                    },
-                    body: JSON.stringify({ plan: pName.toLowerCase() })
-                })
-                .then(async r => {
-                    const data = await r.json().catch(() => ({}));
-                    if (r.ok) {
-                        alert("🎉 " + (data.message || ("Payment Successful! Upgraded to " + pName)));
-                        LANDING.closePayment();
-                        location.reload();
-                    } else {
-                        alert("Something went wrong: " + (data.detail || data.message || "Payment failed. Please try again."));
-                    }
-                })
-                .catch(err => {
-                    alert("Something went wrong: Connection error (" + err.message + ")");
-                });
             } else {
-                alert("Something went wrong: Please log in first to complete payment.");
+                alert("Paddle SDK is not initialized. Please ensure your Paddle Client Token is set in Admin > Payment Gateway.");
             }
         }
 

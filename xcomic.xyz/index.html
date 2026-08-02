@@ -6827,7 +6827,7 @@
 
 
 
-                    <li><i class="fa-solid fa-check"></i> 24/7 Phone Support</li>
+                    <li><i class="fa-solid fa-check"></i> VIP Priority Email Support</li>
 
 
 
@@ -25406,6 +25406,9 @@
             } else if (reason === 'replies' || reason === 'ai') {
                 document.getElementById('upgrade-modal-title').innerText = "🔒 AI Replies Feature Locked";
                 document.getElementById('upgrade-modal-desc').innerText = "AI Automated Inbox Replies & Sentiment Analysis are locked on Free & Starter plans. Upgrade to Professional or Enterprise to unlock!";
+            } else if (reason === 'support') {
+                document.getElementById('upgrade-modal-title').innerText = "🔒 Support Feature Locked";
+                document.getElementById('upgrade-modal-desc').innerText = "Customer Support ticketing is available on Starter, Professional & Enterprise plans. Upgrade to unlock support access!";
             } else if (reason === 'templates') {
                 document.getElementById('upgrade-modal-title').innerText = "🔒 Premium Templates Locked";
                 document.getElementById('upgrade-modal-desc').innerText = "Advanced AI Newsletter Templates are locked on your current plan. Upgrade now to unlock all premium templates!";
@@ -25441,6 +25444,31 @@
                 } else {
                     badge.style.display = 'none';
                     repliesNav.onclick = function() { window.navTo('replies-view'); };
+                }
+            }
+
+            // Lock Support for Free users
+            var supportNav = document.querySelector('[data-target="support-view"]');
+            if (supportNav) {
+                var suppBadge = supportNav.querySelector('.supp-lock-badge');
+                if (!suppBadge) {
+                    suppBadge = document.createElement('span');
+                    suppBadge.className = 'supp-lock-badge';
+                    suppBadge.style.cssText = 'margin-left:auto; font-size:10px; font-weight:700; background:#fef08a; color:#ca8a04; padding:2px 6px; border-radius:10px; display:inline-flex; align-items:center; gap:3px;';
+                    supportNav.appendChild(suppBadge);
+                }
+                if (plan === 'free') {
+                    suppBadge.innerHTML = '<i class="fa-solid fa-lock"></i> STARTER';
+                    suppBadge.style.display = 'inline-flex';
+                    supportNav.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        window.showUpgradeModal('support');
+                        return false;
+                    };
+                } else {
+                    suppBadge.style.display = 'none';
+                    supportNav.onclick = function() { window.navTo('support-view'); };
                 }
             }
         };

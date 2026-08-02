@@ -372,40 +372,95 @@ function getToken() {
 
 
 
-window._isSavingCampaign = false;
 async function apiCall(endpoint, method = 'GET', body = null) {
-    if ((endpoint === '/campaigns/send' || endpoint.endsWith('/save-schedule')) && method === 'POST') {
-        if (window._isSavingCampaign) {
-            return new Response(JSON.stringify({ detail: 'Please wait, saving...' }), { status: 429, headers: { 'Content-Type': 'application/json' } });
-        }
-        window._isSavingCampaign = true;
+
+
+
+    const token = getToken();
+
+
+
+    const headers = { 'Authorization': `Bearer ${token}` };
+
+
+
+    if (body) headers['Content-Type'] = 'application/json';
+
+
+
+    if (method === 'GET') {
+
+        endpoint += (endpoint.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
+
     }
-    try {
-        const token = getToken();
-        const headers = { 'Authorization': `Bearer ${token}` };
-        if (body) headers['Content-Type'] = 'application/json';
-        if (method === 'GET') { endpoint += (endpoint.includes('?') ? '&' : '?') + 't=' + new Date().getTime(); }
-        const res = await fetch(API_URL + endpoint, {
-            method,
-            headers,
-            body: body ? JSON.stringify(body) : null,
-            cache: 'no-store'
-        });
-        if ((endpoint === '/campaigns/send' || endpoint.endsWith('/save-schedule')) && method === 'POST') {
-            window._isSavingCampaign = false;
+
+    const res = await fetch(`${API_URL}${endpoint}`, {
+
+        method,
+
+        headers,
+
+        body: body ? JSON.stringify(body) : null,
+
+        cache: 'no-store'
+
+    });
+
+
+
+    const ct = res.headers.get('content-type');
+    if (res.status === 401) {
+
+
+
+        try { localStorage.removeItem('token'); localStorage.removeItem('is_admin'); } catch(e) {}
+
+
+
+        
+
+
+
+        var authPage = document.getElementById('auth-page');
+
+
+
+        if (authPage && authPage.classList.contains('hidden')) {
+
+
+
+            // User was in the app, but token expired -> reload to kick them out
+
+
+
+            location.reload();
+
+
+
+        } else {
+
+
+
+            // Already on auth page, don't reload! Just throw error.
+
+
+
+            throw new Error('Unauthorized');
+
+
+
         }
-        if (res.status === 401) {
-            try { localStorage.removeItem('token'); localStorage.removeItem('is_admin'); localStorage.removeItem('user'); localStorage.removeItem('xcomic_token'); } catch(e) {}
-            var authPage = document.getElementById('auth-page');
-            if (authPage && authPage.classList.contains('hidden')) { location.reload(); } else { throw new Error('Unauthorized'); }
-        }
-        return res;
-    } catch (err) {
-        if ((endpoint === '/campaigns/send' || endpoint.endsWith('/save-schedule')) && method === 'POST') {
-            window._isSavingCampaign = false;
-        }
-        throw err;
+
+
+
     }
+
+
+
+    return res;
+
+
+
 }
 
 
@@ -494,31 +549,41 @@ function showToast(message, type) {
 
 
 
-    toast.style.position = 'fixed';
-    toast.style.zIndex = '999999';
-    toast.style.right = '20px';
-    toast.style.top = "20px";
-    toast.style.bottom = "auto";
-
-
-
     msg.innerHTML = '<span style="font-size:16px;">' + icon + '</span><span style="font-size:14px;font-weight:500;">' + message + '</span>';
+
+
+
+    toast.style.bottom = '24px';
 
 
 
     toast.style.opacity = '1';
 
+
+
     toast.style.transform = 'translateY(0)';
+
+
 
     toast.style.transition = 'all 0.3s cubic-bezier(0.34,1.56,0.64,1)';
 
+
+
     window._toastTimer = setTimeout(function() {
+
+
 
         toast.style.opacity = '0';
 
-        toast.style.transform = 'translateY(-20px)';
 
-        setTimeout(function() { toast.style.display = "none"; }, 300);
+
+        toast.style.transform = 'translateY(20px)';
+
+
+
+        setTimeout(function() { toast.style.bottom = '-200px'; }, 300);
+
+
 
     }, 3500);
 
@@ -739,13 +804,6 @@ window.navTo = function(targetId) {
         if (targetId === 'unsubscribes-view') loadUnsubscribes();
 
         if (targetId === 'replies-view') loadReplies();
-if (targetId === 'support-view') { 
-            SUPPORT.loadSupportTickets(); 
-            SUPPORT.checkUnreadTickets();
-            // Clear user badge when support is opened
-            let userBadge = document.getElementById('user-support-badge');
-            if (userBadge) userBadge.style.display = 'none';
-        }
 
         if (targetId === 'settings') loadSmtpStatus();
 
@@ -1105,7 +1163,7 @@ window.populateVbAnalytics = function(id) {
 
     if (tbody) {
 
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--text-muted);">Loading leads...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:24px;color:var(--text-muted);">Loading leads...</td></tr>';
 
         apiCall('/campaigns/' + id + '/leads')
 
@@ -1117,7 +1175,7 @@ window.populateVbAnalytics = function(id) {
 
                 if (!leads || leads.length === 0) {
 
-                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--text-muted);">No leads found for this campaign.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:24px;color:var(--text-muted);">No leads found for this campaign.</td></tr>';
 
                     return;
 
@@ -1137,8 +1195,6 @@ window.populateVbAnalytics = function(id) {
 
                         <td><span style="font-size:12px; font-weight:600; color:${statusColor}; text-transform:capitalize;">${l.status || 'pending'}</span></td>
 
-                        <td><button onclick="deleteCampaignLead('${id}','${l.id}', this)" style="padding:4px 10px;font-size:12px;background:#fef2f2;border:1px solid #fca5a5;border-radius:6px;color:#dc2626;cursor:pointer;" title="Delete Lead"><i class="fa-solid fa-trash"></i></button></td>
-
                     `;
 
                     tbody.appendChild(tr);
@@ -1151,7 +1207,7 @@ window.populateVbAnalytics = function(id) {
 
                 console.error('Error fetching leads:', err);
 
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--text-muted);">Error loading leads.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:24px;color:var(--text-muted);">Error loading leads.</td></tr>';
 
             });
 
@@ -1521,7 +1577,7 @@ function setupLogout() {
 
 
 
-        try { localStorage.removeItem('token'); localStorage.removeItem('is_admin'); localStorage.removeItem('user'); localStorage.removeItem('xcomic_token'); } catch(e) {}
+        try { localStorage.removeItem('token'); localStorage.removeItem('is_admin'); } catch(e) {}
 
 
 
@@ -1670,15 +1726,30 @@ async function fetchDashboard() {
 
 
         const cRes = await apiCall('/campaigns');
-        const bulkRes = await apiCall('/bulk-campaigns');
+
+
+
         if (cRes && cRes.ok) {
+
+
+
             campaigns = await cRes.json();
-            window.lastFetchedCampaigns = campaigns;
+
+
+
+            if (!Array.isArray(campaigns)) campaigns = [];
+
+
+
+        } else {
+
+
+
+            console.warn('Campaigns API returned status:', cRes ? cRes.status : 'no response');
+
+
+
         }
-        if (bulkRes && bulkRes.ok) {
-            window.lastFetchedBulkCampaigns = await bulkRes.json();
-        }
-        if (!Array.isArray(campaigns)) campaigns = [];
 
 
 
@@ -4480,8 +4551,6 @@ window.saveSchedule = async function() {
 
                 is_draft: true,
 
-                campaign_id: window.currentCampaignId || null,
-
                 sending_days: payload.sending_days,
 
                 start_hour: payload.start_hour,
@@ -4512,7 +4581,7 @@ window.saveSchedule = async function() {
 
                 if (!window.lastFetchedCampaigns) window.lastFetchedCampaigns = [];
 
-                const itemData = {
+                window.lastFetchedCampaigns.push({
 
                     id: draftData.campaign_id, subject: draftPayload.subject, body: draftPayload.body,
 
@@ -4524,19 +4593,7 @@ window.saveSchedule = async function() {
 
                     delay_min: payload.delay_min, delay_max: payload.delay_max
 
-                };
-
-                const existingIdx = window.lastFetchedCampaigns.findIndex(x => x.id === draftData.campaign_id);
-
-                if (existingIdx >= 0) {
-
-                    window.lastFetchedCampaigns[existingIdx] = itemData;
-
-                } else {
-
-                    window.lastFetchedCampaigns.push(itemData);
-
-                }
+                });
 
                 showToast('Schedule saved! Draft created.', 'success');
 
@@ -4758,40 +4815,42 @@ function populateTimezones() {
 
         if (vbSchTimezone) vbSchTimezone.innerHTML = html;
 
-        const userTzSelect = document.getElementById('user-timezone');
-        if (userTzSelect) userTzSelect.innerHTML = html;
+
+
+        
+
+
 
         if (typeof Choices !== 'undefined') {
 
             if (schTimezone) {
+
                 new Choices(schTimezone, {
+
                     searchEnabled: true,
+
                     itemSelectText: '',
-                    shouldSort: false,
-                    position: 'auto'
+
+                    shouldSort: false
+
                 });
+
             }
 
             if (vbSchTimezone) {
+
                 new Choices(vbSchTimezone, {
+
                     searchEnabled: true,
+
                     itemSelectText: '',
-                    shouldSort: false,
-                    position: 'auto'
+
+                    shouldSort: false
+
                 });
+
             }
 
-            if (userTzSelect) {
-                try {
-                    if (userTzSelect.choicesInstance) userTzSelect.choicesInstance.destroy();
-                    userTzSelect.choicesInstance = new Choices(userTzSelect, {
-                        searchEnabled: true,
-                        itemSelectText: '',
-                        shouldSort: false,
-                        position: 'top'
-                    });
-                } catch(e) {}
-            }
         }
 
 
@@ -5006,28 +5065,15 @@ window.loadedAIKeys = {};
 
 async function loadSmtpStatus() {
     const statusEl = document.getElementById('smtp-status');
+    if (!statusEl) return;
     try {
         const res = await apiCall('/settings/smtp', 'GET');
         if (res.ok) {
             const data = await res.json();
             if (data.has_account) {
-                const accountEmail = data.smtp_username || data.from_email || '-';
-                if (statusEl) {
-                    statusEl.innerHTML = `✅ <strong>Saved Account:</strong> ${accountEmail} &nbsp;|&nbsp; Host: ${data.smtp_host}:${data.smtp_port} &nbsp;|&nbsp; Name: ${data.from_name || '-'}`;
-                    statusEl.style.cssText = 'display:block; margin-top:20px; padding:14px 18px; border-radius:10px; background:#f0fdf4; color:#16a34a; border:1px solid #bbf7d0; font-size:14px;';
-                }
-                // Auto-fill form inputs if empty or on load
-                const hostEl = document.getElementById('smtp-host');
-                if (hostEl && data.smtp_host) hostEl.value = data.smtp_host;
-                const portEl = document.getElementById('smtp-port');
-                if (portEl && data.smtp_port) portEl.value = data.smtp_port;
-                const userEl = document.getElementById('smtp-user');
-                if (userEl && data.smtp_username) userEl.value = data.smtp_username;
-                const nameEl = document.getElementById('smtp-from-name');
-                if (nameEl && data.from_name) nameEl.value = data.from_name;
-                const emailEl = document.getElementById('smtp-from-email');
-                if (emailEl && data.from_email) emailEl.value = data.from_email;
-            } else if (statusEl) {
+                statusEl.innerHTML = `✅ <strong>Saved Account:</strong> ${data.email} &nbsp;|&nbsp; Host: ${data.smtp_host}:${data.smtp_port} &nbsp;|&nbsp; Name: ${data.from_name || '-'}`;
+                statusEl.style.cssText = 'display:block; margin-top:20px; padding:14px 18px; border-radius:10px; background:#f0fdf4; color:#16a34a; border:1px solid #bbf7d0; font-size:14px;';
+            } else {
                 statusEl.textContent = '⚠️ No email account saved yet. Fill the form below and click Save Changes.';
                 statusEl.style.cssText = 'display:block; margin-top:20px; padding:14px 18px; border-radius:10px; background:#fffbeb; color:#b45309; border:1px solid #fcd34d; font-size:14px;';
             }
@@ -5037,61 +5083,26 @@ async function loadSmtpStatus() {
 
 function setupSettings() {
 
-    // --- Load existing Timezone ---
-    (async () => {
-        const tzEl = document.getElementById('user-timezone');
-        if (tzEl) {
-            try {
-                const res = await apiCall('/settings/timezone', 'GET');
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.timezone) {
-                        tzEl.value = data.timezone;
-                        if (tzEl.choicesInstance) {
-                            tzEl.choicesInstance.setChoiceByValue(data.timezone);
-                        }
-                    }
-                }
-            } catch(e) {}
-        }
-    })();
-    
-    // --- Handle Save Timezone ---
-    const saveTzBtn = document.getElementById('save-timezone-btn');
-    if (saveTzBtn) {
-        saveTzBtn.addEventListener('click', async () => {
-            const tz = document.getElementById('user-timezone').value;
-            const statusEl = document.getElementById('timezone-status');
-            if (statusEl) {
-                statusEl.textContent = 'Saving...';
-                statusEl.className = 'alert info';
-                statusEl.style.display = 'block';
-            }
-            try {
-                const res = await apiCall('/settings/timezone', 'POST', { timezone: tz });
-                if (res.ok) {
-                    if (statusEl) {
-                        statusEl.textContent = 'Timezone saved successfully!';
-                        statusEl.className = 'alert success';
-                    }
-                    if (window.currentUser) window.currentUser.timezone = tz;
-                } else {
-                    if (statusEl) {
-                        statusEl.textContent = 'Failed to save timezone.';
-                        statusEl.className = 'alert error';
-                    }
-                }
-            } catch (e) {
-                if (statusEl) {
-                    statusEl.textContent = 'Error saving timezone.';
-                    statusEl.className = 'alert error';
-                }
-            }
-        });
-    }
-
     // --- Load existing SMTP account status on page open ---
-    loadSmtpStatus();
+    (async () => {
+        const statusEl = document.getElementById('smtp-status');
+        if (!statusEl) return;
+        try {
+            const res = await apiCall('/settings/smtp', 'GET');
+            if (res.ok) {
+                const data = await res.json();
+                if (data.has_account) {
+                    statusEl.innerHTML = `✅ <strong>Saved Account:</strong> ${data.email} &nbsp;|&nbsp; Host: ${data.smtp_host}:${data.smtp_port} &nbsp;|&nbsp; Name: ${data.from_name || '-'}`;
+                    statusEl.className = 'alert success';
+                    statusEl.style.display = 'block';
+                } else {
+                    statusEl.textContent = '⚠️ No email account saved yet. Fill the form below and click Save Changes.';
+                    statusEl.className = 'alert warning';
+                    statusEl.style.display = 'block';
+                }
+            }
+        } catch(e) {}
+    })();
 
     const providerSelect = document.getElementById('smtp-provider');
 
@@ -5125,8 +5136,7 @@ function setupSettings() {
 
 
 
-            const providerEl = document.getElementById('smtp-provider');
-            const provider = providerEl ? providerEl.value : 'smtp';
+            const provider = document.getElementById('smtp-provider').value;
 
 
 
@@ -5142,13 +5152,11 @@ function setupSettings() {
 
                 body.smtp_pass = document.getElementById('smtp-pass').value;
 
-                body.smtp_port = parseInt(document.getElementById('smtp-port').value) || 587;
+                body.smtp_port = parseInt(document.getElementById('smtp-port').value);
 
-                body.from_name = (document.getElementById('smtp-from-name') || {}).value || '';
-
-                body.from_email = (document.getElementById('smtp-from-email') || {}).value || '';
-
-            }
+                body.from_name = document.getElementById('smtp-from-name').value;
+body.from_email = document.getElementById('smtp-from-email') ? document.getElementById('smtp-from-email').value : '';
+}
 
 
 
@@ -5172,7 +5180,7 @@ function setupSettings() {
 
 
 
-                    statusEl.textContent = res.ok ? 'Settings saved successfully!' : (data.detail || 'Error saving settings.');
+                    statusEl.textContent = res.ok ? 'Settings saved!' : (data.detail || 'Error');
 
 
 
@@ -5184,13 +5192,6 @@ function setupSettings() {
 
 
 
-                }
-
-                if (res.ok) {
-                    showToast('SMTP settings saved successfully!', 'success');
-                    loadSmtpStatus();
-                } else {
-                    showToast(data.detail || 'Failed to save SMTP settings', 'error');
                 }
 
 
@@ -5213,27 +5214,27 @@ function setupSettings() {
 
     const testBtn = document.getElementById('test-smtp-btn');
 
+
+
     if (testBtn) {
+
+
 
         testBtn.addEventListener('click', async () => {
 
-            testBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="margin-right:6px;"></i>Testing...';
+
+
+            testBtn.textContent = 'Testing...';
+
+
 
             testBtn.disabled = true;
 
-            // FIX: Send current form values so user can test before saving
-            const smtpHost = (document.getElementById('smtp-host') || {}).value || '';
-            const smtpPort = parseInt((document.getElementById('smtp-port') || {}).value) || 587;
-            const smtpUser = (document.getElementById('smtp-user') || {}).value || '';
-            const smtpPass = (document.getElementById('smtp-pass') || {}).value || '';
 
-            const body = smtpHost && smtpUser && smtpPass
-                ? { smtp_host: smtpHost, smtp_port: smtpPort, smtp_user: smtpUser, smtp_pass: smtpPass }
-                : null; // null = use saved .env credentials
 
             try {
 
-                const res = await apiCall('/settings/test-smtp', 'POST', body);
+                const res = await apiCall('/settings/test-smtp', 'POST');
                 const data = await res.json();
 
                 if (res.ok) {
@@ -5245,10 +5246,20 @@ function setupSettings() {
 
             } catch(e) { showToast('Error testing connection: ' + (e.message || e), 'error'); }
 
-            testBtn.innerHTML = '<i class="fa-solid fa-plug" style="margin-right:6px;"></i>Test Connection';
+
+
+            testBtn.textContent = 'Test Connection';
+
+
 
             testBtn.disabled = false;
+
+
+
         });
+
+
+
     }
 
 
@@ -5302,54 +5313,19 @@ function setupSettings() {
 
 
                 if (geminiKey) {
-                    try { 
-                        const r = await apiCall('/settings/gemini', 'POST', { gemini_api_key: geminiKey }); 
-                        if (!r.ok) { const d = await r.json().catch(()=>({})); throw new Error(d.detail || d.message || 'Server error ' + r.status); }
-                        window.loadedAIKeys['gemini'] = geminiKey; 
-                        document.getElementById('gemini-api-key').value = ''; 
-                        window.updateInputState('gemini-api-key', true); 
-                        alert('Gemini key saved!'); 
-                    } catch(e) { alert('Failed to save Gemini key: ' + e.message); }
+                    try { const r = await apiCall('/settings/gemini', 'POST', { gemini_api_key: geminiKey }); window.loadedAIKeys['gemini'] = geminiKey; document.getElementById('gemini-api-key').value = ''; window.updateInputState('gemini-api-key', true); alert('Gemini key saved!'); } catch(e) { alert('Failed to save Gemini key: ' + e.message); }
                 }
                 if (groqKey) {
-                    try { 
-                        const r = await apiCall('/settings/groq', 'POST', { groq_api_key: groqKey }); 
-                        if (!r.ok) { const d = await r.json().catch(()=>({})); throw new Error(d.detail || d.message || 'Server error ' + r.status); }
-                        window.loadedAIKeys['groq'] = groqKey; 
-                        document.getElementById('groq-api-key').value = ''; 
-                        window.updateInputState('groq-api-key', true); 
-                        alert('Groq key saved!'); 
-                    } catch(e) { alert('Failed to save Groq key: ' + e.message); }
+                    try { const r = await apiCall('/settings/groq', 'POST', { groq_api_key: groqKey }); window.loadedAIKeys['groq'] = groqKey; document.getElementById('groq-api-key').value = ''; window.updateInputState('groq-api-key', true); alert('Groq key saved!'); } catch(e) { alert('Failed to save Groq key: ' + e.message); }
                 }
                 if (openaiKey) {
-                    try { 
-                        const r = await apiCall('/settings/openai', 'POST', { openai_api_key: openaiKey }); 
-                        if (!r.ok) { const d = await r.json().catch(()=>({})); throw new Error(d.detail || d.message || 'Server error ' + r.status); }
-                        window.loadedAIKeys['openai'] = openaiKey; 
-                        document.getElementById('openai-api-key').value = ''; 
-                        window.updateInputState('openai-api-key', true); 
-                        alert('OpenAI key saved!'); 
-                    } catch(e) { alert('Failed to save OpenAI key: ' + e.message); }
+                    try { const r = await apiCall('/settings/openai', 'POST', { openai_api_key: openaiKey }); window.loadedAIKeys['openai'] = openaiKey; document.getElementById('openai-api-key').value = ''; window.updateInputState('openai-api-key', true); alert('OpenAI key saved!'); } catch(e) { alert('Failed to save OpenAI key: ' + e.message); }
                 }
                 if (anthropicKey) {
-                    try { 
-                        const r = await apiCall('/settings/anthropic', 'POST', { anthropic_api_key: anthropicKey }); 
-                        if (!r.ok) { const d = await r.json().catch(()=>({})); throw new Error(d.detail || d.message || 'Server error ' + r.status); }
-                        window.loadedAIKeys['anthropic'] = anthropicKey; 
-                        document.getElementById('anthropic-api-key').value = ''; 
-                        window.updateInputState('anthropic-api-key', true); 
-                        alert('Anthropic key saved!'); 
-                    } catch(e) { alert('Failed to save Anthropic key: ' + e.message); }
+                    try { const r = await apiCall('/settings/anthropic', 'POST', { anthropic_api_key: anthropicKey }); window.loadedAIKeys['anthropic'] = anthropicKey; document.getElementById('anthropic-api-key').value = ''; window.updateInputState('anthropic-api-key', true); alert('Anthropic key saved!'); } catch(e) { alert('Failed to save Anthropic key: ' + e.message); }
                 }
                 if (deepseekKey) {
-                    try { 
-                        const r = await apiCall('/settings/deepseek', 'POST', { deepseek_api_key: deepseekKey }); 
-                        if (!r.ok) { const d = await r.json().catch(()=>({})); throw new Error(d.detail || d.message || 'Server error ' + r.status); }
-                        window.loadedAIKeys['deepseek'] = deepseekKey; 
-                        document.getElementById('deepseek-api-key').value = ''; 
-                        window.updateInputState('deepseek-api-key', true); 
-                        alert('DeepSeek key saved!'); 
-                    } catch(e) { alert('Failed to save DeepSeek key: ' + e.message); }
+                    try { const r = await apiCall('/settings/deepseek', 'POST', { deepseek_api_key: deepseekKey }); window.loadedAIKeys['deepseek'] = deepseekKey; document.getElementById('deepseek-api-key').value = ''; window.updateInputState('deepseek-api-key', true); alert('DeepSeek key saved!'); } catch(e) { alert('Failed to save DeepSeek key: ' + e.message); }
                 }
                 verifyAllAIKeys();
 
@@ -9875,19 +9851,11 @@ function setupSequenceBuilder() {
 
 
 
-            if (res.ok) {
+            if (res.ok) showToast('Draft saved successfully!', 'success');
 
-                const data = await res.json();
 
-                if (data && data.campaign_id) {
 
-                    window.currentCampaignId = data.campaign_id;
-
-                }
-
-                showToast('Draft saved successfully!', 'success');
-
-            } else { const d = await res.json(); showToast(d.detail || 'Failed to save draft', 'error'); }
+            else { const d = await res.json(); showToast(d.detail || 'Failed to save draft', 'error'); }
 
 
 
@@ -10057,18 +10025,6 @@ function setupABTest() {
 
         const res = await apiCall('/campaigns/send', 'POST', payload);
 
-        if (res.ok) {
-
-            const data = await res.json();
-
-            if (data && data.campaign_id) {
-
-                window.currentCampaignId = data.campaign_id;
-
-            }
-
-        }
-
 
 
             if (statusDiv) {
@@ -10231,319 +10187,6 @@ async function checkPendingApprovals() {
 
 
 
-window.SUPPORT = {
-    showCreateModal: function() {
-        var m = document.getElementById('support-create-modal');
-        if (m) m.style.display = 'flex';
-    },
-    createTicket: async function(btn) {
-        var subject = document.getElementById('support-subject');
-        var message = document.getElementById('support-message');
-        if (!subject.value.trim() || !message.value.trim()) {
-            alert('Please enter a subject and message.');
-            return;
-        }
-        var origText = btn.innerHTML;
-        btn.innerHTML = 'Submitting...';
-        btn.disabled = true;
-        
-        try {
-            let res = await fetch('/api/support/tickets', {
-                method: 'POST',
-                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token'), 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    subject: subject.value.trim(),
-                    message: message.value.trim()
-                })
-            });
-            if (res.ok) {
-                document.getElementById('support-create-modal').style.display = 'none';
-                subject.value = '';
-                message.value = '';
-                SUPPORT.loadSupportTickets();
-                alert('Ticket created successfully.');
-            } else {
-                let err = await res.json();
-                alert('Failed to create ticket: ' + (err.detail || 'Unknown error'));
-            }
-        } catch (e) {
-            console.error(e);
-            alert('An error occurred.');
-        } finally {
-            btn.innerHTML = origText;
-            btn.disabled = false;
-        }
-    },
-    
-    loadSupportTickets: async function() {
-        try {
-            let res = await fetch('/api/support/tickets', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
-            if (res.ok) {
-                let data = await res.json();
-                let tbody = document.getElementById('user-tickets-body');
-                let userHtml = '';
-                
-                data.tickets.forEach(t => {
-                    let statusColor = (t.status.toLowerCase() === 'open' || t.status.toLowerCase() === 'user reply') ? '#3b82f6' : (t.status.toLowerCase() === 'admin reply' ? '#10b981' : '#64748b');
-                    let dt = new Date(t.updated_at).toLocaleString();
-                    
-                    userHtml += `<tr>
-                        <td>${t.subject}</td>
-                        <td><span style="color:${statusColor}; font-weight:600; text-transform:capitalize;">${t.status}</span></td>
-                        <td>${dt}</td>
-                        <td><button class="btn" onclick="SUPPORT.viewTicket('${t.id}')">View</button></td>
-                    </tr>`;
-                });
-                if (tbody) tbody.innerHTML = userHtml || '<tr><td colspan="4">No tickets found.</td></tr>';
-            }
-        } catch (e) {
-            console.error('Failed to load user tickets', e);
-        }
-    },
-    loadAdminTickets: async function() {
-        try {
-            let res = await fetch('/api/admin/tickets', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
-            if (res.ok) {
-                let data = await res.json();
-                let adminBody = document.getElementById('admin-all-tickets-body');
-                let adminHtml = '';
-                
-                data.tickets.forEach(t => {
-                    let statusColor = (t.status.toLowerCase() === 'open' || t.status.toLowerCase() === 'user reply') ? '#3b82f6' : (t.status.toLowerCase() === 'admin reply' ? '#10b981' : '#64748b');
-                    let dt = new Date(t.updated_at).toLocaleString();
-                    
-                    adminHtml += `<tr>
-                        <td>${t.user_email}</td>
-                        <td>${t.subject}</td>
-                        <td><span style="color:${statusColor}; font-weight:600; text-transform:capitalize;">${t.status}</span></td>
-                        <td><button class="btn" onclick="SUPPORT.viewTicket('${t.id}')">View & Reply</button></td>
-                    </tr>`;
-                });
-                if (adminBody) adminBody.innerHTML = adminHtml || '<tr><td colspan="4">No tickets found.</td></tr>';
-            }
-        } catch (e) {
-            console.error('Failed to load admin tickets', e);
-        }
-    },
-viewTicket: async function(ticketId) {
-        try {
-            let res = await fetch('/api/support/tickets/' + ticketId, { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } });
-            if (res.ok) {
-                let data = await res.json();
-                let currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-                let isAdmin = currentUser.is_admin === true || localStorage.getItem('is_admin') === 'true';
-                document.getElementById('support-active-ticket-id').value = ticketId;
-                let statusColor = data.status === 'resolved' ? '#10b981' : (data.status === 'Admin Reply' ? '#10b981' : '#3b82f6');
-                document.getElementById('support-view-title').innerHTML = '<i class="fa-solid fa-comments"></i> ' + data.subject + ' <span style="font-size:12px;color:' + statusColor + ';margin-left:8px;text-transform:capitalize;font-weight:600;">(' + data.status + ')</span>';
-                
-                // Show/hide admin action buttons
-                let adminActions = document.getElementById('support-admin-actions');
-                if (adminActions) {
-                    if (isAdmin) {
-                        adminActions.style.display = 'flex';
-                        let resolveBtn = document.getElementById('support-resolve-btn');
-                        if (resolveBtn) {
-                            if (data.status === 'resolved') {
-                                resolveBtn.innerHTML = '<i class="fa-solid fa-check-circle"></i> Resolved';
-                                resolveBtn.style.background = '#10b981';
-                                resolveBtn.disabled = true;
-                            } else {
-                                resolveBtn.innerHTML = '<i class="fa-solid fa-check-circle"></i> Resolve';
-                                resolveBtn.style.background = '#3b82f6';
-                                resolveBtn.disabled = false;
-                            }
-                        }
-                    } else {
-                        adminActions.style.display = 'none';
-                    }
-                }
-
-                // Hide or show reply box depending on status
-                let replyBox = document.getElementById('support-reply-box');
-                if (replyBox) {
-                    replyBox.style.display = (data.status === 'resolved') ? 'none' : 'block';
-                }
-
-                let chatContainer = document.getElementById('support-replies-container');
-                let chatHtml = '';
-                
-                data.messages.forEach(m => {
-                    let isAdminMsg = m.is_admin;
-                    let bg = isAdminMsg ? 'var(--card-bg, #e0e7ff)' : 'var(--bg-secondary, #f1f5f9)';
-                    let border = isAdminMsg ? '1px solid #6366f1' : '1px solid var(--border)';
-                    let align = isAdminMsg ? 'flex-start' : 'flex-end';
-                    let name = isAdminMsg ? '<i class="fa-solid fa-headset" style="color:#6366f1"></i> Support Team' : '<i class="fa-solid fa-user"></i> You';
-                    
-                    chatHtml += `
-                    <div style="display:flex; flex-direction:column; align-items:${align}; margin-bottom:12px;">
-                        <div style="font-size:11px; color:var(--text-muted,#64748b); margin-bottom:4px;">${name} &bull; ${new Date(m.created_at).toLocaleString()}</div>
-                        <div style="background:${bg}; border:${border}; padding:12px 16px; border-radius:12px; max-width:80%; font-size:14px; color:var(--text-primary,#1e293b); white-space:pre-wrap;">${m.message}</div>
-                    </div>`;
-                });
-                
-                chatContainer.innerHTML = chatHtml;
-                document.getElementById('support-view-modal').style.display = 'flex';
-                // scroll to bottom
-                setTimeout(() => { chatContainer.scrollTop = chatContainer.scrollHeight; }, 100);
-            } else {
-                alert('Failed to load ticket details.');
-            }
-        } catch (e) {
-            console.error('Error viewing ticket', e);
-            alert('An error occurred loading the ticket.');
-        }
-    },
-    replyToTicket: async function(btn) {
-        var message = document.getElementById('support-reply-message');
-        var ticketId = document.getElementById('support-active-ticket-id').value;
-        if (!message.value.trim() || !ticketId) {
-            alert('Please enter a reply.');
-            return;
-        }
-        var origText = btn.innerHTML;
-        btn.innerHTML = 'Sending...';
-        btn.disabled = true;
-        
-        try {
-            let res = await fetch('/api/support/tickets/' + ticketId + '/reply', {
-                method: 'POST',
-                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token'), 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: message.value.trim() })
-            });
-            if (res.ok) {
-                message.value = '';
-                // Reload ticket chat
-                SUPPORT.viewTicket(ticketId);
-                // Refresh ticket lists for both user and admin
-                SUPPORT.loadSupportTickets();
-                SUPPORT.loadAdminTickets();
-                SUPPORT.checkUnreadTickets();
-            } else {
-                alert('Failed to send reply.');
-            }
-        } catch(e) {
-            console.error(e);
-            alert('An error occurred.');
-        } finally {
-            btn.innerHTML = origText;
-            btn.disabled = false;
-        }
-    },
-    resolveTicket: async function() {
-        let ticketId = document.getElementById('support-active-ticket-id').value;
-        if (!ticketId) return;
-        try {
-            let res = await fetch('/api/admin/tickets/' + ticketId + '/status', {
-                method: 'PUT',
-                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token'), 'Content-Type': 'application/json' },
-                body: JSON.stringify({ status: 'resolved' })
-            });
-            if (res.ok) {
-                SUPPORT.viewTicket(ticketId);
-                SUPPORT.loadAdminTickets();
-                SUPPORT.loadSupportTickets();
-                SUPPORT.checkUnreadTickets();
-            } else { alert('Failed to resolve ticket.'); }
-        } catch(e) { alert('Error resolving ticket.'); }
-    },
-    deleteTicket: async function() {
-        let ticketId = document.getElementById('support-active-ticket-id').value;
-        if (!ticketId) return;
-        if (!confirm('Are you sure you want to delete this ticket? This cannot be undone.')) return;
-        try {
-            let res = await fetch('/api/admin/tickets/' + ticketId, {
-                method: 'DELETE',
-                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
-            });
-            if (res.ok) {
-                document.getElementById('support-view-modal').style.display = 'none';
-                SUPPORT.loadAdminTickets();
-                SUPPORT.checkUnreadTickets();
-            } else { alert('Failed to delete ticket.'); }
-        } catch(e) { alert('Error deleting ticket.'); }
-    },
-    checkUnreadTickets: async function() {
-        try {
-            let currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-            let isAdminUser = currentUser.is_admin === true || localStorage.getItem('is_admin') === 'true';
-
-            if (isAdminUser) {
-                // ADMIN: check tickets with "User Reply" status
-                let res = await fetch('/api/admin/tickets/unread-count', {
-                    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
-                });
-                if (res.ok) {
-                    let data = await res.json();
-                    let count = data.unread || 0;
-
-                    // 1. Admin sidebar nav badge
-                    let adminBadge = document.getElementById('admin-unread-badge');
-                    if (adminBadge) {
-                        if (count > 0) {
-                            adminBadge.textContent = count;
-                            adminBadge.style.display = 'inline-flex';
-                        } else {
-                            adminBadge.style.display = 'none';
-                        }
-                    }
-
-                    // 2. Support Tickets sub-tab badge inside Admin panel
-                    let tabBadge = document.getElementById('tab-tickets-unread-badge');
-                    if (tabBadge) {
-                        if (count > 0) {
-                            tabBadge.textContent = count;
-                            tabBadge.style.display = 'inline-flex';
-                        } else {
-                            tabBadge.style.display = 'none';
-                        }
-                    }
-                }
-            } else {
-                // REGULAR USER: check if admin replied to any of their tickets
-                let currentView = document.querySelector('.view.active');
-                let isOnSupportView = currentView && currentView.id === 'support-view';
-                if (isOnSupportView) return; // already on support page, no need for badge
-
-                let res = await fetch('/api/support/tickets/unread-count', {
-                    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
-                });
-                if (res.ok) {
-                    let data = await res.json();
-                    let count = data.unread || 0;
-                    let userBadge = document.getElementById('user-support-badge');
-                    if (userBadge) {
-                        if (count > 0) {
-                            userBadge.textContent = count;
-                            userBadge.style.display = 'inline-flex';
-                        } else {
-                            userBadge.style.display = 'none';
-                        }
-                    }
-                }
-            }
-        } catch(e) { /* silent */ }
-    },
-    switchAdminTab: function(tab) {
-        document.querySelectorAll('.admin-tab').forEach(t => {
-            t.classList.remove('active');
-            t.style.color = 'var(--text-muted)';
-            t.style.borderBottomColor = 'transparent';
-        });
-        document.querySelectorAll('.admin-section').forEach(s => s.style.display = 'none');
-        var btn = document.getElementById('tab-btn-' + tab);
-        if(btn) {
-            btn.classList.add('active');
-            btn.style.color = 'var(--primary)';
-            btn.style.borderBottomColor = 'var(--primary)';
-        }
-        var sec = document.getElementById('admin-section-' + tab);
-        if(sec) {
-            sec.style.display = 'block';
-            if (tab === 'tickets') SUPPORT.loadAdminTickets();
-        }
-    }
-};
-
 function setupAdmin() {
 
 
@@ -10596,7 +10239,7 @@ async function loadUnsubscribes() {
 
 
 
-            tbody.innerHTML = `<tr><td colspan="3" style="padding:20px; text-align:center; color:var(--text-muted);">No unsubscribes yet</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="2" style="padding:20px; text-align:center; color:var(--text-muted);">No unsubscribes yet</td></tr>`;
 
 
 
@@ -10609,46 +10252,48 @@ async function loadUnsubscribes() {
 
 
         data.forEach(item => {
+
+
+
             const tr = document.createElement('tr');
+
+
+
             tr.innerHTML = `
+
+
+
                 <td style="padding:16px 24px; font-weight:600; color:var(--text);">${escapeHtml(item.email)}</td>
+
+
+
                 <td style="padding:16px 24px; color:var(--text-muted); font-size:13px;">${new Date(item.unsubscribed_at).toLocaleString()}</td>
-                <td style="padding:16px 24px; display: flex; gap: 8px; align-items: center;">
-                    <button onclick="removeUnsubscribe('${escapeHtml(item.email)}', this)" class="btn" style="padding:6px 12px; font-size:12px; color:#ef4444; border-color:#fecaca; background: transparent;"><i class="fa-solid fa-trash"></i> Remove</button>
-                </td>
+
+
+
             `;
+
+
+
             tbody.appendChild(tr);
+
+
+
         });
+
+
 
     } catch(e) { console.error(e); }
 
+
+
 }
 
-async function removeUnsubscribe(email, btn) {
-    if (!confirm(`Are you sure you want to remove ${email} from the unsubscribe list? They will be able to receive emails again.`)) return;
 
-    const oldHtml = btn.innerHTML;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-    btn.disabled = true;
 
-    try {
-        const res = await apiCall(`/unsubscribes/remove`, 'POST', { email: email });
-        if (res.ok) {
-            showToast("Removed from unsubscribe list", "success");
-            loadUnsubscribes();
-        } else {
-            const data = await res.json();
-            showToast(data.detail || "Failed to remove email", "error");
-            btn.innerHTML = oldHtml;
-            btn.disabled = false;
-        }
-    } catch (e) {
-        console.error(e);
-        showToast("Error removing email", "error");
-        btn.innerHTML = oldHtml;
-        btn.disabled = false;
-    }
-}
+
+
+
 
 async function loadReplies() {
 
@@ -10959,153 +10604,89 @@ async function sendAiReply(btn) {
 
 
 async function loadAdminUsers() {
-
-
-
     try {
-
-
-
         const res = await fetch(`${API_URL}/admin/users`, { headers: { 'Authorization': `Bearer ${getToken()}` } });
-
-
-
         if (!res.ok) return;
-
-
-
         const users = await res.json();
-
-
-
-        const tbody = document.getElementById('admin-users-body');
-
-
-
-        if (!tbody) return;
-
-
-
-        tbody.innerHTML = '';
-
-
+        
+        const tbodyAll = document.getElementById('admin-users-body');
+        const tbodyFree = document.getElementById('admin-free-users-body');
+        if (tbodyAll) tbodyAll.innerHTML = '';
+        if (tbodyFree) tbodyFree.innerHTML = '';
 
         users.forEach(u => {
-
-
-
             const tr = document.createElement('tr');
-
-
-
             
-
-
-
             const statusBadge = u.is_approved
-
-
-
                 ? `<span style="background:#dcfce7;color:#059669;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">✅ Approved</span>`
-
-
-
                 : `<span style="background:#fef9c3;color:#ca8a04;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">⏳ Pending</span>`;
-
-
-
                 
-
-
+            const planBadgeText = u.subscription_plan ? u.subscription_plan.toUpperCase() : 'FREE';
+            const planColor = planBadgeText === 'FREE' ? '#64748b' : '#3b82f6';
+            const planBg = planBadgeText === 'FREE' ? '#f1f5f9' : '#dbeafe';
+            const planBadge = `<span style="background:${planBg};color:${planColor};padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">${planBadgeText}</span>`;
 
             let actionsHTML = '';
-
-
-
+            
             let approveBtn = u.is_approved 
-
-
-
                 ? `<button class="btn" disabled style="padding:5px 14px;font-size:12px;opacity:0.5;background:#e2e8f0;color:#64748b;"><i class='fa-solid fa-check' style='margin-right:4px;'></i>Approved</button>`
-
-
-
                 : `<button class="btn primary" onclick="approveUser('${u.id}')" style="padding:5px 14px;font-size:12px;background:#059669;color:white;"><i class='fa-solid fa-check' style='margin-right:4px;'></i>Approve</button>`;
-
-
-
                 
-
-
-
             let deleteBtn = u.is_admin 
-
-
-
                 ? `<button class="btn" disabled style="padding:5px 10px;font-size:12px;background:#e2e8f0;color:#64748b;margin-left:8px;" title="Cannot delete admin"><i class='fa-solid fa-trash'></i> Delete</button>`
-
-
-
                 : `<button class="btn danger" onclick="deleteUser('${u.id}')" style="padding:5px 10px;font-size:12px;background:#ef4444;color:white;margin-left:8px;"><i class='fa-solid fa-trash'></i> Delete</button>`;
 
-
-
+            let changePlanSelect = `
+                <select onchange="changeUserPlan('${u.id}', this.value)" style="margin-left:8px; padding:4px; font-size:12px; border-radius:4px; border:1px solid #cbd5e1; outline:none;">
+                    <option value="" disabled selected>Change Plan</option>
+                    <option value="free">Free</option>
+                    <option value="starter">Starter</option>
+                    <option value="professional">Professional</option>
+                </select>
+            `;
             
-
-
-
-            actionsHTML = approveBtn + deleteBtn;
-
-
-
-
-
-
+            actionsHTML = approveBtn + deleteBtn + changePlanSelect;
 
             tr.innerHTML = `
-
-
-
                 <td>${u.id}</td>
-
-
-
                 <td>${escapeHtml(u.email)}</td>
-
-
-
+                <td>${planBadge}</td>
                 <td>${u.is_admin ? '<span style="color:#6366f1;font-weight:600;">Admin</span>' : `User ${statusBadge}`}</td>
-
-
-
-                <td style="display:flex;align-items:center;">
-
-
-
-                    ${actionsHTML}
-
-
-
-                </td>
-
-
-
+                <td style="display:flex;align-items:center;">${actionsHTML}</td>
             `;
 
-
-
-            tbody.appendChild(tr);
-
-
-
+            if (tbodyAll) {
+                tbodyAll.appendChild(tr.cloneNode(true));
+            }
+            if (tbodyFree && planBadgeText === 'FREE') {
+                tbodyFree.appendChild(tr);
+            }
         });
 
-
-
     } catch(e) { console.error(e); }
+}
 
-
-
+window.changeUserPlan = async function(userId, newPlan) {
+    try {
+        const res = await fetch(`${API_URL}/admin/users/${userId}/plan`, {
+            method: 'POST',
+            headers: { 
+                'Authorization': `Bearer ${getToken()}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ plan: newPlan })
+        });
+        if (res.ok) {
+            showToast('User plan updated successfully!', 'success');
+            loadAdminUsers();
+        } else {
+            const d = await res.json();
+            showToast(d.detail || 'Error updating user plan', 'error');
+        }
+    } catch(e) {
+        showToast('Error updating user plan', 'error');
+        console.error(e);
+    }
 }
 
 
@@ -11432,7 +11013,7 @@ async function renderNewsletterList() {
 
 
 
-    const campaigns = window.lastFetchedBulkCampaigns || [];
+    const campaigns = (window.lastFetchedCampaigns || []).filter(c => c.type !== 'cold_mail');
 
 
 
@@ -11484,7 +11065,7 @@ async function renderNewsletterList() {
 
 
 
-            <td><div style="font-weight:600;color:var(--text);">${c.name || 'Untitled'}</div></td>
+            <td><div style="font-weight:600;color:var(--text);">${c.subject || 'Untitled'}</div></td>
 
 
 
@@ -12736,14 +12317,15 @@ window.loadAdminUsers = async function() {
 
 
 
-            var statusHtml = '';
-            if (u.is_email_verified === false) {
-                statusHtml = '<span style="color:#d97706;font-weight:600;font-size:13px;">&#9888; Inactive (Unverified)</span>';
-            } else if (u.is_approved) {
-                statusHtml = '<span style="color:#059669;font-weight:600;font-size:13px;">&#10003; Approved</span>';
-            } else {
-                statusHtml = '<button onclick="window.approveUser(\'' + u.id + '\')" style="background:#059669;color:#fff;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;">&#10003; Approve</button>';
-            };
+            var statusHtml = u.is_approved
+
+
+
+                ? '<span style="color:#059669;font-weight:600;">&#10003; Approved</span>'
+
+
+
+                : '<button onclick="window.approveUser(\'' + u.id + '\')" style="background:#059669;color:#fff;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;">&#10003; Approve</button>';
 
 
 
@@ -13324,39 +12906,36 @@ window.saveNewsletterSchedule = async function() {
             const subEl = document.getElementById('campaign-subject');
 
             const draftPayload = {
+
                 subject: (subEl ? subEl.value : '') || 'Untitled Newsletter',
-                body: typeof editor !== 'undefined' && editor ? editor.exportHtml() : '',
-                design_json: typeof editor !== 'undefined' && editor ? JSON.stringify(editor.exportDesign()) : '',
+
+                body: '',
+
+                type: 'newsletter',
+
                 leads: [],
+
                 is_draft: true,
-                campaign_id: window.currentCampaignId || null
+
+                sending_days: payload.sending_days,
+
+                start_hour: payload.start_hour,
+
+                end_hour: payload.end_hour,
+
+                timezone: payload.timezone,
+
+                delay_min: payload.delay_min,
+
+                delay_max: payload.delay_max
+
             };
-
-
-
-            const leadsText = (document.getElementById('newsletter-leads') || {}).value || '';
-
-            leadsText.split('\n').map(l => l.trim()).filter(l => l).forEach(line => {
-
-                const parts = line.split(',').map(p => p.trim());
-                draftPayload.leads.push({ email: parts[0], name: parts[1] || '', company: parts[2] || '' });
-            });
-
-
 
             if (window.getSelectedSenderIds) {
 
-                const sendingIds = window.getSelectedSenderIds('vb-sender-accounts-list');
-
-                if (sendingIds) {
-
-                    draftPayload.sending_account_ids = JSON.stringify(sendingIds);
-
-                }
+                draftPayload.selected_sender_ids = window.getSelectedSenderIds('vb-sender-accounts-list');
 
             }
-
-
 
             const draftRes = await apiCall('/campaigns/send', 'POST', draftPayload);
 
@@ -13368,7 +12947,7 @@ window.saveNewsletterSchedule = async function() {
 
                 if (!window.lastFetchedCampaigns) window.lastFetchedCampaigns = [];
 
-                const itemData = {
+                window.lastFetchedCampaigns.push({
 
                     id: draftData.campaign_id, subject: draftPayload.subject, body: '',
 
@@ -13380,19 +12959,7 @@ window.saveNewsletterSchedule = async function() {
 
                     delay_min: payload.delay_min, delay_max: payload.delay_max
 
-                };
-
-                const existingIdx = window.lastFetchedCampaigns.findIndex(x => x.id === draftData.campaign_id);
-
-                if (existingIdx >= 0) {
-
-                    window.lastFetchedCampaigns[existingIdx] = itemData;
-
-                } else {
-
-                    window.lastFetchedCampaigns.push(itemData);
-
-                }
+                });
 
                 showToast('Schedule saved! Draft created.', 'success');
 
@@ -13846,51 +13413,78 @@ window.filterAccounts = function(input, containerId) {
 
 
 
-
-
-// ─────────────────────────────────────────────
-
-// DELETE CAMPAIGN LEAD
-
-// ─────────────────────────────────────────────
-
-window.deleteCampaignLead = async function(campaignId, leadId, btn) {
-
-    if (!confirm('Are you sure you want to delete this lead?')) return;
-
-    const row = btn ? btn.closest('tr') : null;
-
-    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>'; }
-
-    try {
-
-        const res = await apiCall('/campaigns/' + campaignId + '/leads/' + leadId, 'DELETE');
-
-        if (res.ok) {
-
-            if (row) row.remove();
-
-            if (typeof showToast === 'function') showToast('Lead deleted.', 'success');
-
-        } else {
-
-            const d = await res.json().catch(() => ({}));
-
-            if (typeof showToast === 'function') showToast(d.detail || 'Failed to delete lead.', 'error');
-
-            if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-trash"></i>'; }
-
+// Public Pages Logic
+window.showPublicPage = function(pageId) {
+    // Hide auth and app
+    document.getElementById('auth-page').style.display = 'none';
+    if(document.getElementById('app-page')) document.getElementById('app-page').style.display = 'none';
+    
+    // Show public container
+    const pubContainer = document.getElementById('public-container');
+    if(pubContainer) {
+        pubContainer.style.display = 'block';
+        
+        // Hide all public pages
+        document.querySelectorAll('.public-page').forEach(p => {
+            p.classList.remove('active');
+            p.style.display = 'none'; // Ensure they are completely hidden before making active
+            // trigger reflow
+            void p.offsetWidth;
+        });
+        
+        // Show target
+        const target = document.getElementById('public-' + pageId);
+        if(target) {
+            target.style.display = 'block';
+            target.classList.add('active');
         }
-
-    } catch(e) {
-
-        if (typeof showToast === 'function') showToast('Error: ' + (e.message || e), 'error');
-
-        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-trash"></i>'; }
-
     }
-
 };
 
+window.showAuthPage = function() {
+    const pubContainer = document.getElementById('public-container');
+    if(pubContainer) pubContainer.style.display = 'none';
+    
+    const authPage = document.getElementById('auth-page');
+    if(authPage) {
+        authPage.style.display = 'flex'; // Auth page uses flex
+        authPage.classList.remove('hidden');
+    }
+};
 
+// Override original auth page showing if no token
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+        const token = window.getToken ? window.getToken() : null;
+        if (!token) {
+            // Check if auth page is currently showing (which means we are not logged in)
+            const authPage = document.getElementById('auth-page');
+            if (authPage && !authPage.classList.contains('hidden')) {
+                // We are not logged in. Show public home page by default instead of Auth.
+                showPublicPage('home');
+            }
+        }
+    }, 100); // slight delay to let existing init finish
+});
+window.SUPPORT = window.SUPPORT || {};
+window.SUPPORT.switchAdminTab = function(tabId) {
+    document.querySelectorAll('.admin-tab').forEach(t => {
+        t.classList.remove('active');
+        t.style.borderBottom = '2px solid transparent';
+        t.style.color = 'var(--text-muted)';
+    });
+    const activeTab = document.getElementById('tab-btn-' + tabId);
+    if (activeTab) {
+        activeTab.classList.add('active');
+        activeTab.style.borderBottom = '2px solid var(--primary)';
+        activeTab.style.color = 'var(--primary)';
+    }
 
+    document.querySelectorAll('.admin-section').forEach(s => s.style.display = 'none');
+    const activeSection = document.getElementById('admin-section-' + tabId);
+    if (activeSection) activeSection.style.display = 'block';
+
+    if (tabId === 'users' || tabId === 'free-users') {
+        if (window.loadAdminUsers) window.loadAdminUsers();
+    }
+};

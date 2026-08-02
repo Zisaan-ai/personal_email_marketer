@@ -58,6 +58,11 @@ class User(Base):
     anthropic_api_key = Column(String, nullable=True)
     deepseek_api_key = Column(String, nullable=True)
     timezone = Column(String, default="Asia/Dhaka")
+    subscription_plan = Column(String, default="free")
+    subscription_status = Column(String, default="active")
+    paddle_customer_id = Column(String, nullable=True)
+    paddle_subscription_id = Column(String, nullable=True)
+    free_emails_sent = Column(Integer, default=0)
 
 class Campaign(Base):
     __tablename__ = "campaigns"
@@ -362,6 +367,11 @@ def run_migrations():
         
         # New: timezone for User
         _safe_add_column("users", "timezone", "VARCHAR", "Asia/Dhaka")
+        _safe_add_column("users", "subscription_plan", "VARCHAR", "free")
+        _safe_add_column("users", "subscription_status", "VARCHAR", "active")
+        _safe_add_column("users", "paddle_customer_id", "VARCHAR", None)
+        _safe_add_column("users", "paddle_subscription_id", "VARCHAR", None)
+        _safe_add_column("users", "free_emails_sent", "INTEGER", 0)
 
         _safe_add_column("sending_accounts", "custom_tracking_domain", "VARCHAR", None)
         _safe_add_column("replies", "message_id", "VARCHAR", None)

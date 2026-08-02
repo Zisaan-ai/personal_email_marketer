@@ -357,7 +357,13 @@ const ACCOUNTS = {
             } else {
                 const errData = await res.json().catch(() => ({ detail: 'Unknown error' }));
                 const msg = errData.detail || JSON.stringify(errData);
-                alert('Error: ' + msg);
+                if (res.status === 403 && msg.includes("FREE_LIMIT_REACHED")) {
+                    document.getElementById('add-account-modal').style.display = 'none';
+                    if (window.showUpgradeModal) window.showUpgradeModal('accounts');
+                    else alert(msg);
+                } else {
+                    alert('Error: ' + msg);
+                }
             }
         } catch(e) {
             console.error("Add account error", e);

@@ -4909,6 +4909,13 @@
 
 
 
+    <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+    <script>
+        Paddle.Environment.set('sandbox');
+        Paddle.Initialize({ 
+            token: 'test_c2c1f7b673c15e7a705b10c5bf7', // Replace with your client token
+        });
+    </script>
 </head>
 
 
@@ -8361,9 +8368,11 @@
 
 
 
-            
+            <div style="border-top:1px solid var(--border); margin:12px 0;"></div>
 
-
+            <a class="nav-item" onclick="window.showUpgradeModal()" style="cursor:pointer; color:#10b981; font-weight: 600;">
+                <i class="fa-solid fa-arrow-up-right-dots"></i><span>Upgrade Plan</span>
+            </a>
 
             <a class="nav-item" data-target="settings" onclick="window.navTo('settings')">
 
@@ -19610,18 +19619,28 @@
 
 
 
-                <button id="tab-btn-users" class="admin-tab active" onclick="SUPPORT.switchAdminTab('users')" style="padding: 12px 24px; border: none; background: transparent; color: var(--primary); font-weight: 600; cursor: pointer; border-bottom: 2px solid var(--primary);">Users</button>
-
-
-
+                <button id="tab-btn-users" class="admin-tab active" onclick="SUPPORT.switchAdminTab('users')" style="padding: 12px 24px; border: none; background: transparent; color: var(--primary); font-weight: 600; cursor: pointer; border-bottom: 2px solid var(--primary);">All Users</button>
+                <button id="tab-btn-free-users" class="admin-tab" onclick="SUPPORT.switchAdminTab('free-users')" style="padding: 12px 24px; border: none; background: transparent; color: var(--text-muted); font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent;">Free Users</button>
                 <button id="tab-btn-tickets" class="admin-tab" onclick="SUPPORT.switchAdminTab('tickets')" style="padding: 12px 24px; border: none; background: transparent; color: var(--text-muted); font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent;position:relative;">Support Tickets<span id="tab-tickets-unread-badge" style="display:none;position:absolute;top:4px;right:4px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;border-radius:50%;width:16px;height:16px;align-items:center;justify-content:center;line-height:1;">0</span></button>
-
-
-
                 <button id="tab-btn-email" class="admin-tab" onclick="SUPPORT.switchAdminTab('email')" style="padding: 12px 24px; border: none; background: transparent; color: var(--text-muted); font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent;">Email Delivery</button>
+            </div>
 
+            <div id="admin-section-users" class="admin-section" style="display: block;">
+                <div class="glass" style="padding:0;overflow:hidden;">
+                    <table>
+                        <thead><tr><th>ID</th><th>User Email</th><th>Plan</th><th>Role</th><th style="width:180px;">Actions</th></tr></thead>
+                        <tbody id="admin-users-body"></tbody>
+                    </table>
+                </div>
+            </div>
 
-
+            <div id="admin-section-free-users" class="admin-section" style="display: none;">
+                <div class="glass" style="padding:0;overflow:hidden;">
+                    <table>
+                        <thead><tr><th>ID</th><th>User Email</th><th>Plan</th><th>Role</th><th style="width:180px;">Actions</th></tr></thead>
+                        <tbody id="admin-free-users-body"></tbody>
+                    </table>
+                </div>
             </div>
 
 
@@ -24175,13 +24194,27 @@
 
 
         openPayment: function(plan, price) {
+            if (typeof Paddle === 'undefined') {
+                alert("Payment gateway is loading. Please try again in a moment.");
+                return;
+            }
+            
+            let priceId = '';
+            if (plan === 'Starter') priceId = 'pri_01kz1fwdrmswb6c1ytevea2zd4';
+            else if (plan === 'Professional') priceId = 'pri_01kz1fxmmpdpk5v8h0b0y0k8qd';
+            else priceId = 'pri_01kz1fz3n7mq0mpv6nhabycqzk';
 
-
-
-            var pm = document.getElementById('payment-modal'); if (pm) pm.style.display = 'flex';
-
-
-
+            Paddle.Checkout.open({
+                items: [
+                    {
+                        priceId: priceId,
+                        quantity: 1
+                    }
+                ],
+                customData: {
+                    user_id: window.APP && window.APP.user ? window.APP.user.id : ''
+                }
+            });
         },
 
 
@@ -25289,9 +25322,34 @@
 </script>
 
 
-
+    <!-- UPGRADE MODAL -->
+    <div id="upgrade-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:999999;justify-content:center;align-items:center;flex-direction:column;color:white;">
+        <div style="background:var(--surface);padding:40px;border-radius:12px;text-align:center;max-width:400px;color:var(--text);box-shadow:0 10px 25px rgba(0,0,0,0.5);position:relative;">
+            <button onclick="document.getElementById('upgrade-modal').style.display='none'" style="position:absolute;top:15px;right:15px;background:none;border:none;color:var(--text-muted);font-size:20px;cursor:pointer;">&times;</button>
+            <i class="fa-solid fa-rocket" style="font-size:48px;color:#10b981;margin-bottom:20px;"></i>
+            <h2 id="upgrade-modal-title" style="margin-bottom:15px;font-size:24px;color:var(--text);font-weight:700;">Upgrade Your Plan</h2>
+            <p id="upgrade-modal-desc" style="margin-bottom:30px;color:var(--text-muted);font-size:15px;line-height:1.5;">You've reached the limits of the Free plan. Upgrade now to unlock more features and higher limits.</p>
+            <button class="p-btn" onclick="document.getElementById('upgrade-modal').style.display='none'; LANDING.openPayment('Starter', 29)" style="background:#000;color:#fff;border:none;padding:12px 24px;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;margin-bottom:12px;width:100%;transition:transform 0.2s;">Buy Starter ($29/mo)</button>
+            <button class="p-btn" onclick="document.getElementById('upgrade-modal').style.display='none'; LANDING.openPayment('Professional', 99)" style="background:#000;color:#fff;border:none;padding:12px 24px;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;margin-bottom:20px;width:100%;transition:transform 0.2s;">Buy Pro ($99/mo)</button>
+        </div>
+    </div>
+    
+    <script>
+        window.showUpgradeModal = function(reason) {
+            if (reason === 'accounts') {
+                document.getElementById('upgrade-modal-title').innerText = "Account Limit Reached";
+                document.getElementById('upgrade-modal-desc').innerText = "The free plan allows a maximum of 2 sending accounts. Upgrade your plan to add more accounts.";
+            } else if (reason === 'emails') {
+                document.getElementById('upgrade-modal-title').innerText = "Email Limit Reached";
+                document.getElementById('upgrade-modal-desc').innerText = "You have sent your free limit of 10 emails. Upgrade your plan to continue sending campaigns.";
+            } else {
+                document.getElementById('upgrade-modal-title').innerText = "Upgrade Your Plan";
+                document.getElementById('upgrade-modal-desc').innerText = "Upgrade now to unlock more features and higher sending limits.";
+            }
+            document.getElementById('upgrade-modal').style.display = 'flex';
+        };
+    </script>
 </body>
-
 
 
 

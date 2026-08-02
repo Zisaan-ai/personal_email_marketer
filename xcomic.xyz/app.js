@@ -10604,153 +10604,89 @@ async function sendAiReply(btn) {
 
 
 async function loadAdminUsers() {
-
-
-
     try {
-
-
-
         const res = await fetch(`${API_URL}/admin/users`, { headers: { 'Authorization': `Bearer ${getToken()}` } });
-
-
-
         if (!res.ok) return;
-
-
-
         const users = await res.json();
-
-
-
-        const tbody = document.getElementById('admin-users-body');
-
-
-
-        if (!tbody) return;
-
-
-
-        tbody.innerHTML = '';
-
-
+        
+        const tbodyAll = document.getElementById('admin-users-body');
+        const tbodyFree = document.getElementById('admin-free-users-body');
+        if (tbodyAll) tbodyAll.innerHTML = '';
+        if (tbodyFree) tbodyFree.innerHTML = '';
 
         users.forEach(u => {
-
-
-
             const tr = document.createElement('tr');
-
-
-
             
-
-
-
             const statusBadge = u.is_approved
-
-
-
                 ? `<span style="background:#dcfce7;color:#059669;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">✅ Approved</span>`
-
-
-
                 : `<span style="background:#fef9c3;color:#ca8a04;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">⏳ Pending</span>`;
-
-
-
                 
-
-
+            const planBadgeText = u.subscription_plan ? u.subscription_plan.toUpperCase() : 'FREE';
+            const planColor = planBadgeText === 'FREE' ? '#64748b' : '#3b82f6';
+            const planBg = planBadgeText === 'FREE' ? '#f1f5f9' : '#dbeafe';
+            const planBadge = `<span style="background:${planBg};color:${planColor};padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">${planBadgeText}</span>`;
 
             let actionsHTML = '';
-
-
-
+            
             let approveBtn = u.is_approved 
-
-
-
                 ? `<button class="btn" disabled style="padding:5px 14px;font-size:12px;opacity:0.5;background:#e2e8f0;color:#64748b;"><i class='fa-solid fa-check' style='margin-right:4px;'></i>Approved</button>`
-
-
-
                 : `<button class="btn primary" onclick="approveUser('${u.id}')" style="padding:5px 14px;font-size:12px;background:#059669;color:white;"><i class='fa-solid fa-check' style='margin-right:4px;'></i>Approve</button>`;
-
-
-
                 
-
-
-
             let deleteBtn = u.is_admin 
-
-
-
                 ? `<button class="btn" disabled style="padding:5px 10px;font-size:12px;background:#e2e8f0;color:#64748b;margin-left:8px;" title="Cannot delete admin"><i class='fa-solid fa-trash'></i> Delete</button>`
-
-
-
                 : `<button class="btn danger" onclick="deleteUser('${u.id}')" style="padding:5px 10px;font-size:12px;background:#ef4444;color:white;margin-left:8px;"><i class='fa-solid fa-trash'></i> Delete</button>`;
 
-
-
+            let changePlanSelect = `
+                <select onchange="changeUserPlan('${u.id}', this.value)" style="margin-left:8px; padding:4px; font-size:12px; border-radius:4px; border:1px solid #cbd5e1; outline:none;">
+                    <option value="" disabled selected>Change Plan</option>
+                    <option value="free">Free</option>
+                    <option value="starter">Starter</option>
+                    <option value="professional">Professional</option>
+                </select>
+            `;
             
-
-
-
-            actionsHTML = approveBtn + deleteBtn;
-
-
-
-
-
-
+            actionsHTML = approveBtn + deleteBtn + changePlanSelect;
 
             tr.innerHTML = `
-
-
-
                 <td>${u.id}</td>
-
-
-
                 <td>${escapeHtml(u.email)}</td>
-
-
-
+                <td>${planBadge}</td>
                 <td>${u.is_admin ? '<span style="color:#6366f1;font-weight:600;">Admin</span>' : `User ${statusBadge}`}</td>
-
-
-
-                <td style="display:flex;align-items:center;">
-
-
-
-                    ${actionsHTML}
-
-
-
-                </td>
-
-
-
+                <td style="display:flex;align-items:center;">${actionsHTML}</td>
             `;
 
-
-
-            tbody.appendChild(tr);
-
-
-
+            if (tbodyAll) {
+                tbodyAll.appendChild(tr.cloneNode(true));
+            }
+            if (tbodyFree && planBadgeText === 'FREE') {
+                tbodyFree.appendChild(tr);
+            }
         });
 
-
-
     } catch(e) { console.error(e); }
+}
 
-
-
+window.changeUserPlan = async function(userId, newPlan) {
+    try {
+        const res = await fetch(`${API_URL}/admin/users/${userId}/plan`, {
+            method: 'POST',
+            headers: { 
+                'Authorization': `Bearer ${getToken()}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ plan: newPlan })
+        });
+        if (res.ok) {
+            showToast('User plan updated successfully!', 'success');
+            loadAdminUsers();
+        } else {
+            const d = await res.json();
+            showToast(d.detail || 'Error updating user plan', 'error');
+        }
+    } catch(e) {
+        showToast('Error updating user plan', 'error');
+        console.error(e);
+    }
 }
 
 

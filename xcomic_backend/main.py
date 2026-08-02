@@ -15,6 +15,7 @@ import database
 from sqlalchemy.orm import Session
 import email_service
 import auth
+import payment
 import threading
 import random
 import string
@@ -184,6 +185,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(payment.router)
 from bounce_processor import check_bounces
 @app.get("/api/cron/run")
 def trigger_cron():
@@ -497,7 +500,7 @@ def get_all_users(current_user: database.User = Depends(auth.get_current_user), 
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admin privileges required")
     users = db.query(database.User).all()
-    return [{"id": str(u.id), "email": u.email, "is_admin": u.is_admin, "is_approved": u.is_approved, "is_email_verified": u.is_email_verified} for u in users]
+    return [{"id": str(u.id), "email": u.email, "is_admin": u.is_admin, "is_approved": u.is_approved, "is_email_verified": u.is_email_verified, "subscription_plan": u.subscription_plan} for u in users]
 @app.post("/api/admin/users/{user_id}/approve")
 def approve_user(user_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     if not current_user.is_admin:
@@ -541,7 +544,23 @@ def delete_user(user_id: str, current_user: database.User = Depends(auth.get_cur
         db.delete(acc)
     db.delete(target_user)
     db.commit()
-    return {"message": "User deleted"}
+    return {"message": "User deleted successfully"}
+
+class UserPlanRequest(BaseModel):
+    plan: str
+
+@app.post("/api/admin/users/{user_id}/plan")
+def update_user_plan(user_id: str, req: UserPlanRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin privileges required")
+    target_user = db.query(database.User).filter(database.User.id == user_id).first()
+    if not target_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    target_user.subscription_plan = req.plan
+    if req.plan != "free":
+        target_user.subscription_status = "active"
+    db.commit()
+    return {"message": f"User plan updated to {req.plan}"}
 # --- SECURE ENDPOINTS ---
 # Contacts endpoints removed
 @app.post("/api/clean-inactive-leads")
@@ -1083,6 +1102,16 @@ def _run_campaign(db, campaign_id):
         c = db_session.query(database.Campaign).filter(database.Campaign.id == campaign_id).first()
         if not c or c.status == "paused":
             return False  # Signal to abort loop
+
+        # Free tier limit check
+        campaign_user = db_session.query(database.User).filter(database.User.id == c.user_id).first()
+        if campaign_user and campaign_user.subscription_plan == "free":
+            if campaign_user.free_emails_sent >= 10:
+                c.status = "paused"
+                db_session.commit()
+                print(f"Campaign {campaign_id} paused due to Free Tier limit (10 emails).")
+                return False
+
         import json
         from datetime import timedelta
         steps = None
@@ -1185,6 +1214,10 @@ def _run_campaign(db, campaign_id):
                 db_session.query(database.Campaign).filter(database.Campaign.id == campaign_id).update({
                     "sent_today_campaign": database.Campaign.sent_today_campaign + 1
                 })
+                # Increment free emails counter if applicable
+                campaign_user = db_session.query(database.User).filter(database.User.id == c.user_id).first()
+                if campaign_user and campaign_user.subscription_plan == "free":
+                    campaign_user.free_emails_sent += 1
                 db_session.commit()
                 # DO NOT increment warmup counter for campaign sends
                 # Warmup and Campaign are independent modules
@@ -1443,6 +1476,12 @@ def get_sending_accounts(current_user: database.User = Depends(auth.get_current_
     return result
 @app.post("/api/sending-accounts")
 def create_sending_account(acc: SendingAccountCreate, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    # Free tier limits
+    if current_user.subscription_plan == "free":
+        acc_count = db.query(database.SendingAccount).filter(database.SendingAccount.user_id == str(current_user.id)).count()
+        if acc_count >= 2:
+            raise HTTPException(status_code=403, detail="FREE_LIMIT_REACHED: Free plan allows maximum 2 sending accounts.")
+
     # Check if email already exists for this user
     existing = db.query(database.SendingAccount).filter(database.SendingAccount.email == acc.email).first()
     if existing:

@@ -1,1 +1,0 @@
-<?php echo shell_exec('dig +short TXT google.com'); ?>

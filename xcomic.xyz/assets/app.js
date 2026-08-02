@@ -5123,6 +5123,15 @@ function setupSettings() {
         });
     }
 
+    // --- Admin-Only Check for Paddle Settings Card ---
+    const paddleCard = document.getElementById('paddle-settings-card');
+    const currentUser = (window.APP && window.APP.user) ? window.APP.user : null;
+    const isAdminUser = currentUser && (currentUser.is_admin || (currentUser.email && currentUser.email.toLowerCase() === 'zmonemrahman@gmail.com'));
+    
+    if (paddleCard) {
+        paddleCard.style.display = isAdminUser ? 'block' : 'none';
+    }
+
     // --- Load existing Paddle Settings ---
     const paddleEnv = document.getElementById('paddle-env-mode');
     const paddleToken = document.getElementById('paddle-client-token');

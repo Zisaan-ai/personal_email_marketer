@@ -6754,7 +6754,7 @@
 
 
 
-                <button class="p-btn" onclick="LANDING.openPayment('Starter', 29)">Buy Starter</button>
+                <button class="p-btn" onclick="LANDING.openPayment('Starter')">Buy Starter</button>
 
 
 
@@ -6818,7 +6818,7 @@
 
 
 
-                <button class="p-btn" onclick="LANDING.openPayment('Professional', 99)">Get Professional</button>
+                <button class="p-btn" onclick="LANDING.openPayment('Professional')">Get Professional</button>
 
 
 
@@ -6878,7 +6878,7 @@
 
 
 
-                <button class="p-btn" onclick="LANDING.openPayment('Enterprise', 299)">Contact Sales</button>
+                <button class="p-btn" onclick="LANDING.openPayment('Enterprise')">Contact Sales</button>
 
 
 
@@ -20276,40 +20276,40 @@
                     <!-- Subscription Plans & Prices Grid -->
                     <div style="margin-bottom:20px;">
                         <label style="display:block; font-size:13px; font-weight:600; margin-bottom:10px; color:var(--text);">Subscription Plan Prices & Price IDs</label>
-                        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:14px;">
-                            <div style="background:var(--bg-light); border:1px solid var(--border); border-radius:10px; padding:14px;">
+                        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:16px;">
+                            <div style="background:var(--bg-light); border:1px solid var(--border); border-radius:10px; padding:16px;">
                                 <div style="font-size:12px; font-weight:700; color:#10b981; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Starter Plan</div>
-                                <div style="margin-bottom:8px;">
-                                    <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:2px;">Price Amount ($/mo)</label>
-                                    <input type="number" id="adm-price-amt-starter" placeholder="29" value="29" style="width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); font-size:13px; font-weight:600;">
+                                <div style="margin-bottom:10px;">
+                                    <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">Price Amount ($/mo)</label>
+                                    <input type="number" id="adm-price-amt-starter" placeholder="29" value="29" style="width:100%; padding:9px 12px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); font-size:13px; font-weight:600; box-sizing:border-box;">
                                 </div>
                                 <div>
-                                    <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:2px;">Paddle Price ID</label>
-                                    <input type="text" id="adm-price-starter" placeholder="pri_01xxx..." style="width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); font-size:13px; font-family:monospace;">
+                                    <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">Paddle Price ID</label>
+                                    <input type="text" id="adm-price-starter" placeholder="pri_01xxx..." style="width:100%; padding:9px 12px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); font-size:13px; font-family:monospace; box-sizing:border-box;">
                                 </div>
                             </div>
 
-                            <div style="background:var(--bg-light); border:1px solid var(--border); border-radius:10px; padding:14px;">
+                            <div style="background:var(--bg-light); border:1px solid var(--border); border-radius:10px; padding:16px;">
                                 <div style="font-size:12px; font-weight:700; color:#6366f1; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Professional Plan</div>
-                                <div style="margin-bottom:8px;">
-                                    <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:2px;">Price Amount ($/mo)</label>
-                                    <input type="number" id="adm-price-amt-pro" placeholder="99" value="99" style="width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); font-size:13px; font-weight:600;">
+                                <div style="margin-bottom:10px;">
+                                    <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">Price Amount ($/mo)</label>
+                                    <input type="number" id="adm-price-amt-pro" placeholder="99" value="99" style="width:100%; padding:9px 12px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); font-size:13px; font-weight:600; box-sizing:border-box;">
                                 </div>
                                 <div>
-                                    <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:2px;">Paddle Price ID</label>
-                                    <input type="text" id="adm-price-pro" placeholder="pri_01xxx..." style="width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); font-size:13px; font-family:monospace;">
+                                    <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">Paddle Price ID</label>
+                                    <input type="text" id="adm-price-pro" placeholder="pri_01xxx..." style="width:100%; padding:9px 12px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); font-size:13px; font-family:monospace; box-sizing:border-box;">
                                 </div>
                             </div>
 
-                            <div style="background:var(--bg-light); border:1px solid var(--border); border-radius:10px; padding:14px;">
+                            <div style="background:var(--bg-light); border:1px solid var(--border); border-radius:10px; padding:16px;">
                                 <div style="font-size:12px; font-weight:700; color:#f59e0b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Enterprise Plan</div>
-                                <div style="margin-bottom:8px;">
-                                    <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:2px;">Price Amount ($/mo)</label>
-                                    <input type="number" id="adm-price-amt-enterprise" placeholder="299" value="299" style="width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); font-size:13px; font-weight:600;">
+                                <div style="margin-bottom:10px;">
+                                    <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">Price Amount ($/mo)</label>
+                                    <input type="number" id="adm-price-amt-enterprise" placeholder="299" value="299" style="width:100%; padding:9px 12px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); font-size:13px; font-weight:600; box-sizing:border-box;">
                                 </div>
                                 <div>
-                                    <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:2px;">Paddle Price ID</label>
-                                    <input type="text" id="adm-price-enterprise" placeholder="pri_01xxx..." style="width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); font-size:13px; font-family:monospace;">
+                                    <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">Paddle Price ID</label>
+                                    <input type="text" id="adm-price-enterprise" placeholder="pri_01xxx..." style="width:100%; padding:9px 12px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); font-size:13px; font-family:monospace; box-sizing:border-box;">
                                 </div>
                             </div>
                         </div>
@@ -20335,7 +20335,7 @@
                             <p style="font-size:12px; color:var(--text-muted); margin:2px 0 0 0;">Use these cards in Paddle sandbox to simulate different payment scenarios.</p>
                         </div>
                     </div>
-                    <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:10px;">
+                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px;">
                         <div style="background:var(--bg-light); border:1px solid var(--border); border-radius:10px; padding:12px 16px; display:flex; align-items:center; gap:12px;">
                             <div style="width:36px;height:36px;border-radius:8px;background:#dcfce7;display:flex;align-items:center;justify-content:center;">
                                 <i class="fa-solid fa-check" style="color:#16a34a; font-size:14px;"></i>

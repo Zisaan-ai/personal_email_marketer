@@ -4911,11 +4911,38 @@
 
     <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
     <script>
+        // Dynamic Pricing Sync Engine
+        window.syncDynamicPrices = function() {
+            var cfg = window.PADDLE_CONFIG || {};
+            var prices = cfg.prices || { Starter: 29, Professional: 99, Enterprise: 299 };
+
+            var sPrice = prices.Starter || 29;
+            var pPrice = prices.Professional || 99;
+            var ePrice = prices.Enterprise || 299;
+
+            var dStarter = document.getElementById('display-price-starter');
+            var dPro = document.getElementById('display-price-pro');
+            var dEnt = document.getElementById('display-price-enterprise');
+
+            if (dStarter) dStarter.innerHTML = '$' + sPrice + '<span>/mo</span>';
+            if (dPro) dPro.innerHTML = '$' + pPrice + '<span>/mo</span>';
+            if (dEnt) dEnt.innerHTML = '$' + ePrice + '<span>/mo</span>';
+
+            var bStarter = document.getElementById('upgrade-modal-btn-starter');
+            var bPro = document.getElementById('upgrade-modal-btn-pro');
+            var bEnt = document.getElementById('upgrade-modal-btn-enterprise');
+
+            if (bStarter) bStarter.innerText = 'Buy Starter ($' + sPrice + '/mo)';
+            if (bPro) bPro.innerText = 'Buy Pro ($' + pPrice + '/mo)';
+            if (bEnt) bEnt.innerText = 'Buy Enterprise ($' + ePrice + '/mo)';
+        };
+
         // Load Paddle config: localStorage override > hardcoded defaults
         (function() {
             var defaults = {
                 environment: 'sandbox',
                 clientToken: 'test_c2c1f7b673c15e7a705b10c5bf7',
+                prices: { Starter: 29, Professional: 99, Enterprise: 299 },
                 priceIds: {
                     Starter: 'pri_01kz1fwdrmswb6c1ytevea2zd4',
                     Professional: 'pri_01kz1fxmmpdpk5v8h0b0y0k8qd',
@@ -4941,6 +4968,10 @@
                     Paddle.Initialize({ token: token });
                 }
             } catch(e) { console.warn('Paddle init:', e); }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                if (window.syncDynamicPrices) window.syncDynamicPrices();
+            });
         })();
     </script>
 </head>
@@ -6691,7 +6722,7 @@
 
 
 
-                <div class="p-price">$29<span>/mo</span></div>
+                <div class="p-price" id="display-price-starter">$29<span>/mo</span></div>
 
 
 
@@ -6751,7 +6782,7 @@
 
 
 
-                <div class="p-price">$99<span>/mo</span></div>
+                <div class="p-price" id="display-price-pro">$99<span>/mo</span></div>
 
 
 
@@ -6811,7 +6842,7 @@
 
 
 
-                <div class="p-price">$299<span>/mo</span></div>
+                <div class="p-price" id="display-price-enterprise">$299<span>/mo</span></div>
 
 
 
@@ -25449,9 +25480,9 @@
             <i class="fa-solid fa-rocket" style="font-size:48px;color:#10b981;margin-bottom:20px;"></i>
             <h2 id="upgrade-modal-title" style="margin-bottom:15px;font-size:24px;color:var(--text);font-weight:700;">Upgrade Your Plan</h2>
             <p id="upgrade-modal-desc" style="margin-bottom:30px;color:var(--text-muted);font-size:15px;line-height:1.5;">You've reached the limits of the Free plan. Upgrade now to unlock more features and higher limits.</p>
-            <button class="p-btn" onclick="document.getElementById('upgrade-modal').style.display='none'; LANDING.openPayment('Starter', 29)" style="background:#000;color:#fff;border:none;padding:12px 24px;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;margin-bottom:12px;width:100%;transition:transform 0.2s;">Buy Starter ($29/mo)</button>
-            <button class="p-btn" onclick="document.getElementById('upgrade-modal').style.display='none'; LANDING.openPayment('Professional', 99)" style="background:#000;color:#fff;border:none;padding:12px 24px;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;margin-bottom:12px;width:100%;transition:transform 0.2s;">Buy Pro ($99/mo)</button>
-            <button class="p-btn" onclick="document.getElementById('upgrade-modal').style.display='none'; LANDING.openPayment('Enterprise', 299)" style="background:#000;color:#fff;border:none;padding:12px 24px;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;margin-bottom:20px;width:100%;transition:transform 0.2s;">Buy Enterprise ($299/mo)</button>
+            <button id="upgrade-modal-btn-starter" class="p-btn" onclick="document.getElementById('upgrade-modal').style.display='none'; LANDING.openPayment('Starter')" style="background:#000;color:#fff;border:none;padding:12px 24px;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;margin-bottom:12px;width:100%;transition:transform 0.2s;">Buy Starter ($29/mo)</button>
+            <button id="upgrade-modal-btn-pro" class="p-btn" onclick="document.getElementById('upgrade-modal').style.display='none'; LANDING.openPayment('Professional')" style="background:#000;color:#fff;border:none;padding:12px 24px;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;margin-bottom:12px;width:100%;transition:transform 0.2s;">Buy Pro ($99/mo)</button>
+            <button id="upgrade-modal-btn-enterprise" class="p-btn" onclick="document.getElementById('upgrade-modal').style.display='none'; LANDING.openPayment('Enterprise')" style="background:#000;color:#fff;border:none;padding:12px 24px;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;margin-bottom:20px;width:100%;transition:transform 0.2s;">Buy Enterprise ($299/mo)</button>
         </div>
     </div>
     

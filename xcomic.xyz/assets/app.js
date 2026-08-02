@@ -13621,6 +13621,9 @@ window.loadPaddleAdminSettings = function() {
                     Paddle.Environment.set(env);
                     Paddle.Initialize({ token: token });
                 }
+                if (typeof window.syncDynamicPrices === 'function') {
+                    window.syncDynamicPrices();
+                }
             } catch(e) { console.warn('Paddle save error:', e); }
 
             var statusEl = document.getElementById('adm-paddle-status');

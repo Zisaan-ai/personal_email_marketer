@@ -4535,6 +4535,8 @@ window.saveSchedule = async function() {
 
                 is_draft: true,
 
+                campaign_id: window.currentCampaignId || null,
+
                 sending_days: payload.sending_days,
 
                 start_hour: payload.start_hour,
@@ -4565,7 +4567,7 @@ window.saveSchedule = async function() {
 
                 if (!window.lastFetchedCampaigns) window.lastFetchedCampaigns = [];
 
-                window.lastFetchedCampaigns.push({
+                const itemData = {
 
                     id: draftData.campaign_id, subject: draftPayload.subject, body: draftPayload.body,
 
@@ -4577,7 +4579,21 @@ window.saveSchedule = async function() {
 
                     delay_min: payload.delay_min, delay_max: payload.delay_max
 
-                });
+                };
+
+                const existingIdx = window.lastFetchedCampaigns.findIndex(x => x.id === draftData.campaign_id);
+
+                if (existingIdx >= 0) {
+
+                    window.lastFetchedCampaigns[existingIdx] = itemData;
+
+                } else {
+
+                    window.lastFetchedCampaigns.push(itemData);
+
+                }
+
+            }
 
                 showToast('Schedule saved! Draft created.', 'success');
 
@@ -13370,7 +13386,8 @@ window.saveNewsletterSchedule = async function() {
                 body: typeof editor !== 'undefined' && editor ? editor.exportHtml() : '',
                 design_json: typeof editor !== 'undefined' && editor ? JSON.stringify(editor.exportDesign()) : '',
                 leads: [],
-                is_draft: true
+                is_draft: true,
+                campaign_id: window.currentCampaignId || null
             };
 
 
@@ -13409,7 +13426,7 @@ window.saveNewsletterSchedule = async function() {
 
                 if (!window.lastFetchedCampaigns) window.lastFetchedCampaigns = [];
 
-                window.lastFetchedCampaigns.push({
+                const itemData = {
 
                     id: draftData.campaign_id, subject: draftPayload.subject, body: '',
 
@@ -13421,7 +13438,19 @@ window.saveNewsletterSchedule = async function() {
 
                     delay_min: payload.delay_min, delay_max: payload.delay_max
 
-                });
+                };
+
+                const existingIdx = window.lastFetchedCampaigns.findIndex(x => x.id === draftData.campaign_id);
+
+                if (existingIdx >= 0) {
+
+                    window.lastFetchedCampaigns[existingIdx] = itemData;
+
+                } else {
+
+                    window.lastFetchedCampaigns.push(itemData);
+
+                }
 
                 showToast('Schedule saved! Draft created.', 'success');
 

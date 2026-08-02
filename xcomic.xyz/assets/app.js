@@ -13578,11 +13578,20 @@ window.loadPaddleAdminSettings = function() {
     var starterEl = document.getElementById('adm-price-starter');
     var proEl = document.getElementById('adm-price-pro');
     var enterpriseEl = document.getElementById('adm-price-enterprise');
+
+    var starterAmtEl = document.getElementById('adm-price-amt-starter');
+    var proAmtEl = document.getElementById('adm-price-amt-pro');
+    var enterpriseAmtEl = document.getElementById('adm-price-amt-enterprise');
+
     if (envEl) envEl.value = cfg.environment || 'sandbox';
     if (tokenEl) tokenEl.value = cfg.clientToken || '';
     if (starterEl) starterEl.value = (cfg.priceIds && cfg.priceIds.Starter) || '';
     if (proEl) proEl.value = (cfg.priceIds && cfg.priceIds.Professional) || '';
     if (enterpriseEl) enterpriseEl.value = (cfg.priceIds && cfg.priceIds.Enterprise) || '';
+
+    if (starterAmtEl) starterAmtEl.value = (cfg.prices && cfg.prices.Starter) || 29;
+    if (proAmtEl) proAmtEl.value = (cfg.prices && cfg.prices.Professional) || 99;
+    if (enterpriseAmtEl) enterpriseAmtEl.value = (cfg.prices && cfg.prices.Enterprise) || 299;
 };
 
 (function() {
@@ -13595,16 +13604,20 @@ window.loadPaddleAdminSettings = function() {
             var pro = document.getElementById('adm-price-pro').value || '';
             var enterprise = document.getElementById('adm-price-enterprise').value || '';
 
+            var starterAmt = parseInt(document.getElementById('adm-price-amt-starter')?.value, 10) || 29;
+            var proAmt = parseInt(document.getElementById('adm-price-amt-pro')?.value, 10) || 99;
+            var enterpriseAmt = parseInt(document.getElementById('adm-price-amt-enterprise')?.value, 10) || 299;
+
             window.PADDLE_CONFIG = {
                 environment: env,
                 clientToken: token,
+                prices: { Starter: starterAmt, Professional: proAmt, Enterprise: enterpriseAmt },
                 priceIds: { Starter: starter, Professional: pro, Enterprise: enterprise }
             };
 
             try {
                 localStorage.setItem('PADDLE_CONFIG', JSON.stringify(window.PADDLE_CONFIG));
-                // Re-initialize Paddle if token is valid
-                if (typeof Paddle !== 'undefined' && token && token.length > 10) {
+                if (typeof Paddle !== 'undefined' && token) {
                     Paddle.Environment.set(env);
                     Paddle.Initialize({ token: token });
                 }
@@ -13612,7 +13625,7 @@ window.loadPaddleAdminSettings = function() {
 
             var statusEl = document.getElementById('adm-paddle-status');
             if (statusEl) {
-                statusEl.textContent = '✅ Paddle configuration saved successfully!';
+                statusEl.textContent = '✅ Paddle configuration and price amounts saved successfully!';
                 statusEl.style.display = 'block';
                 statusEl.style.background = '#dcfce7';
                 statusEl.style.color = '#16a34a';

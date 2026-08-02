@@ -5118,6 +5118,64 @@ function setupSettings() {
         });
     }
 
+    // --- Load existing Paddle Settings ---
+    const paddleEnv = document.getElementById('paddle-env-mode');
+    const paddleToken = document.getElementById('paddle-client-token');
+    const paddleStarter = document.getElementById('paddle-price-starter');
+    const paddlePro = document.getElementById('paddle-price-pro');
+    const paddleEnterprise = document.getElementById('paddle-price-enterprise');
+
+    if (paddleToken) {
+        let cfg = window.PADDLE_CONFIG || {};
+        if (paddleEnv) paddleEnv.value = cfg.environment || 'sandbox';
+        paddleToken.value = cfg.clientToken || '';
+        if (paddleStarter) paddleStarter.value = cfg.priceIds?.Starter || '';
+        if (paddlePro) paddlePro.value = cfg.priceIds?.Professional || '';
+        if (paddleEnterprise) paddleEnterprise.value = cfg.priceIds?.Enterprise || '';
+    }
+
+    const savePaddleBtn = document.getElementById('save-paddle-settings-btn');
+    if (savePaddleBtn) {
+        savePaddleBtn.addEventListener('click', () => {
+            const env = document.getElementById('paddle-env-mode')?.value || 'sandbox';
+            const token = document.getElementById('paddle-client-token')?.value || '';
+            const starter = document.getElementById('paddle-price-starter')?.value || '';
+            const pro = document.getElementById('paddle-price-pro')?.value || '';
+            const enterprise = document.getElementById('paddle-price-enterprise')?.value || '';
+
+            window.PADDLE_CONFIG = {
+                environment: env,
+                clientToken: token,
+                priceIds: { Starter: starter, Professional: pro, Enterprise: enterprise }
+            };
+
+            try {
+                localStorage.setItem('PADDLE_CONFIG', JSON.stringify(window.PADDLE_CONFIG));
+                if (typeof Paddle !== 'undefined' && token) {
+                    Paddle.Environment.set(env);
+                    Paddle.Initialize({ token: token });
+                }
+            } catch(e) {}
+
+            const statusEl = document.getElementById('paddle-settings-status');
+            if (statusEl) {
+                statusEl.textContent = 'Paddle Settings saved successfully!';
+                statusEl.className = 'alert success';
+                statusEl.style.display = 'block';
+            }
+            showToast('Paddle configuration updated!', 'success');
+        });
+    }
+
+    const testPaddleBtn = document.getElementById('test-paddle-sandbox-btn');
+    if (testPaddleBtn) {
+        testPaddleBtn.addEventListener('click', () => {
+            if (typeof LANDING !== 'undefined' && LANDING.openPayment) {
+                LANDING.openPayment('Starter', 29);
+            }
+        });
+    }
+
     const saveSmtpBtn = document.getElementById('save-smtp-btn');
 
 

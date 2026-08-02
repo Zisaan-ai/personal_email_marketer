@@ -2054,8 +2054,10 @@ def unsubscribe(token: str, db: Session = Depends(database.get_db)):
         raise HTTPException(status_code=400, detail='Invalid token')
 @app.get('/api/unsubscribes')
 def get_unsubscribes(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    # BUG FIX: return serializable dicts, accessible to all users
-    unsubs = db.query(database.UnsubscribeList).all()
+    user_campaigns = db.query(database.Campaign.id).filter(database.Campaign.user_id == str(current_user.id)).subquery()
+    user_emails = db.query(database.CampaignLead.email).filter(database.CampaignLead.campaign_id.in_(user_campaigns)).subquery()
+    
+    unsubs = db.query(database.UnsubscribeList).filter(database.UnsubscribeList.email.in_(user_emails)).all()
     return [{"email": u.email, "unsubscribed_at": str(u.unsubscribed_at)} for u in unsubs]
 
 
@@ -2779,8 +2781,10 @@ def unsubscribe(token: str, db: Session = Depends(database.get_db)):
         raise HTTPException(status_code=400, detail='Invalid token')
 @app.get('/api/unsubscribes')
 def get_unsubscribes(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    # BUG FIX: return serializable dicts, accessible to all users
-    unsubs = db.query(database.UnsubscribeList).all()
+    user_campaigns = db.query(database.Campaign.id).filter(database.Campaign.user_id == str(current_user.id)).subquery()
+    user_emails = db.query(database.CampaignLead.email).filter(database.CampaignLead.campaign_id.in_(user_campaigns)).subquery()
+    
+    unsubs = db.query(database.UnsubscribeList).filter(database.UnsubscribeList.email.in_(user_emails)).all()
     return [{"email": u.email, "unsubscribed_at": str(u.unsubscribed_at)} for u in unsubs]
 # --- BOUNCES ENDPOINT ---
 @app.get('/api/bounces')

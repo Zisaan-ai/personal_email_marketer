@@ -372,95 +372,34 @@ function getToken() {
 
 
 
+window._isSavingCampaign = false;
 async function apiCall(endpoint, method = 'GET', body = null) {
-
-
-
-    const token = getToken();
-
-
-
-    const headers = { 'Authorization': `Bearer ${token}` };
-
-
-
-    if (body) headers['Content-Type'] = 'application/json';
-
-
-
-    if (method === 'GET') {
-
-        endpoint += (endpoint.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
-
-    }
-
-    const res = await fetch(`${API_URL}${endpoint}`, {
-
-        method,
-
-        headers,
-
-        body: body ? JSON.stringify(body) : null,
-
-        cache: 'no-store'
-
-    });
-
-
-
-    const ct = res.headers.get('content-type');
-    if (res.status === 401) {
-
-
-
-        try { localStorage.removeItem('token'); localStorage.removeItem('is_admin'); localStorage.removeItem('user'); localStorage.removeItem('xcomic_token'); } catch(e) {}
-
-
-
-        
-
-
-
-        var authPage = document.getElementById('auth-page');
-
-
-
-        if (authPage && authPage.classList.contains('hidden')) {
-
-
-
-            // User was in the app, but token expired -> reload to kick them out
-
-
-
-            location.reload();
-
-
-
-        } else {
-
-
-
-            // Already on auth page, don't reload! Just throw error.
-
-
-
-            throw new Error('Unauthorized');
-
-
-
+    if ((endpoint === '/campaigns/send' || endpoint.endsWith('/save-schedule')) && method === 'POST') {
+        if (window._isSavingCampaign) {
+            return new Response(JSON.stringify({ detail: 'Please wait, saving...' }), { status: 429, headers: { 'Content-Type': 'application/json' } });
         }
-
-
-
+        window._isSavingCampaign = true;
     }
-
-
-
-    return res;
-
-
-
+    try {
+        const token = getToken();
+        const headers = { 'Authorization': `Bearer ${token}` };
+        if (body) headers['Content-Type'] = 'application/json';
+        const res = await fetch(API_BASE + endpoint, {
+            method,
+            headers,
+            body: body ? JSON.stringify(body) : null
+        });
+        if ((endpoint === '/campaigns/send' || endpoint.endsWith('/save-schedule')) && method === 'POST') {
+            window._isSavingCampaign = false;
+        }
+        if (res.status === 401) { logout(); throw new Error('Unauthorized'); }
+        return res;
+    } catch (err) {
+        if ((endpoint === '/campaigns/send' || endpoint.endsWith('/save-schedule')) && method === 'POST') {
+            window._isSavingCampaign = false;
+        }
+        throw err;
+    }
 }
 
 
@@ -13947,4 +13886,5 @@ window.deleteCampaignLead = async function(campaignId, leadId, btn) {
     }
 
 };
+
 

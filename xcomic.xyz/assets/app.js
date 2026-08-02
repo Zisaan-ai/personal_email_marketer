@@ -5047,15 +5047,28 @@ window.loadedAIKeys = {};
 
 async function loadSmtpStatus() {
     const statusEl = document.getElementById('smtp-status');
-    if (!statusEl) return;
     try {
         const res = await apiCall('/settings/smtp', 'GET');
         if (res.ok) {
             const data = await res.json();
             if (data.has_account) {
-                statusEl.innerHTML = `✅ <strong>Saved Account:</strong> ${data.email} &nbsp;|&nbsp; Host: ${data.smtp_host}:${data.smtp_port} &nbsp;|&nbsp; Name: ${data.from_name || '-'}`;
-                statusEl.style.cssText = 'display:block; margin-top:20px; padding:14px 18px; border-radius:10px; background:#f0fdf4; color:#16a34a; border:1px solid #bbf7d0; font-size:14px;';
-            } else {
+                const accountEmail = data.smtp_username || data.from_email || '-';
+                if (statusEl) {
+                    statusEl.innerHTML = `✅ <strong>Saved Account:</strong> ${accountEmail} &nbsp;|&nbsp; Host: ${data.smtp_host}:${data.smtp_port} &nbsp;|&nbsp; Name: ${data.from_name || '-'}`;
+                    statusEl.style.cssText = 'display:block; margin-top:20px; padding:14px 18px; border-radius:10px; background:#f0fdf4; color:#16a34a; border:1px solid #bbf7d0; font-size:14px;';
+                }
+                // Auto-fill form inputs if empty or on load
+                const hostEl = document.getElementById('smtp-host');
+                if (hostEl && data.smtp_host) hostEl.value = data.smtp_host;
+                const portEl = document.getElementById('smtp-port');
+                if (portEl && data.smtp_port) portEl.value = data.smtp_port;
+                const userEl = document.getElementById('smtp-user');
+                if (userEl && data.smtp_username) userEl.value = data.smtp_username;
+                const nameEl = document.getElementById('smtp-from-name');
+                if (nameEl && data.from_name) nameEl.value = data.from_name;
+                const emailEl = document.getElementById('smtp-from-email');
+                if (emailEl && data.from_email) emailEl.value = data.from_email;
+            } else if (statusEl) {
                 statusEl.textContent = '⚠️ No email account saved yet. Fill the form below and click Save Changes.';
                 statusEl.style.cssText = 'display:block; margin-top:20px; padding:14px 18px; border-radius:10px; background:#fffbeb; color:#b45309; border:1px solid #fcd34d; font-size:14px;';
             }
@@ -5119,25 +5132,7 @@ function setupSettings() {
     }
 
     // --- Load existing SMTP account status on page open ---
-    (async () => {
-        const statusEl = document.getElementById('smtp-status');
-        if (!statusEl) return;
-        try {
-            const res = await apiCall('/settings/smtp', 'GET');
-            if (res.ok) {
-                const data = await res.json();
-                if (data.has_account) {
-                    statusEl.innerHTML = `✅ <strong>Saved Account:</strong> ${data.email} &nbsp;|&nbsp; Host: ${data.smtp_host}:${data.smtp_port} &nbsp;|&nbsp; Name: ${data.from_name || '-'}`;
-                    statusEl.className = 'alert success';
-                    statusEl.style.display = 'block';
-                } else {
-                    statusEl.textContent = '⚠️ No email account saved yet. Fill the form below and click Save Changes.';
-                    statusEl.className = 'alert warning';
-                    statusEl.style.display = 'block';
-                }
-            }
-        } catch(e) {}
-    })();
+    loadSmtpStatus();
 
     const providerSelect = document.getElementById('smtp-provider');
 
@@ -5171,7 +5166,8 @@ function setupSettings() {
 
 
 
-            const provider = document.getElementById('smtp-provider').value;
+            const providerEl = document.getElementById('smtp-provider');
+            const provider = providerEl ? providerEl.value : 'smtp';
 
 
 
@@ -5187,9 +5183,11 @@ function setupSettings() {
 
                 body.smtp_pass = document.getElementById('smtp-pass').value;
 
-                body.smtp_port = parseInt(document.getElementById('smtp-port').value);
+                body.smtp_port = parseInt(document.getElementById('smtp-port').value) || 587;
 
-                body.from_name = document.getElementById('smtp-from-name').value;
+                body.from_name = (document.getElementById('smtp-from-name') || {}).value || '';
+
+                body.from_email = (document.getElementById('smtp-from-email') || {}).value || '';
 
             }
 
@@ -5215,7 +5213,7 @@ function setupSettings() {
 
 
 
-                    statusEl.textContent = res.ok ? 'Settings saved!' : (data.detail || 'Error');
+                    statusEl.textContent = res.ok ? 'Settings saved successfully!' : (data.detail || 'Error saving settings.');
 
 
 
@@ -5227,6 +5225,13 @@ function setupSettings() {
 
 
 
+                }
+
+                if (res.ok) {
+                    showToast('SMTP settings saved successfully!', 'success');
+                    loadSmtpStatus();
+                } else {
+                    showToast(data.detail || 'Failed to save SMTP settings', 'error');
                 }
 
 

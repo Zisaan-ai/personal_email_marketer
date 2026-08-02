@@ -5028,17 +5028,30 @@ window.loadedAIKeys = {};
 
 async function loadSmtpStatus() {
     const statusEl = document.getElementById('smtp-status');
-    if (!statusEl) return;
     try {
         const res = await apiCall('/settings/smtp', 'GET');
         if (res.ok) {
             const data = await res.json();
             if (data.has_account) {
-                statusEl.innerHTML = `✅ <strong>Saved Account:</strong> ${data.smtp_username} &nbsp;|&nbsp; Host: ${data.smtp_host}:${data.smtp_port} &nbsp;|&nbsp; Name: ${data.from_name || '-'}`;
-                statusEl.style.cssText = 'display:block; margin-top:20px; padding:14px 18px; border-radius:10px; background:#f0fdf4; color:#16a34a; border:1px solid #bbf7d0; font-size:14px;';
+                if (statusEl) {
+                    statusEl.innerHTML = `✅ <strong>Saved Account:</strong> ${data.smtp_username} &nbsp;|&nbsp; Host: ${data.smtp_host}:${data.smtp_port} &nbsp;|&nbsp; Name: ${data.from_name || '-'}`;
+                    statusEl.style.cssText = 'display:block; margin-top:20px; padding:14px 18px; border-radius:10px; background:#f0fdf4; color:#16a34a; border:1px solid #bbf7d0; font-size:14px;';
+                }
+                var hostEl = document.getElementById('smtp-host');
+                var portEl = document.getElementById('smtp-port');
+                var userEl = document.getElementById('smtp-user');
+                var nameEl = document.getElementById('smtp-from-name');
+                var fromEmailEl = document.getElementById('smtp-from-email');
+                if (hostEl && data.smtp_host) hostEl.value = data.smtp_host;
+                if (portEl && data.smtp_port) portEl.value = data.smtp_port;
+                if (userEl && data.smtp_username) userEl.value = data.smtp_username;
+                if (nameEl && data.from_name) nameEl.value = data.from_name;
+                if (fromEmailEl && data.from_email) fromEmailEl.value = data.from_email;
             } else {
-                statusEl.textContent = '⚠️ No email account saved yet. Fill the form below and click Save Changes.';
-                statusEl.style.cssText = 'display:block; margin-top:20px; padding:14px 18px; border-radius:10px; background:#fffbeb; color:#b45309; border:1px solid #fcd34d; font-size:14px;';
+                if (statusEl) {
+                    statusEl.textContent = '⚠️ No email account saved yet. Fill the form below and click Save Changes.';
+                    statusEl.style.cssText = 'display:block; margin-top:20px; padding:14px 18px; border-radius:10px; background:#fffbeb; color:#b45309; border:1px solid #fcd34d; font-size:14px;';
+                }
             }
         }
     } catch(e) {}
@@ -13490,6 +13503,9 @@ window.SUPPORT.switchAdminTab = function(tabId) {
     }
     if (tabId === 'payment') {
         if (window.loadPaddleAdminSettings) window.loadPaddleAdminSettings();
+    }
+    if (tabId === 'email') {
+        if (typeof loadSmtpStatus === 'function') loadSmtpStatus();
     }
 };
 

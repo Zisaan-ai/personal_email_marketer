@@ -2552,7 +2552,7 @@ def delete_ticket(ticket_id: str, current_user: database.User = Depends(auth.get
 def get_unread_ticket_count(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admin only")
-    count = db.query(database.Ticket).filter(database.Ticket.status.in_(["User Reply", "Open", "open"])).count()
+    count = db.query(database.Ticket).filter(database.Ticket.status == "User Reply").count()
     return {"unread": count, "count": count}
 
 @app.get("/api/admin/notifications/unread")
@@ -2560,8 +2560,8 @@ def get_admin_notifications_unread(current_user: database.User = Depends(auth.ge
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admin only")
     
-    # 1. Unread support tickets (status is "User Reply" or "Open")
-    support_count = db.query(database.Ticket).filter(database.Ticket.status.in_(["User Reply", "Open", "open"])).count()
+    # 1. Unread support tickets waiting for Admin ("User Reply")
+    support_count = db.query(database.Ticket).filter(database.Ticket.status == "User Reply").count()
     
     # 2. New pending users / registrations (is_approved is False)
     new_users_count = db.query(database.User).filter(database.User.is_approved == False).count()

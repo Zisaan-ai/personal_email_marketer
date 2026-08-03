@@ -2479,7 +2479,7 @@ def reply_ticket(ticket_id: str, req: TicketReply, current_user: database.User =
     if not current_user.is_admin and ticket.user_id != current_user.id:
         raise HTTPException(status_code=403, detail="Not authorized")
     import uuid, datetime
-    is_admin_msg = bool(current_user.is_admin and current_user.id != ticket.user_id)
+    is_admin_msg = bool(current_user.is_admin)
     new_msg = database.TicketMessage(
         id=str(uuid.uuid4()),
         ticket_id=ticket.id,
@@ -2490,7 +2490,7 @@ def reply_ticket(ticket_id: str, req: TicketReply, current_user: database.User =
     db.add(new_msg)
     
     ticket.updated_at = datetime.datetime.utcnow()
-    if is_admin_msg:
+    if current_user.is_admin:
         ticket.status = "Admin Reply"
     else:
         ticket.status = "User Reply"

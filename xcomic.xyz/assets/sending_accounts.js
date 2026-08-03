@@ -203,9 +203,21 @@ const ACCOUNTS = {
         const customSettings = document.getElementById('custom-smtp-settings');
         
         if (provider === 'google' || provider === 'microsoft') {
-            if (passNote) passNote.style.display = 'flex';
+            if (passNote) {
+                passNote.style.display = 'flex';
+                passNote.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="margin-right:8px; margin-top:2px;"></i><span><strong>Note on Passwords:</strong> If you are using Gmail or Microsoft/Outlook, you <strong>must</strong> use an App Password instead of your regular account password.</span>';
+            }
             if (passLabel) passLabel.textContent = 'App Password (16-digit Google/Microsoft App Password)';
             customSettings.style.display = 'none';
+        } else if (provider === 'brevo_api') {
+            if (passNote) {
+                passNote.style.display = 'flex';
+                passNote.innerHTML = '<i class="fa-solid fa-bolt" style="margin-right:8px; margin-top:2px; color:#10b981;"></i><span><strong>Brevo High-Deliverability Mode:</strong> Paste your Brevo API Key (starts with <code>xkeysib-...</code>) or Brevo Password below. The system automatically routes through Brevo API for 100% Inbox rate!</span>';
+            }
+            if (passLabel) passLabel.textContent = 'Brevo API Key (xkeysib-...) or Brevo Password';
+            customSettings.style.display = 'none';
+            if (document.getElementById('acc-smtp-server')) document.getElementById('acc-smtp-server').value = 'smtp-relay.brevo.com';
+            if (document.getElementById('acc-smtp-port')) document.getElementById('acc-smtp-port').value = 587;
         } else if (provider === 'custom') {
             if (passNote) passNote.style.display = 'none';
             if (passLabel) passLabel.textContent = 'Main Password (or SMTP/IMAP Password)';
@@ -264,6 +276,12 @@ const ACCOUNTS = {
         let imapServer = document.getElementById('acc-imap-server').value.trim();
         let imapPort = parseInt(document.getElementById('acc-imap-port').value) || 993;
         
+        const provider = document.getElementById('acc-provider').value;
+        if (provider === 'brevo_api' || password.startsWith('xkeysib-')) {
+            smtpServer = 'smtp-relay.brevo.com';
+            smtpPort = 587;
+        }
+
         // If server details are left empty, auto-detect/guess based on the email domain
         if (!smtpServer) {
             const domain = email.split('@')[1]?.toLowerCase();

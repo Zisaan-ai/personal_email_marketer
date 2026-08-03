@@ -2405,7 +2405,7 @@ def create_ticket(req: TicketCreate, current_user: database.User = Depends(auth.
         id=str(uuid.uuid4()),
         user_id=current_user.id,
         subject=req.subject,
-        status="Open"
+        status="User Reply"
     )
     db.add(new_ticket)
     db.flush()
@@ -2428,18 +2428,17 @@ def get_user_tickets(current_user: database.User = Depends(auth.get_current_user
             "id": t.id,
             "subject": t.subject,
             "status": t.status,
-            "created_at": t.created_at.isoformat(),
-            "updated_at": t.updated_at.isoformat()
+            "created_at": t.created_at.isoformat() if t.created_at else None,
+            "updated_at": t.updated_at.isoformat() if t.updated_at else None
         })
     return {"tickets": result}
 @app.get("/api/support/tickets/unread-count")
 def get_user_unread_ticket_count(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    # Count user's tickets where admin has replied (status is "Admin Reply") - user hasn't seen yet
     count = db.query(database.Ticket).filter(
         database.Ticket.user_id == current_user.id,
         database.Ticket.status == "Admin Reply"
     ).count()
-    return {"unread": count}
+    return {"count": count}
 @app.get("/api/support/tickets/{ticket_id}")
 def get_ticket(ticket_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     ticket = db.query(database.Ticket).filter(database.Ticket.id == ticket_id).first()
@@ -2448,7 +2447,17 @@ def get_ticket(ticket_id: str, current_user: database.User = Depends(auth.get_cu
     if not current_user.is_admin and ticket.user_id != current_user.id:
         raise HTTPException(status_code=403, detail="Not authorized")
     msgs = db.query(database.TicketMessage).filter(database.TicketMessage.ticket_id == ticket.id).order_by(database.TicketMessage.created_at.asc()).all()
-    messages = [{"is_admin": m.is_admin, "message": m.message, "created_at": m.created_at.isoformat()} for m in msgs]
+    messages = []
+    for m in msgs:
+        u = db.query(database.User).filter(database.User.id == m.user_id).first()
+        messages.append({
+            "id": m.id,
+            "user_id": m.user_id,
+            "sender_email": u.email if u else ("Admin" if m.is_admin else "User"),
+            "is_admin": m.is_admin,
+            "message": m.message,
+            "created_at": m.created_at.isoformat() if m.created_at else None
+        })
     return {
         "id": ticket.id,
         "subject": ticket.subject,
@@ -2462,21 +2471,23 @@ def reply_ticket(ticket_id: str, req: TicketReply, current_user: database.User =
         raise HTTPException(status_code=404, detail="Ticket not found")
     if not current_user.is_admin and ticket.user_id != current_user.id:
         raise HTTPException(status_code=403, detail="Not authorized")
-    import uuid
+    import uuid, datetime
+    is_admin_msg = bool(current_user.is_admin and current_user.id != ticket.user_id)
     new_msg = database.TicketMessage(
         id=str(uuid.uuid4()),
         ticket_id=ticket.id,
         user_id=current_user.id,
-        is_admin=(current_user.is_admin and current_user.id != ticket.user_id),
+        is_admin=is_admin_msg,
         message=req.message
     )
     db.add(new_msg)
-    if current_user.id == ticket.user_id:
-        ticket.status = "User Reply"
-    elif current_user.is_admin:
+    
+    ticket.updated_at = datetime.datetime.utcnow()
+    if is_admin_msg:
         ticket.status = "Admin Reply"
     else:
         ticket.status = "User Reply"
+        
     db.commit()
     return {"status": "success"}
 @app.get("/api/admin/tickets")

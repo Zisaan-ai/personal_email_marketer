@@ -176,8 +176,10 @@ window.SUPPORT.viewTicket = async function(ticketId) {
     container.innerHTML = '<div style="text-align:center;padding:20px;color:#64748b;">Loading ticket conversation...</div>';
     modal.style.display = 'flex';
 
-    var isAdmin = localStorage.getItem('is_admin') === 'true';
-    if (adminActions) adminActions.style.display = isAdmin ? 'flex' : 'none';
+    var isAdmin = localStorage.getItem('is_admin') === 'true' || localStorage.getItem('is_admin') === '1' || (window.currentUser && window.currentUser.is_admin);
+    if (adminActions) {
+        adminActions.style.display = isAdmin ? 'flex' : 'none';
+    }
 
     try {
         var res = await apiCall('/support/tickets/' + ticketId, 'GET');

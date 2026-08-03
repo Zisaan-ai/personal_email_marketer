@@ -289,22 +289,67 @@ window.SUPPORT.deleteTicket = async function() {
     }
 };
 
-// Check unread tickets badge
+// Check unread badges for Support, Admin, Users, Subscriptions
 window.SUPPORT.checkUnreadTickets = async function() {
     try {
-        var isAdmin = localStorage.getItem('is_admin') === 'true';
-        var endpoint = isAdmin ? '/admin/tickets/unread-count' : '/support/tickets/unread-count';
-        var res = await apiCall(endpoint, 'GET');
-        if (res.ok) {
-            var data = await res.json();
-            var count = data.count || 0;
-            var badge = document.getElementById('tab-tickets-unread-badge');
-            if (badge) {
-                if (count > 0) {
-                    badge.innerText = count;
-                    badge.style.display = 'inline-flex';
-                } else {
-                    badge.style.display = 'none';
+        var isAdmin = localStorage.getItem('is_admin') === 'true' || localStorage.getItem('is_admin') === '1';
+
+        if (isAdmin) {
+            var res = await apiCall('/admin/notifications/unread', 'GET');
+            if (res.ok) {
+                var data = await res.json();
+                var suppCount = data.support_count || 0;
+                var userCount = data.new_users_count || 0;
+                var totalAdmin = data.total_admin_unread || (suppCount + userCount);
+
+                // Admin Sidebar Badge
+                var adminBadge = document.getElementById('admin-unread-badge');
+                if (adminBadge) {
+                    if (totalAdmin > 0) {
+                        adminBadge.innerText = totalAdmin;
+                        adminBadge.style.display = 'inline-flex';
+                    } else {
+                        adminBadge.style.display = 'none';
+                    }
+                }
+
+                // Admin Support Tickets Tab Badge
+                var suppTabBadge = document.getElementById('tab-tickets-unread-badge');
+                if (suppTabBadge) {
+                    if (suppCount > 0) {
+                        suppTabBadge.innerText = suppCount;
+                        suppTabBadge.style.display = 'inline-flex';
+                    } else {
+                        suppTabBadge.style.display = 'none';
+                    }
+                }
+
+                // Admin All Users Tab Badge (for new pending registrations)
+                var userTabBadge = document.getElementById('tab-users-badge');
+                if (userTabBadge) {
+                    if (userCount > 0) {
+                        userTabBadge.innerText = userCount;
+                        userTabBadge.style.display = 'inline-flex';
+                    } else {
+                        userTabBadge.style.display = 'none';
+                    }
+                }
+            }
+        } else {
+            // User Support Badge
+            var res = await apiCall('/support/tickets/unread-count', 'GET');
+            if (res.ok) {
+                var data = await res.json();
+                var count = data.count || 0;
+                
+                var userBadge = document.getElementById('user-support-badge');
+                if (userBadge) {
+                    if (count > 0) {
+                        userBadge.innerText = count;
+                        userBadge.style.display = 'inline-flex';
+                    } else {
+                        userBadge.style.display = 'none';
+                    }
                 }
             }
         }

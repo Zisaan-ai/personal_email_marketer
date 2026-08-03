@@ -4757,14 +4757,6 @@ function populateTimezones(targetSelectedTz) {
 
     }
 
-});
-
-
-
-    }
-
-
-
 }
 
 

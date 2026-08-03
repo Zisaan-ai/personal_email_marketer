@@ -891,18 +891,14 @@ def send_single_email(subject: str, body_html: str, recipient: str, account=None
 
             }
 
+            sender_email_addr = getattr(account, 'email', active_user) or active_user
             payload = {
-
-                "sender": {"name": sender_name or getattr(account, 'email', active_user), "email": getattr(account, 'email', active_user)},
-
+                "sender": {"name": sender_name or sender_email_addr, "email": sender_email_addr},
+                "replyTo": {"name": sender_name or sender_email_addr, "email": sender_email_addr},
                 "to": [{"email": recipient, "name": lead_name or recipient.split('@')[0]}],
-
                 "subject": spun_subject,
-
                 "htmlContent": spun_html,
-
                 "textContent": spun_text
-
             }
 
             if use_unsubscribe:
@@ -932,31 +928,30 @@ def send_single_email(subject: str, body_html: str, recipient: str, account=None
         # Regular SMTP
         else:
             import smtplib
+            import email.utils
             from email.mime.text import MIMEText
             from email.mime.multipart import MIMEMultipart
 
+            sender_em = getattr(account, 'email', active_user) or active_user
+            domain = sender_em.split('@')[-1] if '@' in sender_em else 'xcomic.xyz'
+
             msg = MIMEMultipart('alternative')
             msg['Subject'] = spun_subject
-
-            sender_em = getattr(account, 'email', active_user)
             msg['From'] = f"{sender_name} <{sender_em}>" if sender_name else sender_em
-
             msg['To'] = recipient
-            
+            msg['Reply-To'] = sender_em
+            msg['Date'] = email.utils.formatdate(localtime=True)
+            msg['Message-ID'] = email.utils.make_msgid(domain=domain)
+            msg['MIME-Version'] = '1.0'
 
             if use_unsubscribe:
-
                 msg.add_header('List-Unsubscribe', f"<{unsub_url}>")
-
                 msg.add_header('List-Unsubscribe-Post', 'List-Unsubscribe=One-Click')
 
-
-
             msg.attach(MIMEText(spun_text, 'plain', 'utf-8'))
-
             msg.attach(MIMEText(spun_html, 'html', 'utf-8'))
 
-            # BUG 5 FIX: Use SMTP_SSL for port 465, regular SMTP+STARTTLS for 587/other
+            # Use SMTP_SSL for port 465, regular SMTP+STARTTLS for 587/other
             port = int(active_port) if active_port else 587
             if port == 465:
                 with smtplib.SMTP_SSL(active_server, port, timeout=20) as server:

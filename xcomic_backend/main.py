@@ -489,7 +489,14 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
     #     raise HTTPException(status_code=403, detail="Wait for admin approve")
     access_token_expires = timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = auth.create_access_token(data={"sub": user.email}, expires_delta=access_token_expires)
-    return {"access_token": access_token, "token_type": "bearer", "is_admin": user.is_admin}
+    plan_name = (user.subscription_plan or "free").lower()
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "is_admin": user.is_admin,
+        "user_plan": plan_name,
+        "plan": plan_name
+    }
 # --- ADMIN ENDPOINTS ---
 @app.get("/api/test-db")
 def test_db(db: Session = Depends(database.get_db)):

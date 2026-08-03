@@ -24455,12 +24455,12 @@
 
 
 
-    <script src="assets/templates.js?v=20260803_v103"></script>
-    <script src="assets/app.js?v=20260803_v103"></script>
-    <script src="assets/support_patch.js?v=20260803_v103"></script>
-    <script src="assets/sending_accounts.js?v=20260803_v103"></script>
-    <script src="assets/ai_features.js?v=20260803_v103"></script>
-    <script src="assets/deliverability_v2.js?v=20260803_v103"></script>
+    <script src="assets/templates.js?v=20260803_v104"></script>
+    <script src="assets/app.js?v=20260803_v104"></script>
+    <script src="assets/support_patch.js?v=20260803_v104"></script>
+    <script src="assets/sending_accounts.js?v=20260803_v104"></script>
+    <script src="assets/ai_features.js?v=20260803_v104"></script>
+    <script src="assets/deliverability_v2.js?v=20260803_v104"></script>
 
 
 
@@ -25490,6 +25490,7 @@
 
         window.updateFeatureLocks = function(planOverride) {
             var plan = (planOverride || localStorage.getItem('user_plan') || 'free').toLowerCase();
+            var isAdmin = localStorage.getItem('is_admin') === 'true' || localStorage.getItem('is_admin') === '1';
 
             // Lock AI Replies for Free and Starter users
             var repliesNav = document.querySelector('[data-target="replies-view"]');
@@ -25501,7 +25502,7 @@
                     badge.style.cssText = 'margin-left:auto; font-size:10px; font-weight:700; background:#fef08a; color:#ca8a04; padding:2px 6px; border-radius:10px; display:inline-flex; align-items:center; gap:3px;';
                     repliesNav.appendChild(badge);
                 }
-                if (plan === 'free' || plan === 'starter') {
+                if (!isAdmin && (plan === 'free' || plan === 'starter')) {
                     badge.innerHTML = '<i class="fa-solid fa-lock"></i> PRO';
                     badge.style.display = 'inline-flex';
                     repliesNav.onclick = function(e) {
@@ -25516,12 +25517,29 @@
                 }
             }
 
-            // Support is available for all users
+            // Support is available for paid plans (Starter, Pro, Enterprise) and Admins. Locked for Free users.
             var supportNav = document.querySelector('[data-target="support-view"]');
             if (supportNav) {
                 var suppBadge = supportNav.querySelector('.supp-lock-badge');
-                if (suppBadge) suppBadge.style.display = 'none';
-                supportNav.onclick = function() { window.navTo('support-view'); };
+                if (!suppBadge) {
+                    suppBadge = document.createElement('span');
+                    suppBadge.className = 'supp-lock-badge';
+                    suppBadge.style.cssText = 'margin-left:auto; font-size:10px; font-weight:700; background:#fef08a; color:#ca8a04; padding:2px 6px; border-radius:10px; display:inline-flex; align-items:center; gap:3px;';
+                    supportNav.appendChild(suppBadge);
+                }
+                if (!isAdmin && plan === 'free') {
+                    suppBadge.innerHTML = '<i class="fa-solid fa-lock"></i> STARTER';
+                    suppBadge.style.display = 'inline-flex';
+                    supportNav.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        window.showUpgradeModal('support');
+                        return false;
+                    };
+                } else {
+                    suppBadge.style.display = 'none';
+                    supportNav.onclick = function() { window.navTo('support-view'); };
+                }
             }
         };
 

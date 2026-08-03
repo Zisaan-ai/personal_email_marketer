@@ -23119,18 +23119,20 @@
 
 
 
-            var isAdmin = false;
-            try {
-                isAdmin = localStorage.getItem('is_admin') === 'true';
-                var u = JSON.parse(localStorage.getItem('user') || '{}');
-                if (u && (u.is_admin || u.email === 'mzisan367@gmail.com')) {
-                    isAdmin = true;
-                    localStorage.setItem('is_admin', 'true');
-                }
-            } catch(e) {}
+            if (data.is_admin) { 
 
-            if (isAdmin) { 
+
+
+
+
+
+
                 var n = document.getElementById('nav-admin'); if (n) n.style.display = 'flex'; 
+
+
+
+
+
 
 
                 var edc = document.getElementById('admin-email-delivery-card'); if (edc) edc.style.display = 'block';
@@ -24255,6 +24257,8 @@
                         localStorage.setItem('is_admin', 'true');
                         var n = document.getElementById('nav-admin'); if (n) n.style.display = 'flex';
                         var edc = document.getElementById('admin-email-delivery-card'); if (edc) edc.style.display = 'block';
+                    } else {
+                        localStorage.setItem('is_admin', 'false');
                     }
                 }).catch(function(){});
             }
@@ -24444,7 +24448,6 @@
 
 
 
-    <script src="assets/templates.js?v=1785372797"></script>
 
 
 
@@ -24452,32 +24455,12 @@
 
 
 
-    <script src="assets/app.js?v=14"></script>
-    <script src="assets/support_patch.js?v=2"></script>
-
-
-
-
-
-
-
-    <script src="assets/sending_accounts.js?v=1785372797"></script>
-
-
-
-
-
-
-
-    <script src="assets/ai_features.js?v=1785372797"></script>
-
-
-
-
-
-
-
-    <script src="assets/deliverability_v2.js?v=1785372797"></script>
+    <script src="assets/templates.js?v=20260803_v99"></script>
+    <script src="assets/app.js?v=20260803_v99"></script>
+    <script src="assets/support_patch.js?v=20260803_v99"></script>
+    <script src="assets/sending_accounts.js?v=20260803_v99"></script>
+    <script src="assets/ai_features.js?v=20260803_v99"></script>
+    <script src="assets/deliverability_v2.js?v=20260803_v99"></script>
 
 
 
@@ -25506,8 +25489,7 @@
         };
 
         window.updateFeatureLocks = function(planOverride) {
-            var isAdmin = localStorage.getItem('is_admin') === 'true';
-            var plan = isAdmin ? 'enterprise' : (planOverride || localStorage.getItem('user_plan') || 'free').toLowerCase();
+            var plan = (planOverride || localStorage.getItem('user_plan') || 'free').toLowerCase();
 
             // Lock AI Replies for Free and Starter users
             var repliesNav = document.querySelector('[data-target="replies-view"]');

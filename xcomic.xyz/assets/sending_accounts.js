@@ -212,9 +212,9 @@ const ACCOUNTS = {
         } else if (provider === 'brevo_api') {
             if (passNote) {
                 passNote.style.display = 'flex';
-                passNote.innerHTML = '<i class="fa-solid fa-bolt" style="margin-right:8px; margin-top:2px; color:#10b981;"></i><span><strong>Brevo High-Deliverability Mode:</strong> Paste your Brevo API Key (starts with <code>xkeysib-...</code>) or Brevo Password below. The system automatically routes through Brevo API for 100% Inbox rate!</span>';
+                passNote.innerHTML = '<i class="fa-solid fa-bolt" style="margin-right:8px; margin-top:2px; color:#10b981;"></i><span><strong>High-Deliverability API Mode:</strong> Paste your API Key (e.g. Brevo <code>xkeysib-...</code>) or Provider Password. The system automatically routes via High-Speed Transactional API for 100% Inbox rate!</span>';
             }
-            if (passLabel) passLabel.textContent = 'Brevo API Key (xkeysib-...) or Brevo Password';
+            if (passLabel) passLabel.textContent = 'API Key (xkeysib-...) or Provider Password';
             customSettings.style.display = 'none';
             if (document.getElementById('acc-smtp-server')) document.getElementById('acc-smtp-server').value = 'smtp-relay.brevo.com';
             if (document.getElementById('acc-smtp-port')) document.getElementById('acc-smtp-port').value = 587;

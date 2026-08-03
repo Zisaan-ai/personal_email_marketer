@@ -2453,6 +2453,12 @@ def get_ticket(ticket_id: str, current_user: database.User = Depends(auth.get_cu
         raise HTTPException(status_code=404, detail="Ticket not found")
     if not current_user.is_admin and ticket.user_id != current_user.id:
         raise HTTPException(status_code=403, detail="Not authorized")
+    
+    # If user reads an admin reply, clear unread status
+    if current_user.id == ticket.user_id and ticket.status == "Admin Reply":
+        ticket.status = "Open"
+        db.commit()
+
     msgs = db.query(database.TicketMessage).filter(database.TicketMessage.ticket_id == ticket.id).order_by(database.TicketMessage.created_at.asc()).all()
     messages = []
     for m in msgs:

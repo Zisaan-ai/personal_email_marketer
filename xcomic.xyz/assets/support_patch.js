@@ -230,6 +230,13 @@ window.SUPPORT.viewTicket = async function(ticketId) {
                     replyBox.style.display = 'block';
                 }
             }
+
+            if (!isAdmin) {
+                setTimeout(function() {
+                    window.SUPPORT.checkUnreadTickets();
+                    window.SUPPORT.loadUserTickets();
+                }, 300);
+            }
         }
     } catch(e) {
         container.innerHTML = '<div style="text-align:center;padding:20px;color:#ef4444;">Error loading conversation</div>';

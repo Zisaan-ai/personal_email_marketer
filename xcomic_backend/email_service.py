@@ -209,39 +209,27 @@ def personalize_content(text: str, lead_name: str = "", lead_company: str = "", 
 
 
 def inject_tracking_pixel(body_html: str, pixel_url: str) -> str:
-
-    pixel_img = f'<img src="{pixel_url}" width="1" height="1" style="display:none;" />'
-
+    # DELIVERABILITY FIX: Do not use display:none; as spam filters penalize hidden elements!
+    pixel_img = f'<img src="{pixel_url}" alt="" width="1" height="1" border="0" style="outline:none;text-decoration:none;border:0;width:1px;height:1px;" />'
     if "</body>" in body_html.lower():
-
-        # Inject right before closing body tag
-
         return re.sub(r'(</body>)', lambda m: f'{pixel_img}{m.group(1)}', body_html, flags=re.IGNORECASE)
-
     else:
-
-        # Just append at the end
-
         return body_html + pixel_img
 
-
-
 def inject_click_tracking(body_html: str, base_tracking_url: str) -> str:
-
     soup = BeautifulSoup(body_html, "html.parser")
-
     for a_tag in soup.find_all('a', href=True):
-
         original_url = a_tag['href']
-
         if original_url.startswith(('mailto:', 'tel:', '#', 'http://localhost', base_tracking_url.split('/api')[0])):
-
+            continue
+        
+        # PHISHING PROTECTION: If visible link text is a URL, do not rewrite to avoid Domain Mismatch Spam penalty!
+        link_text = a_tag.get_text().strip().lower()
+        if link_text.startswith(('http://', 'https://', 'www.')) or ('.' in link_text and '/' in link_text):
             continue
 
         encoded_url = urllib.parse.quote(original_url)
-
         a_tag['href'] = f"{base_tracking_url}?url={encoded_url}"
-
     return str(soup)
 
 
@@ -929,11 +917,12 @@ def send_single_email(subject: str, body_html: str, recipient: str, account=None
         else:
             import smtplib
             import email.utils
+            import uuid
             from email.mime.text import MIMEText
             from email.mime.multipart import MIMEMultipart
 
             sender_em = getattr(account, 'email', active_user) or active_user
-            domain = sender_em.split('@')[-1] if '@' in sender_em else 'xcomic.xyz'
+            domain = sender_em.split('@')[-1] if '@' in sender_em and '.' in sender_em.split('@')[-1] else 'xcomic.xyz'
 
             msg = MIMEMultipart('alternative')
             msg['Subject'] = spun_subject
@@ -941,8 +930,9 @@ def send_single_email(subject: str, body_html: str, recipient: str, account=None
             msg['To'] = recipient
             msg['Reply-To'] = sender_em
             msg['Date'] = email.utils.formatdate(localtime=True)
-            msg['Message-ID'] = email.utils.make_msgid(domain=domain)
+            msg['Message-ID'] = f"<{uuid.uuid4().hex}@{domain}>"
             msg['MIME-Version'] = '1.0'
+            msg['X-Mailer'] = 'XComic Email Engine v2.0'
 
             if use_unsubscribe:
                 msg.add_header('List-Unsubscribe', f"<{unsub_url}>")
@@ -957,13 +947,13 @@ def send_single_email(subject: str, body_html: str, recipient: str, account=None
                 with smtplib.SMTP_SSL(active_server, port, timeout=20) as server:
                     server.ehlo()
                     server.login(active_user, active_pass)
-                    server.send_message(msg)
+                    server.send_message(msg, from_addr=active_user)
             else:
                 with smtplib.SMTP(active_server, port, timeout=20) as server:
                     server.ehlo()
                     server.starttls()
                     server.login(active_user, active_pass)
-                    server.send_message(msg)
+                    server.send_message(msg, from_addr=active_user)
 
             return True
 

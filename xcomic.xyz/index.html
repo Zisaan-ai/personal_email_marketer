@@ -23119,20 +23119,18 @@
 
 
 
-            if (data.is_admin) { 
+            var isAdmin = false;
+            try {
+                isAdmin = localStorage.getItem('is_admin') === 'true';
+                var u = JSON.parse(localStorage.getItem('user') || '{}');
+                if (u && (u.is_admin || u.email === 'mzisan367@gmail.com')) {
+                    isAdmin = true;
+                    localStorage.setItem('is_admin', 'true');
+                }
+            } catch(e) {}
 
-
-
-
-
-
-
+            if (isAdmin) { 
                 var n = document.getElementById('nav-admin'); if (n) n.style.display = 'flex'; 
-
-
-
-
-
 
 
                 var edc = document.getElementById('admin-email-delivery-card'); if (edc) edc.style.display = 'block';
@@ -24257,8 +24255,6 @@
                         localStorage.setItem('is_admin', 'true');
                         var n = document.getElementById('nav-admin'); if (n) n.style.display = 'flex';
                         var edc = document.getElementById('admin-email-delivery-card'); if (edc) edc.style.display = 'block';
-                    } else {
-                        localStorage.setItem('is_admin', 'false');
                     }
                 }).catch(function(){});
             }

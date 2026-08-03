@@ -4673,10 +4673,7 @@ window.saveSchedule = async function() {
 
 
 // ============================================================
-
-
-
-function populateTimezones() {
+function populateTimezones(targetSelectedTz) {
 
     const schTimezone = document.getElementById('sch-timezone');
 
@@ -4702,7 +4699,7 @@ function populateTimezones() {
 
 
 
-        const userTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const savedTz = targetSelectedTz || localStorage.getItem('user_timezone') || Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Dhaka';
 
 
 
@@ -4710,7 +4707,7 @@ function populateTimezones() {
 
         timezones.forEach(tz => {
 
-            const selected = (tz === userTz) ? 'selected' : '';
+            const selected = (tz === savedTz) ? 'selected' : '';
 
             html += `<option value="${tz}" ${selected}>${tz.replace('_', ' ')}</option>`;
 
@@ -4730,19 +4727,25 @@ function populateTimezones() {
 
             if (schTimezone) {
 
-                new Choices(schTimezone, { searchEnabled: true, itemSelectText: '', shouldSort: false });
+                if (window._schTzChoices) try { window._schTzChoices.destroy(); } catch(e){}
+
+                window._schTzChoices = new Choices(schTimezone, { searchEnabled: true, itemSelectText: '', shouldSort: false });
 
             }
 
             if (vbSchTimezone) {
 
-                new Choices(vbSchTimezone, { searchEnabled: true, itemSelectText: '', shouldSort: false });
+                if (window._vbSchTzChoices) try { window._vbSchTzChoices.destroy(); } catch(e){}
+
+                window._vbSchTzChoices = new Choices(vbSchTimezone, { searchEnabled: true, itemSelectText: '', shouldSort: false });
 
             }
 
             if (userTimezone) {
 
-                new Choices(userTimezone, { searchEnabled: true, itemSelectText: '', shouldSort: false });
+                if (window._userTzChoices) try { window._userTzChoices.destroy(); } catch(e){}
+
+                window._userTzChoices = new Choices(userTimezone, { searchEnabled: true, itemSelectText: '', shouldSort: false });
 
             }
 
@@ -4750,9 +4753,11 @@ function populateTimezones() {
 
     } catch (e) {
 
-
-
         console.warn("Timezone API not supported by browser", e);
+
+    }
+
+});
 
 
 
@@ -5039,7 +5044,13 @@ function setupSettings() {
                 if (res.ok) {
                     const data = await res.json();
                     if (data.timezone) {
+                        localStorage.setItem('user_timezone', data.timezone);
                         userTzEl.value = data.timezone;
+                        if (window._userTzChoices) {
+                            try { window._userTzChoices.setChoiceByValue(data.timezone); } catch(e){}
+                        } else if (typeof populateTimezones === 'function') {
+                            populateTimezones(data.timezone);
+                        }
                     }
                 }
             } catch(e) {}
@@ -5048,22 +5059,37 @@ function setupSettings() {
 
     const saveTzBtn = document.getElementById('save-timezone-btn');
     if (saveTzBtn) {
-        saveTzBtn.addEventListener('click', async () => {
-            const tzVal = document.getElementById('user-timezone')?.value || 'Asia/Dhaka';
+        saveTzBtn.onclick = async () => {
+            let tzVal = '';
+            if (window._userTzChoices) {
+                try { tzVal = window._userTzChoices.getValue(true); } catch(e){}
+            }
+            if (!tzVal) {
+                tzVal = document.getElementById('user-timezone')?.value || localStorage.getItem('user_timezone') || 'Asia/Dhaka';
+            }
             const statusEl = document.getElementById('timezone-status');
             try {
                 const res = await apiCall('/settings/timezone', 'POST', { timezone: tzVal });
                 const data = await res.json();
-                if (statusEl) {
-                    statusEl.textContent = res.ok ? 'Timezone saved successfully!' : (data.detail || 'Error saving timezone');
-                    statusEl.className = res.ok ? 'alert success' : 'alert error';
-                    statusEl.style.display = 'block';
+                if (res.ok) {
+                    localStorage.setItem('user_timezone', tzVal);
+                    if (statusEl) {
+                        statusEl.textContent = 'Timezone saved successfully!';
+                        statusEl.className = 'alert success';
+                        statusEl.style.display = 'block';
+                    }
+                    showToast('Timezone saved!', 'success');
+                } else {
+                    if (statusEl) {
+                        statusEl.textContent = data.detail || 'Error saving timezone';
+                        statusEl.className = 'alert error';
+                        statusEl.style.display = 'block';
+                    }
                 }
-                if (res.ok) showToast('Timezone saved!', 'success');
             } catch(e) {
                 showToast('Error saving timezone: ' + e.message, 'error');
             }
-        });
+        };
     }
 
 

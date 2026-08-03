@@ -1,5 +1,21 @@
 window.SUPPORT = window.SUPPORT || {};
 
+// Helper API call method with failsafe
+function safeApiCall(endpoint, method, body) {
+    if (typeof apiCall === 'function') return apiCall(endpoint, method, body);
+    if (typeof window.apiCall === 'function') return window.apiCall(endpoint, method, body);
+    var token = localStorage.getItem('token') || '';
+    var API_BASE = window.API_URL || (window.location.origin + '/api');
+    return fetch(API_BASE + endpoint + (method === 'GET' ? '?t=' + Date.now() : ''), {
+        method: method || 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': body ? 'application/json' : 'application/x-www-form-urlencoded'
+        },
+        body: body ? JSON.stringify(body) : null
+    });
+}
+
 // Admin tab switching
 window.SUPPORT.switchAdminTab = function(tabId) {
     document.querySelectorAll('.admin-tab').forEach(function(t) {
@@ -69,12 +85,13 @@ window.SUPPORT.createTicket = async function(btn) {
     if (btn) { btn.disabled = true; btn.innerText = 'Submitting...'; }
 
     try {
-        var res = await apiCall('/support/tickets', 'POST', { subject: subject, message: message });
-        if (res.ok) {
+        var res = await safeApiCall('/support/tickets', 'POST', { subject: subject, message: message });
+        if (res && res.ok) {
             if (typeof showToast === 'function') showToast('Support ticket created successfully!', 'success');
             var modal = document.getElementById('support-create-modal');
             if (modal) modal.style.display = 'none';
             window.SUPPORT.loadUserTickets();
+            window.SUPPORT.checkUnreadTickets();
         } else {
             var err = await res.json().catch(function(){ return {}; });
             if (typeof showToast === 'function') showToast(err.detail || 'Failed to create ticket', 'error');
@@ -93,8 +110,8 @@ window.SUPPORT.loadUserTickets = async function() {
     tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--text-muted);">Loading tickets...</td></tr>';
 
     try {
-        var res = await apiCall('/support/tickets', 'GET');
-        if (res.ok) {
+        var res = await safeApiCall('/support/tickets', 'GET');
+        if (res && res.ok) {
             var data = await res.json();
             var tickets = data.tickets || [];
             tbody.innerHTML = '';
@@ -131,8 +148,8 @@ window.SUPPORT.loadAdminTickets = async function() {
     tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--text-muted);">Loading support tickets...</td></tr>';
 
     try {
-        var res = await apiCall('/admin/tickets', 'GET');
-        if (res.ok) {
+        var res = await safeApiCall('/admin/tickets', 'GET');
+        if (res && res.ok) {
             var data = await res.json();
             var tickets = data.tickets || [];
             tbody.innerHTML = '';
@@ -182,8 +199,8 @@ window.SUPPORT.viewTicket = async function(ticketId) {
     }
 
     try {
-        var res = await apiCall('/support/tickets/' + ticketId, 'GET');
-        if (res.ok) {
+        var res = await safeApiCall('/support/tickets/' + ticketId, 'GET');
+        if (res && res.ok) {
             var t = await res.json();
             var titleEl = document.getElementById('support-view-title');
             if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-comments"></i> Ticket #${t.id.substring(0,8)}: ${t.subject}`;
@@ -233,14 +250,15 @@ window.SUPPORT.replyToTicket = async function(btn) {
     if (btn) { btn.disabled = true; btn.innerText = 'Sending...'; }
 
     try {
-        var res = await apiCall('/support/tickets/' + ticketId + '/reply', 'POST', { message: message });
-        if (res.ok) {
+        var res = await safeApiCall('/support/tickets/' + ticketId + '/reply', 'POST', { message: message });
+        if (res && res.ok) {
             if (msgInput) msgInput.value = '';
             if (typeof showToast === 'function') showToast('Reply sent!', 'success');
             window.SUPPORT.viewTicket(ticketId);
-            var isAdmin = localStorage.getItem('is_admin') === 'true';
+            var isAdmin = localStorage.getItem('is_admin') === 'true' || localStorage.getItem('is_admin') === '1';
             if (isAdmin) window.SUPPORT.loadAdminTickets();
             else window.SUPPORT.loadUserTickets();
+            window.SUPPORT.checkUnreadTickets();
         } else {
             var err = await res.json().catch(function(){ return {}; });
             if (typeof showToast === 'function') showToast(err.detail || 'Failed to send reply', 'error');
@@ -258,12 +276,13 @@ window.SUPPORT.resolveTicket = async function() {
     if (!ticketId) return;
 
     try {
-        var res = await apiCall('/admin/tickets/' + ticketId + '/status', 'PUT', { status: 'Closed' });
-        if (res.ok) {
+        var res = await safeApiCall('/admin/tickets/' + ticketId + '/status', 'PUT', { status: 'Closed' });
+        if (res && res.ok) {
             if (typeof showToast === 'function') showToast('Ticket resolved and closed', 'success');
             var modal = document.getElementById('support-view-modal');
             if (modal) modal.style.display = 'none';
             window.SUPPORT.loadAdminTickets();
+            window.SUPPORT.checkUnreadTickets();
         }
     } catch(e) {
         if (typeof showToast === 'function') showToast('Error resolving ticket', 'error');
@@ -277,12 +296,13 @@ window.SUPPORT.deleteTicket = async function() {
     if (!confirm('Are you sure you want to delete this ticket?')) return;
 
     try {
-        var res = await apiCall('/admin/tickets/' + ticketId, 'DELETE');
-        if (res.ok) {
+        var res = await safeApiCall('/admin/tickets/' + ticketId, 'DELETE');
+        if (res && res.ok) {
             if (typeof showToast === 'function') showToast('Ticket deleted', 'success');
             var modal = document.getElementById('support-view-modal');
             if (modal) modal.style.display = 'none';
             window.SUPPORT.loadAdminTickets();
+            window.SUPPORT.checkUnreadTickets();
         }
     } catch(e) {
         if (typeof showToast === 'function') showToast('Error deleting ticket', 'error');
@@ -292,11 +312,14 @@ window.SUPPORT.deleteTicket = async function() {
 // Check unread badges for Support, Admin, Users, Subscriptions
 window.SUPPORT.checkUnreadTickets = async function() {
     try {
+        var token = localStorage.getItem('token');
+        if (!token) return;
+
         var isAdmin = localStorage.getItem('is_admin') === 'true' || localStorage.getItem('is_admin') === '1';
 
         if (isAdmin) {
-            var res = await apiCall('/admin/notifications/unread', 'GET');
-            if (res.ok) {
+            var res = await safeApiCall('/admin/notifications/unread', 'GET');
+            if (res && res.ok) {
                 var data = await res.json();
                 var suppCount = data.support_count || 0;
                 var userCount = data.new_users_count || 0;
@@ -324,7 +347,7 @@ window.SUPPORT.checkUnreadTickets = async function() {
                     }
                 }
 
-                // Admin All Users Tab Badge (for new pending registrations)
+                // Admin All Users Tab Badge
                 var userTabBadge = document.getElementById('tab-users-badge');
                 if (userTabBadge) {
                     if (userCount > 0) {
@@ -337,8 +360,8 @@ window.SUPPORT.checkUnreadTickets = async function() {
             }
         } else {
             // User Support Badge
-            var res = await apiCall('/support/tickets/unread-count', 'GET');
-            if (res.ok) {
+            var res = await safeApiCall('/support/tickets/unread-count', 'GET');
+            if (res && res.ok) {
                 var data = await res.json();
                 var count = data.count || 0;
                 
@@ -355,3 +378,19 @@ window.SUPPORT.checkUnreadTickets = async function() {
         }
     } catch(e) {}
 };
+
+// Auto-start polling badges immediately and every 15s
+if (typeof window._unreadPollInterval !== 'undefined') clearInterval(window._unreadPollInterval);
+window._unreadPollInterval = setInterval(function() {
+    if (window.SUPPORT && window.SUPPORT.checkUnreadTickets) {
+        window.SUPPORT.checkUnreadTickets();
+    }
+}, 15000);
+
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+        if (window.SUPPORT && window.SUPPORT.checkUnreadTickets) {
+            window.SUPPORT.checkUnreadTickets();
+        }
+    }, 1000);
+});

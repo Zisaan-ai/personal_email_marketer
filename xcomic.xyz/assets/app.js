@@ -463,6 +463,10 @@ async function apiCall(endpoint, method = 'GET', body = null) {
 
 
 
+window.apiCall = apiCall;
+
+
+
 
 
 

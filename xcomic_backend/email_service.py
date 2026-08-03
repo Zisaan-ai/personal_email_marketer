@@ -209,19 +209,12 @@ def personalize_content(text: str, lead_name: str = "", lead_company: str = "", 
 
 
 def inject_tracking_pixel(body_html: str, pixel_url: str) -> str:
-
-    pixel_img = f'<img src="{pixel_url}" width="1" height="1" style="display:none;" />'
-
+    pixel_img = f'<img src="{pixel_url}" alt="" width="1" height="1" border="0" style="outline:none;text-decoration:none;" />'
     if "</body>" in body_html.lower():
-
         # Inject right before closing body tag
-
         return re.sub(r'(</body>)', lambda m: f'{pixel_img}{m.group(1)}', body_html, flags=re.IGNORECASE)
-
     else:
-
         # Just append at the end
-
         return body_html + pixel_img
 
 
@@ -906,13 +899,12 @@ def send_single_email(subject: str, body_html: str, recipient: str, account=None
             }
 
             if use_unsubscribe:
-
+                unsub_em = getattr(account, 'email', None) or active_user
+                unsub_dom = unsub_em.split('@')[-1] if '@' in unsub_em else 'xcomic.xyz'
+                unsub_mailto = f"mailto:unsubscribe@{unsub_dom}?subject=unsubscribe"
                 payload["headers"] = {
-
-                    "List-Unsubscribe": f"<{unsub_url}>",
-
+                    "List-Unsubscribe": f"<{unsub_mailto}>, <{unsub_url}>",
                     "List-Unsubscribe-Post": "List-Unsubscribe=One-Click"
-
                 }
 
             resp = requests.post("https://api.brevo.com/v3/smtp/email", headers=headers, json=payload, timeout=20)
@@ -932,28 +924,28 @@ def send_single_email(subject: str, body_html: str, recipient: str, account=None
         # Regular SMTP
         else:
             import smtplib
+            import email.utils
             from email.mime.text import MIMEText
             from email.mime.multipart import MIMEMultipart
 
+            sender_em = getattr(account, 'email', None) or active_user
+            domain = sender_em.split('@')[-1] if '@' in sender_em else 'xcomic.xyz'
+
             msg = MIMEMultipart('alternative')
             msg['Subject'] = spun_subject
-
-            sender_em = getattr(account, 'email', active_user)
             msg['From'] = f"{sender_name} <{sender_em}>" if sender_name else sender_em
-
             msg['To'] = recipient
-            
+            msg['Reply-To'] = sender_em
+            msg['Date'] = email.utils.formatdate(localtime=True)
+            msg['Message-ID'] = email.utils.make_msgid(domain=domain)
+            msg['MIME-Version'] = '1.0'
 
             if use_unsubscribe:
-
-                msg.add_header('List-Unsubscribe', f"<{unsub_url}>")
-
+                unsub_mailto = f"mailto:unsubscribe@{domain}?subject=unsubscribe"
+                msg.add_header('List-Unsubscribe', f"<{unsub_mailto}>, <{unsub_url}>")
                 msg.add_header('List-Unsubscribe-Post', 'List-Unsubscribe=One-Click')
 
-
-
             msg.attach(MIMEText(spun_text, 'plain', 'utf-8'))
-
             msg.attach(MIMEText(spun_html, 'html', 'utf-8'))
 
             # BUG 5 FIX: Use SMTP_SSL for port 465, regular SMTP+STARTTLS for 587/other

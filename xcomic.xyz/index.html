@@ -25510,7 +25510,8 @@
         };
 
         window.updateFeatureLocks = function(planOverride) {
-            var plan = (planOverride || localStorage.getItem('user_plan') || 'free').toLowerCase();
+            var isAdmin = localStorage.getItem('is_admin') === 'true';
+            var plan = isAdmin ? 'enterprise' : (planOverride || localStorage.getItem('user_plan') || 'free').toLowerCase();
 
             // Lock AI Replies for Free and Starter users
             var repliesNav = document.querySelector('[data-target="replies-view"]');

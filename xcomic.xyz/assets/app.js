@@ -732,9 +732,8 @@ window.navTo = function(targetId) {
 
 
         if (targetId === 'unsubscribes-view') loadUnsubscribes();
-
         if (targetId === 'replies-view') loadReplies();
-
+        if (targetId === 'support-view' && window.SUPPORT && window.SUPPORT.loadUserTickets) window.SUPPORT.loadUserTickets();
         if (targetId === 'settings') loadSmtpStatus();
 
 

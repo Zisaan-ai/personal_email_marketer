@@ -56,27 +56,42 @@ async def paddle_webhook(request: Request, db: Session = Depends(database.get_db
     
     print(f"[Paddle Webhook] Received event: {event_type}")
 
-    # Process subscription events
-    if event_type in ["subscription.created", "subscription.updated", "subscription.activated"]:
+    # Process subscription & transaction events
+    if event_type in ["subscription.created", "subscription.updated", "subscription.activated", "transaction.completed", "checkout.completed"]:
         custom_data = data.get("custom_data", {})
         user_id = custom_data.get("user_id")
+        plan_from_custom = custom_data.get("plan", "").lower()
         
         if user_id:
             user = db.query(database.User).filter(database.User.id == user_id).first()
             if user:
                 user.subscription_status = data.get("status", "active")
-                user.paddle_subscription_id = data.get("id")
-                user.paddle_customer_id = data.get("customer_id")
+                if data.get("id"):
+                    user.paddle_subscription_id = data.get("id")
+                if data.get("customer_id"):
+                    user.paddle_customer_id = data.get("customer_id")
                 
-                # Update plan based on price or product id
-                items = data.get("items", [])
-                if items and len(items) > 0:
-                    price_id = items[0].get("price", {}).get("id")
-                    if price_id:
-                        user.subscription_plan = price_id # Map this to human-readable names
+                # Determine plan name from custom_data or items price_id
+                target_plan = plan_from_custom
+                if not target_plan:
+                    items = data.get("items", [])
+                    if items and len(items) > 0:
+                        price_id = items[0].get("price", {}).get("id") or items[0].get("price_id", "")
+                        # Map default price IDs if match
+                        if "fz3n7mq" in price_id or "enterprise" in price_id.lower():
+                            target_plan = "enterprise"
+                        elif "fxmmpdp" in price_id or "pro" in price_id.lower():
+                            target_plan = "professional"
+                        elif "fwdrmsw" in price_id or "starter" in price_id.lower():
+                            target_plan = "starter"
+                        else:
+                            target_plan = price_id
+                
+                if target_plan:
+                    user.subscription_plan = target_plan
                 
                 db.commit()
-                print(f"[Paddle Webhook] Updated subscription for user {user_id}")
+                print(f"[Paddle Webhook] Updated subscription for user {user_id} -> {user.subscription_plan}")
                 
     elif event_type in ["subscription.canceled", "subscription.past_due"]:
         custom_data = data.get("custom_data", {})

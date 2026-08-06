@@ -4977,12 +4977,28 @@
                 window.PADDLE_CONFIG = defaults;
             }
 
-            // Initialize Paddle.js
+            // Initialize Paddle.js & Register Event Handlers
             try {
                 var token = window.PADDLE_CONFIG.clientToken || '';
                 if (typeof Paddle !== 'undefined' && token) {
-                    Paddle.Environment.set(window.PADDLE_CONFIG.environment);
-                    Paddle.Initialize({ token: token });
+                    Paddle.Environment.set(window.PADDLE_CONFIG.environment || 'sandbox');
+                    Paddle.Initialize({ 
+                        token: token,
+                        eventCallback: function(event) {
+                            if (event.name === 'checkout.completed') {
+                                console.log('Paddle Checkout Completed:', event);
+                                if (typeof showToast === 'function') {
+                                    showToast('Payment successful! Subscription plan updated.', 'success');
+                                } else {
+                                    alert('Payment successful! Subscription plan updated.');
+                                }
+                                setTimeout(function() {
+                                    if (typeof window.APP_INIT === 'function') window.APP_INIT();
+                                    if (typeof window.LANDING !== 'undefined' && window.LANDING.closePayment) window.LANDING.closePayment();
+                                }, 1500);
+                            }
+                        }
+                    });
                 }
             } catch(e) { console.warn('Paddle init:', e); }
 

@@ -10694,6 +10694,7 @@ window.openUserManageModalById = function(userId) {
     const email = user.email || userId;
     const currentPlan = user.subscription_plan || 'free';
     const currentLimit = user.custom_daily_limit;
+    const currentMaxAccs = user.custom_max_accounts;
 
     document.getElementById('adm-modal-email').innerText = email;
     
@@ -10701,7 +10702,11 @@ window.openUserManageModalById = function(userId) {
     const origPlanEl = document.getElementById('adm-modal-orig-plan');
     if (origPlanEl) {
         const planUpper = currentPlan.toUpperCase();
-        origPlanEl.innerHTML = `<span style="color:#6366f1;">${planUpper}</span> ${currentLimit ? '<small style="color:#818cf8;margin-left:6px;">(' + currentLimit + ' Custom Limit)</small>' : ''}`;
+        let customInfo = [];
+        if (currentLimit) customInfo.push(`${currentLimit} Email Limit`);
+        if (currentMaxAccs) customInfo.push(`${currentMaxAccs} Accs Limit`);
+        const customText = customInfo.length ? ` <small style="color:#818cf8;margin-left:6px;">(${customInfo.join(', ')})</small>` : '';
+        origPlanEl.innerHTML = `<span style="color:#6366f1;">${planUpper}</span>${customText}`;
     }
     const origStatusEl = document.getElementById('adm-modal-orig-status');
     if (origStatusEl) {
@@ -10710,6 +10715,40 @@ window.openUserManageModalById = function(userId) {
 
     document.getElementById('adm-modal-plan').value = currentPlan.toLowerCase();
     document.getElementById('adm-modal-limit').value = (currentLimit !== null && currentLimit !== undefined) ? currentLimit : '';
+    
+    const accLimitEl = document.getElementById('adm-modal-acc-limit');
+    if (accLimitEl) {
+        accLimitEl.value = (currentMaxAccs !== null && currentMaxAccs !== undefined) ? currentMaxAccs : '';
+    }
+    
+    // 1-Click Reset to Defaults Handler
+    const resetBtn = document.getElementById('adm-modal-reset-btn');
+    if (resetBtn) {
+        resetBtn.onclick = async function() {
+            if (!confirm(`Reset all custom overrides for ${email} back to original ${currentPlan.toUpperCase()} plan defaults?`)) return;
+            resetBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Resetting...';
+            resetBtn.disabled = true;
+            try {
+                const res = await fetch(`${API_URL}/admin/users/${userId}/reset-defaults`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${getToken()}`, 'Content-Type': 'application/json' }
+                });
+                if (res.ok) {
+                    showToast(`User reset back to ${currentPlan.toUpperCase()} plan defaults!`, 'success');
+                    modal.style.display = 'none';
+                    if (typeof loadAdminUsers === 'function') loadAdminUsers();
+                } else {
+                    const err = await res.json().catch(() => ({}));
+                    showToast(err.detail || 'Failed to reset defaults', 'error');
+                }
+            } catch(e) {
+                showToast('Error resetting: ' + e.message, 'error');
+            } finally {
+                resetBtn.disabled = false;
+                resetBtn.innerHTML = '<i class="fa-solid fa-rotate-left"></i> 1-Click Back to Original Plan Defaults';
+            }
+        };
+    }
     
     const delBtn = document.getElementById('adm-modal-delete-btn');
     if (delBtn) {
@@ -10736,6 +10775,9 @@ window.openUserManageModalById = function(userId) {
             const newLimitRaw = document.getElementById('adm-modal-limit').value.trim();
             let newLimit = newLimitRaw !== '' ? parseInt(newLimitRaw, 10) : null;
             
+            const newAccLimitRaw = accLimitEl ? accLimitEl.value.trim() : '';
+            let newAccLimit = newAccLimitRaw !== '' ? parseInt(newAccLimitRaw, 10) : null;
+            
             try {
                 // Update plan
                 const pRes = await fetch(`${API_URL}/admin/users/${userId}/plan`, {
@@ -10748,18 +10790,21 @@ window.openUserManageModalById = function(userId) {
                     throw new Error(pErr.detail || 'Failed to update plan');
                 }
                 
-                // Update limit
+                // Update limits
                 const lRes = await fetch(`${API_URL}/admin/users/${userId}/limit`, {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${getToken()}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ daily_limit: (newLimit !== null && !isNaN(newLimit) && newLimit > 0) ? newLimit : 0 })
+                    body: JSON.stringify({ 
+                        daily_limit: (newLimit !== null && !isNaN(newLimit) && newLimit > 0) ? newLimit : null,
+                        max_accounts: (newAccLimit !== null && !isNaN(newAccLimit) && newAccLimit > 0) ? newAccLimit : null
+                    })
                 });
                 if (!lRes.ok) {
                     const lErr = await lRes.json().catch(() => ({}));
-                    throw new Error(lErr.detail || 'Failed to update daily limit');
+                    throw new Error(lErr.detail || 'Failed to update custom limits');
                 }
 
-                showToast('User plan & daily limit saved successfully!', 'success');
+                showToast('User settings & custom limits saved successfully!', 'success');
                 modal.style.display = 'none';
                 if (typeof loadAdminUsers === 'function') loadAdminUsers();
             } catch(e) {

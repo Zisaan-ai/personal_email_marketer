@@ -64,6 +64,7 @@ class User(Base):
     paddle_subscription_id = Column(String, nullable=True)
     free_emails_sent = Column(Integer, default=0)
     custom_daily_limit = Column(Integer, nullable=True)
+    custom_max_accounts = Column(Integer, nullable=True)
 
 class Campaign(Base):
     __tablename__ = "campaigns"

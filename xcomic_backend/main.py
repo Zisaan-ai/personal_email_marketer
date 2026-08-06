@@ -520,6 +520,7 @@ def get_all_users(current_user: database.User = Depends(auth.get_current_user), 
             "subscription_plan": u.subscription_plan or "free",
             "subscription_status": getattr(u, 'subscription_status', 'active') or 'active',
             "custom_daily_limit": getattr(u, 'custom_daily_limit', None),
+            "custom_max_accounts": getattr(u, 'custom_max_accounts', None),
             "sending_accounts_count": acc_count,
             "sent_today": sent_today
         })
@@ -536,6 +537,17 @@ def approve_user(user_id: str, current_user: database.User = Depends(auth.get_cu
     db.commit()
     return {"message": "User approved successfully"}
 
+@app.post("/api/admin/users/{user_id}/status")
+def update_user_status(user_id: str, status: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin privileges required")
+    target_user = db.query(database.User).filter(database.User.id == user_id).first()
+    if not target_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    target_user.subscription_status = status
+    db.commit()
+    return {"message": f"User status updated to {status}"}
+
 @app.delete("/api/admin/users/{user_id}")
 def delete_user(user_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     if not current_user.is_admin:
@@ -543,9 +555,8 @@ def delete_user(user_id: str, current_user: database.User = Depends(auth.get_cur
     target_user = db.query(database.User).filter(database.User.id == user_id).first()
     if not target_user:
         raise HTTPException(status_code=404, detail="User not found")
-    # Protect owner account
-    if target_user.email.lower() == "zmonemrahman@gmail.com":
-        raise HTTPException(status_code=403, detail="Owner account cannot be deleted")
+    if target_user.is_admin or target_user.email.lower() == "zmonemrahman@gmail.com":
+        raise HTTPException(status_code=400, detail="Cannot delete super admin user")
     db.query(database.Media).filter(database.Media.user_id == user_id).delete()
     db.query(database.TicketMessage).filter(database.TicketMessage.user_id == user_id).delete()
     db.query(database.Ticket).filter(database.Ticket.user_id == user_id).delete()
@@ -585,6 +596,7 @@ def update_user_plan(user_id: str, req: UserPlanRequest, current_user: database.
 
 class UserLimitRequest(BaseModel):
     daily_limit: Optional[int] = None
+    max_accounts: Optional[int] = None
 
 @app.post("/api/admin/users/{user_id}/limit")
 def update_user_limit(user_id: str, req: UserLimitRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
@@ -594,8 +606,22 @@ def update_user_limit(user_id: str, req: UserLimitRequest, current_user: databas
     if not target_user:
         raise HTTPException(status_code=404, detail="User not found")
     target_user.custom_daily_limit = req.daily_limit if (req.daily_limit is not None and req.daily_limit > 0) else None
+    target_user.custom_max_accounts = req.max_accounts if (req.max_accounts is not None and req.max_accounts > 0) else None
     db.commit()
-    return {"message": "User daily email limit updated"}
+    return {"message": "User custom limits updated successfully"}
+
+@app.post("/api/admin/users/{user_id}/reset-defaults")
+def reset_user_defaults(user_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin privileges required")
+    target_user = db.query(database.User).filter(database.User.id == user_id).first()
+    if not target_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    target_user.custom_daily_limit = None
+    target_user.custom_max_accounts = None
+    db.commit()
+    return {"message": "User custom overrides cleared, reset to plan defaults"}
+
 # --- SECURE ENDPOINTS ---
 # Contacts endpoints removed
 @app.post("/api/clean-inactive-leads")

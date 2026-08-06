@@ -13549,13 +13549,13 @@ window.loadAdminUsers = async function() {
             var displayLimit = u.custom_daily_limit ? `<span style="color:#6366f1;font-weight:700;">${u.custom_daily_limit}</span> <small style="color:#94a3b8;">(Custom)</small>` : `<span style="color:#64748b;font-weight:600;">${defaultLimit}</span>`;
 
             tr.innerHTML = `
-                <td style="font-size:11px;color:#94a3b8;" title="${u.id}">${u.id.substring(0,8)}...</td>
-                <td><strong style="color:var(--text);font-size:13px;">${escapeHtml(u.email)}</strong> ${u.is_admin ? '<span style="color:#6366f1;font-size:11px;font-weight:700;margin-left:4px;">[Admin]</span>' : ''}</td>
-                <td><div style="display:flex;align-items:center;gap:6px;">${planBadge} ${statusBadge}</div></td>
-                <td><span style="font-weight:700;color:#10b981;">${u.sent_today || 0}</span> <small style="color:#94a3b8;">emails</small></td>
-                <td>${displayLimit} <small style="color:#94a3b8;">/day</small></td>
-                <td><span style="font-weight:700;color:#f59e0b;">${u.sending_accounts_count || 0}</span> <small style="color:#94a3b8;">accs</small></td>
-                <td><div style="display:flex;align-items:center;gap:4px;">${actionsHTML}</div></td>
+                <td style="padding:10px 12px;font-size:11px;color:#94a3b8;white-space:nowrap;" title="${u.id}">${u.id.substring(0,8)}...</td>
+                <td style="padding:10px 12px;white-space:nowrap;"><strong style="color:var(--text);font-size:13px;">${escapeHtml(u.email)}</strong> ${u.is_admin ? '<span style="color:#6366f1;font-size:11px;font-weight:700;margin-left:4px;">[Admin]</span>' : ''}</td>
+                <td style="padding:10px 12px;white-space:nowrap;"><div style="display:flex;align-items:center;gap:6px;">${planBadge} ${statusBadge}</div></td>
+                <td style="padding:10px 12px;white-space:nowrap;"><span style="font-weight:700;color:#10b981;">${u.sent_today || 0}</span> <small style="color:#94a3b8;">emails</small></td>
+                <td style="padding:10px 12px;white-space:nowrap;">${displayLimit} <small style="color:#94a3b8;">/day</small></td>
+                <td style="padding:10px 12px;white-space:nowrap;"><span style="font-weight:700;color:#f59e0b;">${u.sending_accounts_count || 0}</span> <small style="color:#94a3b8;">accs</small></td>
+                <td style="padding:10px 12px;white-space:nowrap;"><div style="display:flex;align-items:center;gap:4px;">${actionsHTML}</div></td>
             `;
 
             if (tbodyAll) tbodyAll.appendChild(tr.cloneNode(true));

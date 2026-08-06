@@ -10679,6 +10679,7 @@ window.changeUserLimit = async function(userId) {
         showToast('Error updating user limit', 'error');
         console.error(e);
     }
+};
 window.openUserManageModalById = function(userId) {
     const user = (window._allAdminUsersMap || {})[userId];
     if (!user) {

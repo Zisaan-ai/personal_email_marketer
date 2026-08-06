@@ -10679,19 +10679,31 @@ window.changeUserLimit = async function(userId) {
         showToast('Error updating user limit', 'error');
         console.error(e);
     }
-window.openUserManageModal = function(userId, email, currentPlan, currentLimit, isAdmin) {
+window.openUserManageModalById = function(userId) {
+    const user = (window._allAdminUsersMap || {})[userId];
+    if (!user) {
+        showToast('User data not found for ID: ' + userId, 'error');
+        return;
+    }
     const modal = document.getElementById('admin-user-modal');
-    if (!modal) return;
+    if (!modal) {
+        showToast('Admin user modal element not found', 'error');
+        return;
+    }
+    const email = user.email || userId;
+    const currentPlan = user.subscription_plan || 'free';
+    const currentLimit = user.custom_daily_limit;
+
     document.getElementById('adm-modal-email').innerText = email;
-    document.getElementById('adm-modal-plan').value = currentPlan || 'free';
-    document.getElementById('adm-modal-limit').value = (currentLimit && currentLimit !== 'null' && currentLimit !== 'undefined') ? currentLimit : '';
+    document.getElementById('adm-modal-plan').value = currentPlan.toLowerCase();
+    document.getElementById('adm-modal-limit').value = (currentLimit !== null && currentLimit !== undefined) ? currentLimit : '';
     
     const delBtn = document.getElementById('adm-modal-delete-btn');
     if (delBtn) {
-        if (isAdmin || email.toLowerCase() === 'zmonemrahman@gmail.com') {
+        if (user.is_admin || (email && email.toLowerCase() === 'zmonemrahman@gmail.com')) {
             delBtn.style.display = 'none';
         } else {
-            delBtn.style.display = 'flex';
+            delBtn.style.display = 'inline-flex';
             delBtn.onclick = function() {
                 if (confirm('Are you sure you want to delete user ' + email + '?')) {
                     deleteUser(userId);
@@ -10705,7 +10717,7 @@ window.openUserManageModal = function(userId, email, currentPlan, currentLimit, 
     if (saveBtn) {
         saveBtn.onclick = async function() {
             const newPlan = document.getElementById('adm-modal-plan').value;
-            const newLimitRaw = document.getElementById('adm-modal-limit').value;
+            const newLimitRaw = document.getElementById('adm-modal-limit').value.trim();
             let newLimit = newLimitRaw !== '' ? parseInt(newLimitRaw, 10) : null;
             
             try {
@@ -13560,7 +13572,9 @@ window.loadAdminUsers = async function() {
         if (tbodyPro) tbodyPro.innerHTML = '';
         if (tbodyEnterprise) tbodyEnterprise.innerHTML = '';
 
+        window._allAdminUsersMap = {};
         users.forEach(u => {
+            window._allAdminUsersMap[u.id] = u;
             const tr = document.createElement('tr');
             
             const statusBadge = u.is_approved
@@ -13572,13 +13586,11 @@ window.loadAdminUsers = async function() {
             const planBg = planBadgeText === 'FREE' ? '#f1f5f9' : (planBadgeText === 'ENTERPRISE' ? '#f3e8ff' : '#dbeafe');
             const planBadge = `<span style="background:${planBg};color:${planColor};padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">${planBadgeText}</span>`;
 
-            let actionsHTML = '';
-            
             let approveBtn = u.is_approved 
                 ? ''
                 : `<button class="btn primary" onclick="approveUser('${u.id}')" style="padding:6px 12px;font-size:12px;background:#059669;color:white;border-radius:8px;border:none;cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:4px;"><i class='fa-solid fa-check'></i> Approve</button>`;
 
-            let manageBtn = `<button class="btn" onclick="openUserManageModal('${u.id}', '${escapeHtml(u.email)}', '${u.subscription_plan || 'free'}', '${u.custom_daily_limit || ''}', ${u.is_admin})" style="padding:6px 14px;font-size:12px;background:rgba(99,102,241,0.12);color:#6366f1;border:1px solid rgba(99,102,241,0.3);border-radius:8px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.2s;"><i class='fa-solid fa-sliders'></i> Manage</button>`;
+            let manageBtn = `<button class="btn" onclick="window.openUserManageModalById('${u.id}')" style="padding:6px 14px;font-size:12px;background:rgba(99,102,241,0.12);color:#6366f1;border:1px solid rgba(99,102,241,0.3);border-radius:8px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.2s;"><i class='fa-solid fa-sliders'></i> Manage</button>`;
 
             var defaultLimit = planBadgeText === 'ENTERPRISE' ? '5,000' : (planBadgeText === 'PROFESSIONAL' ? '2,000' : (planBadgeText === 'STARTER' ? '1,000' : '100'));
             var displayLimit = u.custom_daily_limit ? `<span style="color:#6366f1;font-weight:700;">${u.custom_daily_limit}</span> <small style="color:#94a3b8;font-size:10px;">(Custom)</small>` : `<span style="color:#64748b;font-weight:600;">${defaultLimit}</span>`;

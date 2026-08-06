@@ -10696,6 +10696,18 @@ window.openUserManageModalById = function(userId) {
     const currentLimit = user.custom_daily_limit;
 
     document.getElementById('adm-modal-email').innerText = email;
+    
+    // Originally Active Plan & Status Display
+    const origPlanEl = document.getElementById('adm-modal-orig-plan');
+    if (origPlanEl) {
+        const planUpper = currentPlan.toUpperCase();
+        origPlanEl.innerHTML = `<span style="color:#6366f1;">${planUpper}</span> ${currentLimit ? '<small style="color:#818cf8;margin-left:6px;">(' + currentLimit + ' Custom Limit)</small>' : ''}`;
+    }
+    const origStatusEl = document.getElementById('adm-modal-orig-status');
+    if (origStatusEl) {
+        origStatusEl.innerHTML = user.is_approved ? '<span style="color:#10b981;">✓ Approved</span>' : '<span style="color:#ca8a04;">⏳ Pending</span>';
+    }
+
     document.getElementById('adm-modal-plan').value = currentPlan.toLowerCase();
     document.getElementById('adm-modal-limit').value = (currentLimit !== null && currentLimit !== undefined) ? currentLimit : '';
     
@@ -10717,28 +10729,45 @@ window.openUserManageModalById = function(userId) {
     const saveBtn = document.getElementById('adm-modal-save-btn');
     if (saveBtn) {
         saveBtn.onclick = async function() {
+            saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+            saveBtn.disabled = true;
+            
             const newPlan = document.getElementById('adm-modal-plan').value;
             const newLimitRaw = document.getElementById('adm-modal-limit').value.trim();
             let newLimit = newLimitRaw !== '' ? parseInt(newLimitRaw, 10) : null;
             
             try {
-                if (newPlan !== currentPlan) {
-                    await fetch(`${API_URL}/admin/users/${userId}/plan`, {
-                        method: 'POST',
-                        headers: { 'Authorization': `Bearer ${getToken()}`, 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ plan: newPlan })
-                    });
-                }
-                await fetch(`${API_URL}/admin/users/${userId}/limit`, {
+                // Update plan
+                const pRes = await fetch(`${API_URL}/admin/users/${userId}/plan`, {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${getToken()}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ daily_limit: newLimit !== null && !isNaN(newLimit) ? newLimit : 0 })
+                    body: JSON.stringify({ plan: newPlan })
                 });
-                showToast('User settings updated successfully!', 'success');
+                if (!pRes.ok) {
+                    const pErr = await pRes.json().catch(() => ({}));
+                    throw new Error(pErr.detail || 'Failed to update plan');
+                }
+                
+                // Update limit
+                const lRes = await fetch(`${API_URL}/admin/users/${userId}/limit`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${getToken()}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ daily_limit: (newLimit !== null && !isNaN(newLimit) && newLimit > 0) ? newLimit : 0 })
+                });
+                if (!lRes.ok) {
+                    const lErr = await lRes.json().catch(() => ({}));
+                    throw new Error(lErr.detail || 'Failed to update daily limit');
+                }
+
+                showToast('User plan & daily limit saved successfully!', 'success');
                 modal.style.display = 'none';
                 if (typeof loadAdminUsers === 'function') loadAdminUsers();
             } catch(e) {
-                showToast('Error updating user: ' + e.message, 'error');
+                showToast('Error saving changes: ' + e.message, 'error');
+                console.error(e);
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = '<i class="fa-solid fa-check"></i> Save Changes';
             }
         };
     }

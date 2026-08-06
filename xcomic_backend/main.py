@@ -584,7 +584,7 @@ def update_user_plan(user_id: str, req: UserPlanRequest, current_user: database.
     return {"message": f"User plan updated to {req.plan.upper()}"}
 
 class UserLimitRequest(BaseModel):
-    daily_limit: int
+    daily_limit: Optional[int] = None
 
 @app.post("/api/admin/users/{user_id}/limit")
 def update_user_limit(user_id: str, req: UserLimitRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
@@ -593,9 +593,9 @@ def update_user_limit(user_id: str, req: UserLimitRequest, current_user: databas
     target_user = db.query(database.User).filter(database.User.id == user_id).first()
     if not target_user:
         raise HTTPException(status_code=404, detail="User not found")
-    target_user.custom_daily_limit = req.daily_limit
+    target_user.custom_daily_limit = req.daily_limit if (req.daily_limit is not None and req.daily_limit > 0) else None
     db.commit()
-    return {"message": f"User daily email limit updated to {req.daily_limit}"}
+    return {"message": "User daily email limit updated"}
 # --- SECURE ENDPOINTS ---
 # Contacts endpoints removed
 @app.post("/api/clean-inactive-leads")

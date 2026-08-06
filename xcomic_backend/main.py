@@ -507,7 +507,24 @@ def get_all_users(current_user: database.User = Depends(auth.get_current_user), 
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admin privileges required")
     users = db.query(database.User).all()
-    return [{"id": str(u.id), "email": u.email, "is_admin": u.is_admin, "is_approved": u.is_approved, "is_email_verified": u.is_email_verified, "subscription_plan": u.subscription_plan} for u in users]
+    result = []
+    for u in users:
+        sent_today = sum(c.sent_today_campaign or 0 for c in db.query(database.Campaign).filter(database.Campaign.user_id == str(u.id)).all())
+        acc_count = db.query(database.SendingAccount).filter(database.SendingAccount.user_id == str(u.id)).count()
+        result.append({
+            "id": str(u.id),
+            "email": u.email,
+            "is_admin": u.is_admin,
+            "is_approved": u.is_approved,
+            "is_email_verified": u.is_email_verified,
+            "subscription_plan": u.subscription_plan or "free",
+            "subscription_status": getattr(u, 'subscription_status', 'active') or 'active',
+            "custom_daily_limit": getattr(u, 'custom_daily_limit', None),
+            "sending_accounts_count": acc_count,
+            "sent_today": sent_today
+        })
+    return result
+
 @app.post("/api/admin/users/{user_id}/approve")
 def approve_user(user_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     if not current_user.is_admin:
@@ -518,6 +535,7 @@ def approve_user(user_id: str, current_user: database.User = Depends(auth.get_cu
     target_user.is_approved = True
     db.commit()
     return {"message": "User approved successfully"}
+
 @app.delete("/api/admin/users/{user_id}")
 def delete_user(user_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     if not current_user.is_admin:
@@ -525,23 +543,19 @@ def delete_user(user_id: str, current_user: database.User = Depends(auth.get_cur
     target_user = db.query(database.User).filter(database.User.id == user_id).first()
     if not target_user:
         raise HTTPException(status_code=404, detail="User not found")
-    # Protect the owner account â€” can NEVER be deleted
+    # Protect owner account
     if target_user.email.lower() == "zmonemrahman@gmail.com":
         raise HTTPException(status_code=403, detail="Owner account cannot be deleted")
-    # Delete Media
     db.query(database.Media).filter(database.Media.user_id == user_id).delete()
-    # Delete User Settings
     db.query(database.TicketMessage).filter(database.TicketMessage.user_id == user_id).delete()
     db.query(database.Ticket).filter(database.Ticket.user_id == user_id).delete()
     db.query(database.Webhook).filter(database.Webhook.user_id == user_id).delete()
-    # Delete campaigns and associated tracking
     user_campaigns = db.query(database.Campaign).filter(database.Campaign.user_id == user_id).all()
     for camp in user_campaigns:
         db.query(database.CampaignLead).filter(database.CampaignLead.campaign_id == str(camp.id)).delete()
         db.query(database.TrackingLog).filter(database.TrackingLog.campaign_id == str(camp.id)).delete()
         db.query(database.BounceRecord).filter(database.BounceRecord.campaign_id == str(camp.id)).delete()
         db.delete(camp)
-    # Delete sending accounts and associated stats
     user_accounts = db.query(database.SendingAccount).filter(database.SendingAccount.user_id == user_id).all()
     for acc in user_accounts:
         db.query(database.AccountDailyStats).filter(database.AccountDailyStats.account_id == str(acc.id)).delete()
@@ -567,7 +581,21 @@ def update_user_plan(user_id: str, req: UserPlanRequest, current_user: database.
     if req.plan != "free":
         target_user.subscription_status = "active"
     db.commit()
-    return {"message": f"User plan updated to {req.plan}"}
+    return {"message": f"User plan updated to {req.plan.upper()}"}
+
+class UserLimitRequest(BaseModel):
+    daily_limit: int
+
+@app.post("/api/admin/users/{user_id}/limit")
+def update_user_limit(user_id: str, req: UserLimitRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin privileges required")
+    target_user = db.query(database.User).filter(database.User.id == user_id).first()
+    if not target_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    target_user.custom_daily_limit = req.daily_limit
+    db.commit()
+    return {"message": f"User daily email limit updated to {req.daily_limit}"}
 # --- SECURE ENDPOINTS ---
 # Contacts endpoints removed
 @app.post("/api/clean-inactive-leads")

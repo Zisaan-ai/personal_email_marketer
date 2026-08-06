@@ -10651,6 +10651,36 @@ window.changeUserPlan = async function(userId, newPlan) {
     }
 }
 
+window.changeUserLimit = async function(userId) {
+    var limitInput = prompt("Enter new custom daily email limit for this user (e.g. 500, 2000, 5000):");
+    if (limitInput === null) return;
+    var limitVal = parseInt(limitInput, 10);
+    if (isNaN(limitVal) || limitVal < 0) {
+        showToast('Invalid limit value', 'error');
+        return;
+    }
+    try {
+        const res = await fetch(`${API_URL}/admin/users/${userId}/limit`, {
+            method: 'POST',
+            headers: { 
+                'Authorization': `Bearer ${getToken()}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ daily_limit: limitVal })
+        });
+        if (res.ok) {
+            showToast(`User daily limit updated to ${limitVal} emails/day!`, 'success');
+            if (typeof loadAdminUsers === 'function') loadAdminUsers();
+        } else {
+            const d = await res.json();
+            showToast(d.detail || 'Error updating user limit', 'error');
+        }
+    } catch(e) {
+        showToast('Error updating user limit', 'error');
+        console.error(e);
+    }
+};
+
 
 
 
@@ -13511,7 +13541,9 @@ window.loadAdminUsers = async function() {
                 </select>
             `;
             
-            actionsHTML = approveBtn + deleteBtn + changePlanSelect;
+            let limitBtn = `<button class="btn" onclick="changeUserLimit('${u.id}')" style="padding:5px 10px;font-size:12px;background:#4f46e5;color:white;margin-left:8px;" title="Set Custom Daily Limit"><i class='fa-solid fa-sliders'></i> Limit ${u.custom_daily_limit ? '(' + u.custom_daily_limit + '/day)' : ''}</button>`;
+            
+            actionsHTML = approveBtn + deleteBtn + changePlanSelect + limitBtn;
 
             tr.innerHTML = `
                 <td>${u.id}</td>

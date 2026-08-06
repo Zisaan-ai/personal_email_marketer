@@ -511,6 +511,19 @@ def get_all_users(current_user: database.User = Depends(auth.get_current_user), 
     for u in users:
         sent_today = sum(c.sent_today_campaign or 0 for c in db.query(database.Campaign).filter(database.Campaign.user_id == str(u.id)).all())
         acc_count = db.query(database.SendingAccount).filter(database.SendingAccount.user_id == str(u.id)).count()
+        started_at = getattr(u, 'subscription_started_at', None)
+        expires_at = getattr(u, 'subscription_expires_at', None)
+        days_remaining = None
+        sub_status = getattr(u, 'subscription_status', 'active') or 'active'
+        
+        if expires_at:
+            from datetime import datetime
+            now_dt = datetime.utcnow()
+            diff = (expires_at - now_dt).days
+            days_remaining = max(0, diff) if diff >= 0 else 0
+            if diff < 0 and (u.subscription_plan or "free").lower() != "free":
+                sub_status = "expired"
+
         result.append({
             "id": str(u.id),
             "email": u.email,
@@ -518,7 +531,10 @@ def get_all_users(current_user: database.User = Depends(auth.get_current_user), 
             "is_approved": u.is_approved,
             "is_email_verified": u.is_email_verified,
             "subscription_plan": u.subscription_plan or "free",
-            "subscription_status": getattr(u, 'subscription_status', 'active') or 'active',
+            "subscription_status": sub_status,
+            "subscription_started_at": started_at.isoformat() if started_at else None,
+            "subscription_expires_at": expires_at.isoformat() if expires_at else None,
+            "days_remaining": days_remaining,
             "custom_daily_limit": getattr(u, 'custom_daily_limit', None),
             "custom_max_accounts": getattr(u, 'custom_max_accounts', None),
             "custom_ai_replies": getattr(u, 'custom_ai_replies', None),
@@ -582,6 +598,7 @@ def delete_user(user_id: str, current_user: database.User = Depends(auth.get_cur
 
 class UserPlanRequest(BaseModel):
     plan: str
+    extend_days: Optional[int] = None
 
 @app.post("/api/admin/users/{user_id}/plan")
 def update_user_plan(user_id: str, req: UserPlanRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
@@ -592,6 +609,16 @@ def update_user_plan(user_id: str, req: UserPlanRequest, current_user: database.
         raise HTTPException(status_code=404, detail="User not found")
     target_user.subscription_plan = req.plan
     if req.plan != "free":
+        target_user.subscription_status = "active"
+        from datetime import datetime, timedelta
+        if not getattr(target_user, 'subscription_started_at', None):
+            target_user.subscription_started_at = datetime.utcnow()
+        if not getattr(target_user, 'subscription_expires_at', None) or target_user.subscription_expires_at < datetime.utcnow():
+            target_user.subscription_expires_at = datetime.utcnow() + timedelta(days=30)
+    if req.extend_days and req.extend_days > 0:
+        from datetime import datetime, timedelta
+        base_dt = target_user.subscription_expires_at if (target_user.subscription_expires_at and target_user.subscription_expires_at > datetime.utcnow()) else datetime.utcnow()
+        target_user.subscription_expires_at = base_dt + timedelta(days=req.extend_days)
         target_user.subscription_status = "active"
     db.commit()
     return {"message": f"User plan updated to {req.plan.upper()}"}

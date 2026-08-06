@@ -10698,7 +10698,7 @@ window.openUserManageModalById = function(userId) {
 
     document.getElementById('adm-modal-email').innerText = email;
     
-    // Originally Active Plan & Status Display
+    // Originally Active Plan & Expiration Display
     const origPlanEl = document.getElementById('adm-modal-orig-plan');
     if (origPlanEl) {
         const planUpper = currentPlan.toUpperCase();
@@ -10710,11 +10710,35 @@ window.openUserManageModalById = function(userId) {
     }
     const origStatusEl = document.getElementById('adm-modal-orig-status');
     if (origStatusEl) {
-        origStatusEl.innerHTML = user.is_approved ? '<span style="color:#10b981;">✓ Approved</span>' : '<span style="color:#ca8a04;">⏳ Pending</span>';
+        let stText = user.is_approved ? '<span style="color:#10b981;">✓ Active</span>' : '<span style="color:#ca8a04;">⏳ Pending</span>';
+        if (user.subscription_status === 'expired') {
+            stText = '<span style="color:#ef4444;">⚠️ Expired</span>';
+        } else if (user.subscription_status === 'canceled') {
+            stText = '<span style="color:#94a3b8;">🚫 Canceled</span>';
+        }
+        origStatusEl.innerHTML = stText;
+    }
+
+    const expireEl = document.getElementById('adm-modal-expire-text');
+    if (expireEl) {
+        if (user.subscription_expires_at) {
+            const expDate = new Date(user.subscription_expires_at);
+            const dateFormatted = expDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            if (user.days_remaining && user.days_remaining > 0) {
+                expireEl.innerHTML = `<span style="color:#818cf8;font-weight:700;">${user.days_remaining} Days Remaining</span> <small style="color:#94a3b8;">(Until ${dateFormatted})</small>`;
+            } else {
+                expireEl.innerHTML = `<span style="color:#ef4444;font-weight:700;">Expired</span> <small style="color:#94a3b8;">(Ended ${dateFormatted})</small>`;
+            }
+        } else {
+            expireEl.innerHTML = `<span style="color:#10b981;font-weight:700;">No expiration (Free / Unlimited)</span>`;
+        }
     }
 
     document.getElementById('adm-modal-plan').value = currentPlan.toLowerCase();
     document.getElementById('adm-modal-limit').value = (currentLimit !== null && currentLimit !== undefined) ? currentLimit : '';
+    if (document.getElementById('adm-modal-extend-days')) {
+        document.getElementById('adm-modal-extend-days').value = '0';
+    }
     
     const accLimitEl = document.getElementById('adm-modal-acc-limit');
     if (accLimitEl) {
@@ -10789,11 +10813,14 @@ window.openUserManageModalById = function(userId) {
             let newAccLimit = newAccLimitRaw !== '' ? parseInt(newAccLimitRaw, 10) : null;
             
             try {
-                // Update plan
+                const extendEl = document.getElementById('adm-modal-extend-days');
+                const extendVal = extendEl ? parseInt(extendEl.value, 10) : 0;
+
+                // Update plan & duration
                 const pRes = await fetch(`${API_URL}/admin/users/${userId}/plan`, {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${getToken()}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ plan: newPlan })
+                    body: JSON.stringify({ plan: newPlan, extend_days: extendVal })
                 });
                 if (!pRes.ok) {
                     const pErr = await pRes.json().catch(() => ({}));

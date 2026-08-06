@@ -67,6 +67,8 @@ class User(Base):
     custom_max_accounts = Column(Integer, nullable=True)
     custom_ai_replies = Column(Boolean, nullable=True)
     custom_support = Column(Boolean, nullable=True)
+    subscription_started_at = Column(DateTime, nullable=True)
+    subscription_expires_at = Column(DateTime, nullable=True)
 
 class Campaign(Base):
     __tablename__ = "campaigns"

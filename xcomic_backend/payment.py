@@ -90,6 +90,11 @@ async def paddle_webhook(request: Request, db: Session = Depends(database.get_db
                 if target_plan:
                     user.subscription_plan = target_plan
                 
+                from datetime import datetime, timedelta
+                if not getattr(user, 'subscription_started_at', None):
+                    user.subscription_started_at = datetime.utcnow()
+                user.subscription_expires_at = datetime.utcnow() + timedelta(days=30)
+                
                 db.commit()
                 print(f"[Paddle Webhook] Updated subscription for user {user_id} -> {user.subscription_plan}")
                 

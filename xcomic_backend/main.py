@@ -657,6 +657,9 @@ def admin_user_update(req: AdminUserUpdateRequest, current_user: database.User =
                 target_user.subscription_started_at = datetime.utcnow()
             if not getattr(target_user, 'subscription_expires_at', None) or target_user.subscription_expires_at < datetime.utcnow():
                 target_user.subscription_expires_at = datetime.utcnow() + timedelta(days=30)
+        else:
+            target_user.subscription_status = "active"
+            target_user.subscription_expires_at = None
     
     if req.extend_days and req.extend_days > 0:
         base_dt = target_user.subscription_expires_at if (target_user.subscription_expires_at and target_user.subscription_expires_at > datetime.utcnow()) else datetime.utcnow()
@@ -681,12 +684,18 @@ def admin_user_reset(req: AdminUserResetRequest, current_user: database.User = D
     target_user = db.query(database.User).filter(database.User.id == req.user_id).first()
     if not target_user:
         raise HTTPException(status_code=404, detail="User not found")
+    
+    target_user.subscription_plan = "free"
+    target_user.subscription_status = "active"
+    target_user.subscription_started_at = None
+    target_user.subscription_expires_at = None
     target_user.custom_daily_limit = None
     target_user.custom_max_accounts = None
     target_user.custom_ai_replies = None
     target_user.custom_support = None
+    
     db.commit()
-    return {"status": "success", "message": "User custom overrides reset to plan defaults"}
+    return {"status": "success", "message": "User reset back to Original FREE Plan & Defaults"}
 
 class UserPlanRequest(BaseModel):
     plan: str

@@ -10760,7 +10760,7 @@ window.openUserManageModalById = function(userId) {
     const resetBtn = document.getElementById('adm-modal-reset-btn');
     if (resetBtn) {
         resetBtn.onclick = async function() {
-            if (!confirm(`Reset all custom overrides for ${email} back to original ${currentPlan.toUpperCase()} plan defaults?`)) return;
+            if (!confirm(`Reset ${email} back to original FREE plan & clear all custom overrides?`)) return;
             resetBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Resetting...';
             resetBtn.disabled = true;
             try {
@@ -10770,7 +10770,7 @@ window.openUserManageModalById = function(userId) {
                     body: JSON.stringify({ user_id: userId })
                 });
                 if (res.ok) {
-                    showToast(`User reset back to ${currentPlan.toUpperCase()} plan defaults!`, 'success');
+                    showToast(`User reset back to Original FREE Plan & Defaults!`, 'success');
                     modal.style.display = 'none';
                     if (typeof loadAdminUsers === 'function') loadAdminUsers();
                 } else {

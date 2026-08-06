@@ -10721,16 +10721,17 @@ window.openUserManageModalById = function(userId) {
 
     const expireEl = document.getElementById('adm-modal-expire-text');
     if (expireEl) {
-        if (user.subscription_expires_at) {
-            const expDate = new Date(user.subscription_expires_at);
+        if (currentPlan.toLowerCase() !== 'free') {
+            let expDate = user.subscription_expires_at ? new Date(user.subscription_expires_at) : new Date(Date.now() + 30*24*60*60*1000);
+            let daysLeft = (user.days_remaining !== null && user.days_remaining !== undefined) ? user.days_remaining : 30;
             const dateFormatted = expDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-            if (user.days_remaining && user.days_remaining > 0) {
-                expireEl.innerHTML = `<span style="color:#818cf8;font-weight:700;">${user.days_remaining} Days Remaining</span> <small style="color:#94a3b8;">(Until ${dateFormatted})</small>`;
+            if (daysLeft > 0) {
+                expireEl.innerHTML = `<span style="color:#818cf8;font-weight:700;">${daysLeft} Days Remaining</span> <small style="color:#94a3b8;">(Until ${dateFormatted})</small>`;
             } else {
                 expireEl.innerHTML = `<span style="color:#ef4444;font-weight:700;">Expired</span> <small style="color:#94a3b8;">(Ended ${dateFormatted})</small>`;
             }
         } else {
-            expireEl.innerHTML = `<span style="color:#10b981;font-weight:700;">No expiration (Free / Unlimited)</span>`;
+            expireEl.innerHTML = `<span style="color:#10b981;font-weight:700;">No expiration (Free Plan)</span>`;
         }
     }
 

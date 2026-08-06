@@ -516,12 +516,24 @@ def get_all_users(current_user: database.User = Depends(auth.get_current_user), 
         days_remaining = None
         sub_status = getattr(u, 'subscription_status', 'active') or 'active'
         
+        plan_clean = (u.subscription_plan or "free").lower()
+        if plan_clean != "free" and not expires_at:
+            from datetime import datetime, timedelta
+            started_at = datetime.utcnow()
+            expires_at = datetime.utcnow() + timedelta(days=30)
+            u.subscription_started_at = started_at
+            u.subscription_expires_at = expires_at
+            try:
+                db.commit()
+            except Exception:
+                db.rollback()
+        
         if expires_at:
             from datetime import datetime
             now_dt = datetime.utcnow()
             diff = (expires_at - now_dt).days
             days_remaining = max(0, diff) if diff >= 0 else 0
-            if diff < 0 and (u.subscription_plan or "free").lower() != "free":
+            if diff < 0 and plan_clean != "free":
                 sub_status = "expired"
 
         result.append({

@@ -37,6 +37,42 @@ else:
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+def migrate_sqlite_columns():
+    try:
+        import sqlite3
+        if "sqlite" in DATABASE_URL:
+            db_path = DATABASE_URL.replace("sqlite:///", "")
+            if os.path.exists(db_path):
+                conn = sqlite3.connect(db_path)
+                cursor = conn.cursor()
+                cursor.execute("PRAGMA table_info(users)")
+                columns = [row[1] for row in cursor.fetchall()]
+                
+                new_cols = [
+                    ("custom_daily_limit", "INTEGER"),
+                    ("custom_max_accounts", "INTEGER"),
+                    ("custom_ai_replies", "BOOLEAN"),
+                    ("custom_support", "BOOLEAN"),
+                    ("subscription_started_at", "DATETIME"),
+                    ("subscription_expires_at", "DATETIME")
+                ]
+                for col_name, col_type in new_cols:
+                    if col_name not in columns:
+                        try:
+                            cursor.execute(f"ALTER TABLE users ADD COLUMN {col_name} {col_type}")
+                            print(f"[SQLite Migration] Added column {col_name} to users table.")
+                        except Exception as e:
+                            print(f"[SQLite Migration] Column {col_name} error: {e}")
+                conn.commit()
+                conn.close()
+    except Exception as e:
+        print(f"[SQLite Migration Error] {e}")
+
+try:
+    migrate_sqlite_columns()
+except Exception:
+    pass
+
 Base = declarative_base()
 
 def generate_uuid():

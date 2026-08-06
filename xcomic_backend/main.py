@@ -506,55 +506,77 @@ def test_db(db: Session = Depends(database.get_db)):
 def get_all_users(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admin privileges required")
-    users = db.query(database.User).all()
-    result = []
-    for u in users:
-        sent_today = sum(c.sent_today_campaign or 0 for c in db.query(database.Campaign).filter(database.Campaign.user_id == str(u.id)).all())
-        acc_count = db.query(database.SendingAccount).filter(database.SendingAccount.user_id == str(u.id)).count()
-        started_at = getattr(u, 'subscription_started_at', None)
-        expires_at = getattr(u, 'subscription_expires_at', None)
-        days_remaining = None
-        sub_status = getattr(u, 'subscription_status', 'active') or 'active'
-        
-        plan_clean = (u.subscription_plan or "free").lower()
-        if plan_clean != "free" and not expires_at:
-            from datetime import datetime, timedelta
-            started_at = datetime.utcnow()
-            expires_at = datetime.utcnow() + timedelta(days=30)
-            u.subscription_started_at = started_at
-            u.subscription_expires_at = expires_at
-            try:
-                db.commit()
-            except Exception:
-                db.rollback()
-        
-        if expires_at:
-            from datetime import datetime
-            now_dt = datetime.utcnow()
-            diff = (expires_at - now_dt).days
-            days_remaining = max(0, diff) if diff >= 0 else 0
-            if diff < 0 and plan_clean != "free":
-                sub_status = "expired"
+    try:
+        try:
+            database.migrate_sqlite_columns()
+        except Exception:
+            pass
 
-        result.append({
-            "id": str(u.id),
-            "email": u.email,
-            "is_admin": u.is_admin,
-            "is_approved": u.is_approved,
-            "is_email_verified": u.is_email_verified,
-            "subscription_plan": u.subscription_plan or "free",
-            "subscription_status": sub_status,
-            "subscription_started_at": started_at.isoformat() if started_at else None,
-            "subscription_expires_at": expires_at.isoformat() if expires_at else None,
-            "days_remaining": days_remaining,
-            "custom_daily_limit": getattr(u, 'custom_daily_limit', None),
-            "custom_max_accounts": getattr(u, 'custom_max_accounts', None),
-            "custom_ai_replies": getattr(u, 'custom_ai_replies', None),
-            "custom_support": getattr(u, 'custom_support', None),
-            "sending_accounts_count": acc_count,
-            "sent_today": sent_today
-        })
-    return result
+        users = db.query(database.User).all()
+        result = []
+        for u in users:
+            try:
+                sent_today = sum(c.sent_today_campaign or 0 for c in db.query(database.Campaign).filter(database.Campaign.user_id == str(u.id)).all())
+            except Exception:
+                sent_today = 0
+
+            try:
+                acc_count = db.query(database.SendingAccount).filter(database.SendingAccount.user_id == str(u.id)).count()
+            except Exception:
+                acc_count = 0
+
+            started_at = getattr(u, 'subscription_started_at', None)
+            expires_at = getattr(u, 'subscription_expires_at', None)
+            days_remaining = None
+            sub_status = getattr(u, 'subscription_status', 'active') or 'active'
+            
+            plan_clean = (getattr(u, 'subscription_plan', 'free') or "free").lower()
+            if plan_clean != "free" and not expires_at:
+                from datetime import datetime, timedelta
+                started_at = datetime.utcnow()
+                expires_at = datetime.utcnow() + timedelta(days=30)
+                try:
+                    setattr(u, 'subscription_started_at', started_at)
+                    setattr(u, 'subscription_expires_at', expires_at)
+                    db.commit()
+                except Exception:
+                    db.rollback()
+            
+            if expires_at:
+                try:
+                    from datetime import datetime
+                    now_dt = datetime.utcnow()
+                    diff = (expires_at - now_dt).days
+                    days_remaining = max(0, diff) if diff >= 0 else 0
+                    if diff < 0 and plan_clean != "free":
+                        sub_status = "expired"
+                except Exception:
+                    pass
+
+            result.append({
+                "id": str(u.id),
+                "email": getattr(u, 'email', ''),
+                "is_admin": getattr(u, 'is_admin', False),
+                "is_approved": getattr(u, 'is_approved', False),
+                "is_email_verified": getattr(u, 'is_email_verified', False),
+                "subscription_plan": getattr(u, 'subscription_plan', 'free') or 'free',
+                "subscription_status": sub_status,
+                "subscription_started_at": started_at.isoformat() if (started_at and hasattr(started_at, 'isoformat')) else None,
+                "subscription_expires_at": expires_at.isoformat() if (expires_at and hasattr(expires_at, 'isoformat')) else None,
+                "days_remaining": days_remaining,
+                "custom_daily_limit": getattr(u, 'custom_daily_limit', None),
+                "custom_max_accounts": getattr(u, 'custom_max_accounts', None),
+                "custom_ai_replies": getattr(u, 'custom_ai_replies', None),
+                "custom_support": getattr(u, 'custom_support', None),
+                "sending_accounts_count": acc_count,
+                "sent_today": sent_today
+            })
+        return result
+    except Exception as e:
+        print(f"[get_all_users ERROR] {e}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Database query error: {str(e)}")
 
 @app.post("/api/admin/users/{user_id}/approve")
 def approve_user(user_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):

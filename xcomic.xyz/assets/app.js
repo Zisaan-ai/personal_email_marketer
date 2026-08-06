@@ -10764,9 +10764,10 @@ window.openUserManageModalById = function(userId) {
             resetBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Resetting...';
             resetBtn.disabled = true;
             try {
-                const res = await fetch(`${API_URL}/admin/users/${userId}/reset-defaults`, {
+                const res = await fetch(`${API_URL}/admin/user-reset`, {
                     method: 'POST',
-                    headers: { 'Authorization': `Bearer ${getToken()}`, 'Content-Type': 'application/json' }
+                    headers: { 'Authorization': `Bearer ${getToken()}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId })
                 });
                 if (res.ok) {
                     showToast(`User reset back to ${currentPlan.toUpperCase()} plan defaults!`, 'success');
@@ -10813,38 +10814,30 @@ window.openUserManageModalById = function(userId) {
             const newAccLimitRaw = accLimitEl ? accLimitEl.value.trim() : '';
             let newAccLimit = newAccLimitRaw !== '' ? parseInt(newAccLimitRaw, 10) : null;
             
+            const extendEl = document.getElementById('adm-modal-extend-days');
+            const extendVal = extendEl ? parseInt(extendEl.value, 10) : 0;
+
+            const aiVal = aiRepliesEl ? aiRepliesEl.value : 'default';
+            const suppVal = supportEl ? supportEl.value : 'default';
+            
             try {
-                const extendEl = document.getElementById('adm-modal-extend-days');
-                const extendVal = extendEl ? parseInt(extendEl.value, 10) : 0;
-
-                // Update plan & duration
-                const pRes = await fetch(`${API_URL}/admin/users/${userId}/plan`, {
+                const res = await fetch(`${API_URL}/admin/user-update`, {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${getToken()}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ plan: newPlan, extend_days: extendVal })
-                });
-                if (!pRes.ok) {
-                    const pErr = await pRes.json().catch(() => ({}));
-                    throw new Error(pErr.detail || 'Failed to update plan');
-                }
-                
-                const aiVal = aiRepliesEl ? aiRepliesEl.value : 'default';
-                const suppVal = supportEl ? supportEl.value : 'default';
-
-                // Update limits & features
-                const lRes = await fetch(`${API_URL}/admin/users/${userId}/limit`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${getToken()}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
+                    body: JSON.stringify({
+                        user_id: userId,
+                        plan: newPlan,
+                        extend_days: extendVal,
                         daily_limit: (newLimit !== null && !isNaN(newLimit) && newLimit > 0) ? newLimit : null,
                         max_accounts: (newAccLimit !== null && !isNaN(newAccLimit) && newAccLimit > 0) ? newAccLimit : null,
                         ai_replies: aiVal === 'true' ? true : (aiVal === 'false' ? false : null),
                         support: suppVal === 'true' ? true : (suppVal === 'false' ? false : null)
                     })
                 });
-                if (!lRes.ok) {
-                    const lErr = await lRes.json().catch(() => ({}));
-                    throw new Error(lErr.detail || 'Failed to update custom limits');
+                
+                if (!res.ok) {
+                    const errData = await res.json().catch(() => ({}));
+                    throw new Error(errData.detail || 'Failed to update user settings');
                 }
 
                 showToast('User settings & custom limits saved successfully!', 'success');

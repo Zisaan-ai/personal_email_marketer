@@ -608,6 +608,64 @@ def delete_user(user_id: str, current_user: database.User = Depends(auth.get_cur
     db.commit()
     return {"message": "User deleted successfully"}
 
+class AdminUserUpdateRequest(BaseModel):
+    user_id: str
+    plan: Optional[str] = "free"
+    extend_days: Optional[int] = 0
+    daily_limit: Optional[int] = None
+    max_accounts: Optional[int] = None
+    ai_replies: Optional[bool] = None
+    support: Optional[bool] = None
+
+@app.post("/api/admin/user-update")
+def admin_user_update(req: AdminUserUpdateRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin privileges required")
+    target_user = db.query(database.User).filter(database.User.id == req.user_id).first()
+    if not target_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    from datetime import datetime, timedelta
+    
+    if req.plan:
+        target_user.subscription_plan = req.plan.lower()
+        if req.plan.lower() != "free":
+            target_user.subscription_status = "active"
+            if not getattr(target_user, 'subscription_started_at', None):
+                target_user.subscription_started_at = datetime.utcnow()
+            if not getattr(target_user, 'subscription_expires_at', None) or target_user.subscription_expires_at < datetime.utcnow():
+                target_user.subscription_expires_at = datetime.utcnow() + timedelta(days=30)
+    
+    if req.extend_days and req.extend_days > 0:
+        base_dt = target_user.subscription_expires_at if (target_user.subscription_expires_at and target_user.subscription_expires_at > datetime.utcnow()) else datetime.utcnow()
+        target_user.subscription_expires_at = base_dt + timedelta(days=req.extend_days)
+        target_user.subscription_status = "active"
+        
+    target_user.custom_daily_limit = req.daily_limit if (req.daily_limit is not None and req.daily_limit > 0) else None
+    target_user.custom_max_accounts = req.max_accounts if (req.max_accounts is not None and req.max_accounts > 0) else None
+    target_user.custom_ai_replies = req.ai_replies
+    target_user.custom_support = req.support
+    
+    db.commit()
+    return {"status": "success", "message": "User settings updated successfully"}
+
+class AdminUserResetRequest(BaseModel):
+    user_id: str
+
+@app.post("/api/admin/user-reset")
+def admin_user_reset(req: AdminUserResetRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin privileges required")
+    target_user = db.query(database.User).filter(database.User.id == req.user_id).first()
+    if not target_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    target_user.custom_daily_limit = None
+    target_user.custom_max_accounts = None
+    target_user.custom_ai_replies = None
+    target_user.custom_support = None
+    db.commit()
+    return {"status": "success", "message": "User custom overrides reset to plan defaults"}
+
 class UserPlanRequest(BaseModel):
     plan: str
     extend_days: Optional[int] = None

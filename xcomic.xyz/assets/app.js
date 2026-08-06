@@ -10721,6 +10721,16 @@ window.openUserManageModalById = function(userId) {
         accLimitEl.value = (currentMaxAccs !== null && currentMaxAccs !== undefined) ? currentMaxAccs : '';
     }
     
+    const aiRepliesEl = document.getElementById('adm-modal-ai-replies');
+    if (aiRepliesEl) {
+        aiRepliesEl.value = user.custom_ai_replies === true ? 'true' : (user.custom_ai_replies === false ? 'false' : 'default');
+    }
+    
+    const supportEl = document.getElementById('adm-modal-support');
+    if (supportEl) {
+        supportEl.value = user.custom_support === true ? 'true' : (user.custom_support === false ? 'false' : 'default');
+    }
+    
     // 1-Click Reset to Defaults Handler
     const resetBtn = document.getElementById('adm-modal-reset-btn');
     if (resetBtn) {
@@ -10790,13 +10800,18 @@ window.openUserManageModalById = function(userId) {
                     throw new Error(pErr.detail || 'Failed to update plan');
                 }
                 
-                // Update limits
+                const aiVal = aiRepliesEl ? aiRepliesEl.value : 'default';
+                const suppVal = supportEl ? supportEl.value : 'default';
+
+                // Update limits & features
                 const lRes = await fetch(`${API_URL}/admin/users/${userId}/limit`, {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${getToken()}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
                         daily_limit: (newLimit !== null && !isNaN(newLimit) && newLimit > 0) ? newLimit : null,
-                        max_accounts: (newAccLimit !== null && !isNaN(newAccLimit) && newAccLimit > 0) ? newAccLimit : null
+                        max_accounts: (newAccLimit !== null && !isNaN(newAccLimit) && newAccLimit > 0) ? newAccLimit : null,
+                        ai_replies: aiVal === 'true' ? true : (aiVal === 'false' ? false : null),
+                        support: suppVal === 'true' ? true : (suppVal === 'false' ? false : null)
                     })
                 });
                 if (!lRes.ok) {

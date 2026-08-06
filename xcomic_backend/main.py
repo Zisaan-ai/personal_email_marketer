@@ -521,6 +521,8 @@ def get_all_users(current_user: database.User = Depends(auth.get_current_user), 
             "subscription_status": getattr(u, 'subscription_status', 'active') or 'active',
             "custom_daily_limit": getattr(u, 'custom_daily_limit', None),
             "custom_max_accounts": getattr(u, 'custom_max_accounts', None),
+            "custom_ai_replies": getattr(u, 'custom_ai_replies', None),
+            "custom_support": getattr(u, 'custom_support', None),
             "sending_accounts_count": acc_count,
             "sent_today": sent_today
         })
@@ -597,6 +599,8 @@ def update_user_plan(user_id: str, req: UserPlanRequest, current_user: database.
 class UserLimitRequest(BaseModel):
     daily_limit: Optional[int] = None
     max_accounts: Optional[int] = None
+    ai_replies: Optional[bool] = None
+    support: Optional[bool] = None
 
 @app.post("/api/admin/users/{user_id}/limit")
 def update_user_limit(user_id: str, req: UserLimitRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
@@ -607,8 +611,10 @@ def update_user_limit(user_id: str, req: UserLimitRequest, current_user: databas
         raise HTTPException(status_code=404, detail="User not found")
     target_user.custom_daily_limit = req.daily_limit if (req.daily_limit is not None and req.daily_limit > 0) else None
     target_user.custom_max_accounts = req.max_accounts if (req.max_accounts is not None and req.max_accounts > 0) else None
+    target_user.custom_ai_replies = req.ai_replies
+    target_user.custom_support = req.support
     db.commit()
-    return {"message": "User custom limits updated successfully"}
+    return {"message": "User custom limits & feature overrides updated successfully"}
 
 @app.post("/api/admin/users/{user_id}/reset-defaults")
 def reset_user_defaults(user_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
@@ -619,6 +625,8 @@ def reset_user_defaults(user_id: str, current_user: database.User = Depends(auth
         raise HTTPException(status_code=404, detail="User not found")
     target_user.custom_daily_limit = None
     target_user.custom_max_accounts = None
+    target_user.custom_ai_replies = None
+    target_user.custom_support = None
     db.commit()
     return {"message": "User custom overrides cleared, reset to plan defaults"}
 

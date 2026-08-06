@@ -65,6 +65,8 @@ class User(Base):
     free_emails_sent = Column(Integer, default=0)
     custom_daily_limit = Column(Integer, nullable=True)
     custom_max_accounts = Column(Integer, nullable=True)
+    custom_ai_replies = Column(Boolean, nullable=True)
+    custom_support = Column(Boolean, nullable=True)
 
 class Campaign(Base):
     __tablename__ = "campaigns"

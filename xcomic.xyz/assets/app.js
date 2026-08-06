@@ -10679,6 +10679,57 @@ window.changeUserLimit = async function(userId) {
         showToast('Error updating user limit', 'error');
         console.error(e);
     }
+window.openUserManageModal = function(userId, email, currentPlan, currentLimit, isAdmin) {
+    const modal = document.getElementById('admin-user-modal');
+    if (!modal) return;
+    document.getElementById('adm-modal-email').innerText = email;
+    document.getElementById('adm-modal-plan').value = currentPlan || 'free';
+    document.getElementById('adm-modal-limit').value = (currentLimit && currentLimit !== 'null' && currentLimit !== 'undefined') ? currentLimit : '';
+    
+    const delBtn = document.getElementById('adm-modal-delete-btn');
+    if (delBtn) {
+        if (isAdmin || email.toLowerCase() === 'zmonemrahman@gmail.com') {
+            delBtn.style.display = 'none';
+        } else {
+            delBtn.style.display = 'flex';
+            delBtn.onclick = function() {
+                if (confirm('Are you sure you want to delete user ' + email + '?')) {
+                    deleteUser(userId);
+                    modal.style.display = 'none';
+                }
+            };
+        }
+    }
+    
+    const saveBtn = document.getElementById('adm-modal-save-btn');
+    if (saveBtn) {
+        saveBtn.onclick = async function() {
+            const newPlan = document.getElementById('adm-modal-plan').value;
+            const newLimitRaw = document.getElementById('adm-modal-limit').value;
+            let newLimit = newLimitRaw !== '' ? parseInt(newLimitRaw, 10) : null;
+            
+            try {
+                if (newPlan !== currentPlan) {
+                    await fetch(`${API_URL}/admin/users/${userId}/plan`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${getToken()}`, 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ plan: newPlan })
+                    });
+                }
+                await fetch(`${API_URL}/admin/users/${userId}/limit`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${getToken()}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ daily_limit: newLimit !== null && !isNaN(newLimit) ? newLimit : 0 })
+                });
+                showToast('User settings updated successfully!', 'success');
+                modal.style.display = 'none';
+                if (typeof loadAdminUsers === 'function') loadAdminUsers();
+            } catch(e) {
+                showToast('Error updating user: ' + e.message, 'error');
+            }
+        };
+    }
+    modal.style.display = 'flex';
 };
 
 
@@ -13524,38 +13575,20 @@ window.loadAdminUsers = async function() {
             let actionsHTML = '';
             
             let approveBtn = u.is_approved 
-                ? `<button class="btn" disabled style="padding:5px 14px;font-size:12px;opacity:0.5;background:#e2e8f0;color:#64748b;"><i class='fa-solid fa-check' style='margin-right:4px;'></i>Approved</button>`
-                : `<button class="btn primary" onclick="approveUser('${u.id}')" style="padding:5px 14px;font-size:12px;background:#059669;color:white;"><i class='fa-solid fa-check' style='margin-right:4px;'></i>Approve</button>`;
-                
-            let deleteBtn = u.is_admin 
-                ? `<button class="btn" disabled style="padding:5px 10px;font-size:12px;background:#e2e8f0;color:#64748b;margin-left:8px;" title="Cannot delete admin"><i class='fa-solid fa-trash'></i> Delete</button>`
-                : `<button class="btn danger" onclick="deleteUser('${u.id}')" style="padding:5px 10px;font-size:12px;background:#ef4444;color:white;margin-left:8px;"><i class='fa-solid fa-trash'></i> Delete</button>`;
+                ? ''
+                : `<button class="btn primary" onclick="approveUser('${u.id}')" style="padding:6px 12px;font-size:12px;background:#059669;color:white;border-radius:8px;border:none;cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:4px;"><i class='fa-solid fa-check'></i> Approve</button>`;
 
-            let changePlanSelect = `
-                <select onchange="changeUserPlan('${u.id}', this.value)" style="margin-left:8px; padding:4px; font-size:12px; border-radius:4px; border:1px solid #cbd5e1; outline:none;">
-                    <option value="" disabled selected>Change Plan</option>
-                    <option value="free">Free</option>
-                    <option value="starter">Starter</option>
-                    <option value="professional">Professional</option>
-                    <option value="enterprise">Enterprise</option>
-                </select>
-            `;
-            
-            let limitBtn = `<button class="btn" onclick="changeUserLimit('${u.id}')" style="padding:5px 10px;font-size:12px;background:#4f46e5;color:white;margin-left:4px;" title="Set Custom Daily Limit"><i class='fa-solid fa-sliders'></i> ${u.custom_daily_limit ? u.custom_daily_limit : 'Limit'}</button>`;
-            
-            actionsHTML = approveBtn + deleteBtn + changePlanSelect + limitBtn;
+            let manageBtn = `<button class="btn" onclick="openUserManageModal('${u.id}', '${escapeHtml(u.email)}', '${u.subscription_plan || 'free'}', '${u.custom_daily_limit || ''}', ${u.is_admin})" style="padding:6px 14px;font-size:12px;background:rgba(99,102,241,0.12);color:#6366f1;border:1px solid rgba(99,102,241,0.3);border-radius:8px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.2s;"><i class='fa-solid fa-sliders'></i> Manage</button>`;
 
             var defaultLimit = planBadgeText === 'ENTERPRISE' ? '5,000' : (planBadgeText === 'PROFESSIONAL' ? '2,000' : (planBadgeText === 'STARTER' ? '1,000' : '100'));
-            var displayLimit = u.custom_daily_limit ? `<span style="color:#6366f1;font-weight:700;">${u.custom_daily_limit}</span> <small style="color:#94a3b8;">(Custom)</small>` : `<span style="color:#64748b;font-weight:600;">${defaultLimit}</span>`;
+            var displayLimit = u.custom_daily_limit ? `<span style="color:#6366f1;font-weight:700;">${u.custom_daily_limit}</span> <small style="color:#94a3b8;font-size:10px;">(Custom)</small>` : `<span style="color:#64748b;font-weight:600;">${defaultLimit}</span>`;
 
             tr.innerHTML = `
-                <td style="padding:10px 12px;font-size:11px;color:#94a3b8;white-space:nowrap;" title="${u.id}">${u.id.substring(0,8)}...</td>
-                <td style="padding:10px 12px;white-space:nowrap;"><strong style="color:var(--text);font-size:13px;">${escapeHtml(u.email)}</strong> ${u.is_admin ? '<span style="color:#6366f1;font-size:11px;font-weight:700;margin-left:4px;">[Admin]</span>' : ''}</td>
-                <td style="padding:10px 12px;white-space:nowrap;"><div style="display:flex;align-items:center;gap:6px;">${planBadge} ${statusBadge}</div></td>
-                <td style="padding:10px 12px;white-space:nowrap;"><span style="font-weight:700;color:#10b981;">${u.sent_today || 0}</span> <small style="color:#94a3b8;">emails</small></td>
-                <td style="padding:10px 12px;white-space:nowrap;">${displayLimit} <small style="color:#94a3b8;">/day</small></td>
-                <td style="padding:10px 12px;white-space:nowrap;"><span style="font-weight:700;color:#f59e0b;">${u.sending_accounts_count || 0}</span> <small style="color:#94a3b8;">accs</small></td>
-                <td style="padding:10px 12px;white-space:nowrap;"><div style="display:flex;align-items:center;gap:4px;">${actionsHTML}</div></td>
+                <td style="padding:14px 16px;"><strong style="color:var(--text);font-size:13px;">${escapeHtml(u.email)}</strong> ${u.is_admin ? '<span style="color:#6366f1;font-size:11px;font-weight:700;margin-left:4px;background:rgba(99,102,241,0.1);padding:2px 8px;border-radius:12px;">Admin</span>' : ''}</td>
+                <td style="padding:14px 16px;"><div style="display:flex;align-items:center;gap:6px;">${planBadge} ${statusBadge}</div></td>
+                <td style="padding:14px 16px;"><span style="font-weight:700;color:#10b981;font-size:13px;">${u.sent_today || 0}</span> <small style="color:#94a3b8;font-size:11px;">emails</small></td>
+                <td style="padding:14px 16px;">${displayLimit} <small style="color:#94a3b8;font-size:11px;">/day</small></td>
+                <td style="padding:14px 16px;text-align:right;"><div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;">${approveBtn} ${manageBtn}</div></td>
             `;
 
             if (tbodyAll) tbodyAll.appendChild(tr.cloneNode(true));

@@ -13541,16 +13541,21 @@ window.loadAdminUsers = async function() {
                 </select>
             `;
             
-            let limitBtn = `<button class="btn" onclick="changeUserLimit('${u.id}')" style="padding:5px 10px;font-size:12px;background:#4f46e5;color:white;margin-left:8px;" title="Set Custom Daily Limit"><i class='fa-solid fa-sliders'></i> Limit ${u.custom_daily_limit ? '(' + u.custom_daily_limit + '/day)' : ''}</button>`;
+            let limitBtn = `<button class="btn" onclick="changeUserLimit('${u.id}')" style="padding:5px 10px;font-size:12px;background:#4f46e5;color:white;margin-left:4px;" title="Set Custom Daily Limit"><i class='fa-solid fa-sliders'></i> ${u.custom_daily_limit ? u.custom_daily_limit : 'Limit'}</button>`;
             
             actionsHTML = approveBtn + deleteBtn + changePlanSelect + limitBtn;
 
+            var defaultLimit = planBadgeText === 'ENTERPRISE' ? '5,000' : (planBadgeText === 'PROFESSIONAL' ? '2,000' : (planBadgeText === 'STARTER' ? '1,000' : '100'));
+            var displayLimit = u.custom_daily_limit ? `<span style="color:#6366f1;font-weight:700;">${u.custom_daily_limit}</span> <small style="color:#94a3b8;">(Custom)</small>` : `<span style="color:#64748b;font-weight:600;">${defaultLimit}</span>`;
+
             tr.innerHTML = `
-                <td>${u.id}</td>
-                <td>${escapeHtml(u.email)}</td>
-                <td>${planBadge}</td>
-                <td>${u.is_admin ? '<span style="color:#6366f1;font-weight:600;">Admin</span>' : `User ${statusBadge}`}</td>
-                <td style="display:flex;align-items:center;">${actionsHTML}</td>
+                <td style="font-size:11px;color:#94a3b8;" title="${u.id}">${u.id.substring(0,8)}...</td>
+                <td><strong style="color:var(--text);font-size:13px;">${escapeHtml(u.email)}</strong> ${u.is_admin ? '<span style="color:#6366f1;font-size:11px;font-weight:700;margin-left:4px;">[Admin]</span>' : ''}</td>
+                <td><div style="display:flex;align-items:center;gap:6px;">${planBadge} ${statusBadge}</div></td>
+                <td><span style="font-weight:700;color:#10b981;">${u.sent_today || 0}</span> <small style="color:#94a3b8;">emails</small></td>
+                <td>${displayLimit} <small style="color:#94a3b8;">/day</small></td>
+                <td><span style="font-weight:700;color:#f59e0b;">${u.sending_accounts_count || 0}</span> <small style="color:#94a3b8;">accs</small></td>
+                <td><div style="display:flex;align-items:center;gap:4px;">${actionsHTML}</div></td>
             `;
 
             if (tbodyAll) tbodyAll.appendChild(tr.cloneNode(true));

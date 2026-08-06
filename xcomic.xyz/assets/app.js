@@ -10693,6 +10693,7 @@ window.openUserManageModalById = function(userId) {
     }
     const email = user.email || userId;
     const currentPlan = user.subscription_plan || 'free';
+    const originalPlan = user.original_subscription_plan || currentPlan || 'free';
     const currentLimit = user.custom_daily_limit;
     const currentMaxAccs = user.custom_max_accounts;
 
@@ -10702,11 +10703,16 @@ window.openUserManageModalById = function(userId) {
     const origPlanEl = document.getElementById('adm-modal-orig-plan');
     if (origPlanEl) {
         const planUpper = currentPlan.toUpperCase();
+        const baseUpper = originalPlan.toUpperCase();
+        let planLabel = `<span style="color:#6366f1;">${planUpper}</span>`;
+        if (planUpper !== baseUpper) {
+            planLabel += ` <small style="color:#94a3b8;">(Purchased: <strong style="color:#818cf8;">${baseUpper}</strong>)</small>`;
+        }
         let customInfo = [];
         if (currentLimit) customInfo.push(`${currentLimit} Email Limit`);
         if (currentMaxAccs) customInfo.push(`${currentMaxAccs} Accs Limit`);
         const customText = customInfo.length ? ` <small style="color:#818cf8;margin-left:6px;">(${customInfo.join(', ')})</small>` : '';
-        origPlanEl.innerHTML = `<span style="color:#6366f1;">${planUpper}</span>${customText}`;
+        origPlanEl.innerHTML = `${planLabel}${customText}`;
     }
     const origStatusEl = document.getElementById('adm-modal-orig-status');
     if (origStatusEl) {
@@ -10759,8 +10765,9 @@ window.openUserManageModalById = function(userId) {
     // 1-Click Reset to Defaults Handler
     const resetBtn = document.getElementById('adm-modal-reset-btn');
     if (resetBtn) {
+        resetBtn.innerHTML = `<i class="fa-solid fa-rotate-left"></i> 1-Click Back to Original ${originalPlan.toUpperCase()} Plan Defaults`;
         resetBtn.onclick = async function() {
-            if (!confirm(`Reset ${email} back to original FREE plan & clear all custom overrides?`)) return;
+            if (!confirm(`Reset ${email} back to original ${originalPlan.toUpperCase()} plan & clear all custom overrides?`)) return;
             resetBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Resetting...';
             resetBtn.disabled = true;
             try {
@@ -10770,7 +10777,7 @@ window.openUserManageModalById = function(userId) {
                     body: JSON.stringify({ user_id: userId })
                 });
                 if (res.ok) {
-                    showToast(`User reset back to Original FREE Plan & Defaults!`, 'success');
+                    showToast(`User reset back to Original ${originalPlan.toUpperCase()} Plan & Defaults!`, 'success');
                     modal.style.display = 'none';
                     if (typeof loadAdminUsers === 'function') loadAdminUsers();
                 } else {
@@ -10781,7 +10788,7 @@ window.openUserManageModalById = function(userId) {
                 showToast('Error resetting: ' + e.message, 'error');
             } finally {
                 resetBtn.disabled = false;
-                resetBtn.innerHTML = '<i class="fa-solid fa-rotate-left"></i> 1-Click Back to Original Plan Defaults';
+                resetBtn.innerHTML = `<i class="fa-solid fa-rotate-left"></i> 1-Click Back to Original ${originalPlan.toUpperCase()} Plan Defaults`;
             }
         };
     }

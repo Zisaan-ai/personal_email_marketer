@@ -54,7 +54,8 @@ def migrate_sqlite_columns():
                     ("custom_ai_replies", "BOOLEAN"),
                     ("custom_support", "BOOLEAN"),
                     ("subscription_started_at", "DATETIME"),
-                    ("subscription_expires_at", "DATETIME")
+                    ("subscription_expires_at", "DATETIME"),
+                    ("original_subscription_plan", "VARCHAR")
                 ]
                 for col_name, col_type in new_cols:
                     if col_name not in columns:
@@ -105,6 +106,7 @@ class User(Base):
     custom_support = Column(Boolean, nullable=True)
     subscription_started_at = Column(DateTime, nullable=True)
     subscription_expires_at = Column(DateTime, nullable=True)
+    original_subscription_plan = Column(String, default="free")
 
 class Campaign(Base):
     __tablename__ = "campaigns"

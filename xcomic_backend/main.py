@@ -549,9 +549,9 @@ def get_all_users(current_user: database.User = Depends(auth.get_current_user), 
                     diff = (expires_at - now_dt).days
                     days_remaining = max(0, diff) if diff >= 0 else 0
                     if diff < 0 and plan_clean != "free":
-                        sub_status = "expired"
-                except Exception:
-                    pass
+                       orig_plan = getattr(u, 'original_subscription_plan', None)
+            if not orig_plan:
+                orig_plan = getattr(u, 'subscription_plan', 'free') or 'free'
 
             result.append({
                 "id": str(u.id),
@@ -560,6 +560,7 @@ def get_all_users(current_user: database.User = Depends(auth.get_current_user), 
                 "is_approved": getattr(u, 'is_approved', False),
                 "is_email_verified": getattr(u, 'is_email_verified', False),
                 "subscription_plan": getattr(u, 'subscription_plan', 'free') or 'free',
+                "original_subscription_plan": orig_plan,
                 "subscription_status": sub_status,
                 "subscription_started_at": started_at.isoformat() if (started_at and hasattr(started_at, 'isoformat')) else None,
                 "subscription_expires_at": expires_at.isoformat() if (expires_at and hasattr(expires_at, 'isoformat')) else None,
@@ -590,15 +591,16 @@ def approve_user(user_id: str, current_user: database.User = Depends(auth.get_cu
     return {"message": "User approved successfully"}
 
 @app.post("/api/admin/users/{user_id}/status")
-def update_user_status(user_id: str, status: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+def update_user_status(user_id: str, req: dict, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admin privileges required")
     target_user = db.query(database.User).filter(database.User.id == user_id).first()
     if not target_user:
         raise HTTPException(status_code=404, detail="User not found")
-    target_user.subscription_status = status
+    if "is_approved" in req:
+        target_user.is_approved = req["is_approved"]
     db.commit()
-    return {"message": f"User status updated to {status}"}
+    return {"message": "User status updated successfully"}
 
 @app.delete("/api/admin/users/{user_id}")
 def delete_user(user_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
@@ -685,17 +687,27 @@ def admin_user_reset(req: AdminUserResetRequest, current_user: database.User = D
     if not target_user:
         raise HTTPException(status_code=404, detail="User not found")
     
-    target_user.subscription_plan = "free"
-    target_user.subscription_status = "active"
-    target_user.subscription_started_at = None
-    target_user.subscription_expires_at = None
+    orig_plan = (getattr(target_user, 'original_subscription_plan', None) or getattr(target_user, 'subscription_plan', 'free') or "free").lower()
+    target_user.subscription_plan = orig_plan
+    
+    from datetime import datetime, timedelta
+    if orig_plan != "free":
+        target_user.subscription_status = "active"
+        if not getattr(target_user, 'subscription_started_at', None):
+            target_user.subscription_started_at = datetime.utcnow()
+        if not getattr(target_user, 'subscription_expires_at', None) or target_user.subscription_expires_at < datetime.utcnow():
+            target_user.subscription_expires_at = datetime.utcnow() + timedelta(days=30)
+    else:
+        target_user.subscription_status = "active"
+        target_user.subscription_expires_at = None
+    
     target_user.custom_daily_limit = None
     target_user.custom_max_accounts = None
     target_user.custom_ai_replies = None
     target_user.custom_support = None
     
     db.commit()
-    return {"status": "success", "message": "User reset back to Original FREE Plan & Defaults"}
+    return {"status": "success", "message": f"User reset back to Original {orig_plan.upper()} Plan & Defaults"}
 
 class UserPlanRequest(BaseModel):
     plan: str

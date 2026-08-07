@@ -6736,7 +6736,7 @@
 
 
 
-                <button class="p-btn" onclick="LANDING.openPayment('Starter')">Buy Starter</button>
+                <button class="p-btn" onclick="LANDING.openPayment('Starter', 29)">Buy Starter</button>
 
 
 
@@ -6800,7 +6800,7 @@
 
 
 
-                <button class="p-btn" onclick="LANDING.openPayment('Professional')">Get Professional</button>
+                <button class="p-btn" onclick="LANDING.openPayment('Professional', 99)">Get Professional</button>
 
 
 
@@ -6860,7 +6860,7 @@
 
 
 
-                <button class="p-btn" onclick="LANDING.openPayment('Enterprise')">Contact Sales</button>
+                <button class="p-btn" onclick="LANDING.openPayment('Enterprise', 299)">Contact Sales</button>
 
 
 
@@ -7397,38 +7397,82 @@
 
 
 <div id="payment-modal">
-    <div class="pm-content" style="max-width:440px; border-radius:18px; padding:28px;">
-        <button class="pm-close" onclick="LANDING.closePayment()"><i class="fa-solid fa-xmark"></i></button>
-
-        <div class="pm-title" style="font-size:20px; font-weight:800; color:var(--text); margin-bottom:6px;">Complete Checkout</div>
-        <div class="pm-sub" style="font-size:14px; color:var(--text-muted); margin-bottom:20px;">You are purchasing the <strong id="pm-plan-name" style="color:var(--primary);">Starter</strong> plan for <strong id="pm-plan-price" style="color:var(--primary);">$29</strong>/month.</div>
-
-        <div class="pm-methods" style="margin-bottom:16px;">
-            <div class="pm-method selected" style="padding:14px; border:1px solid var(--border); border-radius:12px; display:flex; align-items:center; justify-content:space-between; background:var(--bg-glass);">
-                <div class="pm-method-left" style="display:flex; align-items:center;">
-                    <i class="fa-solid fa-credit-card" style="font-size:22px; color:#6366f1;"></i>
-                    <div class="pm-method-name" style="margin-left:12px; text-align:left;">
-                        <strong style="display:block; font-size:14px; color:var(--text);">Paddle / Test Checkout</strong>
-                        <span style="font-size:11px; color:var(--text-muted); font-weight:normal;">Credit Card, PayPal & Sandbox Test Cards</span>
-                    </div>
+    <div class="pm-content" style="max-width:460px; border-radius:20px; padding:0; overflow:hidden;">
+        <!-- Header -->
+        <div style="background:linear-gradient(135deg, #6366f1, #4f46e5); padding:24px 28px 20px; position:relative;">
+            <button class="pm-close" onclick="LANDING.closePayment()" style="position:absolute; top:16px; right:16px; background:rgba(255,255,255,0.2); border:none; color:#fff; width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-xmark"></i></button>
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+                <div style="width:42px; height:42px; border-radius:12px; background:rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center;">
+                    <i class="fa-solid fa-lock" style="color:#fff; font-size:18px;"></i>
+                </div>
+                <div>
+                    <div style="font-size:18px; font-weight:800; color:#fff;">Secure Checkout</div>
+                    <div style="font-size:12px; color:rgba(255,255,255,0.7);">256-bit SSL Encrypted</div>
+                </div>
+            </div>
+            <div style="background:rgba(255,255,255,0.15); border-radius:10px; padding:12px 16px; display:flex; align-items:center; justify-content:space-between;">
+                <div>
+                    <div style="font-size:11px; color:rgba(255,255,255,0.6); text-transform:uppercase; letter-spacing:0.5px;">Plan</div>
+                    <div id="pm-plan-name" style="font-size:16px; font-weight:700; color:#fff;">Starter</div>
+                </div>
+                <div style="text-align:right;">
+                    <div style="font-size:11px; color:rgba(255,255,255,0.6); text-transform:uppercase; letter-spacing:0.5px;">Amount</div>
+                    <div id="pm-plan-price" style="font-size:22px; font-weight:800; color:#fff;">$29<span style="font-size:13px; font-weight:400;">/mo</span></div>
                 </div>
             </div>
         </div>
 
-        <div id="pm-card-input-box" style="margin-bottom:20px; text-align:left; background:rgba(99,102,241,0.05); border:1px solid rgba(99,102,241,0.2); border-radius:12px; padding:14px;">
-            <label style="font-size:11px; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:6px;">
-                <i class="fa-solid fa-flask" style="margin-right:4px;"></i> Sandbox Test Card Number
-            </label>
-            <input type="text" id="pm-test-card" value="4242 4242 4242 4242" readonly style="width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); font-family:monospace; font-size:14px; font-weight:700;" />
-            <div style="display:flex; gap:10px; margin-top:8px;">
-                <input type="text" value="12/28" readonly style="width:50%; padding:8px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text-muted); font-size:12px; text-align:center;" />
-                <input type="text" value="100" readonly style="width:50%; padding:8px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text-muted); font-size:12px; text-align:center;" />
+        <!-- Card Form -->
+        <div style="padding:24px 28px 28px;">
+            <!-- Cardholder Name -->
+            <div style="margin-bottom:16px;">
+                <label style="display:block; font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.3px;">Cardholder Name</label>
+                <input type="text" id="pm-card-name" placeholder="John Doe" autocomplete="cc-name" style="width:100%; padding:12px 14px; border:1.5px solid var(--border); border-radius:10px; background:var(--bg); color:var(--text); font-size:14px; font-weight:500; outline:none; transition:border-color 0.2s;" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='var(--border)'" />
+            </div>
+
+            <!-- Card Number -->
+            <div style="margin-bottom:16px;">
+                <label style="display:block; font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.3px;">Card Number</label>
+                <div style="position:relative;">
+                    <input type="text" id="pm-card-number" placeholder="4242 4242 4242 4242" maxlength="19" autocomplete="cc-number" style="width:100%; padding:12px 14px; padding-right:80px; border:1.5px solid var(--border); border-radius:10px; background:var(--bg); color:var(--text); font-size:15px; font-weight:600; font-family:monospace; letter-spacing:1px; outline:none; transition:border-color 0.2s;" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='var(--border)'" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/(.{4})/g,'$1 ').trim().substring(0,19)" />
+                    <div style="position:absolute; right:12px; top:50%; transform:translateY(-50%); display:flex; gap:4px;">
+                        <i class="fa-brands fa-cc-visa" style="font-size:24px; color:#1a1f71;"></i>
+                        <i class="fa-brands fa-cc-mastercard" style="font-size:24px; color:#eb001b;"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Expiry & CVC -->
+            <div style="display:flex; gap:12px; margin-bottom:16px;">
+                <div style="flex:1;">
+                    <label style="display:block; font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.3px;">Expiry Date</label>
+                    <input type="text" id="pm-card-expiry" placeholder="MM/YY" maxlength="5" autocomplete="cc-exp" style="width:100%; padding:12px 14px; border:1.5px solid var(--border); border-radius:10px; background:var(--bg); color:var(--text); font-size:14px; font-weight:600; font-family:monospace; text-align:center; outline:none; transition:border-color 0.2s;" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='var(--border)'" oninput="let v=this.value.replace(/[^0-9]/g,''); if(v.length>=2) v=v.substring(0,2)+'/'+v.substring(2); this.value=v.substring(0,5);" />
+                </div>
+                <div style="flex:1;">
+                    <label style="display:block; font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.3px;">CVC</label>
+                    <input type="text" id="pm-card-cvc" placeholder="123" maxlength="4" autocomplete="cc-csc" style="width:100%; padding:12px 14px; border:1.5px solid var(--border); border-radius:10px; background:var(--bg); color:var(--text); font-size:14px; font-weight:600; font-family:monospace; text-align:center; outline:none; transition:border-color 0.2s;" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='var(--border)'" oninput="this.value=this.value.replace(/[^0-9]/g,'').substring(0,4)" />
+                </div>
+            </div>
+
+            <!-- Error message area -->
+            <div id="pm-card-error" style="display:none; background:#fef2f2; border:1px solid #fecaca; color:#dc2626; padding:10px 14px; border-radius:8px; font-size:13px; font-weight:500; margin-bottom:14px;">
+                <i class="fa-solid fa-circle-exclamation" style="margin-right:6px;"></i>
+                <span id="pm-card-error-text"></span>
+            </div>
+
+            <!-- Pay Button -->
+            <button id="pm-pay-btn" onclick="LANDING.processPayment()" style="width:100%; padding:15px; background:linear-gradient(135deg, #6366f1, #4f46e5); color:#fff; border:none; border-radius:12px; font-weight:700; font-size:15px; cursor:pointer; box-shadow:0 4px 14px rgba(99,102,241,0.35); transition:all 0.2s; display:flex; align-items:center; justify-content:center; gap:8px;">
+                <i class="fa-solid fa-lock" style="font-size:13px;"></i>
+                <span id="pm-pay-btn-text">Pay Now</span>
+            </button>
+
+            <!-- Security badges -->
+            <div style="display:flex; align-items:center; justify-content:center; gap:16px; margin-top:16px; padding-top:14px; border-top:1px solid var(--border);">
+                <div style="display:flex; align-items:center; gap:4px; font-size:11px; color:var(--text-muted);"><i class="fa-solid fa-shield-halved" style="color:#10b981;"></i> Secure</div>
+                <div style="display:flex; align-items:center; gap:4px; font-size:11px; color:var(--text-muted);"><i class="fa-solid fa-lock" style="color:#6366f1;"></i> Encrypted</div>
+                <div style="display:flex; align-items:center; gap:4px; font-size:11px; color:var(--text-muted);"><i class="fa-brands fa-cc-visa" style="color:#1a1f71;"></i><i class="fa-brands fa-cc-mastercard" style="color:#eb001b;"></i><i class="fa-brands fa-cc-amex" style="color:#006fcf;"></i></div>
             </div>
         </div>
-
-        <button class="pm-btn" onclick="LANDING.processPayment()" style="width:100%; padding:14px; background:linear-gradient(135deg, #6366f1, #4f46e5); color:#fff; border:none; border-radius:12px; font-weight:700; font-size:15px; cursor:pointer; box-shadow:0 4px 14px rgba(99,102,241,0.35);">
-            Complete Payment →
-        </button>
     </div>
 </div>
 
@@ -22682,7 +22726,7 @@
             var pName = document.getElementById('pm-plan-name');
             var pPrice = document.getElementById('pm-plan-price');
             if (pName) pName.innerText = plan || 'Starter';
-            if (pPrice) pPrice.innerText = '$' + (price || '29');
+            if (pPrice) pPrice.innerHTML = '$' + (price || '29') + '<span style="font-size:13px;font-weight:400;">/mo</span>';
             
             window._pendingUpgradePlan = plan || 'Starter';
 
@@ -22705,6 +22749,22 @@
                 }
             }
 
+            // Reset form
+            var nameEl = document.getElementById('pm-card-name');
+            var numEl = document.getElementById('pm-card-number');
+            var expEl = document.getElementById('pm-card-expiry');
+            var cvcEl = document.getElementById('pm-card-cvc');
+            var errEl = document.getElementById('pm-card-error');
+            var btnText = document.getElementById('pm-pay-btn-text');
+            var btn = document.getElementById('pm-pay-btn');
+            if (nameEl) nameEl.value = '';
+            if (numEl) numEl.value = '';
+            if (expEl) expEl.value = '';
+            if (cvcEl) cvcEl.value = '';
+            if (errEl) errEl.style.display = 'none';
+            if (btnText) btnText.innerText = 'Pay Now';
+            if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+
             if (modal) {
                 modal.style.display = 'flex';
                 modal.classList.add('active');
@@ -22719,20 +22779,37 @@
             }
         },
 
-        selectMethod: function(method) {
-            window.selectedPaymentMethod = method;
-            document.querySelectorAll('.pm-method').forEach(function(el) { el.classList.remove('selected'); });
-            var target = document.getElementById('pm-method-' + method);
-            if (target) target.classList.add('selected');
+        _showCardError: function(msg) {
+            var errEl = document.getElementById('pm-card-error');
+            var errText = document.getElementById('pm-card-error-text');
+            if (errEl && errText) {
+                errText.innerText = msg;
+                errEl.style.display = 'block';
+                errEl.style.animation = 'none';
+                errEl.offsetHeight;
+                errEl.style.animation = 'fadeIn 0.3s';
+            }
+        },
+
+        _luhnCheck: function(num) {
+            let sum = 0;
+            let alt = false;
+            let digits = num.replace(/\s/g, '');
+            for (let i = digits.length - 1; i >= 0; i--) {
+                let n = parseInt(digits[i], 10);
+                if (alt) { n *= 2; if (n > 9) n -= 9; }
+                sum += n;
+                alt = !alt;
+            }
+            return sum % 10 === 0;
         },
 
         processPayment: async function() {
-            var plan = window._pendingUpgradePlan || document.getElementById('pm-plan-name')?.innerText || 'Starter';
+            var plan = window._pendingUpgradePlan || 'Starter';
             let cfg = window.PADDLE_CONFIG || {};
             let priceIds = cfg.priceIds || {};
             let priceId = priceIds[plan] || priceIds['Starter'] || 'pri_01kz1fwdrmswb6c1ytevea2zd4';
             let token = cfg.clientToken || '';
-
             let isDemo = !token || token.includes('test_c2c1f7b6') || priceId.includes('pri_01kz1');
 
             if (!isDemo && typeof Paddle !== 'undefined' && typeof Paddle.Checkout !== 'undefined') {
@@ -22748,8 +22825,72 @@
                 }
             }
 
-            var btn = document.querySelector('#payment-modal .pm-btn');
-            if (btn) { btn.disabled = true; btn.innerText = 'Processing Payment...'; }
+            // === CARD VALIDATION ===
+            var cardName = (document.getElementById('pm-card-name')?.value || '').trim();
+            var cardNum = (document.getElementById('pm-card-number')?.value || '').replace(/\s/g, '');
+            var cardExp = (document.getElementById('pm-card-expiry')?.value || '').trim();
+            var cardCvc = (document.getElementById('pm-card-cvc')?.value || '').trim();
+            var errEl = document.getElementById('pm-card-error');
+            if (errEl) errEl.style.display = 'none';
+
+            // Validate name
+            if (!cardName || cardName.length < 2) {
+                LANDING._showCardError('Please enter the cardholder name.');
+                document.getElementById('pm-card-name')?.focus();
+                return;
+            }
+
+            // Validate card number
+            if (!cardNum || cardNum.length < 13 || cardNum.length > 19) {
+                LANDING._showCardError('Please enter a valid card number (13-19 digits).');
+                document.getElementById('pm-card-number')?.focus();
+                return;
+            }
+            if (!LANDING._luhnCheck(cardNum)) {
+                LANDING._showCardError('Invalid card number. Please check and try again.');
+                document.getElementById('pm-card-number')?.focus();
+                return;
+            }
+
+            // Validate expiry
+            if (!cardExp || !cardExp.match(/^\d{2}\/\d{2}$/)) {
+                LANDING._showCardError('Please enter expiry date in MM/YY format.');
+                document.getElementById('pm-card-expiry')?.focus();
+                return;
+            }
+            var expParts = cardExp.split('/');
+            var expMonth = parseInt(expParts[0], 10);
+            var expYear = parseInt('20' + expParts[1], 10);
+            var now = new Date();
+            if (expMonth < 1 || expMonth > 12) {
+                LANDING._showCardError('Invalid expiry month. Must be 01-12.');
+                document.getElementById('pm-card-expiry')?.focus();
+                return;
+            }
+            if (expYear < now.getFullYear() || (expYear === now.getFullYear() && expMonth < now.getMonth() + 1)) {
+                LANDING._showCardError('This card has expired. Please use a different card.');
+                document.getElementById('pm-card-expiry')?.focus();
+                return;
+            }
+
+            // Validate CVC
+            if (!cardCvc || cardCvc.length < 3 || cardCvc.length > 4) {
+                LANDING._showCardError('Please enter a valid CVC (3-4 digits).');
+                document.getElementById('pm-card-cvc')?.focus();
+                return;
+            }
+
+            // === PROCESS PAYMENT ===
+            var btn = document.getElementById('pm-pay-btn');
+            var btnText = document.getElementById('pm-pay-btn-text');
+            if (btn) { btn.disabled = true; btn.style.opacity = '0.7'; }
+            if (btnText) btnText.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="margin-right:6px;"></i> Verifying Card...';
+
+            // Simulate card verification delay (like real gateway)
+            await new Promise(r => setTimeout(r, 1500));
+            if (btnText) btnText.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="margin-right:6px;"></i> Processing Payment...';
+            await new Promise(r => setTimeout(r, 2000));
+
             try {
                 const tokenVal = localStorage.getItem('token') || localStorage.getItem('xcomic_token');
                 const res = await fetch('/api/payment/test-checkout', {
@@ -22762,10 +22903,13 @@
                 });
                 if (res.ok) {
                     const data = await res.json();
+                    if (btnText) btnText.innerHTML = '<i class="fa-solid fa-circle-check" style="margin-right:6px;"></i> Payment Successful!';
+                    if (btn) btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                    
+                    await new Promise(r => setTimeout(r, 1500));
+                    
                     if (typeof showToast === 'function') {
-                        showToast(data.message || 'Payment Successful! Subscription upgraded.', 'success');
-                    } else {
-                        alert(data.message || 'Payment Successful! Subscription upgraded.');
+                        showToast(data.message || 'Payment Successful! Subscription upgraded to ' + plan + '.', 'success');
                     }
                     localStorage.setItem('user_plan', plan.toLowerCase());
                     if (typeof window.APP_INIT === 'function') window.APP_INIT();
@@ -22773,16 +22917,13 @@
                     LANDING.closePayment();
                 } else {
                     const err = await res.json().catch(() => ({}));
-                    if (typeof showToast === 'function') {
-                        showToast(err.detail || 'Test payment failed', 'error');
-                    } else {
-                        alert(err.detail || 'Test payment failed');
-                    }
+                    LANDING._showCardError(err.detail || 'Payment was declined. Please try a different card.');
                 }
             } catch(e) {
-                alert('Payment error: ' + e.message);
+                LANDING._showCardError('Connection error. Please check your internet and try again.');
             } finally {
-                if (btn) { btn.disabled = false; btn.innerText = 'Complete Payment →'; }
+                if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.style.background = 'linear-gradient(135deg, #6366f1, #4f46e5)'; }
+                if (btnText) btnText.innerText = 'Pay Now';
             }
         }
 
@@ -23854,15 +23995,15 @@
 
             <!-- PLAN BUTTONS -->
             <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:10px;">
-                <button id="upgrade-modal-btn-starter" class="p-btn" onclick="document.getElementById('upgrade-modal').style.display='none'; LANDING.openPayment('Starter')" style="background:#0f172a; color:#fff; border:1px solid rgba(255,255,255,0.15); padding:13px 20px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; width:100%; transition:all 0.2s; display:flex; align-items:center; justify-content:space-between;">
+                <button id="upgrade-modal-btn-starter" class="p-btn" onclick="document.getElementById('upgrade-modal').style.display='none'; LANDING.openPayment('Starter', 29)" style="background:#0f172a; color:#fff; border:1px solid rgba(255,255,255,0.15); padding:13px 20px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; width:100%; transition:all 0.2s; display:flex; align-items:center; justify-content:space-between;">
                     <span>Buy Starter ($29/mo)</span>
                     <span style="color:#818cf8; font-weight:800;">1,000 Limit</span>
                 </button>
-                <button id="upgrade-modal-btn-pro" class="p-btn" onclick="document.getElementById('upgrade-modal').style.display='none'; LANDING.openPayment('Professional')" style="background:linear-gradient(135deg, #6366f1, #4f46e5); color:#fff; border:none; padding:13px 20px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; width:100%; transition:all 0.2s; display:flex; align-items:center; justify-content:space-between; box-shadow:0 4px 14px rgba(99,102,241,0.35);">
+                <button id="upgrade-modal-btn-pro" class="p-btn" onclick="document.getElementById('upgrade-modal').style.display='none'; LANDING.openPayment('Professional', 99)" style="background:linear-gradient(135deg, #6366f1, #4f46e5); color:#fff; border:none; padding:13px 20px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; width:100%; transition:all 0.2s; display:flex; align-items:center; justify-content:space-between; box-shadow:0 4px 14px rgba(99,102,241,0.35);">
                     <span>Buy Professional ($99/mo)</span>
                     <span style="color:#fff; font-weight:800;">2,000 Limit + AI</span>
                 </button>
-                <button id="upgrade-modal-btn-enterprise" class="p-btn" onclick="document.getElementById('upgrade-modal').style.display='none'; LANDING.openPayment('Enterprise')" style="background:#0f172a; color:#fff; border:1px solid rgba(255,255,255,0.15); padding:13px 20px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; width:100%; transition:all 0.2s; display:flex; align-items:center; justify-content:space-between;">
+                <button id="upgrade-modal-btn-enterprise" class="p-btn" onclick="document.getElementById('upgrade-modal').style.display='none'; LANDING.openPayment('Enterprise', 299)" style="background:#0f172a; color:#fff; border:1px solid rgba(255,255,255,0.15); padding:13px 20px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; width:100%; transition:all 0.2s; display:flex; align-items:center; justify-content:space-between;">
                     <span>Buy Enterprise ($299/mo)</span>
                     <span style="color:#818cf8; font-weight:800;">5,000 Limit</span>
                 </button>

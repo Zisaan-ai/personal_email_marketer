@@ -24333,7 +24333,7 @@
 
 
     <script src="assets/templates.js?v=20260804_v116"></script>
-    <script src="assets/app.js?v=20260807_v136"></script>
+    <script src="assets/app.js?v=20260807_v137"></script>
     <script src="assets/support_patch.js?v=20260804_v116"></script>
     <script src="assets/sending_accounts.js?v=20260804_v116"></script>
     <script src="assets/ai_features.js?v=20260804_v116"></script>
@@ -25495,10 +25495,9 @@
     </div>
     
     <script>
-        window.showUpgradeModal = function(reason) {
-            // Get user's current active plan
-            var userPlan = (localStorage.getItem('user_plan') || 'free').toLowerCase();
-            
+        window.renderUpgradeModalStatus = function(stData) {
+            stData = stData || window._userPaymentStatusData || {};
+            var userPlan = (stData.plan || localStorage.getItem('user_plan') || 'free').toLowerCase();
             var planDetails = {
                 'free': { name: 'FREE PLAN', details: '100 emails/day • 5 Sending Accounts' },
                 'starter': { name: 'STARTER PLAN', details: '1,000 emails/day • 10 Sending Accounts • Customer Support' },
@@ -25508,14 +25507,11 @@
             };
 
             var curInfo = planDetails[userPlan] || planDetails['free'];
-            
             var planNameEl = document.getElementById('upgrade-modal-current-plan-name');
             var planDetEl = document.getElementById('upgrade-modal-current-plan-details');
             if (planNameEl) planNameEl.innerText = curInfo.name;
             if (planDetEl) planDetEl.innerText = curInfo.details;
 
-            // Expiration & Custom Overrides from window._userPaymentStatusData
-            var stData = window._userPaymentStatusData || {};
             var expireEl = document.getElementById('upgrade-modal-current-plan-expire');
             if (expireEl) {
                 if (stData.expires_at) {
@@ -25534,7 +25530,6 @@
                 }
             }
 
-            // Check for Custom Overrides (daily limit, max accounts, AI, support)
             var customTextEl = document.getElementById('upgrade-modal-custom-text');
             var customBoxEl = document.getElementById('upgrade-modal-current-plan-custom');
             if (customBoxEl && customTextEl) {
@@ -25594,25 +25589,51 @@
                     btnEnterprise.style.border = '1px solid rgba(255,255,255,0.15)';
                 }
             }
+        };
+
+        window.showUpgradeModal = function(reason) {
+            window.renderUpgradeModalStatus();
+            
+            // Fresh fetch of payment status to ensure exact dates & days remaining are up to date
+            if (typeof apiCall === 'function') {
+                apiCall('/payment/status').then(async r => {
+                    if (r.ok) {
+                        const d = await r.json();
+                        window._userPaymentStatusData = d;
+                        if (d.plan) localStorage.setItem('user_plan', d.plan);
+                        window.renderUpgradeModalStatus(d);
+                    }
+                }).catch(() => {});
+            }
+
+            var userPlan = (localStorage.getItem('user_plan') || 'free').toLowerCase();
+            var planNames = {
+                'free': 'FREE PLAN',
+                'starter': 'STARTER PLAN',
+                'professional': 'PROFESSIONAL PLAN',
+                'pro': 'PROFESSIONAL PLAN',
+                'enterprise': 'ENTERPRISE PLAN'
+            };
+            var curName = planNames[userPlan] || 'FREE PLAN';
 
             if (reason === 'accounts') {
                 document.getElementById('upgrade-modal-title').innerText = "🔒 Account Limit Reached";
                 document.getElementById('upgrade-modal-desc').innerText = "You have reached the maximum sending accounts limit for your current plan. Upgrade to add more accounts!";
             } else if (reason === 'emails') {
                 document.getElementById('upgrade-modal-title').innerText = "🔒 Email Limit Reached";
-                document.getElementById('upgrade-modal-desc').innerText = "You have reached your daily limit on " + curInfo.name + ". Upgrade your plan to continue sending campaigns!";
+                document.getElementById('upgrade-modal-desc').innerText = "You have reached your daily limit on " + curName + ". Upgrade your plan to continue sending campaigns!";
             } else if (reason === 'replies' || reason === 'ai') {
                 document.getElementById('upgrade-modal-title').innerText = "🔒 AI Replies Feature Locked";
-                document.getElementById('upgrade-modal-desc').innerText = "AI Automated Inbox Replies & Sentiment Analysis are locked on " + curInfo.name + ". Upgrade to Professional or Enterprise to unlock!";
+                document.getElementById('upgrade-modal-desc').innerText = "AI Automated Inbox Replies & Sentiment Analysis are locked on " + curName + ". Upgrade to Professional or Enterprise to unlock!";
             } else if (reason === 'support') {
                 document.getElementById('upgrade-modal-title').innerText = "🔒 Support Feature Locked";
                 document.getElementById('upgrade-modal-desc').innerText = "Customer Support ticketing is available on Starter, Professional & Enterprise plans. Upgrade to unlock support access!";
             } else if (reason === 'templates') {
                 document.getElementById('upgrade-modal-title').innerText = "🔒 Premium Templates Locked";
-                document.getElementById('upgrade-modal-desc').innerText = "Advanced AI Newsletter Templates are locked on " + curInfo.name + ". Upgrade now to unlock all premium templates!";
+                document.getElementById('upgrade-modal-desc').innerText = "Advanced AI Newsletter Templates are locked on " + curName + ". Upgrade now to unlock all premium templates!";
             } else {
                 document.getElementById('upgrade-modal-title').innerText = "🚀 Upgrade Your Subscription Plan";
-                document.getElementById('upgrade-modal-desc').innerText = "You are currently on " + curInfo.name + ". Upgrade now to increase daily email volume & unlock AI features!";
+                document.getElementById('upgrade-modal-desc').innerText = "You are currently on " + curName + ". Upgrade now to increase daily email volume & unlock AI features!";
             }
             document.getElementById('upgrade-modal').style.display = 'flex';
         };

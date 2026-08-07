@@ -123,11 +123,22 @@ def payment_status(user: database.User = Depends(auth.get_current_user), db: Ses
     """Get the current user's subscription status, expiration, and custom overrides."""
     started_at = getattr(user, 'subscription_started_at', None)
     expires_at = getattr(user, 'subscription_expires_at', None)
-    days_remaining = None
+    plan_clean = (getattr(user, 'subscription_plan', 'free') or "free").lower()
     
+    from datetime import datetime, timedelta
+    if plan_clean != "free" and not expires_at:
+        started_at = started_at or datetime.utcnow()
+        expires_at = datetime.utcnow() + timedelta(days=30)
+        try:
+            user.subscription_started_at = started_at
+            user.subscription_expires_at = expires_at
+            db.commit()
+        except Exception:
+            db.rollback()
+
+    days_remaining = None
     if expires_at:
         try:
-            from datetime import datetime
             diff = (expires_at - datetime.utcnow()).days
             days_remaining = max(0, diff) if diff >= 0 else 0
         except Exception:

@@ -10693,7 +10693,7 @@ window.openUserManageModalById = function(userId) {
     }
     const email = user.email || userId;
     const currentPlan = user.subscription_plan || 'free';
-    const originalPlan = user.original_subscription_plan || currentPlan || 'free';
+    const originalPlan = user.original_subscription_plan || 'free';
     const currentLimit = user.custom_daily_limit;
     const currentMaxAccs = user.custom_max_accounts;
 

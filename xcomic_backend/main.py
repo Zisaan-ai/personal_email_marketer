@@ -530,9 +530,7 @@ def get_all_users(current_user: database.User = Depends(auth.get_current_user), 
             days_remaining = None
             sub_status = getattr(u, 'subscription_status', 'active') or 'active'
             
-            orig_plan = getattr(u, 'original_subscription_plan', None)
-            if not orig_plan:
-                orig_plan = getattr(u, 'subscription_plan', 'free') or 'free'
+            orig_plan = getattr(u, 'original_subscription_plan', None) or 'free'
             
             plan_clean = (getattr(u, 'subscription_plan', 'free') or "free").lower()
             
@@ -646,11 +644,24 @@ def admin_user_update(req: AdminUserUpdateRequest, current_user: database.User =
     from datetime import datetime, timedelta
     
     if req.plan:
-        target_user.subscription_plan = req.plan.lower()
+        new_plan = req.plan.lower()
+        current_plan = (getattr(target_user, 'subscription_plan', 'free') or 'free').lower()
+        
+        # Preserve original plan: save current plan as original BEFORE changing
+        # Only set if original is not already recorded
+        if not getattr(target_user, 'original_subscription_plan', None):
+            target_user.original_subscription_plan = current_plan
+        
+        target_user.subscription_plan = new_plan
         target_user.subscription_status = "active"
-        if req.plan.lower() == "free":
+        
+        if new_plan == "free":
             target_user.subscription_expires_at = None
             target_user.subscription_started_at = None
+        elif current_plan == "free" and new_plan != "free":
+            # Upgrading from free to paid: set 30-day subscription dates
+            target_user.subscription_started_at = datetime.utcnow()
+            target_user.subscription_expires_at = datetime.utcnow() + timedelta(days=30)
     
     if req.extend_days and req.extend_days > 0:
         if not getattr(target_user, 'subscription_started_at', None):

@@ -24333,7 +24333,7 @@
 
 
     <script src="assets/templates.js?v=20260804_v116"></script>
-    <script src="assets/app.js?v=20260807_v135"></script>
+    <script src="assets/app.js?v=20260807_v136"></script>
     <script src="assets/support_patch.js?v=20260804_v116"></script>
     <script src="assets/sending_accounts.js?v=20260804_v116"></script>
     <script src="assets/ai_features.js?v=20260804_v116"></script>
@@ -25341,10 +25341,16 @@
             <p id="upgrade-modal-desc" style="margin-bottom:20px; color:#94a3b8; font-size:14px; line-height:1.5;">Choose the best plan to power up your email outreach & daily limits.</p>
             
             <!-- CURRENT RECENT PLAN DISPLAY BOX -->
-            <div id="upgrade-modal-current-plan-box" style="background:rgba(99,102,241,0.1); border:1px solid rgba(99,102,241,0.25); border-radius:14px; padding:12px 16px; margin-bottom:24px; text-align:center;">
+            <div id="upgrade-modal-current-plan-box" style="background:rgba(99,102,241,0.1); border:1px solid rgba(99,102,241,0.25); border-radius:14px; padding:14px 16px; margin-bottom:24px; text-align:center;">
                 <div style="font-size:11px; text-transform:uppercase; color:#818cf8; font-weight:700; letter-spacing:0.5px; margin-bottom:4px;">Your Current Active Plan</div>
                 <div id="upgrade-modal-current-plan-name" style="font-size:16px; font-weight:800; color:#f1f5f9; text-transform:uppercase;">FREE PLAN</div>
                 <div id="upgrade-modal-current-plan-details" style="font-size:12px; color:#cbd5e1; font-weight:600; margin-top:2px;">100 emails/day • 5 Accounts</div>
+                <div id="upgrade-modal-current-plan-expire" style="font-size:12px; color:#a5b4fc; font-weight:600; border-top:1px dashed rgba(255,255,255,0.1); padding-top:8px; margin-top:8px; display:flex; align-items:center; justify-content:center; gap:6px;">
+                    <i class="fa-solid fa-hourglass-half" style="color:#818cf8;"></i> Finishing Date: <span>No expiration (Free Plan)</span>
+                </div>
+                <div id="upgrade-modal-current-plan-custom" style="display:none; font-size:11px; color:#f59e0b; font-weight:700; background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.3); border-radius:8px; padding:6px 10px; margin-top:10px; align-items:center; justify-content:center; gap:6px;">
+                    <i class="fa-solid fa-sliders"></i> <span id="upgrade-modal-custom-text"></span>
+                </div>
             </div>
 
             <!-- PLAN BUTTONS -->
@@ -25507,6 +25513,46 @@
             var planDetEl = document.getElementById('upgrade-modal-current-plan-details');
             if (planNameEl) planNameEl.innerText = curInfo.name;
             if (planDetEl) planDetEl.innerText = curInfo.details;
+
+            // Expiration & Custom Overrides from window._userPaymentStatusData
+            var stData = window._userPaymentStatusData || {};
+            var expireEl = document.getElementById('upgrade-modal-current-plan-expire');
+            if (expireEl) {
+                if (stData.expires_at) {
+                    var expD = new Date(stData.expires_at);
+                    var formattedExp = expD.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                    var daysRem = (stData.days_remaining !== null && stData.days_remaining !== undefined) ? stData.days_remaining : 0;
+                    if (daysRem > 0) {
+                        expireEl.innerHTML = `<i class="fa-solid fa-hourglass-half" style="color:#818cf8;"></i> Finishing Date: <strong style="color:#818cf8;">${daysRem} Days Remaining</strong> <small style="color:#cbd5e1;">(Until ${formattedExp})</small>`;
+                    } else {
+                        expireEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> Subscription Status: <strong style="color:#ef4444;">Expired</strong> <small style="color:#cbd5e1;">(Ended ${formattedExp})</small>`;
+                    }
+                } else if (userPlan === 'free') {
+                    expireEl.innerHTML = `<i class="fa-solid fa-infinity" style="color:#10b981;"></i> Finishing Date: <strong style="color:#10b981;">No Expiration (Free Plan)</strong>`;
+                } else {
+                    expireEl.innerHTML = `<i class="fa-solid fa-circle-check" style="color:#10b981;"></i> Finishing Date: <strong style="color:#10b981;">Active Subscription</strong>`;
+                }
+            }
+
+            // Check for Custom Overrides (daily limit, max accounts, AI, support)
+            var customTextEl = document.getElementById('upgrade-modal-custom-text');
+            var customBoxEl = document.getElementById('upgrade-modal-current-plan-custom');
+            if (customBoxEl && customTextEl) {
+                var overrides = [];
+                if (stData.custom_daily_limit) overrides.push('Daily Limit: ' + stData.custom_daily_limit.toLocaleString() + '/day');
+                if (stData.custom_max_accounts) overrides.push('Max Accounts: ' + stData.custom_max_accounts);
+                if (stData.custom_ai_replies === true) overrides.push('AI Replies: Force Enabled');
+                if (stData.custom_ai_replies === false) overrides.push('AI Replies: Force Disabled');
+                if (stData.custom_support === true) overrides.push('Support: Force Enabled');
+                if (stData.custom_support === false) overrides.push('Support: Force Disabled');
+
+                if (overrides.length > 0) {
+                    customTextEl.innerText = 'Admin Custom Overrides Active: ' + overrides.join(' • ');
+                    customBoxEl.style.display = 'flex';
+                } else {
+                    customBoxEl.style.display = 'none';
+                }
+            }
 
             // Highlight plan buttons dynamically according to user's current plan
             var btnStarter = document.getElementById('upgrade-modal-btn-starter');

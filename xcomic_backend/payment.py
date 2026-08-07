@@ -120,10 +120,32 @@ class TestCheckoutRequest(BaseModel):
 
 @router.get("/status")
 def payment_status(user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    """Get the current user's subscription status."""
+    """Get the current user's subscription status, expiration, and custom overrides."""
+    started_at = getattr(user, 'subscription_started_at', None)
+    expires_at = getattr(user, 'subscription_expires_at', None)
+    days_remaining = None
+    
+    if expires_at:
+        try:
+            from datetime import datetime
+            diff = (expires_at - datetime.utcnow()).days
+            days_remaining = max(0, diff) if diff >= 0 else 0
+        except Exception:
+            pass
+
+    orig_plan = getattr(user, 'original_subscription_plan', None) or 'free'
+
     return {
-        "plan": user.subscription_plan,
-        "status": user.subscription_status
+        "plan": getattr(user, 'subscription_plan', 'free') or 'free',
+        "original_plan": orig_plan,
+        "status": getattr(user, 'subscription_status', 'active') or 'active',
+        "started_at": started_at.isoformat() if (started_at and hasattr(started_at, 'isoformat')) else None,
+        "expires_at": expires_at.isoformat() if (expires_at and hasattr(expires_at, 'isoformat')) else None,
+        "days_remaining": days_remaining,
+        "custom_daily_limit": getattr(user, 'custom_daily_limit', None),
+        "custom_max_accounts": getattr(user, 'custom_max_accounts', None),
+        "custom_ai_replies": getattr(user, 'custom_ai_replies', None),
+        "custom_support": getattr(user, 'custom_support', None)
     }
 
 @router.post("/test-checkout")

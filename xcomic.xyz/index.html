@@ -23976,8 +23976,10 @@
     </div>
     
     <script>
-        window.renderUpgradeModalStatus = function(stData) {
+        window.renderUpgradeModalStatus = function(stData, reason) {
             stData = stData || window._userPaymentStatusData || {};
+            reason = reason || window._lastUpgradeReason;
+            
             var userPlan = (stData.plan || localStorage.getItem('user_plan') || 'free').toLowerCase();
             var planDetails = {
                 'free': { name: 'FREE PLAN', details: '100 emails/day • 5 Sending Accounts' },
@@ -23995,7 +23997,9 @@
 
             var expireEl = document.getElementById('upgrade-modal-current-plan-expire');
             if (expireEl) {
-                if (stData.expires_at) {
+                if (userPlan === 'free') {
+                    expireEl.innerHTML = `<i class="fa-solid fa-infinity" style="color:#10b981;"></i> Finishing Date: <strong style="color:#10b981;">No Expiration (Free Plan)</strong>`;
+                } else if (stData.expires_at) {
                     var expD = new Date(stData.expires_at);
                     var formattedExp = expD.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
                     var daysRem = (stData.days_remaining !== null && stData.days_remaining !== undefined) ? stData.days_remaining : 0;
@@ -24004,8 +24008,6 @@
                     } else {
                         expireEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> Subscription Status: <strong style="color:#ef4444;">Expired</strong> <small style="color:#cbd5e1;">(Ended ${formattedExp})</small>`;
                     }
-                } else if (userPlan === 'free') {
-                    expireEl.innerHTML = `<i class="fa-solid fa-infinity" style="color:#10b981;"></i> Finishing Date: <strong style="color:#10b981;">No Expiration (Free Plan)</strong>`;
                 } else {
                     expireEl.innerHTML = `<i class="fa-solid fa-circle-check" style="color:#10b981;"></i> Finishing Date: <strong style="color:#10b981;">Active Subscription</strong>`;
                 }
@@ -24070,33 +24072,9 @@
                     btnEnterprise.style.border = '1px solid rgba(255,255,255,0.15)';
                 }
             }
-        };
 
-        window.showUpgradeModal = function(reason) {
-            window.renderUpgradeModalStatus();
-            
-            // Fresh fetch of payment status to ensure exact dates & days remaining are up to date
-            if (typeof apiCall === 'function') {
-                apiCall('/payment/status').then(async r => {
-                    if (r.ok) {
-                        const d = await r.json();
-                        window._userPaymentStatusData = d;
-                        if (d.plan) localStorage.setItem('user_plan', d.plan);
-                        window.renderUpgradeModalStatus(d);
-                    }
-                }).catch(() => {});
-            }
-
-            var userPlan = (localStorage.getItem('user_plan') || 'free').toLowerCase();
-            var planNames = {
-                'free': 'FREE PLAN',
-                'starter': 'STARTER PLAN',
-                'professional': 'PROFESSIONAL PLAN',
-                'pro': 'PROFESSIONAL PLAN',
-                'enterprise': 'ENTERPRISE PLAN'
-            };
-            var curName = planNames[userPlan] || 'FREE PLAN';
-
+            // Update modal text dynamically based on latest plan info
+            var curName = curInfo.name;
             if (reason === 'accounts') {
                 document.getElementById('upgrade-modal-title').innerText = "🔒 Account Limit Reached";
                 document.getElementById('upgrade-modal-desc').innerText = "You have reached the maximum sending accounts limit for your current plan. Upgrade to add more accounts!";
@@ -24116,6 +24094,24 @@
                 document.getElementById('upgrade-modal-title').innerText = "🚀 Upgrade Your Subscription Plan";
                 document.getElementById('upgrade-modal-desc').innerText = "You are currently on " + curName + ". Upgrade now to increase daily email volume & unlock AI features!";
             }
+        };
+
+        window.showUpgradeModal = function(reason) {
+            window._lastUpgradeReason = reason;
+            window.renderUpgradeModalStatus(null, reason);
+            
+            // Fresh fetch of payment status to ensure exact dates & days remaining are up to date
+            if (typeof apiCall === 'function') {
+                apiCall('/payment/status').then(async r => {
+                    if (r.ok) {
+                        const d = await r.json();
+                        window._userPaymentStatusData = d;
+                        if (d.plan) localStorage.setItem('user_plan', d.plan);
+                        window.renderUpgradeModalStatus(d, window._lastUpgradeReason);
+                    }
+                }).catch(() => {});
+            }
+
             document.getElementById('upgrade-modal').style.display = 'flex';
         };
 

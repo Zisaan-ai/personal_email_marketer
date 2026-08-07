@@ -24333,7 +24333,7 @@
 
 
     <script src="assets/templates.js?v=20260804_v116"></script>
-    <script src="assets/app.js?v=20260807_v134"></script>
+    <script src="assets/app.js?v=20260807_v135"></script>
     <script src="assets/support_patch.js?v=20260804_v116"></script>
     <script src="assets/sending_accounts.js?v=20260804_v116"></script>
     <script src="assets/ai_features.js?v=20260804_v116"></script>
@@ -25329,15 +25329,39 @@
 
 
     <!-- UPGRADE MODAL -->
-    <div id="upgrade-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:999999;justify-content:center;align-items:center;flex-direction:column;color:white;">
-        <div style="background:var(--surface);padding:40px;border-radius:12px;text-align:center;max-width:400px;color:var(--text);box-shadow:0 10px 25px rgba(0,0,0,0.5);position:relative;">
-            <button onclick="document.getElementById('upgrade-modal').style.display='none'" style="position:absolute;top:15px;right:15px;background:none;border:none;color:var(--text-muted);font-size:20px;cursor:pointer;">&times;</button>
-            <i class="fa-solid fa-rocket" style="font-size:48px;color:#10b981;margin-bottom:20px;"></i>
-            <h2 id="upgrade-modal-title" style="margin-bottom:15px;font-size:24px;color:var(--text);font-weight:700;">Upgrade Your Plan</h2>
-            <p id="upgrade-modal-desc" style="margin-bottom:30px;color:var(--text-muted);font-size:15px;line-height:1.5;">You've reached the limits of the Free plan. Upgrade now to unlock more features and higher limits.</p>
-            <button id="upgrade-modal-btn-starter" class="p-btn" onclick="document.getElementById('upgrade-modal').style.display='none'; LANDING.openPayment('Starter')" style="background:#000;color:#fff;border:none;padding:12px 24px;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;margin-bottom:12px;width:100%;transition:transform 0.2s;">Buy Starter ($29/mo)</button>
-            <button id="upgrade-modal-btn-pro" class="p-btn" onclick="document.getElementById('upgrade-modal').style.display='none'; LANDING.openPayment('Professional')" style="background:#000;color:#fff;border:none;padding:12px 24px;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;margin-bottom:12px;width:100%;transition:transform 0.2s;">Buy Pro ($99/mo)</button>
-            <button id="upgrade-modal-btn-enterprise" class="p-btn" onclick="document.getElementById('upgrade-modal').style.display='none'; LANDING.openPayment('Enterprise')" style="background:#000;color:#fff;border:none;padding:12px 24px;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;margin-bottom:20px;width:100%;transition:transform 0.2s;">Buy Enterprise ($299/mo)</button>
+    <div id="upgrade-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.8); backdrop-filter:blur(8px); z-index:999999; justify-content:center; align-items:center; flex-direction:column; color:white;">
+        <div style="background:#1e293b; border:1px solid rgba(255,255,255,0.15); border-radius:20px; padding:32px; text-align:center; max-width:440px; width:90%; color:#f8fafc; box-shadow:0 25px 50px -12px rgba(0,0,0,0.7); position:relative;">
+            <button onclick="document.getElementById('upgrade-modal').style.display='none'" style="position:absolute; top:16px; right:18px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#94a3b8; width:32px; height:32px; border-radius:10px; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center;">&times;</button>
+            
+            <div style="background:rgba(16,185,129,0.12); color:#10b981; width:56px; height:56px; border-radius:16px; display:inline-flex; align-items:center; justify-content:center; font-size:24px; margin-bottom:16px;">
+                <i class="fa-solid fa-rocket"></i>
+            </div>
+            
+            <h2 id="upgrade-modal-title" style="margin-bottom:8px; font-size:22px; color:#f8fafc; font-weight:700;">Upgrade Your Plan</h2>
+            <p id="upgrade-modal-desc" style="margin-bottom:20px; color:#94a3b8; font-size:14px; line-height:1.5;">Choose the best plan to power up your email outreach & daily limits.</p>
+            
+            <!-- CURRENT RECENT PLAN DISPLAY BOX -->
+            <div id="upgrade-modal-current-plan-box" style="background:rgba(99,102,241,0.1); border:1px solid rgba(99,102,241,0.25); border-radius:14px; padding:12px 16px; margin-bottom:24px; text-align:center;">
+                <div style="font-size:11px; text-transform:uppercase; color:#818cf8; font-weight:700; letter-spacing:0.5px; margin-bottom:4px;">Your Current Active Plan</div>
+                <div id="upgrade-modal-current-plan-name" style="font-size:16px; font-weight:800; color:#f1f5f9; text-transform:uppercase;">FREE PLAN</div>
+                <div id="upgrade-modal-current-plan-details" style="font-size:12px; color:#cbd5e1; font-weight:600; margin-top:2px;">100 emails/day • 5 Accounts</div>
+            </div>
+
+            <!-- PLAN BUTTONS -->
+            <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:10px;">
+                <button id="upgrade-modal-btn-starter" class="p-btn" onclick="document.getElementById('upgrade-modal').style.display='none'; LANDING.openPayment('Starter')" style="background:#0f172a; color:#fff; border:1px solid rgba(255,255,255,0.15); padding:13px 20px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; width:100%; transition:all 0.2s; display:flex; align-items:center; justify-content:space-between;">
+                    <span>Buy Starter ($29/mo)</span>
+                    <span style="color:#818cf8; font-weight:800;">1,000 Limit</span>
+                </button>
+                <button id="upgrade-modal-btn-pro" class="p-btn" onclick="document.getElementById('upgrade-modal').style.display='none'; LANDING.openPayment('Professional')" style="background:linear-gradient(135deg, #6366f1, #4f46e5); color:#fff; border:none; padding:13px 20px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; width:100%; transition:all 0.2s; display:flex; align-items:center; justify-content:space-between; box-shadow:0 4px 14px rgba(99,102,241,0.35);">
+                    <span>Buy Professional ($99/mo)</span>
+                    <span style="color:#fff; font-weight:800;">2,000 Limit + AI</span>
+                </button>
+                <button id="upgrade-modal-btn-enterprise" class="p-btn" onclick="document.getElementById('upgrade-modal').style.display='none'; LANDING.openPayment('Enterprise')" style="background:#0f172a; color:#fff; border:1px solid rgba(255,255,255,0.15); padding:13px 20px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; width:100%; transition:all 0.2s; display:flex; align-items:center; justify-content:space-between;">
+                    <span>Buy Enterprise ($299/mo)</span>
+                    <span style="color:#818cf8; font-weight:800;">5,000 Limit</span>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -25466,24 +25490,83 @@
     
     <script>
         window.showUpgradeModal = function(reason) {
+            // Get user's current active plan
+            var userPlan = (localStorage.getItem('user_plan') || 'free').toLowerCase();
+            
+            var planDetails = {
+                'free': { name: 'FREE PLAN', details: '100 emails/day • 5 Sending Accounts' },
+                'starter': { name: 'STARTER PLAN', details: '1,000 emails/day • 10 Sending Accounts • Customer Support' },
+                'professional': { name: 'PROFESSIONAL PLAN', details: '2,000 emails/day • 20 Accounts • AI Replies & Sentiment' },
+                'pro': { name: 'PROFESSIONAL PLAN', details: '2,000 emails/day • 20 Accounts • AI Replies & Sentiment' },
+                'enterprise': { name: 'ENTERPRISE PLAN', details: '5,000 emails/day • Unlimited Accounts • Priority Support' }
+            };
+
+            var curInfo = planDetails[userPlan] || planDetails['free'];
+            
+            var planNameEl = document.getElementById('upgrade-modal-current-plan-name');
+            var planDetEl = document.getElementById('upgrade-modal-current-plan-details');
+            if (planNameEl) planNameEl.innerText = curInfo.name;
+            if (planDetEl) planDetEl.innerText = curInfo.details;
+
+            // Highlight plan buttons dynamically according to user's current plan
+            var btnStarter = document.getElementById('upgrade-modal-btn-starter');
+            var btnPro = document.getElementById('upgrade-modal-btn-pro');
+            var btnEnterprise = document.getElementById('upgrade-modal-btn-enterprise');
+
+            if (btnStarter) {
+                if (userPlan === 'starter') {
+                    btnStarter.innerHTML = '<span><i class="fa-solid fa-circle-check" style="color:#10b981;"></i> Current Active Plan</span><span style="color:#10b981;font-weight:800;">STARTER</span>';
+                    btnStarter.style.background = 'rgba(16,185,129,0.12)';
+                    btnStarter.style.border = '1px solid rgba(16,185,129,0.4)';
+                } else {
+                    btnStarter.innerHTML = '<span>Buy Starter ($29/mo)</span><span style="color:#818cf8;font-weight:800;">1,000 Limit</span>';
+                    btnStarter.style.background = '#0f172a';
+                    btnStarter.style.border = '1px solid rgba(255,255,255,0.15)';
+                }
+            }
+
+            if (btnPro) {
+                if (userPlan === 'professional' || userPlan === 'pro') {
+                    btnPro.innerHTML = '<span><i class="fa-solid fa-circle-check" style="color:#10b981;"></i> Current Active Plan</span><span style="color:#10b981;font-weight:800;">PROFESSIONAL</span>';
+                    btnPro.style.background = 'rgba(16,185,129,0.12)';
+                    btnPro.style.border = '1px solid rgba(16,185,129,0.4)';
+                } else {
+                    btnPro.innerHTML = '<span>Buy Professional ($99/mo)</span><span style="color:#fff;font-weight:800;">2,000 Limit + AI</span>';
+                    btnPro.style.background = 'linear-gradient(135deg, #6366f1, #4f46e5)';
+                    btnPro.style.border = 'none';
+                }
+            }
+
+            if (btnEnterprise) {
+                if (userPlan === 'enterprise') {
+                    btnEnterprise.innerHTML = '<span><i class="fa-solid fa-circle-check" style="color:#10b981;"></i> Current Active Plan</span><span style="color:#10b981;font-weight:800;">ENTERPRISE</span>';
+                    btnEnterprise.style.background = 'rgba(16,185,129,0.12)';
+                    btnEnterprise.style.border = '1px solid rgba(16,185,129,0.4)';
+                } else {
+                    btnEnterprise.innerHTML = '<span>Buy Enterprise ($299/mo)</span><span style="color:#818cf8;font-weight:800;">5,000 Limit</span>';
+                    btnEnterprise.style.background = '#0f172a';
+                    btnEnterprise.style.border = '1px solid rgba(255,255,255,0.15)';
+                }
+            }
+
             if (reason === 'accounts') {
                 document.getElementById('upgrade-modal-title').innerText = "🔒 Account Limit Reached";
                 document.getElementById('upgrade-modal-desc').innerText = "You have reached the maximum sending accounts limit for your current plan. Upgrade to add more accounts!";
             } else if (reason === 'emails') {
                 document.getElementById('upgrade-modal-title').innerText = "🔒 Email Limit Reached";
-                document.getElementById('upgrade-modal-desc').innerText = "You have reached your plan limit for email sending. Upgrade your plan to continue sending campaigns!";
+                document.getElementById('upgrade-modal-desc').innerText = "You have reached your daily limit on " + curInfo.name + ". Upgrade your plan to continue sending campaigns!";
             } else if (reason === 'replies' || reason === 'ai') {
                 document.getElementById('upgrade-modal-title').innerText = "🔒 AI Replies Feature Locked";
-                document.getElementById('upgrade-modal-desc').innerText = "AI Automated Inbox Replies & Sentiment Analysis are locked on Free & Starter plans. Upgrade to Professional or Enterprise to unlock!";
+                document.getElementById('upgrade-modal-desc').innerText = "AI Automated Inbox Replies & Sentiment Analysis are locked on " + curInfo.name + ". Upgrade to Professional or Enterprise to unlock!";
             } else if (reason === 'support') {
                 document.getElementById('upgrade-modal-title').innerText = "🔒 Support Feature Locked";
                 document.getElementById('upgrade-modal-desc').innerText = "Customer Support ticketing is available on Starter, Professional & Enterprise plans. Upgrade to unlock support access!";
             } else if (reason === 'templates') {
                 document.getElementById('upgrade-modal-title').innerText = "🔒 Premium Templates Locked";
-                document.getElementById('upgrade-modal-desc').innerText = "Advanced AI Newsletter Templates are locked on your current plan. Upgrade now to unlock all premium templates!";
+                document.getElementById('upgrade-modal-desc').innerText = "Advanced AI Newsletter Templates are locked on " + curInfo.name + ". Upgrade now to unlock all premium templates!";
             } else {
-                document.getElementById('upgrade-modal-title').innerText = "🔒 Feature Locked";
-                document.getElementById('upgrade-modal-desc').innerText = "This feature is locked on your current plan. Upgrade now to unlock full access and higher limits!";
+                document.getElementById('upgrade-modal-title').innerText = "🚀 Upgrade Your Subscription Plan";
+                document.getElementById('upgrade-modal-desc').innerText = "You are currently on " + curInfo.name + ". Upgrade now to increase daily email volume & unlock AI features!";
             }
             document.getElementById('upgrade-modal').style.display = 'flex';
         };

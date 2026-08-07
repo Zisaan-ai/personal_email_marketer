@@ -134,7 +134,7 @@
 
 
 
-    html { min-height: 100%; }
+    html { min-height: 100%; scroll-behavior: smooth; scroll-padding-top: 90px; }
 
 
 
@@ -1786,37 +1786,18 @@
 
 
     .landing-nav {
-
-
-
         display: flex;
-
-
-
         justify-content: space-between;
-
-
-
         align-items: center;
-
-
-
-        padding: 24px 64px;
-
-
-
-        position: absolute;
-
-
-
+        padding: 16px 64px;
+        position: fixed;
         top: 0; left: 0; right: 0;
-
-
-
-        z-index: 100;
-
-
-
+        z-index: 1000;
+        background: rgba(6, 13, 31, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        transition: all 0.3s ease;
     }
 
 
@@ -3658,7 +3639,7 @@
 
 
 
-    .landing-orb { position: absolute; filter: blur(140px); opacity: 0.25; border-radius: 50%; z-index: 0; animation: floatBg 20s infinite alternate ease-in-out; }
+    .landing-orb { position: absolute; filter: blur(140px); opacity: 0.25; border-radius: 50%; z-index: 0; animation: floatBg 20s infinite alternate ease-in-out; pointer-events: none; }
 
 
 
@@ -3670,7 +3651,7 @@
 
 
 
-    .orb-3 { width: 800px; height: 800px; background: #0ea5e9; bottom: -300px; left: 10%; animation-delay: -10s; }
+    .orb-3 { width: 800px; height: 800px; background: #0ea5e9; bottom: 0; left: 10%; animation-delay: -10s; }
 
 
 

@@ -13785,8 +13785,7 @@ window.loadPaddleAdminSettings = function() {
             try {
                 localStorage.setItem('PADDLE_CONFIG', JSON.stringify(window.PADDLE_CONFIG));
                 if (typeof Paddle !== 'undefined' && token) {
-                    Paddle.Environment.set(env);
-                    Paddle.Initialize({ token: token });
+                    Paddle.Initialize({ token: token, environment: env });
                 }
                 if (typeof window.syncDynamicPrices === 'function') {
                     window.syncDynamicPrices();

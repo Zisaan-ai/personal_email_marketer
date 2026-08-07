@@ -4981,9 +4981,9 @@
             try {
                 var token = window.PADDLE_CONFIG.clientToken || '';
                 if (typeof Paddle !== 'undefined' && token) {
-                    Paddle.Environment.set(window.PADDLE_CONFIG.environment || 'sandbox');
                     Paddle.Initialize({ 
                         token: token,
+                        environment: window.PADDLE_CONFIG.environment || 'sandbox',
                         eventCallback: function(event) {
                             if (event.name === 'checkout.completed') {
                                 console.log('Paddle Checkout Completed:', event);

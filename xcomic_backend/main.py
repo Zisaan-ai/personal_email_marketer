@@ -535,16 +535,6 @@ def get_all_users(current_user: database.User = Depends(auth.get_current_user), 
                 orig_plan = getattr(u, 'subscription_plan', 'free') or 'free'
             
             plan_clean = (getattr(u, 'subscription_plan', 'free') or "free").lower()
-            if plan_clean != "free" and not expires_at:
-                from datetime import datetime, timedelta
-                started_at = datetime.utcnow()
-                expires_at = datetime.utcnow() + timedelta(days=30)
-                try:
-                    setattr(u, 'subscription_started_at', started_at)
-                    setattr(u, 'subscription_expires_at', expires_at)
-                    db.commit()
-                except Exception:
-                    db.rollback()
             
             if expires_at:
                 try:
@@ -657,17 +647,14 @@ def admin_user_update(req: AdminUserUpdateRequest, current_user: database.User =
     
     if req.plan:
         target_user.subscription_plan = req.plan.lower()
-        if req.plan.lower() != "free":
-            target_user.subscription_status = "active"
-            if not getattr(target_user, 'subscription_started_at', None):
-                target_user.subscription_started_at = datetime.utcnow()
-            if not getattr(target_user, 'subscription_expires_at', None) or target_user.subscription_expires_at < datetime.utcnow():
-                target_user.subscription_expires_at = datetime.utcnow() + timedelta(days=30)
-        else:
-            target_user.subscription_status = "active"
+        target_user.subscription_status = "active"
+        if req.plan.lower() == "free":
             target_user.subscription_expires_at = None
+            target_user.subscription_started_at = None
     
     if req.extend_days and req.extend_days > 0:
+        if not getattr(target_user, 'subscription_started_at', None):
+            target_user.subscription_started_at = datetime.utcnow()
         base_dt = target_user.subscription_expires_at if (target_user.subscription_expires_at and target_user.subscription_expires_at > datetime.utcnow()) else datetime.utcnow()
         target_user.subscription_expires_at = base_dt + timedelta(days=req.extend_days)
         target_user.subscription_status = "active"
@@ -693,17 +680,7 @@ def admin_user_reset(req: AdminUserResetRequest, current_user: database.User = D
     
     orig_plan = (getattr(target_user, 'original_subscription_plan', None) or getattr(target_user, 'subscription_plan', 'free') or "free").lower()
     target_user.subscription_plan = orig_plan
-    
-    from datetime import datetime, timedelta
-    if orig_plan != "free":
-        target_user.subscription_status = "active"
-        if not getattr(target_user, 'subscription_started_at', None):
-            target_user.subscription_started_at = datetime.utcnow()
-        if not getattr(target_user, 'subscription_expires_at', None) or target_user.subscription_expires_at < datetime.utcnow():
-            target_user.subscription_expires_at = datetime.utcnow() + timedelta(days=30)
-    else:
-        target_user.subscription_status = "active"
-        target_user.subscription_expires_at = None
+    target_user.subscription_status = "active"
     
     target_user.custom_daily_limit = None
     target_user.custom_max_accounts = None

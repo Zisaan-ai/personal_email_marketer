@@ -65,6 +65,23 @@ def migrate_sqlite_columns():
                         except Exception as e:
                             print(f"[SQLite Migration] Column {col_name} error: {e}")
                 conn.commit()
+                
+                # One-time cleanup: clear auto-set dates that were incorrectly 
+                # set by old get_all_users code (all users got same date)
+                try:
+                    cursor.execute("""
+                        UPDATE users 
+                        SET subscription_started_at = NULL, subscription_expires_at = NULL
+                        WHERE subscription_started_at IS NOT NULL 
+                        AND original_subscription_plan IS NULL
+                    """)
+                    cleaned = cursor.rowcount
+                    if cleaned > 0:
+                        print(f"[SQLite Cleanup] Cleared {cleaned} incorrectly auto-set dates.")
+                    conn.commit()
+                except Exception as e:
+                    print(f"[SQLite Cleanup Error] {e}")
+                
                 conn.close()
     except Exception as e:
         print(f"[SQLite Migration Error] {e}")

@@ -694,7 +694,7 @@ def admin_user_reset(req: AdminUserResetRequest, current_user: database.User = D
     if not target_user:
         raise HTTPException(status_code=404, detail="User not found")
     
-    orig_plan = (getattr(target_user, 'original_subscription_plan', None) or getattr(target_user, 'subscription_plan', 'free') or "free").lower()
+    orig_plan = (getattr(target_user, 'original_subscription_plan', None) or "free").lower()
     target_user.subscription_plan = orig_plan
     target_user.subscription_status = "active"
     

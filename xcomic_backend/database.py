@@ -66,33 +66,7 @@ def migrate_sqlite_columns():
                             print(f"[SQLite Migration] Column {col_name} error: {e}")
                 conn.commit()
                 
-                # One-time cleanup: clear auto-set dates and wrongly-set original plans
-                # original_subscription_plan should ONLY be set by Paddle payment webhook
-                try:
-                    cursor.execute("""
-                        UPDATE users 
-                        SET subscription_started_at = NULL, subscription_expires_at = NULL
-                        WHERE subscription_started_at IS NOT NULL 
-                        AND original_subscription_plan IS NULL
-                    """)
-                    cleaned = cursor.rowcount
-                    if cleaned > 0:
-                        print(f"[SQLite Cleanup] Cleared {cleaned} incorrectly auto-set dates.")
-                    
-                    # Clear admin-set original_subscription_plan (only Paddle webhook sets this)
-                    cursor.execute("""
-                        UPDATE users 
-                        SET original_subscription_plan = NULL
-                        WHERE original_subscription_plan IS NOT NULL
-                    """)
-                    cleaned2 = cursor.rowcount
-                    if cleaned2 > 0:
-                        print(f"[SQLite Cleanup] Cleared {cleaned2} incorrectly set original_subscription_plan values.")
-                    
-                    conn.commit()
-                except Exception as e:
-                    print(f"[SQLite Cleanup Error] {e}")
-                
+                conn.commit()
                 conn.close()
     except Exception as e:
         print(f"[SQLite Migration Error] {e}")

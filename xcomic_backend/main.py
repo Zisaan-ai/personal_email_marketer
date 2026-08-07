@@ -647,10 +647,8 @@ def admin_user_update(req: AdminUserUpdateRequest, current_user: database.User =
         new_plan = req.plan.lower()
         current_plan = (getattr(target_user, 'subscription_plan', 'free') or 'free').lower()
         
-        # Preserve original plan: save current plan as original BEFORE changing
-        # Only set if original is not already recorded
-        if not getattr(target_user, 'original_subscription_plan', None):
-            target_user.original_subscription_plan = current_plan
+        # Admin's plan change is CUSTOM, NOT original.
+        # original_subscription_plan is ONLY set by: default (free) or Paddle payment webhook
         
         target_user.subscription_plan = new_plan
         target_user.subscription_status = "active"
@@ -663,11 +661,18 @@ def admin_user_update(req: AdminUserUpdateRequest, current_user: database.User =
             target_user.subscription_started_at = datetime.utcnow()
             target_user.subscription_expires_at = datetime.utcnow() + timedelta(days=30)
     
-    if req.extend_days and req.extend_days > 0:
+    if req.extend_days and req.extend_days != 0:
         if not getattr(target_user, 'subscription_started_at', None):
             target_user.subscription_started_at = datetime.utcnow()
-        base_dt = target_user.subscription_expires_at if (target_user.subscription_expires_at and target_user.subscription_expires_at > datetime.utcnow()) else datetime.utcnow()
-        target_user.subscription_expires_at = base_dt + timedelta(days=req.extend_days)
+        if req.extend_days > 0:
+            base_dt = target_user.subscription_expires_at if (target_user.subscription_expires_at and target_user.subscription_expires_at > datetime.utcnow()) else datetime.utcnow()
+            target_user.subscription_expires_at = base_dt + timedelta(days=req.extend_days)
+        else:
+            # Negative days: subtract from current expiration
+            if target_user.subscription_expires_at:
+                new_exp = target_user.subscription_expires_at + timedelta(days=req.extend_days)
+                target_user.subscription_expires_at = new_exp if new_exp > datetime.utcnow() else None
+            # If no expiration exists, ignore negative days
         target_user.subscription_status = "active"
         
     target_user.custom_daily_limit = req.daily_limit if (req.daily_limit is not None and req.daily_limit > 0) else None

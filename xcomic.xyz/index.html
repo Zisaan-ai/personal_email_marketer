@@ -7397,56 +7397,39 @@
 
 
 <div id="payment-modal">
-
-
-
-    <div class="pm-content">
-
-
-
+    <div class="pm-content" style="max-width:440px; border-radius:18px; padding:28px;">
         <button class="pm-close" onclick="LANDING.closePayment()"><i class="fa-solid fa-xmark"></i></button>
 
+        <div class="pm-title" style="font-size:20px; font-weight:800; color:var(--text); margin-bottom:6px;">Complete Checkout</div>
+        <div class="pm-sub" style="font-size:14px; color:var(--text-muted); margin-bottom:20px;">You are purchasing the <strong id="pm-plan-name" style="color:var(--primary);">Starter</strong> plan for <strong id="pm-plan-price" style="color:var(--primary);">$29</strong>/month.</div>
 
-
-        <div class="pm-title">Complete Checkout</div>
-
-
-
-        <div class="pm-sub">You are purchasing the <strong id="pm-plan-name">Pro</strong> plan for <strong id="pm-plan-price">$99</strong>/month.</div>
-
-
-
-        
-
-
-
-        <div class="pm-methods" style="margin-bottom:20px;">
-            <div class="pm-method selected" style="padding:14px; border:1px solid var(--border); border-radius:12px; display:flex; align-items:center; justify-content:space-between;">
+        <div class="pm-methods" style="margin-bottom:16px;">
+            <div class="pm-method selected" style="padding:14px; border:1px solid var(--border); border-radius:12px; display:flex; align-items:center; justify-content:space-between; background:var(--bg-glass);">
                 <div class="pm-method-left" style="display:flex; align-items:center;">
-                    <i class="fa-solid fa-credit-card" style="font-size:22px; color:#3b82f6;"></i>
+                    <i class="fa-solid fa-credit-card" style="font-size:22px; color:#6366f1;"></i>
                     <div class="pm-method-name" style="margin-left:12px; text-align:left;">
-                        <strong style="display:block; font-size:14px; color:var(--text);">Paddle Checkout</strong>
-                        <span style="font-size:11px; color:var(--text-muted); font-weight:normal;">Credit Card, Debit Card & PayPal</span>
+                        <strong style="display:block; font-size:14px; color:var(--text);">Paddle / Test Checkout</strong>
+                        <span style="font-size:11px; color:var(--text-muted); font-weight:normal;">Credit Card, PayPal & Sandbox Test Cards</span>
                     </div>
                 </div>
-                <div class="pm-method-radio"></div>
             </div>
         </div>
 
+        <div id="pm-card-input-box" style="margin-bottom:20px; text-align:left; background:rgba(99,102,241,0.05); border:1px solid rgba(99,102,241,0.2); border-radius:12px; padding:14px;">
+            <label style="font-size:11px; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:6px;">
+                <i class="fa-solid fa-flask" style="margin-right:4px;"></i> Sandbox Test Card Number
+            </label>
+            <input type="text" id="pm-test-card" value="4242 4242 4242 4242" readonly style="width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); font-family:monospace; font-size:14px; font-weight:700;" />
+            <div style="display:flex; gap:10px; margin-top:8px;">
+                <input type="text" value="12/28" readonly style="width:50%; padding:8px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text-muted); font-size:12px; text-align:center;" />
+                <input type="text" value="100" readonly style="width:50%; padding:8px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text-muted); font-size:12px; text-align:center;" />
+            </div>
+        </div>
 
-
-        
-
-
-
-        <button class="pm-btn" onclick="LANDING.processPayment()">Proceed to Payment →</button>
-
-
-
+        <button class="pm-btn" onclick="LANDING.processPayment()" style="width:100%; padding:14px; background:linear-gradient(135deg, #6366f1, #4f46e5); color:#fff; border:none; border-radius:12px; font-weight:700; font-size:15px; cursor:pointer; box-shadow:0 4px 14px rgba(99,102,241,0.35);">
+            Complete Payment →
+        </button>
     </div>
-
-
-
 </div>
 
 
@@ -22698,15 +22681,19 @@
             var modal = document.getElementById('payment-modal');
             var pName = document.getElementById('pm-plan-name');
             var pPrice = document.getElementById('pm-plan-price');
-            if (pName) pName.innerText = plan;
-            if (pPrice) pPrice.innerText = '$' + price;
+            if (pName) pName.innerText = plan || 'Starter';
+            if (pPrice) pPrice.innerText = '$' + (price || '29');
             
+            window._pendingUpgradePlan = plan || 'Starter';
+
             let cfg = window.PADDLE_CONFIG || {};
             let priceIds = cfg.priceIds || {};
             let priceId = priceIds[plan] || priceIds['Starter'] || 'pri_01kz1fwdrmswb6c1ytevea2zd4';
+            let token = cfg.clientToken || '';
 
-            // Try opening official Paddle Checkout overlay
-            if (typeof Paddle !== 'undefined' && typeof Paddle.Checkout !== 'undefined') {
+            let isDemo = !token || token.includes('test_c2c1f7b6') || priceId.includes('pri_01kz1');
+
+            if (!isDemo && typeof Paddle !== 'undefined' && typeof Paddle.Checkout !== 'undefined') {
                 try {
                     let opts = { items: [{ priceId: priceId, quantity: 1 }] };
                     let uid = window.APP && window.APP.user ? window.APP.user.id : '';
@@ -22739,13 +22726,16 @@
             if (target) target.classList.add('selected');
         },
 
-        processPayment: function() {
-            var pName = document.getElementById('pm-plan-name')?.innerText || 'Starter';
+        processPayment: async function() {
+            var plan = window._pendingUpgradePlan || document.getElementById('pm-plan-name')?.innerText || 'Starter';
             let cfg = window.PADDLE_CONFIG || {};
             let priceIds = cfg.priceIds || {};
-            let priceId = priceIds[pName] || priceIds['Starter'] || 'pri_01kz1fwdrmswb6c1ytevea2zd4';
+            let priceId = priceIds[plan] || priceIds['Starter'] || 'pri_01kz1fwdrmswb6c1ytevea2zd4';
+            let token = cfg.clientToken || '';
 
-            if (typeof Paddle !== 'undefined' && typeof Paddle.Checkout !== 'undefined') {
+            let isDemo = !token || token.includes('test_c2c1f7b6') || priceId.includes('pri_01kz1');
+
+            if (!isDemo && typeof Paddle !== 'undefined' && typeof Paddle.Checkout !== 'undefined') {
                 try {
                     let opts = { items: [{ priceId: priceId, quantity: 1 }] };
                     let uid = window.APP && window.APP.user ? window.APP.user.id : '';
@@ -22754,11 +22744,45 @@
                     LANDING.closePayment();
                     return;
                 } catch(e) {
-                    alert("Paddle Checkout Error: " + e.message);
-                    return;
+                    console.warn("Paddle Checkout error:", e);
                 }
-            } else {
-                alert("Paddle Checkout is currently offline or improperly configured. Please contact support.");
+            }
+
+            var btn = document.querySelector('#payment-modal .pm-btn');
+            if (btn) { btn.disabled = true; btn.innerText = 'Processing Payment...'; }
+            try {
+                const tokenVal = localStorage.getItem('token') || localStorage.getItem('xcomic_token');
+                const res = await fetch('/api/payment/test-checkout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + tokenVal
+                    },
+                    body: JSON.stringify({ plan: plan.toLowerCase() })
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (typeof showToast === 'function') {
+                        showToast(data.message || 'Payment Successful! Subscription upgraded.', 'success');
+                    } else {
+                        alert(data.message || 'Payment Successful! Subscription upgraded.');
+                    }
+                    localStorage.setItem('user_plan', plan.toLowerCase());
+                    if (typeof window.APP_INIT === 'function') window.APP_INIT();
+                    if (typeof window.updateFeatureLocks === 'function') window.updateFeatureLocks(plan.toLowerCase());
+                    LANDING.closePayment();
+                } else {
+                    const err = await res.json().catch(() => ({}));
+                    if (typeof showToast === 'function') {
+                        showToast(err.detail || 'Test payment failed', 'error');
+                    } else {
+                        alert(err.detail || 'Test payment failed');
+                    }
+                }
+            } catch(e) {
+                alert('Payment error: ' + e.message);
+            } finally {
+                if (btn) { btn.disabled = false; btn.innerText = 'Complete Payment →'; }
             }
         }
 

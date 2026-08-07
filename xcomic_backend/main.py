@@ -530,6 +530,10 @@ def get_all_users(current_user: database.User = Depends(auth.get_current_user), 
             days_remaining = None
             sub_status = getattr(u, 'subscription_status', 'active') or 'active'
             
+            orig_plan = getattr(u, 'original_subscription_plan', None)
+            if not orig_plan:
+                orig_plan = getattr(u, 'subscription_plan', 'free') or 'free'
+            
             plan_clean = (getattr(u, 'subscription_plan', 'free') or "free").lower()
             if plan_clean != "free" and not expires_at:
                 from datetime import datetime, timedelta
@@ -549,9 +553,9 @@ def get_all_users(current_user: database.User = Depends(auth.get_current_user), 
                     diff = (expires_at - now_dt).days
                     days_remaining = max(0, diff) if diff >= 0 else 0
                     if diff < 0 and plan_clean != "free":
-                       orig_plan = getattr(u, 'original_subscription_plan', None)
-            if not orig_plan:
-                orig_plan = getattr(u, 'subscription_plan', 'free') or 'free'
+                        sub_status = "expired"
+                except Exception:
+                    pass
 
             result.append({
                 "id": str(u.id),

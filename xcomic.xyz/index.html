@@ -22708,12 +22708,10 @@
             // Try opening official Paddle Checkout overlay
             if (typeof Paddle !== 'undefined' && typeof Paddle.Checkout !== 'undefined') {
                 try {
-                    Paddle.Checkout.open({
-                        items: [{ priceId: priceId, quantity: 1 }],
-                        customData: {
-                            user_id: window.APP && window.APP.user ? window.APP.user.id : ''
-                        }
-                    });
+                    let opts = { items: [{ priceId: priceId, quantity: 1 }] };
+                    let uid = window.APP && window.APP.user ? window.APP.user.id : '';
+                    if (uid) opts.customData = { user_id: uid };
+                    Paddle.Checkout.open(opts);
                     return;
                 } catch(e) {
                     console.warn("Paddle Checkout open error:", e);
@@ -22749,12 +22747,10 @@
 
             if (typeof Paddle !== 'undefined' && typeof Paddle.Checkout !== 'undefined') {
                 try {
-                    Paddle.Checkout.open({
-                        items: [{ priceId: priceId, quantity: 1 }],
-                        customData: {
-                            user_id: window.APP && window.APP.user ? window.APP.user.id : ''
-                        }
-                    });
+                    let opts = { items: [{ priceId: priceId, quantity: 1 }] };
+                    let uid = window.APP && window.APP.user ? window.APP.user.id : '';
+                    if (uid) opts.customData = { user_id: uid };
+                    Paddle.Checkout.open(opts);
                     LANDING.closePayment();
                     return;
                 } catch(e) {

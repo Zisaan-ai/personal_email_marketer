@@ -10743,10 +10743,15 @@ window.openUserManageModalById = function(userId) {
         }
     }
 
+    window._currentlyManagedUser = user;
+
     document.getElementById('adm-modal-plan').value = currentPlan.toLowerCase();
     document.getElementById('adm-modal-limit').value = (currentLimit !== null && currentLimit !== undefined) ? currentLimit : '';
     if (document.getElementById('adm-modal-extend-days')) {
         document.getElementById('adm-modal-extend-days').value = '0';
+    }
+    if (typeof window.updateExtendDaysPreview === 'function') {
+        window.updateExtendDaysPreview();
     }
     
     const accLimitEl = document.getElementById('adm-modal-acc-limit');
@@ -10862,6 +10867,50 @@ window.openUserManageModalById = function(userId) {
         };
     }
     modal.style.display = 'flex';
+};
+
+window.adjustExtendDays = function(val) {
+    const inp = document.getElementById('adm-modal-extend-days');
+    if (!inp) return;
+    if (val === 0) {
+        inp.value = 0;
+    } else {
+        const curr = parseInt(inp.value, 10) || 0;
+        inp.value = curr + val;
+    }
+    if (typeof window.updateExtendDaysPreview === 'function') {
+        window.updateExtendDaysPreview();
+    }
+};
+
+window.updateExtendDaysPreview = function() {
+    const inp = document.getElementById('adm-modal-extend-days');
+    const prevEl = document.getElementById('adm-modal-extend-preview');
+    if (!inp || !prevEl) return;
+    
+    const days = parseInt(inp.value, 10) || 0;
+    const currentUser = window._currentlyManagedUser;
+    
+    if (days === 0) {
+        prevEl.innerHTML = `<span style="color:#94a3b8;">No change to current duration (0 days)</span>`;
+        return;
+    }
+    
+    let baseDate = new Date();
+    if (currentUser && currentUser.subscription_expires_at) {
+        const exp = new Date(currentUser.subscription_expires_at);
+        if (exp > new Date()) baseDate = exp;
+    }
+    
+    const newDate = new Date(baseDate.getTime() + days * 24 * 60 * 60 * 1000);
+    const dateFormatted = newDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    
+    if (days > 0) {
+        prevEl.innerHTML = `<span style="color:#10b981;font-weight:700;">➕ Will extend by +${days} days</span> <small style="color:#cbd5e1;">(New Expiration: ${dateFormatted})</small>`;
+    } else {
+        const absoluteVal = Math.abs(days);
+        prevEl.innerHTML = `<span style="color:#ef4444;font-weight:700;">➖ Will reduce by -${absoluteVal} days</span> <small style="color:#cbd5e1;">(New Expiration: ${dateFormatted})</small>`;
+    }
 };
 
 

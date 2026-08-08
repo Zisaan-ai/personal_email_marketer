@@ -4907,13 +4907,10 @@
 
 
 
-    <!-- Paddle.js v2 SDK -->
-    <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
     <script>
         // Dynamic Pricing Sync Engine
         window.syncDynamicPrices = function() {
-            var cfg = window.PADDLE_CONFIG || {};
-            var prices = cfg.prices || { Starter: 29, Professional: 99, Enterprise: 299 };
+            var prices = { Starter: 29, Professional: 99, Enterprise: 299 };
 
             var sPrice = prices.Starter || 29;
             var pPrice = prices.Professional || 99;
@@ -22754,25 +22751,7 @@
 
         openPayment: function(plan, price) {
             window._pendingUpgradePlan = plan || 'Starter';
-            let cfg = window.PADDLE_CONFIG || {};
-            try {
-                var saved = JSON.parse(localStorage.getItem('PADDLE_CONFIG'));
-                if (saved && typeof saved === 'object' && saved.clientToken) cfg = saved;
-            } catch(e){}
-
-            let token = cfg.clientToken || document.getElementById('adm-paddle-token')?.value || 'test_c2c1f7b673c15e7a705b10c5bf7';
-            let priceIds = cfg.priceIds || {};
-            let priceId = priceIds[plan];
-            if (!priceId) {
-                if (plan === 'Professional' || plan === 'pro' || plan === 'professional') {
-                    priceId = priceIds.Professional || priceIds.pro || 'pri_01kz1fxmnpdpk5v8h0b0y0k8qd';
-                } else if (plan === 'Enterprise' || plan === 'enterprise') {
-                    priceId = priceIds.Enterprise || priceIds.enterprise || 'pri_01kz1fz3n7mq0mpv6nhabycqzk';
-                } else {
-                    priceId = priceIds.Starter || priceIds.starter || 'pri_01kz1fudrnswb6c1ytexea2zd4';
-                }
-            }
-            let env = cfg.environment || (token.startsWith('live_') ? 'production' : 'sandbox');
+            let dynPrice = price || (plan === 'Enterprise' ? 299 : plan === 'Professional' ? 99 : 29);
 
             // Check login status
             var userToken = localStorage.getItem('token') || localStorage.getItem('xcomic_token');
@@ -22785,48 +22764,10 @@
                 return;
             }
 
-            // Try Paddle Checkout first
-            if (typeof Paddle !== 'undefined' && token && priceId) {
-                try {
-                    if (env === 'sandbox' && typeof Paddle.Environment !== 'undefined') {
-                        try { Paddle.Environment.set('sandbox'); } catch(e){}
-                    }
-                    try {
-                        Paddle.Initialize({
-                            token: token,
-                            eventCallback: function(event) {
-                                if (event.name === 'checkout.completed') {
-                                    console.log('Paddle Checkout Completed:', event);
-                                    if (typeof showToast === 'function') {
-                                        showToast('Payment successful! Subscription plan updated.', 'success');
-                                    }
-                                    setTimeout(function() {
-                                        if (typeof window.APP_INIT === 'function') window.APP_INIT();
-                                    }, 1500);
-                                }
-                            }
-                        });
-                    } catch(e) {}
-
-                    let opts = {
-                        items: [{ priceId: priceId, quantity: 1 }]
-                    };
-                    let uid = window.APP && window.APP.user ? window.APP.user.id : '';
-                    if (uid) opts.customData = { user_id: String(uid) };
-                    
-                    console.log('Opening Paddle Checkout:', opts);
-                    Paddle.Checkout.open(opts);
-                    return;
-                } catch(e) {
-                    console.warn('Paddle Checkout open error, falling back to modal:', e);
-                }
-            }
-
-            // Fallback modal UI
+            // Show payment modal
             var modal = document.getElementById('payment-modal');
             var pName = document.getElementById('pm-plan-name');
             var pPrice = document.getElementById('pm-plan-price');
-            let dynPrice = price || (plan === 'Enterprise' ? 299 : plan === 'Professional' ? 99 : 29);
 
             if (pName) pName.innerText = plan || 'Starter';
             if (pPrice) pPrice.innerHTML = '$' + dynPrice + '<span style="font-size:13px;font-weight:400;">/mo</span>';

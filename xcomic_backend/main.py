@@ -514,7 +514,13 @@ def get_all_users(current_user: database.User = Depends(auth.get_current_user), 
         except Exception:
             pass
 
-        users = db.query(database.User).all()
+        try:
+            users = db.query(database.User).all()
+        except Exception as query_err:
+            print(f"[get_all_users Query Fallback]: {query_err}")
+            db.rollback()
+            database.migrate_sqlite_columns()
+            users = db.query(database.User).all()
         result = []
         for u in users:
             sent_today = 0

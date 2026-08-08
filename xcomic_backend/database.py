@@ -38,38 +38,27 @@ else:
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def migrate_sqlite_columns():
+    new_cols = [
+        ("custom_daily_limit", "INTEGER"),
+        ("custom_max_accounts", "INTEGER"),
+        ("custom_ai_replies", "BOOLEAN"),
+        ("custom_support", "BOOLEAN"),
+        ("subscription_started_at", "TIMESTAMP"),
+        ("subscription_expires_at", "TIMESTAMP"),
+        ("original_subscription_plan", "VARCHAR(100)")
+    ]
     try:
-        import sqlite3
-        if "sqlite" in DATABASE_URL:
-            db_path = DATABASE_URL.replace("sqlite:///", "")
-            if os.path.exists(db_path):
-                conn = sqlite3.connect(db_path)
-                cursor = conn.cursor()
-                cursor.execute("PRAGMA table_info(users)")
-                columns = [row[1] for row in cursor.fetchall()]
-                
-                new_cols = [
-                    ("custom_daily_limit", "INTEGER"),
-                    ("custom_max_accounts", "INTEGER"),
-                    ("custom_ai_replies", "BOOLEAN"),
-                    ("custom_support", "BOOLEAN"),
-                    ("subscription_started_at", "DATETIME"),
-                    ("subscription_expires_at", "DATETIME"),
-                    ("original_subscription_plan", "VARCHAR")
-                ]
-                for col_name, col_type in new_cols:
-                    if col_name not in columns:
-                        try:
-                            cursor.execute(f"ALTER TABLE users ADD COLUMN {col_name} {col_type}")
-                            print(f"[SQLite Migration] Added column {col_name} to users table.")
-                        except Exception as e:
-                            print(f"[SQLite Migration] Column {col_name} error: {e}")
-                conn.commit()
-                
-                conn.commit()
-                conn.close()
+        from sqlalchemy import text
+        with engine.connect() as conn:
+            for col_name, col_type in new_cols:
+                try:
+                    conn.execute(text(f"ALTER TABLE users ADD COLUMN {col_name} {col_type}"))
+                    conn.commit()
+                    print(f"[DB Migration] Added column {col_name} to users table.")
+                except Exception:
+                    pass
     except Exception as e:
-        print(f"[SQLite Migration Error] {e}")
+        print(f"[DB Migration Note] {e}")
 
 try:
     migrate_sqlite_columns()

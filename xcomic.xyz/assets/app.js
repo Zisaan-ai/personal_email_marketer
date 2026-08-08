@@ -13748,6 +13748,16 @@ window.loadPaddleAdminSettings = async function() {
     if (enterpriseAmtEl) enterpriseAmtEl.value = (cfg.prices && cfg.prices.Enterprise) || 299;
 };
 
+window.resetPaddleToDemo = async function() {
+    if (document.getElementById('adm-paddle-token')) document.getElementById('adm-paddle-token').value = '';
+    if (document.getElementById('adm-price-starter')) document.getElementById('adm-price-starter').value = '';
+    if (document.getElementById('adm-price-pro')) document.getElementById('adm-price-pro').value = '';
+    if (document.getElementById('adm-price-enterprise')) document.getElementById('adm-price-enterprise').value = '';
+
+    await window.savePaddleAdminSettings();
+    if (typeof showToast === 'function') showToast('Switched to Demo Mode successfully! You can now test payments without errors.', 'success');
+};
+
 window.savePaddleAdminSettings = async function() {
     var env = document.getElementById('adm-paddle-env')?.value || 'sandbox';
     var token = document.getElementById('adm-paddle-token')?.value || '';

@@ -4907,7 +4907,7 @@
 
 
 
-    <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+    <!-- Paddle.js loaded dynamically on checkout only -->
     <script>
         // Dynamic Pricing Sync Engine
         window.syncDynamicPrices = function() {
@@ -4964,30 +4964,69 @@
                 window.PADDLE_CONFIG = defaults;
             }
 
-            // Initialize Paddle.js & Register Event Handlers
-            try {
-                var token = window.PADDLE_CONFIG.clientToken || '';
-                if (typeof Paddle !== 'undefined' && token) {
-                    Paddle.Initialize({ 
-                        token: token,
-                        environment: window.PADDLE_CONFIG.environment || 'sandbox',
-                        eventCallback: function(event) {
-                            if (event.name === 'checkout.completed') {
-                                console.log('Paddle Checkout Completed:', event);
-                                if (typeof showToast === 'function') {
-                                    showToast('Payment successful! Subscription plan updated.', 'success');
-                                } else {
-                                    alert('Payment successful! Subscription plan updated.');
-                                }
-                                setTimeout(function() {
-                                    if (typeof window.APP_INIT === 'function') window.APP_INIT();
-                                    if (typeof window.LANDING !== 'undefined' && window.LANDING.closePayment) window.LANDING.closePayment();
-                                }, 1500);
-                            }
-                        }
-                    });
+            // ========== PADDLE DYNAMIC LOADER (loads only on checkout) ==========
+            window._paddleReady = false;
+            window._paddleLoading = false;
+
+            function loadAndInitPaddle(tok, envMode, callback) {
+                // Already ready? Just callback
+                if (window._paddleReady && typeof Paddle !== 'undefined') {
+                    if (callback) callback();
+                    return;
                 }
-            } catch(e) { console.warn('Paddle init:', e); }
+                // Already loading? Wait for it
+                if (window._paddleLoading) {
+                    var waitInterval = setInterval(function() {
+                        if (window._paddleReady) {
+                            clearInterval(waitInterval);
+                            if (callback) callback();
+                        }
+                    }, 100);
+                    return;
+                }
+                window._paddleLoading = true;
+
+                // Step 1: Load paddle.js dynamically
+                var script = document.createElement('script');
+                script.src = 'https://cdn.paddle.com/paddle/v2/paddle.js';
+                script.onload = function() {
+                    try {
+                        // Step 2: Initialize properly for v2
+                        if (typeof Paddle.Environment !== 'undefined' && typeof Paddle.Environment.set === 'function') {
+                            Paddle.Environment.set(envMode);
+                        }
+                        Paddle.Initialize({
+                            token: tok,
+                            eventCallback: function(event) {
+                                if (event.name === 'checkout.completed') {
+                                    console.log('Paddle Checkout Completed:', event);
+                                    if (typeof showToast === 'function') {
+                                        showToast('Payment successful! Subscription plan updated.', 'success');
+                                    } else {
+                                        alert('Payment successful!');
+                                    }
+                                    setTimeout(function() {
+                                        if (typeof window.APP_INIT === 'function') window.APP_INIT();
+                                        if (typeof window.LANDING !== 'undefined' && window.LANDING.closePayment) window.LANDING.closePayment();
+                                    }, 1500);
+                                }
+                            }
+                        });
+                        window._paddleReady = true;
+                        window._paddleLoading = false;
+                        if (callback) callback();
+                    } catch(e) {
+                        console.warn('Paddle init error:', e);
+                        window._paddleLoading = false;
+                    }
+                };
+                script.onerror = function() {
+                    console.warn('Failed to load paddle.js');
+                    window._paddleLoading = false;
+                };
+                document.head.appendChild(script);
+            }
+            // ========== END PADDLE DYNAMIC LOADER ==========
 
             document.addEventListener('DOMContentLoaded', function() {
                 if (window.syncDynamicPrices) window.syncDynamicPrices();
@@ -4995,28 +5034,6 @@
                     if (cfg && typeof cfg === 'object' && (cfg.prices || cfg.clientToken !== undefined)) {
                         window.PADDLE_CONFIG = cfg;
                         try { localStorage.setItem('PADDLE_CONFIG', JSON.stringify(cfg)); } catch(e){}
-                        var tok = cfg.clientToken || '';
-                        var envMode = cfg.environment || (tok.startsWith('live_') ? 'production' : 'sandbox');
-                        if (typeof Paddle !== 'undefined' && tok) {
-                            try {
-                                Paddle.Initialize({
-                                    token: tok,
-                                    environment: envMode,
-                                    eventCallback: function(event) {
-                                        if (event.name === 'checkout.completed') {
-                                            console.log('Paddle Checkout Completed:', event);
-                                            if (typeof showToast === 'function') {
-                                                showToast('Payment successful! Subscription plan updated.', 'success');
-                                            }
-                                            setTimeout(function() {
-                                                if (typeof window.APP_INIT === 'function') window.APP_INIT();
-                                                if (typeof window.LANDING !== 'undefined' && window.LANDING.closePayment) window.LANDING.closePayment();
-                                            }, 1500);
-                                        }
-                                    }
-                                });
-                            } catch(e) {}
-                        }
                         if (window.syncDynamicPrices) window.syncDynamicPrices();
                         if (window.updateFeatureLocks) window.updateFeatureLocks(localStorage.getItem('user_plan') || 'free');
                     }
@@ -20346,9 +20363,12 @@
                     </div>
 
                     <!-- Actions -->
-                    <div style="display:flex; gap:12px;">
-                        <button id="adm-save-paddle-btn" onclick="savePaddleAdminSettings()" class="btn primary" style="width:100%; padding:12px; border-radius:10px; justify-content:center; font-weight:600;">
+                    <div style="display:grid; grid-template-columns:2fr 1fr; gap:12px;">
+                        <button id="adm-save-paddle-btn" onclick="savePaddleAdminSettings()" class="btn primary" style="padding:12px; border-radius:10px; justify-content:center; font-weight:600;">
                             <i class="fa-solid fa-floppy-disk" style="margin-right:8px;"></i>Save Gateway Credentials
+                        </button>
+                        <button type="button" onclick="resetPaddleToDemo()" class="btn" style="padding:12px; border-radius:10px; justify-content:center; font-weight:600; background:rgba(239,68,68,0.1); color:#ef4444; border:1px solid rgba(239,68,68,0.3);">
+                            <i class="fa-solid fa-rotate-left" style="margin-right:8px;"></i>Use Demo Mode
                         </button>
                     </div>
                     <div id="adm-paddle-status" style="display:none; margin-top:12px; padding:10px 14px; border-radius:8px; font-size:13px;"></div>
@@ -22882,21 +22902,6 @@
             let env = cfg.environment || (token.startsWith('live_') ? 'production' : 'sandbox');
             let isDemo = !token || !priceId;
 
-            if (!isDemo && typeof Paddle !== 'undefined' && typeof Paddle.Checkout !== 'undefined') {
-                try {
-                    try { Paddle.Initialize({ token: token, environment: env }); } catch(e) {}
-                    let opts = { items: [{ priceId: priceId, quantity: 1 }] };
-                    let uid = window.APP && window.APP.user ? window.APP.user.id : '';
-                    if (uid) opts.customData = { user_id: uid };
-                    let email = (window.APP && window.APP.user && window.APP.user.email) ? window.APP.user.email : '';
-                    if (email && email.includes('@')) opts.customer = { email: email };
-                    Paddle.Checkout.open(opts);
-                    return;
-                } catch(e) {
-                    console.warn("Paddle Checkout open error:", e);
-                }
-            }
-
             // Reset card form fields to empty for real user entry
             var nameEl = document.getElementById('pm-card-name');
             var numEl = document.getElementById('pm-card-number');
@@ -23004,9 +23009,12 @@
             var plan = window._pendingUpgradePlan || 'Starter';
             let cfg = window.PADDLE_CONFIG || {};
             let priceIds = cfg.priceIds || {};
-            let priceId = priceIds[plan] || priceIds['Starter'] || 'pri_01kz1fwdrmswb6c1ytevea2zd4';
+            let priceId = priceIds[plan] || priceIds['Starter'] || '';
             let token = cfg.clientToken || '';
-            let isDemo = !token || !priceId;
+            let env = cfg.environment || (token.startsWith('live_') ? 'production' : 'sandbox');
+            let isRealToken = token && (token.startsWith('test_') || token.startsWith('live_')) && !token.includes('xxx');
+            let isRealPrice = priceId && priceId.startsWith('pri_') && !priceId.includes('xxx');
+            let isDemo = !isRealToken || !isRealPrice;
 
             var errEl = document.getElementById('pm-card-error');
             if (errEl) errEl.style.display = 'none';
@@ -23031,29 +23039,41 @@
                 return;
             }
 
-            if (!isDemo && typeof Paddle !== 'undefined' && typeof Paddle.Checkout !== 'undefined') {
-                try {
-                    let opts = { items: [{ priceId: priceId, quantity: 1 }] };
-                    let uid = window.APP && window.APP.user ? window.APP.user.id : '';
-                    if (uid) opts.customData = { user_id: uid };
-                    let email = (document.getElementById('pm-email')?.value || window.APP?.user?.email || '').trim();
-                    if (email) opts.customer = { email: email };
-                    Paddle.Checkout.open(opts);
-                    LANDING.closePayment();
-                    return;
-                } catch(e) {
-                    console.warn("Paddle Checkout error:", e);
-                }
+            if (!isDemo) {
+                // Load Paddle dynamically & open checkout
+                var _plan = plan;
+                var _priceId = priceId;
+                loadAndInitPaddle(token, env, function() {
+                    try {
+                        let opts = {
+                            settings: {
+                                displayMode: 'overlay',
+                                theme: 'light',
+                                locale: 'en'
+                            },
+                            items: [{ priceId: _priceId, quantity: 1 }]
+                        };
+                        let uid = window.APP && window.APP.user ? window.APP.user.id : '';
+                        if (uid) opts.customData = { user_id: uid };
+                        let email = (document.getElementById('pm-email')?.value || window.APP?.user?.email || '').trim();
+                        if (email && email.includes('@')) {
+                            opts.customer = { email: email };
+                        }
+                        Paddle.Checkout.open(opts);
+                        LANDING.closePayment();
+                    } catch(e) {
+                        console.warn('Paddle Checkout error:', e);
+                        showToast('Payment gateway error. Falling back to demo mode.', 'warning');
+                    }
+                });
+                return;
             }
 
             var errEl = document.getElementById('pm-card-error');
             if (errEl) errEl.style.display = 'none';
 
-            // Non-card methods in demo mode (when real Paddle keys are not configured in Admin)
-            if (method !== 'card') {
-                showToast(`${method.toUpperCase()} requires live Paddle credentials. Please configure Paddle API keys in Admin Settings, or use the Card tab for Demo checkout.`, 'warning');
-                return;
-            } else {
+            // Demo mode processing
+            if (method === 'card') {
                 // === CARD VALIDATION ===
                 var cardName = (document.getElementById('pm-card-name')?.value || '').trim();
                 var cardNum = (document.getElementById('pm-card-number')?.value || '').replace(/\s/g, '');
@@ -23085,27 +23105,31 @@
                     document.getElementById('pm-card-expiry')?.focus();
                     return;
                 }
-            }
-            var expParts = cardExp.split('/');
-            var expMonth = parseInt(expParts[0], 10);
-            var expYear = parseInt('20' + expParts[1], 10);
-            var now = new Date();
-            if (expMonth < 1 || expMonth > 12) {
-                LANDING._showCardError('Invalid expiry month. Must be 01-12.');
-                document.getElementById('pm-card-expiry')?.focus();
-                return;
-            }
-            if (expYear < now.getFullYear() || (expYear === now.getFullYear() && expMonth < now.getMonth() + 1)) {
-                LANDING._showCardError('This card has expired. Please use a different card.');
-                document.getElementById('pm-card-expiry')?.focus();
-                return;
-            }
+                var expParts = cardExp.split('/');
+                var expMonth = parseInt(expParts[0], 10);
+                var expYear = parseInt('20' + expParts[1], 10);
+                var now = new Date();
+                if (expMonth < 1 || expMonth > 12) {
+                    LANDING._showCardError('Invalid expiry month. Must be 01-12.');
+                    document.getElementById('pm-card-expiry')?.focus();
+                    return;
+                }
+                if (expYear < now.getFullYear() || (expYear === now.getFullYear() && expMonth < now.getMonth() + 1)) {
+                    LANDING._showCardError('This card has expired. Please use a different card.');
+                    document.getElementById('pm-card-expiry')?.focus();
+                    return;
+                }
 
-            // Validate CVC
-            if (!cardCvc || cardCvc.length < 3 || cardCvc.length > 4) {
-                LANDING._showCardError('Please enter a valid CVC (3-4 digits).');
-                document.getElementById('pm-card-cvc')?.focus();
-                return;
+                // Validate CVC
+                if (!cardCvc || cardCvc.length < 3 || cardCvc.length > 4) {
+                    LANDING._showCardError('Please enter a valid CVC (3-4 digits).');
+                    document.getElementById('pm-card-cvc')?.focus();
+                    return;
+                }
+            } else {
+                if (method === 'paypal') showToast('Redirecting to PayPal securely...', 'info');
+                else if (method === 'googlepay') showToast('Opening Google Pay...', 'info');
+                else if (method === 'applepay') showToast('Opening Apple Pay...', 'info');
             }
 
             // === PROCESS PAYMENT ===

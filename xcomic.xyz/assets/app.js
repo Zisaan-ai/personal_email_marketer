@@ -10722,10 +10722,6 @@ window.openUserManageModalById = function(userId) {
     }
 
     document.getElementById('adm-modal-plan').value = currentPlan.toLowerCase();
-    const purchasedPlanEl = document.getElementById('adm-modal-purchased-plan');
-    if (purchasedPlanEl) {
-        purchasedPlanEl.value = originalPlan.toLowerCase();
-    }
     document.getElementById('adm-modal-limit').value = (currentLimit !== null && currentLimit !== undefined) ? currentLimit : '';
     if (document.getElementById('adm-modal-extend-days')) {
         document.getElementById('adm-modal-extend-days').value = '0';
@@ -10799,8 +10795,6 @@ window.openUserManageModalById = function(userId) {
             saveBtn.disabled = true;
             
             const newPlan = document.getElementById('adm-modal-plan').value;
-            const purchasedPlanEl2 = document.getElementById('adm-modal-purchased-plan');
-            const newPurchasedPlan = purchasedPlanEl2 ? purchasedPlanEl2.value : null;
             const newLimitRaw = document.getElementById('adm-modal-limit').value.trim();
             let newLimit = newLimitRaw !== '' ? parseInt(newLimitRaw, 10) : null;
             
@@ -10820,7 +10814,6 @@ window.openUserManageModalById = function(userId) {
                     body: JSON.stringify({
                         user_id: userId,
                         plan: newPlan,
-                        purchased_plan: newPurchasedPlan,
                         extend_days: extendVal,
                         daily_limit: (newLimit !== null && !isNaN(newLimit) && newLimit > 0) ? newLimit : null,
                         max_accounts: (newAccLimit !== null && !isNaN(newAccLimit) && newAccLimit > 0) ? newAccLimit : null,

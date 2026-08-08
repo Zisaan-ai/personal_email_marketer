@@ -627,7 +627,6 @@ def delete_user(user_id: str, current_user: database.User = Depends(auth.get_cur
 class AdminUserUpdateRequest(BaseModel):
     user_id: str
     plan: Optional[str] = "free"
-    purchased_plan: Optional[str] = None  # Admin can explicitly override the purchased plan record
     extend_days: Optional[int] = 0
     daily_limit: Optional[int] = None
     max_accounts: Optional[int] = None
@@ -649,21 +648,14 @@ def admin_user_update(req: AdminUserUpdateRequest, current_user: database.User =
         current_plan = (getattr(target_user, 'subscription_plan', 'free') or 'free').lower()
         
         # Admin's plan change is CUSTOM override only.
-        # original_subscription_plan is ONLY set by: Paddle payment webhook or test-checkout
-        # Admin changes should NOT touch original_subscription_plan
-        
+        # original_subscription_plan is ONLY set by: Paddle payment webhook or test-checkout.
         target_user.subscription_plan = new_plan
-        target_user.subscription_status = "active"
-    
-    # Admin can explicitly override the purchased plan record (e.g. to correct a wrongly set original plan)
-    if req.purchased_plan is not None:
-        target_user.original_subscription_plan = req.purchased_plan.lower()
+        target_user.subscription_status = "active" if new_plan != "free" else "free"
         
         if new_plan == "free":
             target_user.subscription_expires_at = None
             target_user.subscription_started_at = None
         elif current_plan == "free" and new_plan != "free":
-            # Upgrading from free to paid: set 30-day subscription dates
             target_user.subscription_started_at = datetime.utcnow()
             target_user.subscription_expires_at = datetime.utcnow() + timedelta(days=30)
     
@@ -712,25 +704,7 @@ def admin_user_reset(req: AdminUserResetRequest, current_user: database.User = D
     db.commit()
     return {"status": "success", "message": f"User reset back to Original {orig_plan.upper()} Plan & Defaults"}
 
-@app.post("/api/admin/migrate-purchased-plans")
-def migrate_purchased_plans(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    if not current_user.is_admin:
-        raise HTTPException(status_code=403, detail="Admin only")
-    
-    users = db.query(database.User).all()
-    fixed = 0
-    details = []
-    for u in users:
-        current_plan = (getattr(u, 'subscription_plan', 'free') or 'free').lower()
-        orig_plan = (getattr(u, 'original_subscription_plan', None) or 'free').lower()
-        
-        if current_plan != 'free' and (orig_plan == 'free' or orig_plan == '' or orig_plan is None):
-            u.original_subscription_plan = current_plan
-            fixed += 1
-            details.append({"email": getattr(u, 'email', ''), "plan": current_plan, "was": orig_plan})
-    
-    db.commit()
-    return {"status": "success", "fixed": fixed, "details": details}
+
 
 class UserPlanRequest(BaseModel):
     plan: str

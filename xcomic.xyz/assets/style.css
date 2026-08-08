@@ -1042,54 +1042,20 @@ details {
     margin-bottom: 16px !important;
     height: auto !important;
 }
+details:not([open]) > div {
+    display: none !important;
+    height: 0 !important;
+    overflow: hidden !important;
+}
+details[open] > div {
+    display: block !important;
+}
 details summary {
     display: flex !important;
     justify-content: space-between !important;
     align-items: center !important;
     cursor: pointer !important;
 }
-
-@media (max-width: 640px) {
-    .main-content {
-        padding: 64px 12px 24px 12px !important;
-    }
-
-    .page-title {
-        font-size: 20px !important;
-    }
-
-    .btn {
-        padding: 10px 14px !important;
-        font-size: 13px !important;
-    }
-
-    #admin-user-modal > div, 
-    .pm-content, 
-    .modal-content, 
-    div[style*="width:480px"],
-    div[style*="width: 480px"] {
-        width: 100% !important;
-        max-width: 100vw !important;
-        border-radius: 0 !important;
-    }
-
-    .modal, .pm-overlay {
-        padding: 8px !important;
-    }
-
-    .pricing-grid {
-        grid-template-columns: 1fr !important;
-        gap: 20px !important;
-    }
-
-    .stat-item {
-        padding: 16px !important;
-    }
-}
-
-/* ============================================================
-   UNIVERSAL MOBILE RESPONSIVE FIXES (PREVENT OVERFLOW)
-   ============================================================ */
 
 /* 1. Global Viewport Overflow Guard */
 html, body, #landing-page, #app-page {
@@ -1108,7 +1074,11 @@ html, body, #landing-page, #app-page {
 /* 2. Responsive Landing Hero, Bento Grid & Typography */
 @media (max-width: 900px) {
     .landing-nav {
-        padding: 16px 20px !important;
+        padding: 14px 20px !important;
+        background: #060d1f !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        border-bottom: 1px solid rgba(255,255,255,0.12) !important;
     }
     .landing-nav-links {
         gap: 8px !important;

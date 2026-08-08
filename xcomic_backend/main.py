@@ -707,6 +707,26 @@ def admin_user_reset(req: AdminUserResetRequest, current_user: database.User = D
     db.commit()
     return {"status": "success", "message": f"User reset back to Original {orig_plan.upper()} Plan & Defaults"}
 
+@app.post("/api/admin/migrate-purchased-plans")
+def migrate_purchased_plans(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin only")
+    
+    users = db.query(database.User).all()
+    fixed = 0
+    details = []
+    for u in users:
+        current_plan = (getattr(u, 'subscription_plan', 'free') or 'free').lower()
+        orig_plan = (getattr(u, 'original_subscription_plan', None) or 'free').lower()
+        
+        if current_plan != 'free' and (orig_plan == 'free' or orig_plan == '' or orig_plan is None):
+            u.original_subscription_plan = current_plan
+            fixed += 1
+            details.append({"email": getattr(u, 'email', ''), "plan": current_plan, "was": orig_plan})
+    
+    db.commit()
+    return {"status": "success", "fixed": fixed, "details": details}
+
 class UserPlanRequest(BaseModel):
     plan: str
     extend_days: Optional[int] = None

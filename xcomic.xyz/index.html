@@ -4946,12 +4946,12 @@
         (function() {
             var defaults = {
                 environment: 'sandbox',
-                clientToken: '',
+                clientToken: 'test_c2c1f7b673c15e7a705b10c5bf7',
                 prices: { Starter: 29, Professional: 99, Enterprise: 299 },
                 priceIds: {
-                    Starter: '',
-                    Professional: '',
-                    Enterprise: ''
+                    Starter: 'pri_01kz1fudrnswb6c1ytexea2zd4',
+                    Professional: 'pri_01kz1fxmnpdpk5v8h0b0y0k8qd',
+                    Enterprise: 'pri_01kz1fz3n7mq0mpv6nhabycqzk'
                 }
             };
             try {
@@ -22850,13 +22850,18 @@
                 if (saved && typeof saved === 'object' && saved.clientToken) cfg = saved;
             } catch(e){}
 
+            let token = cfg.clientToken || document.getElementById('adm-paddle-token')?.value || 'test_c2c1f7b673c15e7a705b10c5bf7';
             let priceIds = cfg.priceIds || {};
-            let priceId = priceIds[plan] || priceIds['Starter'] || '';
+            let priceId = priceIds[plan];
             if (!priceId) {
-                var planKey = plan === 'Professional' ? 'pro' : (plan === 'Enterprise' ? 'enterprise' : 'starter');
-                priceId = document.getElementById('adm-price-' + planKey)?.value || '';
+                if (plan === 'Professional' || plan === 'pro' || plan === 'professional') {
+                    priceId = priceIds.Professional || priceIds.pro || 'pri_01kz1fxmnpdpk5v8h0b0y0k8qd';
+                } else if (plan === 'Enterprise' || plan === 'enterprise') {
+                    priceId = priceIds.Enterprise || priceIds.enterprise || 'pri_01kz1fz3n7mq0mpv6nhabycqzk';
+                } else {
+                    priceId = priceIds.Starter || priceIds.starter || 'pri_01kz1fudrnswb6c1ytexea2zd4';
+                }
             }
-            let token = cfg.clientToken || document.getElementById('adm-paddle-token')?.value || '';
             let env = cfg.environment || (token.startsWith('live_') ? 'production' : 'sandbox');
 
             // Check login status

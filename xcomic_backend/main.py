@@ -179,10 +179,9 @@ except (IOError, OSError) as _e:
         _scheduler_lock_fd = None
     print("[Scheduler] Another process holds the scheduler lock.")
 app = FastAPI(title="MailChimp Clone API")
-# Allow CORS for local React app
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://terapk.com", "https://www.terapk.com", "http://localhost", "http://127.0.0.1"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -475,6 +474,8 @@ def verify_email(payload: VerifyEmail, db: Session = Depends(database.get_db)):
     access_token_expires = timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = auth.create_access_token(data={"sub": user.email}, expires_delta=access_token_expires)
     return {"access_token": access_token, "token_type": "bearer", "is_admin": user.is_admin}
+@app.post("/token", response_model=Token)
+@app.post("/api/token", response_model=Token)
 @app.post("/api/auth/token", response_model=Token)
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(database.get_db)):
     email_lower = form_data.username.strip().lower()

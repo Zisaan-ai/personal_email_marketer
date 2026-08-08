@@ -1,0 +1,15 @@
+{
+  "storeId": "",
+  "apiKey": "",
+  "webhookSecret": "",
+  "prices": {
+    "Starter": 29,
+    "Professional": 99,
+    "Enterprise": 299
+  },
+  "variantIds": {
+    "Starter": "",
+    "Professional": "",
+    "Enterprise": ""
+  }
+}

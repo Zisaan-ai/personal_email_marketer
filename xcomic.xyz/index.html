@@ -4907,6 +4907,8 @@
 
 
 
+    <!-- Lemon Squeezy JS Overlay SDK -->
+    <script src="https://assets.lemonsqueezy.com/lemon.js" defer></script>
     <script>
         // Dynamic Pricing Sync Engine
         window.syncDynamicPrices = function() {
@@ -20161,49 +20163,83 @@
 
 
 
-                                <!-- PAYMENT GATEWAY INFO -->
+                                <!-- LEMON SQUEEZY PAYMENT GATEWAY MANAGEMENT -->
                 <div class="glass" style="padding:28px; border-radius:16px; margin-bottom:24px;">
                     <div style="display:flex; align-items:center; gap:14px; margin-bottom:24px; padding-bottom:20px; border-bottom:1px solid var(--border);">
-                        <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#0d9488,#10b981);display:flex;align-items:center;justify-content:center;">
-                            <i class="fa-solid fa-credit-card" style="color:#fff; font-size:20px;"></i>
+                        <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#f59e0b,#ea580c);display:flex;align-items:center;justify-content:center;">
+                            <i class="fa-solid fa-lemon" style="color:#fff; font-size:22px;"></i>
                         </div>
                         <div>
-                            <h2 style="font-size:20px; font-weight:700; margin:0; color:var(--text);">Payment Gateway</h2>
-                            <p style="font-size:13px; color:var(--text-muted); margin:4px 0 0 0;">Payment processing is handled securely through the built-in checkout system.</p>
+                            <h2 style="font-size:20px; font-weight:700; margin:0; color:var(--text);">Lemon Squeezy Payment Gateway Settings</h2>
+                            <p style="font-size:13px; color:var(--text-muted); margin:4px 0 0 0;">Configure your Store ID, API Key, Webhook Secret, and Variant IDs to collect real money & automatically upgrade user subscriptions.</p>
                         </div>
                     </div>
 
-                    <!-- Subscription Plans & Prices Grid -->
+                    <!-- Store ID, API Key & Webhook Secret Row -->
+                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:20px;">
+                        <div>
+                            <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px; color:var(--text);">Store ID</label>
+                            <input type="text" id="adm-ls-store-id" placeholder="e.g. 12345" style="width:100%; padding:11px 14px; border:1px solid var(--border); border-radius:10px; background:var(--bg); color:var(--text); font-size:14px; font-family:monospace; box-sizing:border-box;">
+                        </div>
+                        <div>
+                            <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px; color:var(--text);">API Key</label>
+                            <input type="password" id="adm-ls-api-key" placeholder="eyJ0eXAi..." style="width:100%; padding:11px 14px; border:1px solid var(--border); border-radius:10px; background:var(--bg); color:var(--text); font-size:14px; font-family:monospace; box-sizing:border-box;">
+                        </div>
+                        <div>
+                            <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px; color:var(--text);">Webhook Signing Secret</label>
+                            <input type="password" id="adm-ls-webhook-secret" placeholder="whsec_..." style="width:100%; padding:11px 14px; border:1px solid var(--border); border-radius:10px; background:var(--bg); color:var(--text); font-size:14px; font-family:monospace; box-sizing:border-box;">
+                        </div>
+                    </div>
+
+                    <!-- Subscription Plans, Prices & Variant IDs Grid -->
                     <div style="margin-bottom:20px;">
-                        <label style="display:block; font-size:13px; font-weight:600; margin-bottom:10px; color:var(--text);">Subscription Plan Prices</label>
+                        <label style="display:block; font-size:13px; font-weight:600; margin-bottom:10px; color:var(--text);">Subscription Plan Prices & Lemon Squeezy Variant IDs</label>
                         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:16px;">
                             <div style="background:var(--bg-light); border:1px solid var(--border); border-radius:10px; padding:16px;">
                                 <div style="font-size:12px; font-weight:700; color:#10b981; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Starter Plan</div>
-                                <div style="font-size:28px; font-weight:800; color:var(--text);">$29<span style="font-size:14px; font-weight:400; color:var(--text-muted);">/mo</span></div>
-                                <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">1,000 Email Limit</div>
+                                <div style="margin-bottom:10px;">
+                                    <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">Price Amount ($/mo)</label>
+                                    <input type="number" id="adm-ls-price-starter" placeholder="29" value="29" style="width:100%; padding:9px 12px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); font-size:13px; font-weight:600; box-sizing:border-box;">
+                                </div>
+                                <div>
+                                    <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">Variant ID</label>
+                                    <input type="text" id="adm-ls-variant-starter" placeholder="e.g. 567890" style="width:100%; padding:9px 12px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); font-size:13px; font-family:monospace; box-sizing:border-box;">
+                                </div>
                             </div>
+
                             <div style="background:var(--bg-light); border:1px solid var(--border); border-radius:10px; padding:16px;">
                                 <div style="font-size:12px; font-weight:700; color:#6366f1; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Professional Plan</div>
-                                <div style="font-size:28px; font-weight:800; color:var(--text);">$99<span style="font-size:14px; font-weight:400; color:var(--text-muted);">/mo</span></div>
-                                <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">2,000 Email Limit + AI</div>
+                                <div style="margin-bottom:10px;">
+                                    <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">Price Amount ($/mo)</label>
+                                    <input type="number" id="adm-ls-price-pro" placeholder="99" value="99" style="width:100%; padding:9px 12px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); font-size:13px; font-weight:600; box-sizing:border-box;">
+                                </div>
+                                <div>
+                                    <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">Variant ID</label>
+                                    <input type="text" id="adm-ls-variant-pro" placeholder="e.g. 567891" style="width:100%; padding:9px 12px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); font-size:13px; font-family:monospace; box-sizing:border-box;">
+                                </div>
                             </div>
+
                             <div style="background:var(--bg-light); border:1px solid var(--border); border-radius:10px; padding:16px;">
                                 <div style="font-size:12px; font-weight:700; color:#f59e0b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Enterprise Plan</div>
-                                <div style="font-size:28px; font-weight:800; color:var(--text);">$299<span style="font-size:14px; font-weight:400; color:var(--text-muted);">/mo</span></div>
-                                <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">5,000 Email Limit</div>
+                                <div style="margin-bottom:10px;">
+                                    <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">Price Amount ($/mo)</label>
+                                    <input type="number" id="adm-ls-price-enterprise" placeholder="299" value="299" style="width:100%; padding:9px 12px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); font-size:13px; font-weight:600; box-sizing:border-box;">
+                                </div>
+                                <div>
+                                    <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">Variant ID</label>
+                                    <input type="text" id="adm-ls-variant-enterprise" placeholder="e.g. 567892" style="width:100%; padding:9px 12px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); font-size:13px; font-family:monospace; box-sizing:border-box;">
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); border-radius:10px; padding:14px 18px; display:flex; align-items:center; gap:10px;">
-                        <i class="fa-solid fa-circle-check" style="color:#10b981; font-size:16px;"></i>
-                        <span style="font-size:13px; color:#10b981; font-weight:600;">Payment system is active. Users can upgrade their plans from the Upgrade Plan page.</span>
+                    <!-- Actions -->
+                    <div style="display:grid; grid-template-columns:1fr; gap:12px;">
+                        <button id="adm-save-ls-btn" onclick="saveLemonAdminSettings()" class="btn primary" style="padding:13px; border-radius:10px; justify-content:center; font-weight:700; background:linear-gradient(135deg,#f59e0b,#ea580c); border:none; color:#fff; cursor:pointer;">
+                            <i class="fa-solid fa-floppy-disk" style="margin-right:8px;"></i>Save Lemon Squeezy Gateway Settings
+                        </button>
                     </div>
-                </div>letter-spacing:0.5px;">All Test Cards</div>
-                                <div style="font-size:13px; color:var(--text-muted);">Expiry: any future date &nbsp;|&nbsp; CVC: <strong>100</strong></div>
-                            </div>
-                        </div>
-                    </div>
+                    <div id="adm-ls-status" style="display:none; margin-top:12px; padding:10px 14px; border-radius:8px; font-size:13px;"></div>
                 </div>
             </div>
         </div>
@@ -22628,7 +22664,7 @@
     var LANDING = {
 
 
-        openPayment: function(plan, price) {
+        openPayment: async function(plan, price) {
             window._pendingUpgradePlan = plan || 'Starter';
             let dynPrice = price || (plan === 'Enterprise' ? 299 : plan === 'Professional' ? 99 : 29);
 
@@ -22643,7 +22679,33 @@
                 return;
             }
 
-            // Show payment modal
+            // Try Lemon Squeezy Checkout First
+            try {
+                showToast('Loading secure checkout...', 'info');
+                const res = await fetch('/api/payment/lemonsqueezy-checkout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + userToken
+                    },
+                    body: JSON.stringify({ plan: (plan || 'Starter').toLowerCase() })
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.checkoutUrl) {
+                        if (window.LemonSqueezy && typeof window.LemonSqueezy.Url?.Open === 'function') {
+                            window.LemonSqueezy.Url.Open(data.checkoutUrl);
+                        } else {
+                            window.location.href = data.checkoutUrl;
+                        }
+                        return;
+                    }
+                }
+            } catch(e) {
+                console.warn('Lemon Squeezy checkout fetch note:', e);
+            }
+
+            // Fallback payment modal UI
             var modal = document.getElementById('payment-modal');
             var pName = document.getElementById('pm-plan-name');
             var pPrice = document.getElementById('pm-plan-price');

@@ -13641,10 +13641,93 @@ window.SUPPORT.switchAdminTab = function(tabId) {
         if (window.loadAdminUsers) window.loadAdminUsers();
     }
     if (tabId === 'payment') {
-        if (window.loadPaddleAdminSettings) window.loadPaddleAdminSettings();
+        if (window.loadLemonAdminSettings) window.loadLemonAdminSettings();
     }
     if (tabId === 'email') {
         if (typeof loadSmtpStatus === 'function') loadSmtpStatus();
+    }
+};
+
+window.loadLemonAdminSettings = async function() {
+    if (typeof window.loadAdminUsers === 'function') window.loadAdminUsers();
+    
+    var cfg = {};
+    try {
+        var res = await fetch('/api/lemonsqueezy-config');
+        if (res.ok) {
+            cfg = await res.json();
+            window.LEMON_CONFIG = cfg;
+        }
+    } catch(e) {}
+
+    var storeEl = document.getElementById('adm-ls-store-id');
+    var apiEl = document.getElementById('adm-ls-api-key');
+    var secretEl = document.getElementById('adm-ls-webhook-secret');
+    var starterEl = document.getElementById('adm-ls-variant-starter');
+    var proEl = document.getElementById('adm-ls-variant-pro');
+    var enterpriseEl = document.getElementById('adm-ls-variant-enterprise');
+
+    var starterAmtEl = document.getElementById('adm-ls-price-starter');
+    var proAmtEl = document.getElementById('adm-ls-price-pro');
+    var enterpriseAmtEl = document.getElementById('adm-ls-price-enterprise');
+
+    if (storeEl) storeEl.value = cfg.storeId || '';
+    if (apiEl) apiEl.value = cfg.apiKey || '';
+    if (secretEl) secretEl.value = cfg.webhookSecret || '';
+    if (starterEl) starterEl.value = (cfg.variantIds && cfg.variantIds.Starter) || '';
+    if (proEl) proEl.value = (cfg.variantIds && cfg.variantIds.Professional) || '';
+    if (enterpriseEl) enterpriseEl.value = (cfg.variantIds && cfg.variantIds.Enterprise) || '';
+
+    if (starterAmtEl) starterAmtEl.value = (cfg.prices && cfg.prices.Starter) || 29;
+    if (proAmtEl) proAmtEl.value = (cfg.prices && cfg.prices.Professional) || 99;
+    if (enterpriseAmtEl) enterpriseAmtEl.value = (cfg.prices && cfg.prices.Enterprise) || 299;
+};
+
+window.saveLemonAdminSettings = async function() {
+    var storeId = document.getElementById('adm-ls-store-id')?.value?.trim() || '';
+    var apiKey = document.getElementById('adm-ls-api-key')?.value?.trim() || '';
+    var webhookSecret = document.getElementById('adm-ls-webhook-secret')?.value?.trim() || '';
+    var starterVar = document.getElementById('adm-ls-variant-starter')?.value?.trim() || '';
+    var proVar = document.getElementById('adm-ls-variant-pro')?.value?.trim() || '';
+    var enterpriseVar = document.getElementById('adm-ls-variant-enterprise')?.value?.trim() || '';
+
+    var starterAmt = parseInt(document.getElementById('adm-ls-price-starter')?.value, 10) || 29;
+    var proAmt = parseInt(document.getElementById('adm-ls-price-pro')?.value, 10) || 99;
+    var enterpriseAmt = parseInt(document.getElementById('adm-ls-price-enterprise')?.value, 10) || 299;
+
+    var saveBtn = document.getElementById('adm-save-ls-btn');
+    var statusEl = document.getElementById('adm-ls-status');
+
+    if (saveBtn) { saveBtn.disabled = true; saveBtn.style.opacity = '0.7'; }
+    if (statusEl) { statusEl.style.display = 'none'; }
+
+    var configObj = {
+        storeId: storeId,
+        apiKey: apiKey,
+        webhookSecret: webhookSecret,
+        prices: { Starter: starterAmt, Professional: proAmt, Enterprise: enterpriseAmt },
+        variantIds: { Starter: starterVar, Professional: proVar, Enterprise: enterpriseVar }
+    };
+
+    try {
+        var res = await apiCall('/admin/lemonsqueezy-config', 'POST', configObj);
+        if (statusEl) {
+            statusEl.style.display = 'block';
+            statusEl.style.background = '#d1fae5';
+            statusEl.style.color = '#065f46';
+            statusEl.innerText = '✓ Lemon Squeezy gateway configuration saved successfully!';
+        }
+        if (typeof showToast === 'function') showToast('Lemon Squeezy credentials saved successfully!', 'success');
+    } catch(e) {
+        if (statusEl) {
+            statusEl.style.display = 'block';
+            statusEl.style.background = '#fee2e2';
+            statusEl.style.color = '#991b1b';
+            statusEl.innerText = '❌ Failed to save Lemon Squeezy settings: ' + e.message;
+        }
+        if (typeof showToast === 'function') showToast('Failed to save settings: ' + e.message, 'error');
+    } finally {
+        if (saveBtn) { saveBtn.disabled = false; saveBtn.style.opacity = '1'; }
     }
 };
 

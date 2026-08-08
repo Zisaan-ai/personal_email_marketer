@@ -188,6 +188,7 @@ app.add_middleware(
 )
 
 app.include_router(payment.router)
+app.include_router(payment_lemonsqueezy.router)
 from bounce_processor import check_bounces
 @app.get("/api/cron/run")
 def trigger_cron():
@@ -3128,6 +3129,28 @@ def get_paddle_config():
             "Enterprise": ""
         }
     }
+
+@app.post("/api/admin/lemonsqueezy-config")
+def save_lemonsqueezy_config(req: payment_lemonsqueezy.LemonSqueezyConfigRequest, current_user: database.User = Depends(auth.get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin only")
+    config_data = {
+        "storeId": req.storeId or "",
+        "apiKey": req.apiKey or "",
+        "webhookSecret": req.webhookSecret or "",
+        "prices": req.prices or {"Starter": 29, "Professional": 99, "Enterprise": 299},
+        "variantIds": req.variantIds or {"Starter": "", "Professional": "", "Enterprise": ""}
+    }
+    try:
+        payment_lemonsqueezy.save_ls_config_file(config_data)
+    except Exception as e:
+        print(f"[LemonSqueezy Config Write Error]: {e}")
+        raise HTTPException(status_code=500, detail=f"Permission or disk error: {str(e)}")
+    return {"ok": True, "message": "Lemon Squeezy configuration saved successfully"}
+
+@app.get("/api/lemonsqueezy-config")
+def get_lemonsqueezy_public_config():
+    return payment_lemonsqueezy.get_ls_config()
 
 # --- UNSUBSCRIBE ENDPOINTS ---
 @app.get('/unsubscribe/{token}')

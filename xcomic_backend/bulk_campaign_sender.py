@@ -112,10 +112,10 @@ def _run_bulk_campaign(db, campaign_id):
         # Free tier limit check
         campaign_user = db.query(database.User).filter(database.User.id == campaign.user_id).first()
         if campaign_user and campaign_user.subscription_plan == "free":
-            if campaign_user.free_emails_sent >= 10:
+            if campaign_user.free_emails_sent >= 250:
                 campaign.status = "paused"
                 db.commit()
-                print(f"Bulk Campaign {campaign_id} paused due to Free Tier limit (10 emails).")
+                print(f"Bulk Campaign {campaign_id} paused due to Free Tier limit (250 emails).")
                 break
         
         try:

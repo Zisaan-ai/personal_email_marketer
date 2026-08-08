@@ -13785,7 +13785,7 @@ window.loadAdminUsers = async function() {
 
             let manageBtn = `<button class="btn" onclick="window.openUserManageModalById('${u.id}')" style="padding:6px 14px;font-size:12px;background:rgba(99,102,241,0.12);color:#6366f1;border:1px solid rgba(99,102,241,0.3);border-radius:8px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.2s;"><i class='fa-solid fa-sliders'></i> Manage</button>`;
 
-            var defaultLimit = planBadgeText === 'ENTERPRISE' ? '5,000' : (planBadgeText === 'PROFESSIONAL' ? '2,000' : (planBadgeText === 'STARTER' ? '1,000' : '100'));
+            var defaultLimit = planBadgeText === 'ENTERPRISE' ? '5,000' : (planBadgeText === 'PROFESSIONAL' ? '2,000' : (planBadgeText === 'STARTER' ? '1,000' : '250'));
             var displayLimit = u.custom_daily_limit ? `<span style="color:#6366f1;font-weight:700;">${u.custom_daily_limit}</span> <small style="color:#94a3b8;font-size:10px;">(Custom)</small>` : `<span style="color:#64748b;font-weight:600;">${defaultLimit}</span>`;
 
             tr.innerHTML = `

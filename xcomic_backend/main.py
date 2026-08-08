@@ -1329,10 +1329,10 @@ def _run_campaign(db, campaign_id):
         if campaign_user:
             plan = (campaign_user.subscription_plan or "free").lower()
             sent_count = getattr(campaign_user, "free_emails_sent", 0) or 0
-            if plan == "free" and sent_count >= 10:
+            if plan == "free" and sent_count >= 250:
                 c.status = "paused"
                 db_session.commit()
-                print(f"Campaign {campaign_id} paused due to Free Tier limit (10 emails).")
+                print(f"Campaign {campaign_id} paused due to Free Tier limit (250 emails).")
                 return False
             elif plan == "starter" and sent_count >= 1000:
                 c.status = "paused"
@@ -1712,8 +1712,8 @@ def create_sending_account(acc: SendingAccountCreate, current_user: database.Use
     # Tier account limits enforcement
     user_plan = (current_user.subscription_plan or "free").lower()
     acc_count = db.query(database.SendingAccount).filter(database.SendingAccount.user_id == str(current_user.id)).count()
-    if user_plan == "free" and acc_count >= 2:
-        raise HTTPException(status_code=403, detail="FREE_LIMIT_REACHED: Free plan allows maximum 2 sending accounts.")
+    if user_plan == "free" and acc_count >= 1:
+        raise HTTPException(status_code=403, detail="FREE_LIMIT_REACHED: Free plan allows maximum 1 sending account.")
     elif user_plan == "starter" and acc_count >= 5:
         raise HTTPException(status_code=403, detail="STARTER_LIMIT_REACHED: Starter plan allows maximum 5 sending accounts.")
     elif user_plan == "professional" and acc_count >= 20:

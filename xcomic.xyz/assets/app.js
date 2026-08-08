@@ -13804,4 +13804,3 @@ window.savePaddleAdminSettings = async function() {
             }
         });
     }
-})();

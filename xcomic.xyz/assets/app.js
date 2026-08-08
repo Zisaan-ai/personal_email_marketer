@@ -410,13 +410,20 @@ async function apiCall(endpoint, method = 'GET', body = null) {
 
     const ct = res.headers.get('content-type');
     if (res.status === 401) {
+        let hadToken = !!token;
         try { 
             localStorage.removeItem('token'); 
             localStorage.removeItem('xcomic_token');
             localStorage.removeItem('is_admin'); 
             localStorage.removeItem('user'); 
         } catch(e) {}
-        window.location.href = 'auth.html?mode=login';
+        
+        var appP = document.getElementById('app-page');
+        var isInsideApp = appP && (appP.classList.contains('on') || appP.style.display === 'flex' || appP.style.display === 'block');
+        
+        if (hadToken && isInsideApp) {
+            window.location.href = 'auth.html?mode=login';
+        }
     }
 
 

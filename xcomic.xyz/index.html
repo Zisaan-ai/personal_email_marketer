@@ -22891,18 +22891,12 @@
                 }
 
                 let opts = {
-                    settings: {
-                        displayMode: 'overlay',
-                        theme: 'light',
-                        locale: 'en'
-                    },
                     items: [{ priceId: priceId, quantity: 1 }]
                 };
                 let uid = window.APP && window.APP.user ? window.APP.user.id : '';
-                if (uid) opts.customData = { user_id: uid };
-                if (userEmail && userEmail.includes('@')) {
-                    opts.customer = { email: userEmail };
-                }
+                if (uid) opts.customData = { user_id: String(uid) };
+                
+                console.log('Opening Paddle Checkout with opts:', opts);
                 Paddle.Checkout.open(opts);
             } catch(e) {
                 console.warn('Paddle Checkout error:', e);

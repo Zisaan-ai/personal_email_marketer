@@ -7418,7 +7418,14 @@
         </div>
 
         <!-- Card Form -->
-        <div style="padding:24px 28px 28px;">
+        <div style="padding:20px 28px 28px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--border);">
+                <span style="font-size:11px; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">Test Payment Details</span>
+                <button type="button" onclick="LANDING.fillTestCard()" style="background:rgba(99,102,241,0.12); color:#6366f1; border:1px solid rgba(99,102,241,0.3); padding:5px 12px; border-radius:8px; font-size:11px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:5px; transition:all 0.2s;">
+                    <i class="fa-solid fa-bolt" style="color:#f59e0b;"></i> Auto-Fill Valid Test Card
+                </button>
+            </div>
+
             <!-- Cardholder Name -->
             <div style="margin-bottom:16px;">
                 <label style="display:block; font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.3px;">Cardholder Name</label>
@@ -22760,7 +22767,7 @@
                 }
             }
 
-            // Reset form
+            // Reset & Pre-fill test card details for fast sandbox testing
             var nameEl = document.getElementById('pm-card-name');
             var numEl = document.getElementById('pm-card-number');
             var expEl = document.getElementById('pm-card-expiry');
@@ -22768,18 +22775,32 @@
             var errEl = document.getElementById('pm-card-error');
             var btnText = document.getElementById('pm-pay-btn-text');
             var btn = document.getElementById('pm-pay-btn');
-            if (nameEl) nameEl.value = '';
-            if (numEl) numEl.value = '';
-            if (expEl) expEl.value = '';
-            if (cvcEl) cvcEl.value = '';
+
+            if (nameEl) nameEl.value = 'John Doe';
+            if (numEl) numEl.value = '4242 4242 4242 4242';
+            if (expEl) expEl.value = '12/28';
+            if (cvcEl) cvcEl.value = '123';
             if (errEl) errEl.style.display = 'none';
             if (btnText) btnText.innerText = 'Pay Now';
-            if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+            if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.style.background = 'linear-gradient(135deg, #6366f1, #4f46e5)'; }
 
             if (modal) {
                 modal.style.display = 'flex';
                 modal.classList.add('active');
             }
+        },
+
+        fillTestCard: function() {
+            var nameEl = document.getElementById('pm-card-name');
+            var numEl = document.getElementById('pm-card-number');
+            var expEl = document.getElementById('pm-card-expiry');
+            var cvcEl = document.getElementById('pm-card-cvc');
+            var errEl = document.getElementById('pm-card-error');
+            if (nameEl) nameEl.value = 'John Doe';
+            if (numEl) numEl.value = '4242 4242 4242 4242';
+            if (expEl) expEl.value = '12/28';
+            if (cvcEl) cvcEl.value = '123';
+            if (errEl) errEl.style.display = 'none';
         },
 
         closePayment: function() {

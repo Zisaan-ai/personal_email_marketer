@@ -22822,9 +22822,18 @@
         openPayment: function(plan, price) {
             window._pendingUpgradePlan = plan || 'Starter';
             let cfg = window.PADDLE_CONFIG || {};
+            try {
+                var saved = JSON.parse(localStorage.getItem('PADDLE_CONFIG'));
+                if (saved && typeof saved === 'object' && saved.clientToken) cfg = saved;
+            } catch(e){}
+
             let priceIds = cfg.priceIds || {};
             let priceId = priceIds[plan] || priceIds['Starter'] || '';
-            let token = cfg.clientToken || '';
+            if (!priceId) {
+                var planKey = plan === 'Professional' ? 'pro' : (plan === 'Enterprise' ? 'enterprise' : 'starter');
+                priceId = document.getElementById('adm-price-' + planKey)?.value || '';
+            }
+            let token = cfg.clientToken || document.getElementById('adm-paddle-token')?.value || '';
             let env = cfg.environment || (token.startsWith('live_') ? 'production' : 'sandbox');
 
             // Check login status
@@ -22856,22 +22865,30 @@
 
             try {
                 if (env === 'sandbox' && typeof Paddle.Environment !== 'undefined' && typeof Paddle.Environment.set === 'function') {
-                    Paddle.Environment.set('sandbox');
+                    try { Paddle.Environment.set('sandbox'); } catch(e){}
                 }
-                Paddle.Initialize({
-                    token: token,
-                    eventCallback: function(event) {
-                        if (event.name === 'checkout.completed') {
-                            console.log('Paddle Checkout Completed:', event);
-                            if (typeof showToast === 'function') {
-                                showToast('Payment successful! Subscription plan updated.', 'success');
+
+                if (!window._paddleInitialized) {
+                    try {
+                        Paddle.Initialize({
+                            token: token,
+                            eventCallback: function(event) {
+                                if (event.name === 'checkout.completed') {
+                                    console.log('Paddle Checkout Completed:', event);
+                                    if (typeof showToast === 'function') {
+                                        showToast('Payment successful! Subscription plan updated.', 'success');
+                                    }
+                                    setTimeout(function() {
+                                        if (typeof window.APP_INIT === 'function') window.APP_INIT();
+                                    }, 1500);
+                                }
                             }
-                            setTimeout(function() {
-                                if (typeof window.APP_INIT === 'function') window.APP_INIT();
-                            }, 1500);
-                        }
+                        });
+                        window._paddleInitialized = true;
+                    } catch(e) {
+                        console.warn('Paddle.Initialize note:', e);
                     }
-                });
+                }
 
                 let opts = {
                     settings: {

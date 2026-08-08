@@ -3102,6 +3102,8 @@ def save_deepseek_key(req: DeepSeekKeyRequest, current_user: database.User = Dep
 def save_lemonsqueezy_config(req: payment_lemonsqueezy.LemonSqueezyConfigRequest, current_user: database.User = Depends(auth.get_current_user)):
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admin only")
+    if not (req.storeId or "").strip() or not (req.apiKey or "").strip() or not (req.webhookSecret or "").strip():
+        raise HTTPException(status_code=400, detail="Store ID, API Key, and Webhook Signing Secret are required before saving.")
     config_data = {
         "storeId": req.storeId or "",
         "apiKey": req.apiKey or "",

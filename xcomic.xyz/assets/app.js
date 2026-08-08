@@ -13698,6 +13698,18 @@ window.saveLemonAdminSettings = async function() {
     var saveBtn = document.getElementById('adm-save-ls-btn');
     var statusEl = document.getElementById('adm-ls-status');
 
+    if (!storeId || !apiKey || !webhookSecret) {
+        var missingMsg = 'Please enter Store ID, API Key, and Webhook Signing Secret before saving.';
+        if (statusEl) {
+            statusEl.style.display = 'block';
+            statusEl.style.background = '#fee2e2';
+            statusEl.style.color = '#991b1b';
+            statusEl.innerText = '❌ ' + missingMsg;
+        }
+        if (typeof showToast === 'function') showToast(missingMsg, 'error');
+        return;
+    }
+
     if (saveBtn) { saveBtn.disabled = true; saveBtn.style.opacity = '0.7'; }
     if (statusEl) { statusEl.style.display = 'none'; }
 

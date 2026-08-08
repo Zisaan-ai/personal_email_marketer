@@ -1153,10 +1153,14 @@ html, body, #landing-page, #app-page {
         line-height: 1.3 !important;
         margin-bottom: 24px !important;
     }
-    .problem-grid, .features-grid, .pricing-grid, .bento-grid {
+    .problem-grid, .features-grid, .pricing-grid, .bento-grid, .testimonials-grid {
         grid-template-columns: 1fr !important;
         max-width: 100% !important;
         gap: 16px !important;
+    }
+    div[style*="width: 600px"], div[style*="width:600px"] {
+        width: 100% !important;
+        max-width: 100% !important;
     }
     .bento-big, .bento-med, .bento-sm {
         grid-column: span 1 !important;

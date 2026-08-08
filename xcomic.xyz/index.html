@@ -23024,11 +23024,10 @@
             var errEl = document.getElementById('pm-card-error');
             if (errEl) errEl.style.display = 'none';
 
-            // If non-card method in demo mode, proceed directly to test checkout
+            // Non-card methods in demo mode (when real Paddle keys are not configured in Admin)
             if (method !== 'card') {
-                let btnText = document.getElementById('pm-pay-btn-text');
-                showToast(`Processing ${method.toUpperCase()} Payment...`, 'info');
-                // Proceed to test checkout below
+                showToast(`${method.toUpperCase()} requires live Paddle credentials. Please configure Paddle API keys in Admin Settings, or use the Card tab for Demo checkout.`, 'warning');
+                return;
             } else {
                 // === CARD VALIDATION ===
                 var cardName = (document.getElementById('pm-card-name')?.value || '').trim();

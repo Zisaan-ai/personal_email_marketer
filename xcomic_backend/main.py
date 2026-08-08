@@ -3082,6 +3082,49 @@ def save_deepseek_key(req: DeepSeekKeyRequest, current_user: database.User = Dep
     db.commit()
     os.environ["DEEPSEEK_API_KEY"] = req.deepseek_api_key
     return {"ok": True, "message": "DeepSeek API key saved"}
+
+# --- PADDLE CONFIG ENDPOINTS ---
+class PaddleConfigRequest(BaseModel):
+    environment: Optional[str] = "sandbox"
+    clientToken: Optional[str] = ""
+    prices: Optional[dict] = {}
+    priceIds: Optional[dict] = {}
+
+@app.post("/api/admin/paddle-config")
+def save_paddle_config(req: PaddleConfigRequest, current_user: database.User = Depends(auth.get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin only")
+    config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "paddle_config.json")
+    config_data = {
+        "environment": req.environment or "sandbox",
+        "clientToken": req.clientToken or "",
+        "prices": req.prices or {},
+        "priceIds": req.priceIds or {}
+    }
+    with open(config_path, "w", encoding="utf-8") as f:
+        json.dump(config_data, f, indent=2)
+    return {"ok": True, "message": "Paddle configuration saved successfully"}
+
+@app.get("/api/paddle-config")
+def get_paddle_config():
+    config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "paddle_config.json")
+    if os.path.exists(config_path):
+        try:
+            with open(config_path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return {
+        "environment": "sandbox",
+        "clientToken": "test_c2c1f7b673c15e7a705b10c5bf7",
+        "prices": {"Starter": 29, "Professional": 99, "Enterprise": 299},
+        "priceIds": {
+            "Starter": "pri_01kz1fwdrmswb6c1ytevea2zd4",
+            "Professional": "pri_01kz1fxmmpdpk5v8h0b0y0k8qd",
+            "Enterprise": "pri_01kz1fz3n7mq0mpv6nhabycqzk"
+        }
+    }
+
 # --- UNSUBSCRIBE ENDPOINTS ---
 @app.get('/unsubscribe/{token}')
 @app.get('/api/unsubscribe/{token}')

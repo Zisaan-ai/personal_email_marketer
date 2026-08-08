@@ -13714,9 +13714,19 @@ window.loadAdminUsers = async function() {
 };
 
 // --- Paddle Admin Payment Gateway Handlers ---
-window.loadPaddleAdminSettings = function() {
+window.loadPaddleAdminSettings = async function() {
     if (typeof window.loadAdminUsers === 'function') window.loadAdminUsers();
+    
     var cfg = window.PADDLE_CONFIG || {};
+    try {
+        var res = await fetch('/api/paddle-config');
+        if (res.ok) {
+            cfg = await res.json();
+            window.PADDLE_CONFIG = cfg;
+            try { localStorage.setItem('PADDLE_CONFIG', JSON.stringify(cfg)); } catch(e) {}
+        }
+    } catch(e) {}
+
     var envEl = document.getElementById('adm-paddle-env');
     var tokenEl = document.getElementById('adm-paddle-token');
     var starterEl = document.getElementById('adm-price-starter');
@@ -13738,49 +13748,53 @@ window.loadPaddleAdminSettings = function() {
     if (enterpriseAmtEl) enterpriseAmtEl.value = (cfg.prices && cfg.prices.Enterprise) || 299;
 };
 
-(function() {
+window.savePaddleAdminSettings = async function() {
+    var env = document.getElementById('adm-paddle-env')?.value || 'sandbox';
+    var token = document.getElementById('adm-paddle-token')?.value || '';
+    var starter = document.getElementById('adm-price-starter')?.value || '';
+    var pro = document.getElementById('adm-price-pro')?.value || '';
+    var enterprise = document.getElementById('adm-price-enterprise')?.value || '';
+
+    var starterAmt = parseInt(document.getElementById('adm-price-amt-starter')?.value, 10) || 29;
+    var proAmt = parseInt(document.getElementById('adm-price-amt-pro')?.value, 10) || 99;
+    var enterpriseAmt = parseInt(document.getElementById('adm-price-amt-enterprise')?.value, 10) || 299;
+
     var saveBtn = document.getElementById('adm-save-paddle-btn');
-    if (saveBtn) {
-        saveBtn.addEventListener('click', function() {
-            var env = document.getElementById('adm-paddle-env').value || 'sandbox';
-            var token = document.getElementById('adm-paddle-token').value || '';
-            var starter = document.getElementById('adm-price-starter').value || '';
-            var pro = document.getElementById('adm-price-pro').value || '';
-            var enterprise = document.getElementById('adm-price-enterprise').value || '';
+    if (saveBtn) { saveBtn.disabled = true; saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="margin-right:8px;"></i>Saving Credentials...'; }
 
-            var starterAmt = parseInt(document.getElementById('adm-price-amt-starter')?.value, 10) || 29;
-            var proAmt = parseInt(document.getElementById('adm-price-amt-pro')?.value, 10) || 99;
-            var enterpriseAmt = parseInt(document.getElementById('adm-price-amt-enterprise')?.value, 10) || 299;
+    window.PADDLE_CONFIG = {
+        environment: env,
+        clientToken: token,
+        prices: { Starter: starterAmt, Professional: proAmt, Enterprise: enterpriseAmt },
+        priceIds: { Starter: starter, Professional: pro, Enterprise: enterprise }
+    };
 
-            window.PADDLE_CONFIG = {
-                environment: env,
-                clientToken: token,
-                prices: { Starter: starterAmt, Professional: proAmt, Enterprise: enterpriseAmt },
-                priceIds: { Starter: starter, Professional: pro, Enterprise: enterprise }
-            };
+    try {
+        localStorage.setItem('PADDLE_CONFIG', JSON.stringify(window.PADDLE_CONFIG));
+        if (typeof apiCall === 'function') {
+            await apiCall('/admin/paddle-config', 'POST', window.PADDLE_CONFIG);
+        }
 
-            try {
-                localStorage.setItem('PADDLE_CONFIG', JSON.stringify(window.PADDLE_CONFIG));
-                if (typeof Paddle !== 'undefined' && token) {
-                    Paddle.Initialize({ token: token, environment: env });
-                }
-                if (typeof window.syncDynamicPrices === 'function') {
-                    window.syncDynamicPrices();
-                }
-            } catch(e) { console.warn('Paddle save error:', e); }
+        if (typeof Paddle !== 'undefined' && token) {
+            try { Paddle.Initialize({ token: token, environment: env }); } catch(e) {}
+        }
+        if (typeof window.syncDynamicPrices === 'function') {
+            window.syncDynamicPrices();
+        }
+    } catch(e) { console.warn('Paddle save error:', e); }
 
-            var statusEl = document.getElementById('adm-paddle-status');
-            if (statusEl) {
-                statusEl.textContent = '✅ Paddle configuration and price amounts saved successfully!';
-                statusEl.style.display = 'block';
-                statusEl.style.background = '#dcfce7';
-                statusEl.style.color = '#16a34a';
-                statusEl.style.border = '1px solid #bbf7d0';
-                setTimeout(function() { statusEl.style.display = 'none'; }, 4000);
-            }
-            if (typeof showToast === 'function') showToast('Paddle configuration saved!', 'success');
-        });
+    var statusEl = document.getElementById('adm-paddle-status');
+    if (statusEl) {
+        statusEl.textContent = '✅ Paddle configuration and price amounts saved successfully!';
+        statusEl.style.display = 'block';
+        statusEl.style.background = '#dcfce7';
+        statusEl.style.color = '#16a34a';
+        statusEl.style.border = '1px solid #bbf7d0';
+        setTimeout(function() { statusEl.style.display = 'none'; }, 4000);
     }
+    if (typeof showToast === 'function') showToast('Paddle gateway credentials saved successfully!', 'success');
+    if (saveBtn) { saveBtn.disabled = false; saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk" style="margin-right:8px;"></i>Save Gateway Credentials'; }
+};
 
     var testBtn = document.getElementById('adm-test-paddle-btn');
     if (testBtn) {

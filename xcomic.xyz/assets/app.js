@@ -410,47 +410,16 @@ async function apiCall(endpoint, method = 'GET', body = null) {
 
     const ct = res.headers.get('content-type');
     if (res.status === 401) {
-
-
-
-        try { localStorage.removeItem('token'); localStorage.removeItem('is_admin'); } catch(e) {}
-
-
-
-        
-
-
-
-        var authPage = document.getElementById('auth-page');
-
-
-
-        if (authPage && authPage.classList.contains('hidden')) {
-
-
-
-            // User was in the app, but token expired -> clear and show login
-            try { localStorage.removeItem('token'); localStorage.removeItem('is_admin'); localStorage.removeItem('user'); } catch(e2) {}
-            location.reload();
-
-
-
-        } else {
-
-
-
-            // Already on auth page, don't reload! Just throw error.
-
-
-
-            throw new Error('Unauthorized');
-
-
-
-        }
-
-
-
+        try { 
+            localStorage.removeItem('token'); 
+            localStorage.removeItem('xcomic_token');
+            localStorage.removeItem('is_admin'); 
+            localStorage.removeItem('user'); 
+        } catch(e) {}
+        if (typeof showToast === 'function') showToast('Session expired. Please sign in again.', 'error');
+        setTimeout(function() {
+            window.location.href = 'auth.html?mode=login';
+        }, 800);
     }
 
 

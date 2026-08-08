@@ -13,7 +13,7 @@ from sqlalchemy.orm import Session
 # BUG-1 FIX: SECRET_KEY was hardcoded - now reads from environment
 SECRET_KEY = os.getenv("SECRET_KEY", "my_super_secret_key_change_in_production_please_set_env")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 300
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 365  # 1 year expiration
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/token")
 

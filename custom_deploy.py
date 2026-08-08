@@ -14,6 +14,7 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 FILES_TO_UPLOAD = [
     (os.path.join(ROOT_DIR, "xcomic.xyz", "index.html"), FTP_FRONTEND_REMOTE + "/index.html"),
+    (os.path.join(ROOT_DIR, "xcomic.xyz", "auth.html"), FTP_FRONTEND_REMOTE + "/auth.html"),
     (os.path.join(ROOT_DIR, "xcomic.xyz", "assets", "app.js"), FTP_FRONTEND_REMOTE + "/assets/app.js"),
     (os.path.join(ROOT_DIR, "xcomic.xyz", "assets", "sending_accounts.js"), FTP_FRONTEND_REMOTE + "/assets/sending_accounts.js"),
     (os.path.join(ROOT_DIR, "xcomic.xyz", "assets", "support_patch.js"), FTP_FRONTEND_REMOTE + "/assets/support_patch.js"),

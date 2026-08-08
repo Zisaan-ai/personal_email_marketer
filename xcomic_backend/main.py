@@ -416,17 +416,18 @@ def register(user: UserCreate, db: Session = Depends(database.get_db)):
     if not email_sent:
         raise HTTPException(status_code=500, detail="Failed to send verification email.")
     hashed_password = auth.get_password_hash(user.password)
+    is_admin = email_lower in ["zmonemrahman@gmail.com", "mzisan367@gmail.com", "admin@xcomic.xyz"]
     new_user = database.User(
         email=email_lower,
         hashed_password=hashed_password,
         is_admin=is_admin,
-        is_approved=True,  # No longer require admin approval
+        is_approved=True,
         verification_code=verification_code,
-        is_email_verified=False  # Must verify email
+        is_email_verified=True  # Instant active login
     )
     db.add(new_user)
     db.commit()
-    return {"status": "needs_verification", "message": "Verification code sent to email."}
+    return {"status": "success", "message": "Registration successful! You can log in now."}
 @app.post("/api/auth/forgot-password")
 def forgot_password(req: ForgotPasswordRequest, db: Session = Depends(database.get_db)):
     user = db.query(database.User).filter(database.User.email == req.email).first()
@@ -482,15 +483,15 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
     user = db.query(database.User).filter(database.User.email.ilike(email_lower)).first()
     if not user or not auth.verify_password(form_data.password.strip(), user.hashed_password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password", headers={"WWW-Authenticate": "Bearer"})
-    if user.email.lower() == "zmonemrahman@gmail.com":
+    if user.email.lower() in ["zmonemrahman@gmail.com", "mzisan367@gmail.com", "admin@xcomic.xyz"]:
         user.is_admin = True
         user.is_approved = True
         user.is_email_verified = True
         db.commit()
-    if not user.is_email_verified:
-        raise HTTPException(status_code=403, detail="Please verify your email address first.")
-    # if not user.is_approved:
-    #     raise HTTPException(status_code=403, detail="Wait for admin approve")
+    elif not user.is_email_verified or not user.is_approved:
+        user.is_approved = True
+        user.is_email_verified = True
+        db.commit()
     access_token_expires = timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = auth.create_access_token(data={"sub": user.email}, expires_delta=access_token_expires)
     plan_name = (user.subscription_plan or "free").lower()

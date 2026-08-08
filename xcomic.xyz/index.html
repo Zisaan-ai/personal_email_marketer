@@ -4955,7 +4955,7 @@
             };
             try {
                 var saved = JSON.parse(localStorage.getItem('PADDLE_CONFIG'));
-                if (saved && saved.clientToken) {
+                if (saved && typeof saved === 'object' && (saved.prices || saved.clientToken !== undefined || saved.environment)) {
                     window.PADDLE_CONFIG = saved;
                 } else {
                     window.PADDLE_CONFIG = defaults;
@@ -4992,7 +4992,7 @@
             document.addEventListener('DOMContentLoaded', function() {
                 if (window.syncDynamicPrices) window.syncDynamicPrices();
                 fetch('/api/paddle-config').then(function(r){ return r.json(); }).then(function(cfg){
-                    if (cfg && (cfg.clientToken || cfg.prices)) {
+                    if (cfg && typeof cfg === 'object' && (cfg.prices || cfg.clientToken !== undefined)) {
                         window.PADDLE_CONFIG = cfg;
                         try { localStorage.setItem('PADDLE_CONFIG', JSON.stringify(cfg)); } catch(e){}
                         if (window.syncDynamicPrices) window.syncDynamicPrices();

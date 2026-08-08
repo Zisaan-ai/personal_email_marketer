@@ -13760,19 +13760,31 @@ window.savePaddleAdminSettings = async function() {
     var enterpriseAmt = parseInt(document.getElementById('adm-price-amt-enterprise')?.value, 10) || 299;
 
     var saveBtn = document.getElementById('adm-save-paddle-btn');
+    var statusEl = document.getElementById('adm-paddle-status');
+
     if (saveBtn) { saveBtn.disabled = true; saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="margin-right:8px;"></i>Saving Credentials...'; }
 
-    window.PADDLE_CONFIG = {
+    var configObj = {
         environment: env,
         clientToken: token,
         prices: { Starter: starterAmt, Professional: proAmt, Enterprise: enterpriseAmt },
         priceIds: { Starter: starter, Professional: pro, Enterprise: enterprise }
     };
 
+    window.PADDLE_CONFIG = configObj;
+    try { localStorage.setItem('PADDLE_CONFIG', JSON.stringify(configObj)); } catch(e) {}
+
     try {
-        localStorage.setItem('PADDLE_CONFIG', JSON.stringify(window.PADDLE_CONFIG));
         if (typeof apiCall === 'function') {
-            await apiCall('/admin/paddle-config', 'POST', window.PADDLE_CONFIG);
+            var res = await apiCall('/admin/paddle-config', 'POST', configObj);
+            if (!res || !res.ok) {
+                var errDetail = 'Server returned HTTP ' + (res ? res.status : 'error');
+                try {
+                    var errData = await res.json();
+                    if (errData && errData.detail) errDetail = errData.detail;
+                } catch(e) {}
+                throw new Error(errDetail);
+            }
         }
 
         if (typeof Paddle !== 'undefined' && token) {
@@ -13781,19 +13793,29 @@ window.savePaddleAdminSettings = async function() {
         if (typeof window.syncDynamicPrices === 'function') {
             window.syncDynamicPrices();
         }
-    } catch(e) { console.warn('Paddle save error:', e); }
 
-    var statusEl = document.getElementById('adm-paddle-status');
-    if (statusEl) {
-        statusEl.textContent = '✅ Paddle configuration and price amounts saved successfully!';
-        statusEl.style.display = 'block';
-        statusEl.style.background = '#dcfce7';
-        statusEl.style.color = '#16a34a';
-        statusEl.style.border = '1px solid #bbf7d0';
-        setTimeout(function() { statusEl.style.display = 'none'; }, 4000);
+        if (statusEl) {
+            statusEl.textContent = '✅ Paddle configuration and price amounts saved successfully!';
+            statusEl.style.display = 'block';
+            statusEl.style.background = '#dcfce7';
+            statusEl.style.color = '#16a34a';
+            statusEl.style.border = '1px solid #bbf7d0';
+            setTimeout(function() { statusEl.style.display = 'none'; }, 4000);
+        }
+        if (typeof showToast === 'function') showToast('Paddle gateway credentials saved successfully!', 'success');
+    } catch(e) {
+        console.error('Paddle save error:', e);
+        if (statusEl) {
+            statusEl.textContent = '❌ Save failed: ' + (e.message || e);
+            statusEl.style.display = 'block';
+            statusEl.style.background = '#fee2e2';
+            statusEl.style.color = '#dc2626';
+            statusEl.style.border = '1px solid #fca5a5';
+        }
+        if (typeof showToast === 'function') showToast('Save failed: ' + (e.message || e), 'error');
+    } finally {
+        if (saveBtn) { saveBtn.disabled = false; saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk" style="margin-right:8px;"></i>Save Gateway Credentials'; }
     }
-    if (typeof showToast === 'function') showToast('Paddle gateway credentials saved successfully!', 'success');
-    if (saveBtn) { saveBtn.disabled = false; saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk" style="margin-right:8px;"></i>Save Gateway Credentials'; }
 };
 
     var testBtn = document.getElementById('adm-test-paddle-btn');

@@ -5009,54 +5009,46 @@
 
 
     <nav class="landing-nav">
-
-
-
         <div class="landing-logo">
-
-
-
             <img src="/assets/logo.jpg" alt="logo">
-
-
-
             <span>XComic</span>
-
-
-
         </div>
-
-
 
         <div class="landing-nav-links">
-
-
-
             <a href="#features">Features</a>
-
-
-
             <a href="#pricing">Pricing</a>
-
-
-
             <a href="#affiliate">Affiliate</a>
-
-
-
+            <a href="#faq">FAQ</a>
             <button class="landing-login-btn" onclick="LANDING.goToLogin()">Sign In</button>
-
-
-
             <button class="landing-signup-btn" onclick="LANDING.goToSignup()">Get Started</button>
-
-
-
         </div>
 
-
-
+        <button class="landing-nav-toggle" id="landing-nav-toggle" onclick="LANDING.toggleMobileNav()" aria-label="Toggle Menu">
+            <i class="fa-solid fa-bars"></i>
+        </button>
     </nav>
+
+    <!-- Mobile Slide-out Menu Drawer for Landing Page -->
+    <div id="landing-mobile-drawer" class="landing-mobile-drawer">
+        <div class="lmd-header">
+            <div class="landing-logo">
+                <img src="/assets/logo.jpg" alt="logo">
+                <span>XComic</span>
+            </div>
+            <button class="lmd-close-btn" onclick="LANDING.closeMobileNav()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="lmd-links">
+            <a href="#features" onclick="LANDING.closeMobileNav()"><i class="fa-solid fa-bolt" style="color:#818cf8;"></i> Features</a>
+            <a href="#pricing" onclick="LANDING.closeMobileNav()"><i class="fa-solid fa-tags" style="color:#34d399;"></i> Pricing Plans</a>
+            <a href="#affiliate" onclick="LANDING.closeMobileNav()"><i class="fa-solid fa-handshake" style="color:#fb923c;"></i> Affiliate Program</a>
+            <a href="#faq" onclick="LANDING.closeMobileNav()"><i class="fa-solid fa-circle-question" style="color:#c084fc;"></i> FAQ</a>
+        </div>
+        <div class="lmd-actions">
+            <button class="landing-login-btn" style="width:100%; padding:14px; text-align:center;" onclick="LANDING.closeMobileNav(); LANDING.goToLogin();">Sign In</button>
+            <button class="landing-signup-btn" style="width:100%; padding:14px; text-align:center;" onclick="LANDING.closeMobileNav(); LANDING.goToSignup();">Get Started &rarr;</button>
+        </div>
+    </div>
+    <div id="landing-mobile-backdrop" class="landing-mobile-backdrop" onclick="LANDING.closeMobileNav()"></div>
 
 
 
@@ -22620,13 +22612,29 @@
 
 
 
+        toggleMobileNav: function() {
+            var drawer = document.getElementById('landing-mobile-drawer');
+            var backdrop = document.getElementById('landing-mobile-backdrop');
+            if (drawer && backdrop) {
+                var isOpen = drawer.classList.contains('open');
+                if (isOpen) {
+                    drawer.classList.remove('open');
+                    backdrop.classList.remove('show');
+                } else {
+                    drawer.classList.add('open');
+                    backdrop.classList.add('show');
+                }
+            }
+        },
+        closeMobileNav: function() {
+            var drawer = document.getElementById('landing-mobile-drawer');
+            var backdrop = document.getElementById('landing-mobile-backdrop');
+            if (drawer && backdrop) {
+                drawer.classList.remove('open');
+                backdrop.classList.remove('show');
+            }
+        }
     };
-
-
-
-
-
-
 
     window.LANDING = LANDING;
 

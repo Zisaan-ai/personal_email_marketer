@@ -4995,6 +4995,28 @@
                     if (cfg && typeof cfg === 'object' && (cfg.prices || cfg.clientToken !== undefined)) {
                         window.PADDLE_CONFIG = cfg;
                         try { localStorage.setItem('PADDLE_CONFIG', JSON.stringify(cfg)); } catch(e){}
+                        var tok = cfg.clientToken || '';
+                        var envMode = cfg.environment || (tok.startsWith('live_') ? 'production' : 'sandbox');
+                        if (typeof Paddle !== 'undefined' && tok) {
+                            try {
+                                Paddle.Initialize({
+                                    token: tok,
+                                    environment: envMode,
+                                    eventCallback: function(event) {
+                                        if (event.name === 'checkout.completed') {
+                                            console.log('Paddle Checkout Completed:', event);
+                                            if (typeof showToast === 'function') {
+                                                showToast('Payment successful! Subscription plan updated.', 'success');
+                                            }
+                                            setTimeout(function() {
+                                                if (typeof window.APP_INIT === 'function') window.APP_INIT();
+                                                if (typeof window.LANDING !== 'undefined' && window.LANDING.closePayment) window.LANDING.closePayment();
+                                            }, 1500);
+                                        }
+                                    }
+                                });
+                            } catch(e) {}
+                        }
                         if (window.syncDynamicPrices) window.syncDynamicPrices();
                         if (window.updateFeatureLocks) window.updateFeatureLocks(localStorage.getItem('user_plan') || 'free');
                     }
@@ -22855,16 +22877,19 @@
             
             window._pendingUpgradePlan = plan || 'Starter';
             let priceIds = cfg.priceIds || {};
-            let priceId = priceIds[plan] || priceIds['Starter'] || 'pri_01kz1fwdrmswb6c1ytevea2zd4';
+            let priceId = priceIds[plan] || priceIds['Starter'] || '';
             let token = cfg.clientToken || '';
-
-            let isDemo = !token || token.includes('test_c2c1f7b6') || priceId.includes('pri_01kz1');
+            let env = cfg.environment || (token.startsWith('live_') ? 'production' : 'sandbox');
+            let isDemo = !token || !priceId;
 
             if (!isDemo && typeof Paddle !== 'undefined' && typeof Paddle.Checkout !== 'undefined') {
                 try {
+                    try { Paddle.Initialize({ token: token, environment: env }); } catch(e) {}
                     let opts = { items: [{ priceId: priceId, quantity: 1 }] };
                     let uid = window.APP && window.APP.user ? window.APP.user.id : '';
                     if (uid) opts.customData = { user_id: uid };
+                    let email = (window.APP && window.APP.user && window.APP.user.email) ? window.APP.user.email : '';
+                    if (email && email.includes('@')) opts.customer = { email: email };
                     Paddle.Checkout.open(opts);
                     return;
                 } catch(e) {

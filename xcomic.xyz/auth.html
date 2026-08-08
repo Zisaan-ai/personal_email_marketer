@@ -577,7 +577,12 @@
                         window.location.href = 'index.html';
                     } else {
                         const errData = await res.json().catch(() => ({}));
-                        alert(errData.detail || 'Login failed. Please check your credentials.');
+                        if (res.status === 403 && errData.detail && errData.detail.toLowerCase().includes('verify')) {
+                            alert(errData.detail + " Switching to verification form...");
+                            toggleMode('verify');
+                        } else {
+                            alert(errData.detail || 'Login failed. Please check your credentials.');
+                        }
                     }
                 } else if (mode === 'signup') {
                     const confirmPass = document.getElementById('confirmPasswordInput').value;

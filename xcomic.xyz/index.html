@@ -22981,7 +22981,7 @@
             let priceIds = cfg.priceIds || {};
             let priceId = priceIds[plan] || priceIds['Starter'] || 'pri_01kz1fwdrmswb6c1ytevea2zd4';
             let token = cfg.clientToken || '';
-            let isDemo = !token || token.includes('test_c2c1f7b6') || priceId.includes('pri_01kz1');
+            let isDemo = !token || !priceId;
 
             var errEl = document.getElementById('pm-card-error');
             if (errEl) errEl.style.display = 'none';
@@ -23011,7 +23011,7 @@
                     let opts = { items: [{ priceId: priceId, quantity: 1 }] };
                     let uid = window.APP && window.APP.user ? window.APP.user.id : '';
                     if (uid) opts.customData = { user_id: uid };
-                    let email = (document.getElementById('pm-email')?.value || '').trim();
+                    let email = (document.getElementById('pm-email')?.value || window.APP?.user?.email || '').trim();
                     if (email) opts.customer = { email: email };
                     Paddle.Checkout.open(opts);
                     LANDING.closePayment();

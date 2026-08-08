@@ -627,6 +627,7 @@ def delete_user(user_id: str, current_user: database.User = Depends(auth.get_cur
 class AdminUserUpdateRequest(BaseModel):
     user_id: str
     plan: Optional[str] = "free"
+    purchased_plan: Optional[str] = None  # Admin can explicitly override the purchased plan record
     extend_days: Optional[int] = 0
     daily_limit: Optional[int] = None
     max_accounts: Optional[int] = None
@@ -653,6 +654,10 @@ def admin_user_update(req: AdminUserUpdateRequest, current_user: database.User =
         
         target_user.subscription_plan = new_plan
         target_user.subscription_status = "active"
+    
+    # Admin can explicitly override the purchased plan record (e.g. to correct a wrongly set original plan)
+    if req.purchased_plan is not None:
+        target_user.original_subscription_plan = req.purchased_plan.lower()
         
         if new_plan == "free":
             target_user.subscription_expires_at = None

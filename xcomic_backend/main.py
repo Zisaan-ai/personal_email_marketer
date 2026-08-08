@@ -531,9 +531,14 @@ def get_all_users(current_user: database.User = Depends(auth.get_current_user), 
             days_remaining = None
             sub_status = getattr(u, 'subscription_status', 'active') or 'active'
             
-            orig_plan = getattr(u, 'original_subscription_plan', None) or 'free'
-            
+            orig_plan = (getattr(u, 'original_subscription_plan', None) or 'free').lower()
             plan_clean = (getattr(u, 'subscription_plan', 'free') or "free").lower()
+            
+            if plan_clean != "free" and orig_plan == "free":
+                u.original_subscription_plan = plan_clean
+                orig_plan = plan_clean
+                try: db.commit()
+                except Exception: pass
             
             if expires_at:
                 try:
@@ -652,7 +657,8 @@ def admin_user_update(req: AdminUserUpdateRequest, current_user: database.User =
         # original_subscription_plan is ONLY set by: default (free) or Paddle payment webhook
         
         target_user.subscription_plan = new_plan
-        target_user.subscription_status = "active"
+        target_user.original_subscription_plan = new_plan
+        target_user.subscription_status = "active" if new_plan != "free" else "free"
         
         if new_plan == "free":
             target_user.subscription_expires_at = None

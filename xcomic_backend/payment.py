@@ -168,11 +168,18 @@ def test_checkout(req: TestCheckoutRequest, current_user: database.User = Depend
         plan_clean = "starter"
         
     current_user.subscription_plan = plan_clean
+    current_user.original_subscription_plan = plan_clean
     current_user.subscription_status = "active" if plan_clean != "free" else "free"
+    
+    from datetime import datetime, timedelta
+    current_user.subscription_started_at = datetime.utcnow()
+    current_user.subscription_expires_at = datetime.utcnow() + timedelta(days=30)
+    
     db.commit()
     return {
         "status": "success",
         "message": f"Test Payment Successful! Subscription upgraded to {plan_clean.upper()}.",
         "plan": current_user.subscription_plan,
+        "original_subscription_plan": current_user.original_subscription_plan,
         "subscription_status": current_user.subscription_status
     }

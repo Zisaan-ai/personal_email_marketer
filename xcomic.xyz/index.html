@@ -7525,24 +7525,30 @@
             </div>
 
             <!-- PayPal Panel -->
-            <div id="pm-panel-paypal" style="display:none; text-align:center; padding:24px 0;">
-                <i class="fa-brands fa-paypal" style="font-size:48px; color:#003087; margin-bottom:12px;"></i>
-                <p style="color:var(--text-muted); font-size:14px; margin:0 0 16px;">You'll be redirected to PayPal to complete your payment securely.</p>
-                <p style="color:var(--text-muted); font-size:12px; margin:0;">PayPal integration requires Paddle live credentials. Available after go-live.</p>
+            <div id="pm-panel-paypal" style="display:none; text-align:center; padding:16px 0 8px;">
+                <i class="fa-brands fa-paypal" style="font-size:44px; color:#003087; margin-bottom:10px;"></i>
+                <p style="color:var(--text-muted); font-size:13px; margin:0 0 16px;">You will be redirected to PayPal to complete your payment securely.</p>
+                <button onclick="LANDING.processPayment('paypal')" style="width:100%; padding:14px; background:#003087; color:#fff; border:none; border-radius:12px; font-weight:700; font-size:15px; cursor:pointer; box-shadow:0 4px 14px rgba(0,48,135,0.3); transition:all 0.2s; display:flex; align-items:center; justify-content:center; gap:8px;">
+                    <i class="fa-brands fa-paypal" style="font-size:18px;"></i> Pay with PayPal
+                </button>
             </div>
 
             <!-- Google Pay Panel -->
-            <div id="pm-panel-googlepay" style="display:none; text-align:center; padding:24px 0;">
-                <div style="font-size:42px; font-weight:800; letter-spacing:-2px; margin-bottom:12px;"><span style="color:#4285f4;">G</span><span style="color:#ea4335;">o</span><span style="color:#fbbc04;">o</span><span style="color:#4285f4;">g</span><span style="color:#34a853;">l</span><span style="color:#ea4335;">e</span> <span style="color:#5f6368;">Pay</span></div>
-                <p style="color:var(--text-muted); font-size:14px; margin:0 0 16px;">Google Pay is available on supported devices via Paddle Checkout.</p>
-                <p style="color:var(--text-muted); font-size:12px; margin:0;">Requires Paddle live credentials. Available after go-live.</p>
+            <div id="pm-panel-googlepay" style="display:none; text-align:center; padding:16px 0 8px;">
+                <div style="font-size:38px; font-weight:800; letter-spacing:-2px; margin-bottom:10px;"><span style="color:#4285f4;">G</span><span style="color:#ea4335;">o</span><span style="color:#fbbc04;">o</span><span style="color:#4285f4;">g</span><span style="color:#34a853;">l</span><span style="color:#ea4335;">e</span> <span style="color:var(--text);">Pay</span></div>
+                <p style="color:var(--text-muted); font-size:13px; margin:0 0 16px;">Google Pay is supported via Paddle Checkout on eligible browsers.</p>
+                <button onclick="LANDING.processPayment('googlepay')" style="width:100%; padding:14px; background:#111; color:#fff; border:none; border-radius:12px; font-weight:700; font-size:15px; cursor:pointer; box-shadow:0 4px 14px rgba(0,0,0,0.3); transition:all 0.2s; display:flex; align-items:center; justify-content:center; gap:8px;">
+                    <i class="fa-brands fa-google-pay" style="font-size:22px;"></i> Pay with Google Pay
+                </button>
             </div>
 
             <!-- Apple Pay Panel -->
-            <div id="pm-panel-applepay" style="display:none; text-align:center; padding:24px 0;">
-                <i class="fa-brands fa-apple" style="font-size:48px; color:var(--text); margin-bottom:12px;"></i>
-                <p style="color:var(--text-muted); font-size:14px; margin:0 0 16px;">Apple Pay is available on Safari & Apple devices via Paddle Checkout.</p>
-                <p style="color:var(--text-muted); font-size:12px; margin:0;">Requires Paddle live credentials. Available after go-live.</p>
+            <div id="pm-panel-applepay" style="display:none; text-align:center; padding:16px 0 8px;">
+                <i class="fa-brands fa-apple" style="font-size:44px; color:var(--text); margin-bottom:10px;"></i>
+                <p style="color:var(--text-muted); font-size:13px; margin:0 0 16px;">Apple Pay is supported on Safari & Apple devices via Paddle Checkout.</p>
+                <button onclick="LANDING.processPayment('applepay')" style="width:100%; padding:14px; background:#000; color:#fff; border:none; border-radius:12px; font-weight:700; font-size:15px; cursor:pointer; box-shadow:0 4px 14px rgba(0,0,0,0.3); transition:all 0.2s; display:flex; align-items:center; justify-content:center; gap:8px;">
+                    <i class="fa-brands fa-apple" style="font-size:18px;"></i> Pay with Apple Pay
+                </button>
             </div>
 
             <!-- Error message area -->
@@ -22968,7 +22974,8 @@
             return sum % 10 === 0;
         },
 
-        processPayment: async function() {
+        processPayment: async function(method) {
+            method = method || 'card';
             var plan = window._pendingUpgradePlan || 'Starter';
             let cfg = window.PADDLE_CONFIG || {};
             let priceIds = cfg.priceIds || {};
@@ -22981,6 +22988,8 @@
                     let opts = { items: [{ priceId: priceId, quantity: 1 }] };
                     let uid = window.APP && window.APP.user ? window.APP.user.id : '';
                     if (uid) opts.customData = { user_id: uid };
+                    let email = (document.getElementById('pm-email')?.value || '').trim();
+                    if (email) opts.customer = { email: email };
                     Paddle.Checkout.open(opts);
                     LANDING.closePayment();
                     return;
@@ -22989,38 +22998,46 @@
                 }
             }
 
-            // === CARD VALIDATION ===
-            var cardName = (document.getElementById('pm-card-name')?.value || '').trim();
-            var cardNum = (document.getElementById('pm-card-number')?.value || '').replace(/\s/g, '');
-            var cardExp = (document.getElementById('pm-card-expiry')?.value || '').trim();
-            var cardCvc = (document.getElementById('pm-card-cvc')?.value || '').trim();
             var errEl = document.getElementById('pm-card-error');
             if (errEl) errEl.style.display = 'none';
 
-            // Validate name
-            if (!cardName || cardName.length < 2) {
-                LANDING._showCardError('Please enter the cardholder name.');
-                document.getElementById('pm-card-name')?.focus();
-                return;
-            }
+            // If non-card method in demo mode, proceed directly to test checkout
+            if (method !== 'card') {
+                let btnText = document.getElementById('pm-pay-btn-text');
+                showToast(`Processing ${method.toUpperCase()} Payment...`, 'info');
+                // Proceed to test checkout below
+            } else {
+                // === CARD VALIDATION ===
+                var cardName = (document.getElementById('pm-card-name')?.value || '').trim();
+                var cardNum = (document.getElementById('pm-card-number')?.value || '').replace(/\s/g, '');
+                var cardExp = (document.getElementById('pm-card-expiry')?.value || '').trim();
+                var cardCvc = (document.getElementById('pm-card-cvc')?.value || '').trim();
 
-            // Validate card number
-            if (!cardNum || cardNum.length < 13 || cardNum.length > 19) {
-                LANDING._showCardError('Please enter a valid card number (13-19 digits).');
-                document.getElementById('pm-card-number')?.focus();
-                return;
-            }
-            if (!LANDING._luhnCheck(cardNum)) {
-                LANDING._showCardError('Invalid card number. Please check and try again.');
-                document.getElementById('pm-card-number')?.focus();
-                return;
-            }
+                // Validate name
+                if (!cardName || cardName.length < 2) {
+                    LANDING._showCardError('Please enter the cardholder name.');
+                    document.getElementById('pm-card-name')?.focus();
+                    return;
+                }
 
-            // Validate expiry
-            if (!cardExp || !cardExp.match(/^\d{2}\/\d{2}$/)) {
-                LANDING._showCardError('Please enter expiry date in MM/YY format.');
-                document.getElementById('pm-card-expiry')?.focus();
-                return;
+                // Validate card number
+                if (!cardNum || cardNum.length < 13 || cardNum.length > 19) {
+                    LANDING._showCardError('Please enter a valid card number (13-19 digits).');
+                    document.getElementById('pm-card-number')?.focus();
+                    return;
+                }
+                if (!LANDING._luhnCheck(cardNum)) {
+                    LANDING._showCardError('Invalid card number. Please check and try again.');
+                    document.getElementById('pm-card-number')?.focus();
+                    return;
+                }
+
+                // Validate expiry
+                if (!cardExp || !cardExp.match(/^\d{2}\/\d{2}$/)) {
+                    LANDING._showCardError('Please enter expiry date in MM/YY format.');
+                    document.getElementById('pm-card-expiry')?.focus();
+                    return;
+                }
             }
             var expParts = cardExp.split('/');
             var expMonth = parseInt(expParts[0], 10);

@@ -22682,7 +22682,6 @@
 
             // Try Lemon Squeezy Checkout First
             try {
-                showToast('Loading secure checkout...', 'info');
                 const res = await fetch('/api/payment/lemonsqueezy-checkout', {
                     method: 'POST',
                     headers: {
@@ -22703,7 +22702,7 @@
                     }
                 }
             } catch(e) {
-                console.warn('Lemon Squeezy checkout fetch note:', e);
+                console.warn('Lemon Squeezy checkout note:', e);
             }
 
             // Fallback payment modal UI
@@ -22983,12 +22982,12 @@
 
 
 
-    <script src="assets/templates.js?v=20260804_v116"></script>
-    <script src="assets/app.js?v=20260807_v140"></script>
-    <script src="assets/support_patch.js?v=20260804_v116"></script>
-    <script src="assets/sending_accounts.js?v=20260804_v116"></script>
-    <script src="assets/ai_features.js?v=20260804_v116"></script>
-    <script src="assets/deliverability_v2.js?v=20260804_v116"></script>
+    <script src="assets/templates.js?v=20260808_v200"></script>
+    <script src="assets/app.js?v=20260808_v200"></script>
+    <script src="assets/support_patch.js?v=20260808_v200"></script>
+    <script src="assets/sending_accounts.js?v=20260808_v200"></script>
+    <script src="assets/ai_features.js?v=20260808_v200"></script>
+    <script src="assets/deliverability_v2.js?v=20260808_v200"></script>
 
 
 

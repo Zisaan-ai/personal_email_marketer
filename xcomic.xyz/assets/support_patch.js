@@ -45,10 +45,10 @@ window.SUPPORT.switchAdminTab = function(tabId) {
         window.SUPPORT.loadAdminTickets();
     }
     if (tabId === 'payment') {
-        if (typeof loadPaddleAdminSettings === 'function') {
-            loadPaddleAdminSettings();
-        } else if (window.loadPaddleAdminSettings) {
-            window.loadPaddleAdminSettings();
+        if (typeof loadLemonAdminSettings === 'function') {
+            loadLemonAdminSettings();
+        } else if (window.loadLemonAdminSettings) {
+            window.loadLemonAdminSettings();
         }
     }
     if (tabId === 'email') {

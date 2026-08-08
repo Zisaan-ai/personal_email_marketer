@@ -409,6 +409,13 @@ def run_migrations():
         _safe_add_column("users", "paddle_customer_id", "VARCHAR", None)
         _safe_add_column("users", "paddle_subscription_id", "VARCHAR", None)
         _safe_add_column("users", "free_emails_sent", "INTEGER", 0)
+        _safe_add_column("users", "custom_daily_limit", "INTEGER", None)
+        _safe_add_column("users", "custom_max_accounts", "INTEGER", None)
+        _safe_add_column("users", "custom_ai_replies", "BOOLEAN", None)
+        _safe_add_column("users", "custom_support", "BOOLEAN", None)
+        _safe_add_column("users", "subscription_started_at", "DATETIME", None)
+        _safe_add_column("users", "subscription_expires_at", "DATETIME", None)
+        _safe_add_column("users", "original_subscription_plan", "VARCHAR(100)", "free")
 
         _safe_add_column("sending_accounts", "custom_tracking_domain", "VARCHAR", None)
         _safe_add_column("replies", "message_id", "VARCHAR", None)

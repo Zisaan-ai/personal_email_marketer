@@ -416,10 +416,7 @@ async function apiCall(endpoint, method = 'GET', body = null) {
             localStorage.removeItem('is_admin'); 
             localStorage.removeItem('user'); 
         } catch(e) {}
-        if (typeof showToast === 'function') showToast('Session expired. Please sign in again.', 'error');
-        setTimeout(function() {
-            window.location.href = 'auth.html?mode=login';
-        }, 800);
+        window.location.href = 'auth.html?mode=login';
     }
 
 

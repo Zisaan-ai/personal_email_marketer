@@ -704,8 +704,6 @@ def admin_user_reset(req: AdminUserResetRequest, current_user: database.User = D
     db.commit()
     return {"status": "success", "message": f"User reset back to Original {orig_plan.upper()} Plan & Defaults"}
 
-
-
 class UserPlanRequest(BaseModel):
     plan: str
     extend_days: Optional[int] = None

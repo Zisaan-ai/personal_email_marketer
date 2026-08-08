@@ -22467,7 +22467,13 @@
     var LANDING = {
 
 
-        openPayment: async function(plan, price) {
+        goToLogin: function() {
+            window.location.href = 'auth.html?mode=login';
+        },
+        goToSignup: function() {
+            window.location.href = 'auth.html?mode=signup';
+        },
+        openPayment: async function(plan, price) {
             window._pendingUpgradePlan = plan || 'Starter';
             let dynPrice = price || (plan === 'Enterprise' ? 299 : plan === 'Professional' ? 99 : 29);
 
@@ -22757,12 +22763,12 @@
 
 
 
-    <script src="assets/templates.js?v=20260808_v700"></script>
-    <script src="assets/app.js?v=20260808_v700"></script>
-    <script src="assets/support_patch.js?v=20260808_v700"></script>
-    <script src="assets/sending_accounts.js?v=20260808_v700"></script>
-    <script src="assets/ai_features.js?v=20260808_v700"></script>
-    <script src="assets/deliverability_v2.js?v=20260808_v700"></script>
+    <script src="assets/templates.js?v=20260809_v800"></script>
+    <script src="assets/app.js?v=20260809_v800"></script>
+    <script src="assets/support_patch.js?v=20260809_v800"></script>
+    <script src="assets/sending_accounts.js?v=20260809_v800"></script>
+    <script src="assets/ai_features.js?v=20260809_v800"></script>
+    <script src="assets/deliverability_v2.js?v=20260809_v800"></script>
 
 
 

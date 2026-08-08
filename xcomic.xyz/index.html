@@ -4912,33 +4912,41 @@
     <script>
         // Dynamic Pricing Sync Engine
         window.syncDynamicPrices = function() {
-            var prices = { Starter: 29, Professional: 99, Enterprise: 299 };
+            fetch('/api/lemonsqueezy-config')
+                .then(function(res) { return res.json(); })
+                .then(function(cfg) {
+                    var prices = (cfg && cfg.prices) ? cfg.prices : { Starter: 29, Professional: 99, Enterprise: 299 };
+                    var sPrice = prices.Starter || 29;
+                    var pPrice = prices.Professional || 99;
+                    var ePrice = prices.Enterprise || 299;
 
-            var sPrice = prices.Starter || 29;
-            var pPrice = prices.Professional || 99;
-            var ePrice = prices.Enterprise || 299;
+                    window._currentPrices = { Starter: sPrice, Professional: pPrice, Enterprise: ePrice };
 
-            var dStarter = document.getElementById('display-price-starter');
-            var dPro = document.getElementById('display-price-pro');
-            var dEnt = document.getElementById('display-price-enterprise');
+                    var dStarter = document.getElementById('display-price-starter');
+                    var dPro = document.getElementById('display-price-pro');
+                    var dEnt = document.getElementById('display-price-enterprise');
 
-            if (dStarter) dStarter.innerHTML = '$' + sPrice + '<span>/mo</span>';
-            if (dPro) dPro.innerHTML = '$' + pPrice + '<span>/mo</span>';
-            if (dEnt) dEnt.innerHTML = '$' + ePrice + '<span>/mo</span>';
+                    if (dStarter) dStarter.innerHTML = '$' + sPrice + '<span>/mo</span>';
+                    if (dPro) dPro.innerHTML = '$' + pPrice + '<span>/mo</span>';
+                    if (dEnt) dEnt.innerHTML = '$' + ePrice + '<span>/mo</span>';
 
-            var bStarter = document.getElementById('upgrade-modal-btn-starter');
-            var bPro = document.getElementById('upgrade-modal-btn-pro');
-            var bEnt = document.getElementById('upgrade-modal-btn-enterprise');
+                    var bStarter = document.getElementById('upgrade-modal-btn-starter');
+                    var bPro = document.getElementById('upgrade-modal-btn-pro');
+                    var bEnt = document.getElementById('upgrade-modal-btn-enterprise');
 
-            if (bStarter && !bStarter.innerHTML.includes('Current Active Plan')) {
-                bStarter.innerHTML = '<span>Buy Starter ($' + sPrice + '/mo)</span><span style="color:#818cf8;font-weight:800;">1,000 Limit</span>';
-            }
-            if (bPro && !bPro.innerHTML.includes('Current Active Plan')) {
-                bPro.innerHTML = '<span>Buy Professional ($' + pPrice + '/mo)</span><span style="color:#fff;font-weight:800;">2,000 Limit + AI</span>';
-            }
-            if (bEnt && !bEnt.innerHTML.includes('Current Active Plan')) {
-                bEnt.innerHTML = '<span>Buy Enterprise ($' + ePrice + '/mo)</span><span style="color:#818cf8;font-weight:800;">5,000 Limit</span>';
-            }
+                    if (bStarter && !bStarter.innerHTML.includes('Current Active Plan')) {
+                        bStarter.innerHTML = '<span>Buy Starter ($' + sPrice + '/mo)</span><span style="color:#818cf8;font-weight:800;">1,000 Limit</span>';
+                    }
+                    if (bPro && !bPro.innerHTML.includes('Current Active Plan')) {
+                        bPro.innerHTML = '<span>Buy Professional ($' + pPrice + '/mo)</span><span style="color:#fff;font-weight:800;">2,000 Limit + AI</span>';
+                    }
+                    if (bEnt && !bEnt.innerHTML.includes('Current Active Plan')) {
+                        bEnt.innerHTML = '<span>Buy Enterprise ($' + ePrice + '/mo)</span><span style="color:#818cf8;font-weight:800;">5,000 Limit</span>';
+                    }
+                })
+                .catch(function(err) {
+                    console.log('Dynamic price sync error:', err);
+                });
         };
 
             // Dynamic Pricing Sync Engine Initializer
@@ -6655,151 +6663,73 @@
 
                 <ul class="p-features">
 
-
-
-                    <li><i class="fa-solid fa-check"></i> 1,000 Emails/month</li>
-
-
-
-                    <li><i class="fa-solid fa-check"></i> 2 Sending Accounts</li>
-
-
-
-                    <li><i class="fa-solid fa-check"></i> Basic Analytics</li>
-
-
-
-                    <li><i class="fa-solid fa-check"></i> Email Support</li>
-
-
-
-                </ul>
-
-
-
-                <button class="p-btn" onclick="LANDING.openPayment('Starter')">Buy Starter</button>
-
-
-
-            </div>
-
-
-
-            
-
-
-
-            <!-- Pro Plan -->
-
-
-
-            <div class="pricing-card pro">
-
-
-
-                <div class="pro-badge">Most Popular</div>
-
-
-
-                <div class="p-name">Professional</div>
-
-
-
-                <div class="p-price" id="display-price-pro">$99<span>/mo</span></div>
-
-
-
-                <div class="p-desc">For growing teams that need to scale their outreach.</div>
-
-
-
-                <ul class="p-features">
-
-
-
-                    <li><i class="fa-solid fa-check"></i> 10,000 Emails/month</li>
-
-
+                    <li><i class="fa-solid fa-check"></i> 1,000 Emails/day</li>
 
                     <li><i class="fa-solid fa-check"></i> 10 Sending Accounts</li>
 
+                    <li><i class="fa-solid fa-check"></i> Campaign Analytics & Lead Tools</li>
 
-
-                    <li><i class="fa-solid fa-check"></i> Advanced AI Replies</li>
-
-
-
-                    <li><i class="fa-solid fa-check"></i> Round-Robin Routing</li>
-
-
-
-                    <li><i class="fa-solid fa-check"></i> Priority Support</li>
-
-
+                    <li><i class="fa-solid fa-check"></i> Customer Support Ticket Access</li>
 
                 </ul>
 
-
-
-                <button class="p-btn" onclick="LANDING.openPayment('Professional')">Get Professional</button>
-
-
+                <button class="p-btn" onclick="LANDING.openPayment('Starter')">Buy Starter</button>
 
             </div>
 
+            <!-- Pro Plan -->
 
+            <div class="pricing-card pro">
 
-            
+                <div class="pro-badge">Most Popular</div>
 
+                <div class="p-name">Professional</div>
 
+                <div class="p-price" id="display-price-pro">$99<span>/mo</span></div>
 
-            <!-- Enterprise Plan -->
-
-
-
-            <div class="pricing-card">
-
-
-
-                <div class="p-name">Enterprise</div>
-
-
-
-                <div class="p-price" id="display-price-enterprise">$299<span>/mo</span></div>
-
-
-
-                <div class="p-desc">For large organizations with heavy sending volumes.</div>
-
-
+                <div class="p-desc">For growing teams that need to scale their outreach.</div>
 
                 <ul class="p-features">
 
+                    <li><i class="fa-solid fa-check"></i> 2,000 Emails/day</li>
 
+                    <li><i class="fa-solid fa-check"></i> 20 Sending Accounts</li>
 
-                    <li><i class="fa-solid fa-check"></i> Unlimited Emails</li>
+                    <li><i class="fa-solid fa-check"></i> AI Auto Replies & Sentiment Analysis</li>
 
+                    <li><i class="fa-solid fa-check"></i> Round-Robin Smart Rotation</li>
 
-
-                    <li><i class="fa-solid fa-check"></i> 50 Sending Accounts</li>
-
-
-
-                    <li><i class="fa-solid fa-check"></i> Custom AI Models</li>
-
-
-
-                    <li><i class="fa-solid fa-check"></i> Dedicated IP addresses</li>
-
-
-
-                    <li><i class="fa-solid fa-check"></i> VIP Priority Email Support</li>
-
-
+                    <li><i class="fa-solid fa-check"></i> Priority Customer Support</li>
 
                 </ul>
 
+                <button class="p-btn" onclick="LANDING.openPayment('Professional')">Get Professional</button>
 
+            </div>
+
+            <!-- Enterprise Plan -->
+
+            <div class="pricing-card">
+
+                <div class="p-name">Enterprise</div>
+
+                <div class="p-price" id="display-price-enterprise">$299<span>/mo</span></div>
+
+                <div class="p-desc">For large organizations with heavy sending volumes.</div>
+
+                <ul class="p-features">
+
+                    <li><i class="fa-solid fa-check"></i> 5,000 Emails/day</li>
+
+                    <li><i class="fa-solid fa-check"></i> 50 Sending Accounts</li>
+
+                    <li><i class="fa-solid fa-check"></i> Full AI Features & Sentiment Analysis</li>
+
+                    <li><i class="fa-solid fa-check"></i> Custom Tracking Domain Support</li>
+
+                    <li><i class="fa-solid fa-check"></i> VIP Priority Customer Support</li>
+
+                </ul>
 
                 <button class="p-btn" onclick="LANDING.openPayment('Enterprise')">Contact Sales</button>
 
@@ -22763,12 +22693,12 @@
 
 
 
-    <script src="assets/templates.js?v=20260809_v1100"></script>
-    <script src="assets/app.js?v=20260809_v1100"></script>
-    <script src="assets/support_patch.js?v=20260809_v1100"></script>
-    <script src="assets/sending_accounts.js?v=20260809_v1000"></script>
-    <script src="assets/ai_features.js?v=20260809_v1100"></script>
-    <script src="assets/deliverability_v2.js?v=20260809_v1100"></script>
+    <script src="assets/templates.js?v=20260809_v1200"></script>
+    <script src="assets/app.js?v=20260809_v1200"></script>
+    <script src="assets/support_patch.js?v=20260809_v1200"></script>
+    <script src="assets/sending_accounts.js?v=20260809_v1200"></script>
+    <script src="assets/ai_features.js?v=20260809_v1200"></script>
+    <script src="assets/deliverability_v2.js?v=20260809_v1200"></script>
 
 
 

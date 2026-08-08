@@ -13730,6 +13730,7 @@ window.saveLemonAdminSettings = async function() {
             statusEl.innerText = '✓ Lemon Squeezy gateway configuration saved successfully!';
         }
         if (typeof showToast === 'function') showToast('Lemon Squeezy credentials saved successfully!', 'success');
+        if (window.syncDynamicPrices) window.syncDynamicPrices();
     } catch(e) {
         if (statusEl) {
             statusEl.style.display = 'block';

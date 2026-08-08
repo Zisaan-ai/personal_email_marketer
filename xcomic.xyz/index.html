@@ -4930,9 +4930,15 @@
             var bPro = document.getElementById('upgrade-modal-btn-pro');
             var bEnt = document.getElementById('upgrade-modal-btn-enterprise');
 
-            if (bStarter) bStarter.innerText = 'Buy Starter ($' + sPrice + '/mo)';
-            if (bPro) bPro.innerText = 'Buy Pro ($' + pPrice + '/mo)';
-            if (bEnt) bEnt.innerText = 'Buy Enterprise ($' + ePrice + '/mo)';
+            if (bStarter && !bStarter.innerHTML.includes('Current Active Plan')) {
+                bStarter.innerHTML = '<span>Buy Starter ($' + sPrice + '/mo)</span><span style="color:#818cf8;font-weight:800;">1,000 Limit</span>';
+            }
+            if (bPro && !bPro.innerHTML.includes('Current Active Plan')) {
+                bPro.innerHTML = '<span>Buy Professional ($' + pPrice + '/mo)</span><span style="color:#fff;font-weight:800;">2,000 Limit + AI</span>';
+            }
+            if (bEnt && !bEnt.innerHTML.includes('Current Active Plan')) {
+                bEnt.innerHTML = '<span>Buy Enterprise ($' + ePrice + '/mo)</span><span style="color:#818cf8;font-weight:800;">5,000 Limit</span>';
+            }
         };
 
         // Load Paddle config: localStorage override > hardcoded defaults
@@ -4985,6 +4991,14 @@
 
             document.addEventListener('DOMContentLoaded', function() {
                 if (window.syncDynamicPrices) window.syncDynamicPrices();
+                fetch('/api/paddle-config').then(function(r){ return r.json(); }).then(function(cfg){
+                    if (cfg && (cfg.clientToken || cfg.prices)) {
+                        window.PADDLE_CONFIG = cfg;
+                        try { localStorage.setItem('PADDLE_CONFIG', JSON.stringify(cfg)); } catch(e){}
+                        if (window.syncDynamicPrices) window.syncDynamicPrices();
+                        if (window.updateFeatureLocks) window.updateFeatureLocks(localStorage.getItem('user_plan') || 'free');
+                    }
+                }).catch(function(){});
             });
         })();
     </script>
@@ -22720,12 +22734,14 @@
             var modal = document.getElementById('payment-modal');
             var pName = document.getElementById('pm-plan-name');
             var pPrice = document.getElementById('pm-plan-price');
+            let cfg = window.PADDLE_CONFIG || {};
+            let prices = cfg.prices || {};
+            let dynPrice = prices[plan] || price || (plan === 'Enterprise' ? 299 : plan === 'Professional' ? 99 : 29);
+
             if (pName) pName.innerText = plan || 'Starter';
-            if (pPrice) pPrice.innerHTML = '$' + (price || '29') + '<span style="font-size:13px;font-weight:400;">/mo</span>';
+            if (pPrice) pPrice.innerHTML = '$' + dynPrice + '<span style="font-size:13px;font-weight:400;">/mo</span>';
             
             window._pendingUpgradePlan = plan || 'Starter';
-
-            let cfg = window.PADDLE_CONFIG || {};
             let priceIds = cfg.priceIds || {};
             let priceId = priceIds[plan] || priceIds['Starter'] || 'pri_01kz1fwdrmswb6c1ytevea2zd4';
             let token = cfg.clientToken || '';
@@ -24186,42 +24202,51 @@
                 }
             }
 
+            var cfg = window.PADDLE_CONFIG || {};
+            var prices = cfg.prices || {};
+            var sPrice = prices.Starter || 29;
+            var pPrice = prices.Professional || 99;
+            var ePrice = prices.Enterprise || 299;
+
             // Highlight plan buttons dynamically according to user's current plan
             var btnStarter = document.getElementById('upgrade-modal-btn-starter');
             var btnPro = document.getElementById('upgrade-modal-btn-pro');
             var btnEnterprise = document.getElementById('upgrade-modal-btn-enterprise');
 
             if (btnStarter) {
+                btnStarter.setAttribute('onclick', "document.getElementById('upgrade-modal').style.display='none'; LANDING.openPayment('Starter', " + sPrice + ")");
                 if (userPlan === 'starter') {
                     btnStarter.innerHTML = '<span><i class="fa-solid fa-circle-check" style="color:#10b981;"></i> Current Active Plan</span><span style="color:#10b981;font-weight:800;">STARTER</span>';
                     btnStarter.style.background = 'rgba(16,185,129,0.12)';
                     btnStarter.style.border = '1px solid rgba(16,185,129,0.4)';
                 } else {
-                    btnStarter.innerHTML = '<span>Buy Starter ($29/mo)</span><span style="color:#818cf8;font-weight:800;">1,000 Limit</span>';
+                    btnStarter.innerHTML = '<span>Buy Starter ($' + sPrice + '/mo)</span><span style="color:#818cf8;font-weight:800;">1,000 Limit</span>';
                     btnStarter.style.background = '#0f172a';
                     btnStarter.style.border = '1px solid rgba(255,255,255,0.15)';
                 }
             }
 
             if (btnPro) {
+                btnPro.setAttribute('onclick', "document.getElementById('upgrade-modal').style.display='none'; LANDING.openPayment('Professional', " + pPrice + ")");
                 if (userPlan === 'professional' || userPlan === 'pro') {
                     btnPro.innerHTML = '<span><i class="fa-solid fa-circle-check" style="color:#10b981;"></i> Current Active Plan</span><span style="color:#10b981;font-weight:800;">PROFESSIONAL</span>';
                     btnPro.style.background = 'rgba(16,185,129,0.12)';
                     btnPro.style.border = '1px solid rgba(16,185,129,0.4)';
                 } else {
-                    btnPro.innerHTML = '<span>Buy Professional ($99/mo)</span><span style="color:#fff;font-weight:800;">2,000 Limit + AI</span>';
+                    btnPro.innerHTML = '<span>Buy Professional ($' + pPrice + '/mo)</span><span style="color:#fff;font-weight:800;">2,000 Limit + AI</span>';
                     btnPro.style.background = 'linear-gradient(135deg, #6366f1, #4f46e5)';
                     btnPro.style.border = 'none';
                 }
             }
 
             if (btnEnterprise) {
+                btnEnterprise.setAttribute('onclick', "document.getElementById('upgrade-modal').style.display='none'; LANDING.openPayment('Enterprise', " + ePrice + ")");
                 if (userPlan === 'enterprise') {
                     btnEnterprise.innerHTML = '<span><i class="fa-solid fa-circle-check" style="color:#10b981;"></i> Current Active Plan</span><span style="color:#10b981;font-weight:800;">ENTERPRISE</span>';
                     btnEnterprise.style.background = 'rgba(16,185,129,0.12)';
                     btnEnterprise.style.border = '1px solid rgba(16,185,129,0.4)';
                 } else {
-                    btnEnterprise.innerHTML = '<span>Buy Enterprise ($299/mo)</span><span style="color:#818cf8;font-weight:800;">5,000 Limit</span>';
+                    btnEnterprise.innerHTML = '<span>Buy Enterprise ($' + ePrice + '/mo)</span><span style="color:#818cf8;font-weight:800;">5,000 Limit</span>';
                     btnEnterprise.style.background = '#0f172a';
                     btnEnterprise.style.border = '1px solid rgba(255,255,255,0.15)';
                 }

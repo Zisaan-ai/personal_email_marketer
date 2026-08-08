@@ -4972,6 +4972,29 @@
                     if (cfg && typeof cfg === 'object' && (cfg.prices || cfg.clientToken !== undefined)) {
                         window.PADDLE_CONFIG = cfg;
                         try { localStorage.setItem('PADDLE_CONFIG', JSON.stringify(cfg)); } catch(e){}
+                        var tok = cfg.clientToken || '';
+                        var envMode = cfg.environment || (tok.startsWith('live_') ? 'production' : 'sandbox');
+                        if (typeof Paddle !== 'undefined' && tok) {
+                            try {
+                                if (envMode === 'sandbox' && typeof Paddle.Environment !== 'undefined') {
+                                    Paddle.Environment.set('sandbox');
+                                }
+                                Paddle.Initialize({
+                                    token: tok,
+                                    eventCallback: function(event) {
+                                        if (event.name === 'checkout.completed') {
+                                            console.log('Paddle Checkout Completed:', event);
+                                            if (typeof showToast === 'function') {
+                                                showToast('Payment successful! Subscription plan updated.', 'success');
+                                            }
+                                            setTimeout(function() {
+                                                if (typeof window.APP_INIT === 'function') window.APP_INIT();
+                                            }, 1500);
+                                        }
+                                    }
+                                });
+                            } catch(e) { console.warn('Paddle init:', e); }
+                        }
                         if (window.syncDynamicPrices) window.syncDynamicPrices();
                         if (window.updateFeatureLocks) window.updateFeatureLocks(localStorage.getItem('user_plan') || 'free');
                     }
@@ -22850,11 +22873,7 @@
             }
 
             if (!token || !priceId) {
-                if (typeof showToast === 'function') {
-                    showToast('Paddle is not configured yet! Please enter your Client Token & Price IDs in Admin Settings.', 'error');
-                } else {
-                    alert('Paddle is not configured yet! Please enter your Client Token & Price IDs in Admin Settings.');
-                }
+                showToast('Paddle is not configured yet! Please enter your Client Token & Price IDs in Admin Settings.', 'error');
                 return;
             }
 
@@ -22864,31 +22883,25 @@
             }
 
             try {
-                if (env === 'sandbox' && typeof Paddle.Environment !== 'undefined' && typeof Paddle.Environment.set === 'function') {
+                if (env === 'sandbox' && typeof Paddle.Environment !== 'undefined') {
                     try { Paddle.Environment.set('sandbox'); } catch(e){}
                 }
-
-                if (!window._paddleInitialized) {
-                    try {
-                        Paddle.Initialize({
-                            token: token,
-                            eventCallback: function(event) {
-                                if (event.name === 'checkout.completed') {
-                                    console.log('Paddle Checkout Completed:', event);
-                                    if (typeof showToast === 'function') {
-                                        showToast('Payment successful! Subscription plan updated.', 'success');
-                                    }
-                                    setTimeout(function() {
-                                        if (typeof window.APP_INIT === 'function') window.APP_INIT();
-                                    }, 1500);
+                try {
+                    Paddle.Initialize({
+                        token: token,
+                        eventCallback: function(event) {
+                            if (event.name === 'checkout.completed') {
+                                console.log('Paddle Checkout Completed:', event);
+                                if (typeof showToast === 'function') {
+                                    showToast('Payment successful! Subscription plan updated.', 'success');
                                 }
+                                setTimeout(function() {
+                                    if (typeof window.APP_INIT === 'function') window.APP_INIT();
+                                }, 1500);
                             }
-                        });
-                        window._paddleInitialized = true;
-                    } catch(e) {
-                        console.warn('Paddle.Initialize note:', e);
-                    }
-                }
+                        }
+                    });
+                } catch(e) {}
 
                 let opts = {
                     items: [{ priceId: priceId, quantity: 1 }]

@@ -1296,9 +1296,11 @@ def _run_campaign(db, campaign_id):
             # Check sending window
             if not is_within_sending_window(acc_doc):
                 continue
-            # NOTE: Warmup limits are NOT checked here.
-            # Warmup and Campaign are independent modules with separate counters.
-            # Campaign only checks sent_today vs daily_limit below.
+            # Check Free plan per-account 250 lifetime email cap
+            acc_owner = db.query(database.User).filter(database.User.id == acc_doc.user_id).first()
+            if acc_owner and (acc_owner.subscription_plan or "free").lower() == "free":
+                if (acc_doc.total_sent or 0) >= 250:
+                    continue
             # Use smart suggested limit if enabled, otherwise use raw daily_limit
             if getattr(acc_doc, "smart_limit_enabled", False):
                 smart_limit = health_monitor.suggest_daily_limit(acc_doc)
@@ -1712,8 +1714,8 @@ def create_sending_account(acc: SendingAccountCreate, current_user: database.Use
     # Tier account limits enforcement
     user_plan = (current_user.subscription_plan or "free").lower()
     acc_count = db.query(database.SendingAccount).filter(database.SendingAccount.user_id == str(current_user.id)).count()
-    if user_plan == "free" and acc_count >= 1:
-        raise HTTPException(status_code=403, detail="FREE_LIMIT_REACHED: Free plan allows maximum 1 sending account.")
+    if user_plan == "free" and acc_count >= 5:
+        raise HTTPException(status_code=403, detail="FREE_LIMIT_REACHED: Free plan allows maximum 5 sending accounts.")
     elif user_plan == "starter" and acc_count >= 5:
         raise HTTPException(status_code=403, detail="STARTER_LIMIT_REACHED: Starter plan allows maximum 5 sending accounts.")
     elif user_plan == "professional" and acc_count >= 20:

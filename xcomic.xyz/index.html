@@ -22801,7 +22801,7 @@
             if (btnText) btnText.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="margin-right:6px;"></i> Processing Payment...';
 
             try {
-                const res = await fetch('/api/payment/test-checkout', {
+                const res = await fetch('/api/payment/lemonsqueezy-checkout', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -22812,30 +22812,26 @@
 
                 if (res.ok) {
                     const data = await res.json();
-                    if (btnText) btnText.innerHTML = '<i class="fa-solid fa-circle-check" style="margin-right:6px;"></i> Payment Successful!';
-                    if (btn) btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
-                    
-                    if (typeof showToast === 'function') {
-                        showToast(data.message || 'Payment Successful! Subscription upgraded to ' + plan + '.', 'success');
-                    }
-                    localStorage.setItem('user_plan', plan.toLowerCase());
-                    
-                    setTimeout(function() {
-                        if (typeof window.APP_INIT === 'function') window.APP_INIT();
-                        if (typeof window.updateFeatureLocks === 'function') window.updateFeatureLocks(plan.toLowerCase());
+                    if (data.checkoutUrl) {
                         LANDING.closePayment();
-                    }, 1200);
+                        if (window.LemonSqueezy && typeof window.LemonSqueezy.Url?.Open === 'function') {
+                            window.LemonSqueezy.Url.Open(data.checkoutUrl);
+                        } else {
+                            window.location.href = data.checkoutUrl;
+                        }
+                        return;
+                    }
                 } else {
                     const err = await res.json().catch(() => ({}));
-                    LANDING._showCardError(err.detail || 'Payment processing failed. Please try again.');
+                    LANDING._showCardError(err.detail || 'Lemon Squeezy gateway is not configured yet in Admin Panel.');
                 }
             } catch(e) {
-                LANDING._showCardError('Connection error. Please check your internet connection.');
+                LANDING._showCardError('Connection error. Unable to reach payment gateway.');
             } finally {
-                if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.style.background = 'linear-gradient(135deg, #6366f1, #4f46e5)'; }
-                if (btnText) btnText.innerText = 'Pay Now';
+                if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.style.background = 'linear-gradient(135deg, #f59e0b, #ea580c)'; }
+                if (btnText) btnText.innerText = 'Pay via Lemon Squeezy Gateway';
             }
-        },ion() {},
+        },
         _showCardError: function(msg) {
             if (typeof showToast === 'function') showToast(msg, 'error');
         },
@@ -22973,12 +22969,12 @@
 
 
 
-    <script src="assets/templates.js?v=20260808_v400"></script>
-    <script src="assets/app.js?v=20260808_v400"></script>
-    <script src="assets/support_patch.js?v=20260808_v400"></script>
-    <script src="assets/sending_accounts.js?v=20260808_v400"></script>
-    <script src="assets/ai_features.js?v=20260808_v400"></script>
-    <script src="assets/deliverability_v2.js?v=20260808_v400"></script>
+    <script src="assets/templates.js?v=20260808_v500"></script>
+    <script src="assets/app.js?v=20260808_v500"></script>
+    <script src="assets/support_patch.js?v=20260808_v500"></script>
+    <script src="assets/sending_accounts.js?v=20260808_v500"></script>
+    <script src="assets/ai_features.js?v=20260808_v500"></script>
+    <script src="assets/deliverability_v2.js?v=20260808_v500"></script>
 
 
 

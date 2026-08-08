@@ -933,13 +933,12 @@ button[onclick*="approveUser"] {
 
 /* ============================================================
    RESPONSIVE & MOBILE DESIGN SYSTEM
-   ============================================================ */
-@media (max-width: 992px) {
+   ============================================================ */@media (max-width: 992px) {
     #app-page.on {
         flex-direction: column;
     }
     
-    .mobile-menu-btn {
+    #app-page .mobile-menu-btn, #app-page.on .mobile-menu-btn {
         display: flex !important;
         align-items: center;
         justify-content: center;
@@ -1019,7 +1018,7 @@ button[onclick*="approveUser"] {
 
     .card, .table-container, div[style*="overflow-x"] {
         max-width: 100% !important;
-        box-sizing: border-box;
+        box-sizing: border-box !important;
     }
 
     table {
@@ -1034,6 +1033,20 @@ button[onclick*="approveUser"] {
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
         gap: 14px !important;
     }
+}
+
+/* FAQ Details Layout Rules */
+details {
+    display: block !important;
+    position: relative !important;
+    margin-bottom: 16px !important;
+    height: auto !important;
+}
+details summary {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    cursor: pointer !important;
 }
 
 @media (max-width: 640px) {
@@ -1104,7 +1117,7 @@ html, body, #landing-page, #app-page {
         display: none !important;
     }
     .landing-hero {
-        padding: 90px 16px 40px !important;
+        padding: 130px 16px 40px !important;
     }
     .landing-hero h1 {
         font-size: 34px !important;

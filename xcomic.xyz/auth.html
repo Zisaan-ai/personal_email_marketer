@@ -335,12 +335,17 @@
     </style>
 
     <script>
-        // Check URL for mode BEFORE rendering body to prevent flash
-        const urlParams = new URLSearchParams(window.location.search);
-        const mode = urlParams.get('mode');
-        if (mode === 'signup') {
-            document.documentElement.classList.add('is-signup');
-        }
+        // Check URL for mode
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const mode = urlParams.get('mode') || 'login';
+            const emailParam = urlParams.get('email');
+            toggleMode(mode);
+            if (emailParam) {
+                const emailInput = document.getElementById('emailInput');
+                if (emailInput) emailInput.value = emailParam;
+            }
+        });
     </script>
 </head>
 

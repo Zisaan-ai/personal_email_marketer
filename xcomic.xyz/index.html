@@ -22983,6 +22983,29 @@
             let token = cfg.clientToken || '';
             let isDemo = !token || token.includes('test_c2c1f7b6') || priceId.includes('pri_01kz1');
 
+            var errEl = document.getElementById('pm-card-error');
+            if (errEl) errEl.style.display = 'none';
+
+            // Check login status & email
+            var userToken = localStorage.getItem('token') || localStorage.getItem('xcomic_token');
+            var userEmail = (document.getElementById('pm-email')?.value || '').trim();
+
+            if (!userToken) {
+                if (!userEmail || !userEmail.includes('@')) {
+                    LANDING._showCardError('Please enter your email address to continue with your purchase.');
+                    document.getElementById('pm-email')?.focus();
+                    return;
+                }
+                // Guest user: Save pending plan & email, then redirect to signup/login
+                localStorage.setItem('pending_purchase_plan', plan.toLowerCase());
+                localStorage.setItem('pending_purchase_email', userEmail);
+                showToast('Please create an account or log in to complete your subscription purchase.', 'info');
+                setTimeout(function() {
+                    window.location.href = 'auth.html?mode=signup&email=' + encodeURIComponent(userEmail);
+                }, 1200);
+                return;
+            }
+
             if (!isDemo && typeof Paddle !== 'undefined' && typeof Paddle.Checkout !== 'undefined') {
                 try {
                     let opts = { items: [{ priceId: priceId, quantity: 1 }] };
@@ -23119,6 +23142,39 @@
 
 
     window.LANDING = LANDING;
+
+    // Check for pending purchase after login/signup
+    document.addEventListener('DOMContentLoaded', async function() {
+        let pendingPlan = localStorage.getItem('pending_purchase_plan');
+        let token = localStorage.getItem('token') || localStorage.getItem('xcomic_token');
+        if (pendingPlan && token) {
+            localStorage.removeItem('pending_purchase_plan');
+            localStorage.removeItem('pending_purchase_email');
+            if (typeof showToast === 'function') {
+                showToast('Activating your ' + pendingPlan.toUpperCase() + ' subscription...', 'info');
+            }
+            try {
+                const res = await fetch('/api/payment/test-checkout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify({ plan: pendingPlan.toLowerCase() })
+                });
+                if (res.ok) {
+                    if (typeof showToast === 'function') {
+                        showToast('🎉 Purchase complete! Your subscription is now ' + pendingPlan.toUpperCase() + '!', 'success');
+                    }
+                    localStorage.setItem('user_plan', pendingPlan.toLowerCase());
+                    if (typeof window.APP_INIT === 'function') window.APP_INIT();
+                    if (typeof window.updateFeatureLocks === 'function') window.updateFeatureLocks(pendingPlan.toLowerCase());
+                }
+            } catch(e) {
+                console.error("Pending purchase activation error:", e);
+            }
+        }
+    });
 
 
 

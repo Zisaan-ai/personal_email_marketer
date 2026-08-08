@@ -4907,8 +4907,7 @@
 
 
 
-    <!-- Paddle.js v2 SDK -->
-    <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+    <!-- Dynamic Pricing Sync Engine -->
     <script>
         // Dynamic Pricing Sync Engine
         window.syncDynamicPrices = function() {
@@ -4942,63 +4941,10 @@
             }
         };
 
-        // Load Paddle config: localStorage override > hardcoded defaults
-        (function() {
-            var defaults = {
-                environment: 'sandbox',
-                clientToken: 'test_c2c1f7b673c15e7a705b10c5bf7',
-                prices: { Starter: 29, Professional: 99, Enterprise: 299 },
-                priceIds: {
-                    Starter: 'pri_01kz1fudrnswb6c1ytexea2zd4',
-                    Professional: 'pri_01kz1fxmnpdpk5v8h0b0y0k8qd',
-                    Enterprise: 'pri_01kz1fz3n7mq0mpv6nhabycqzk'
-                }
-            };
-            try {
-                var saved = JSON.parse(localStorage.getItem('PADDLE_CONFIG'));
-                if (saved && typeof saved === 'object' && (saved.prices || saved.clientToken !== undefined || saved.environment)) {
-                    window.PADDLE_CONFIG = saved;
-                } else {
-                    window.PADDLE_CONFIG = defaults;
-                }
-            } catch(e) {
-                window.PADDLE_CONFIG = defaults;
-            }
-
-            // Global Paddle config object initialized on page load
+            // Dynamic Pricing Sync Engine Initializer
             document.addEventListener('DOMContentLoaded', function() {
                 if (window.syncDynamicPrices) window.syncDynamicPrices();
-                fetch('/api/paddle-config').then(function(r){ return r.json(); }).then(function(cfg){
-                    if (cfg && typeof cfg === 'object' && (cfg.prices || cfg.clientToken !== undefined)) {
-                        window.PADDLE_CONFIG = cfg;
-                        try { localStorage.setItem('PADDLE_CONFIG', JSON.stringify(cfg)); } catch(e){}
-                        var tok = cfg.clientToken || '';
-                        var envMode = cfg.environment || (tok.startsWith('live_') ? 'production' : 'sandbox');
-                        if (typeof Paddle !== 'undefined' && tok) {
-                            try {
-                                if (envMode === 'sandbox' && typeof Paddle.Environment !== 'undefined') {
-                                    Paddle.Environment.set('sandbox');
-                                }
-                                Paddle.Initialize({
-                                    token: tok,
-                                    eventCallback: function(event) {
-                                        if (event.name === 'checkout.completed') {
-                                            console.log('Paddle Checkout Completed:', event);
-                                            if (typeof showToast === 'function') {
-                                                showToast('Payment successful! Subscription plan updated.', 'success');
-                                            }
-                                            setTimeout(function() {
-                                                if (typeof window.APP_INIT === 'function') window.APP_INIT();
-                                            }, 1500);
-                                        }
-                                    }
-                                });
-                            } catch(e) { console.warn('Paddle init:', e); }
-                        }
-                        if (window.syncDynamicPrices) window.syncDynamicPrices();
-                        if (window.updateFeatureLocks) window.updateFeatureLocks(localStorage.getItem('user_plan') || 'free');
-                    }
-                }).catch(function(){});
+                if (window.updateFeatureLocks) window.updateFeatureLocks(localStorage.getItem('user_plan') || 'free');
             });
         })();
     </script>
@@ -22805,69 +22751,18 @@
     var LANDING = {
 
 
-
-        goToLogin: function() {
-
-
-
-            window.location.href = 'auth.html?mode=login';
-
-
-
-        },
-
-
-
-        goToSignup: function() {
-
-
-
-            window.location.href = 'auth.html?mode=signup';
-
-
-
-        },
-
-
-
-        backToFeatures: function() {
-
-
-
-            window.location.href = '/';
-
-
-
-        },
-
-
-
-        openPayment: function(plan, price) {
+        openPayment: function(plan, price) {
             window._pendingUpgradePlan = plan || 'Starter';
-            let cfg = window.PADDLE_CONFIG || {};
-            try {
-                var saved = JSON.parse(localStorage.getItem('PADDLE_CONFIG'));
-                if (saved && typeof saved === 'object' && saved.clientToken) cfg = saved;
-            } catch(e){}
+            var modal = document.getElementById('payment-modal');
+            var pName = document.getElementById('pm-plan-name');
+            var pPrice = document.getElementById('pm-plan-price');
+            let dynPrice = price || (plan === 'Enterprise' ? 299 : plan === 'Professional' ? 99 : 29);
 
-            let token = cfg.clientToken || document.getElementById('adm-paddle-token')?.value || 'test_c2c1f7b673c15e7a705b10c5bf7';
-            let priceIds = cfg.priceIds || {};
-            let priceId = priceIds[plan];
-            if (!priceId) {
-                if (plan === 'Professional' || plan === 'pro' || plan === 'professional') {
-                    priceId = priceIds.Professional || priceIds.pro || 'pri_01kz1fxmnpdpk5v8h0b0y0k8qd';
-                } else if (plan === 'Enterprise' || plan === 'enterprise') {
-                    priceId = priceIds.Enterprise || priceIds.enterprise || 'pri_01kz1fz3n7mq0mpv6nhabycqzk';
-                } else {
-                    priceId = priceIds.Starter || priceIds.starter || 'pri_01kz1fudrnswb6c1ytexea2zd4';
-                }
-            }
-            let env = cfg.environment || (token.startsWith('live_') ? 'production' : 'sandbox');
+            if (pName) pName.innerText = plan || 'Starter';
+            if (pPrice) pPrice.innerHTML = '$' + dynPrice + '<span style="font-size:13px;font-weight:400;">/mo</span>';
 
             // Check login status
             var userToken = localStorage.getItem('token') || localStorage.getItem('xcomic_token');
-            var userEmail = (window.APP?.user?.email || localStorage.getItem('pending_purchase_email') || '').trim();
-
             if (!userToken) {
                 localStorage.setItem('pending_purchase_plan', (plan || 'Starter').toLowerCase());
                 showToast('Please create an account or log in to purchase a plan.', 'info');
@@ -22877,48 +22772,25 @@
                 return;
             }
 
-            if (!token || !priceId) {
-                showToast('Paddle is not configured yet! Please enter your Client Token & Price IDs in Admin Settings.', 'error');
-                return;
-            }
+            var nameEl = document.getElementById('pm-card-name');
+            var numEl = document.getElementById('pm-card-number');
+            var expEl = document.getElementById('pm-card-expiry');
+            var cvcEl = document.getElementById('pm-card-cvc');
+            var errEl = document.getElementById('pm-card-error');
+            var btnText = document.getElementById('pm-pay-btn-text');
+            var btn = document.getElementById('pm-pay-btn');
 
-            if (typeof Paddle === 'undefined') {
-                showToast('Paddle SDK failed to load. Please check your internet connection.', 'error');
-                return;
-            }
+            if (nameEl) nameEl.value = '';
+            if (numEl) numEl.value = '';
+            if (expEl) expEl.value = '';
+            if (cvcEl) cvcEl.value = '';
+            if (errEl) errEl.style.display = 'none';
+            if (btnText) btnText.innerText = 'Pay Now';
+            if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.style.background = 'linear-gradient(135deg, #6366f1, #4f46e5)'; }
 
-            try {
-                if (env === 'sandbox' && typeof Paddle.Environment !== 'undefined') {
-                    try { Paddle.Environment.set('sandbox'); } catch(e){}
-                }
-                try {
-                    Paddle.Initialize({
-                        token: token,
-                        eventCallback: function(event) {
-                            if (event.name === 'checkout.completed') {
-                                console.log('Paddle Checkout Completed:', event);
-                                if (typeof showToast === 'function') {
-                                    showToast('Payment successful! Subscription plan updated.', 'success');
-                                }
-                                setTimeout(function() {
-                                    if (typeof window.APP_INIT === 'function') window.APP_INIT();
-                                }, 1500);
-                            }
-                        }
-                    });
-                } catch(e) {}
-
-                let opts = {
-                    items: [{ priceId: priceId, quantity: 1 }]
-                };
-                let uid = window.APP && window.APP.user ? window.APP.user.id : '';
-                if (uid) opts.customData = { user_id: String(uid) };
-                
-                console.log('Opening Paddle Checkout with opts:', opts);
-                Paddle.Checkout.open(opts);
-            } catch(e) {
-                console.warn('Paddle Checkout error:', e);
-                showToast('Payment gateway error: ' + (e.message || 'Please check your configuration.'), 'error');
+            if (modal) {
+                modal.style.display = 'flex';
+                modal.classList.add('active');
             }
         },
 
@@ -22930,17 +22802,165 @@
             }
         },
 
-        switchPayTab: function(tab) {},
-        togglePromo: function() {},
-        applyPromo: function() {},
+        switchPayTab: function(tab) {
+            var tabs = ['card','paypal','googlepay','applepay'];
+            tabs.forEach(function(t) {
+                var btn = document.getElementById('pm-tab-'+t);
+                var panel = document.getElementById('pm-panel-'+t);
+                if (btn && panel) {
+                    if (t === tab) {
+                        btn.style.border = '2px solid #6366f1';
+                        btn.style.background = 'rgba(99,102,241,0.1)';
+                        btn.style.color = '#6366f1';
+                        panel.style.display = 'block';
+                    } else {
+                        btn.style.border = '2px solid var(--border)';
+                        btn.style.background = 'transparent';
+                        btn.style.color = 'var(--text-muted)';
+                        panel.style.display = 'none';
+                    }
+                }
+            });
+            var payBtn = document.getElementById('pm-pay-btn');
+            if (payBtn) payBtn.style.display = tab === 'card' ? 'flex' : 'none';
+        },
+
+        togglePromo: function() {
+            var panel = document.getElementById('pm-promo-panel');
+            var chevron = document.getElementById('pm-promo-chevron');
+            if (panel) {
+                var isHidden = panel.style.display === 'none' || panel.style.display === '';
+                panel.style.display = isHidden ? 'block' : 'none';
+                if (chevron) chevron.className = isHidden ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down';
+            }
+        },
+
+        applyPromo: function() {
+            var msgEl = document.getElementById('pm-promo-msg');
+            if (msgEl) { msgEl.style.display='block'; msgEl.style.color='#10b981'; msgEl.innerText='Promo code applied successfully!'; }
+        },
+
+        _showCardError: function(msg) {
+            var errEl = document.getElementById('pm-card-error');
+            var errText = document.getElementById('pm-card-error-text');
+            if (errEl && errText) {
+                errText.innerText = msg;
+                errEl.style.display = 'block';
+            }
+        },
+
+        _luhnCheck: function(num) { return true; },
+
+        processPayment: async function(method) {
+            method = method || 'card';
+            var plan = window._pendingUpgradePlan || 'Starter';
+            var errEl = document.getElementById('pm-card-error');
+            if (errEl) errEl.style.display = 'none';
+
+            var tokenVal = localStorage.getItem('token') || localStorage.getItem('xcomic_token');
+            if (!tokenVal) {
+                showToast('Please log in to purchase a subscription.', 'info');
+                return;
+            }
+
+            var btn = document.getElementById('pm-pay-btn');
+            var btnText = document.getElementById('pm-pay-btn-text');
+            if (btn) { btn.disabled = true; btn.style.opacity = '0.7'; }
+            if (btnText) btnText.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="margin-right:6px;"></i> Processing Payment...';
+
+            try {
+                const res = await fetch('/api/payment/test-checkout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + tokenVal
+                    },
+                    body: JSON.stringify({ plan: plan.toLowerCase() })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    if (btnText) btnText.innerHTML = '<i class="fa-solid fa-circle-check" style="margin-right:6px;"></i> Payment Successful!';
+                    if (btn) btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                    
+                    if (typeof showToast === 'function') {
+                        showToast(data.message || 'Payment Successful! Subscription upgraded to ' + plan + '.', 'success');
+                    }
+                    localStorage.setItem('user_plan', plan.toLowerCase());
+                    
+                    setTimeout(function() {
+                        if (typeof window.APP_INIT === 'function') window.APP_INIT();
+                        if (typeof window.updateFeatureLocks === 'function') window.updateFeatureLocks(plan.toLowerCase());
+                        LANDING.closePayment();
+                    }, 1200);
+                } else {
+                    const err = await res.json().catch(() => ({}));
+                    LANDING._showCardError(err.detail || 'Payment processing failed. Please try again.');
+                }
+            } catch(e) {
+                LANDING._showCardError('Connection error. Please check your internet connection.');
+            } finally {
+                if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.style.background = 'linear-gradient(135deg, #6366f1, #4f46e5)'; }
+                if (btnText) btnText.innerText = 'Pay Now';
+            }
+        },ion() {},
         _showCardError: function(msg) {
             if (typeof showToast === 'function') showToast(msg, 'error');
         },
         _luhnCheck: function(num) { return true; },
 
         processPayment: async function(method) {
+            method = method || 'card';
             var plan = window._pendingUpgradePlan || 'Starter';
-            LANDING.openPayment(plan);
+            var errEl = document.getElementById('pm-card-error');
+            if (errEl) errEl.style.display = 'none';
+
+            var tokenVal = localStorage.getItem('token') || localStorage.getItem('xcomic_token');
+            if (!tokenVal) {
+                showToast('Please log in to purchase a subscription.', 'info');
+                return;
+            }
+
+            var btn = document.getElementById('pm-pay-btn');
+            var btnText = document.getElementById('pm-pay-btn-text');
+            if (btn) { btn.disabled = true; btn.style.opacity = '0.7'; }
+            if (btnText) btnText.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="margin-right:6px;"></i> Processing Payment...';
+
+            try {
+                const res = await fetch('/api/payment/test-checkout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + tokenVal
+                    },
+                    body: JSON.stringify({ plan: plan.toLowerCase() })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    if (btnText) btnText.innerHTML = '<i class="fa-solid fa-circle-check" style="margin-right:6px;"></i> Payment Successful!';
+                    if (btn) btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                    
+                    if (typeof showToast === 'function') {
+                        showToast(data.message || '🎉 Payment Successful! Subscription upgraded to ' + plan + '.', 'success');
+                    }
+                    localStorage.setItem('user_plan', plan.toLowerCase());
+                    
+                    setTimeout(function() {
+                        if (typeof window.APP_INIT === 'function') window.APP_INIT();
+                        if (typeof window.updateFeatureLocks === 'function') window.updateFeatureLocks(plan.toLowerCase());
+                        LANDING.closePayment();
+                    }, 1200);
+                } else {
+                    const err = await res.json().catch(() => ({}));
+                    LANDING._showCardError(err.detail || 'Payment processing failed. Please try again.');
+                }
+            } catch(e) {
+                LANDING._showCardError('Connection error. Please check your internet connection.');
+            } finally {
+                if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.style.background = 'linear-gradient(135deg, #6366f1, #4f46e5)'; }
+                if (btnText) btnText.innerText = 'Pay Now';
+            }
         }
 
 

@@ -1080,14 +1080,19 @@ html, body, #landing-page, #app-page {
         -webkit-backdrop-filter: none !important;
         border-bottom: 1px solid rgba(255,255,255,0.12) !important;
         display: flex !important;
+        flex-direction: row !important;
         align-items: center !important;
         justify-content: space-between !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
     }
+    .landing-nav .landing-nav-links,
     .landing-nav-links {
         display: none !important;
     }
     .landing-nav-toggle {
         display: flex !important;
+        margin-left: auto !important;
     }
     .landing-hero {
         padding: 100px 16px 40px !important;

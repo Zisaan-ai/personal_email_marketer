@@ -17,6 +17,7 @@ from sqlalchemy.orm import Session
 import email_service
 import auth
 import payment
+import payment_lemonsqueezy
 import threading
 import random
 import string

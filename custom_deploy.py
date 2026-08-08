@@ -21,6 +21,7 @@ FILES_TO_UPLOAD = [
     (os.path.join(ROOT_DIR, "xcomic_backend", "database.py"), FTP_BACKEND_REMOTE + "/database.py"),
     (os.path.join(ROOT_DIR, "xcomic_backend", "bulk_campaign_sender.py"), FTP_BACKEND_REMOTE + "/bulk_campaign_sender.py"),
     (os.path.join(ROOT_DIR, "xcomic_backend", "bounce_processor.py"), FTP_BACKEND_REMOTE + "/bounce_processor.py"),
+    (os.path.join(ROOT_DIR, "xcomic_backend", "payment.py"), FTP_BACKEND_REMOTE + "/payment.py"),
     (os.path.join(ROOT_DIR, "xcomic_backend", "payment_lemonsqueezy.py"), FTP_BACKEND_REMOTE + "/payment_lemonsqueezy.py"),
     (os.path.join(ROOT_DIR, "xcomic_backend", "lemonsqueezy_config.json"), FTP_BACKEND_REMOTE + "/lemonsqueezy_config.json"),
 ]

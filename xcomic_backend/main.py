@@ -3098,54 +3098,6 @@ def save_deepseek_key(req: DeepSeekKeyRequest, current_user: database.User = Dep
     os.environ["DEEPSEEK_API_KEY"] = req.deepseek_api_key
     return {"ok": True, "message": "DeepSeek API key saved"}
 
-# --- PADDLE CONFIG ENDPOINTS ---
-class PaddleConfigRequest(BaseModel):
-    environment: Optional[str] = "sandbox"
-    clientToken: Optional[str] = ""
-    prices: Optional[dict] = {}
-    priceIds: Optional[dict] = {}
-
-@app.post("/api/admin/paddle-config")
-def save_paddle_config(req: PaddleConfigRequest, current_user: database.User = Depends(auth.get_current_user)):
-    if not current_user.is_admin:
-        raise HTTPException(status_code=403, detail="Admin only")
-    import json
-    config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "paddle_config.json")
-    config_data = {
-        "environment": req.environment or "sandbox",
-        "clientToken": req.clientToken or "",
-        "prices": req.prices or {},
-        "priceIds": req.priceIds or {}
-    }
-    try:
-        with open(config_path, "w", encoding="utf-8") as f:
-            json.dump(config_data, f, indent=2)
-    except Exception as e:
-        print(f"[Paddle Config Write Error]: {e}")
-        raise HTTPException(status_code=500, detail=f"Permission or disk error: {str(e)}")
-    return {"ok": True, "message": "Paddle configuration saved successfully"}
-
-@app.get("/api/paddle-config")
-def get_paddle_config():
-    import json
-    config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "paddle_config.json")
-    if os.path.exists(config_path):
-        try:
-            with open(config_path, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except Exception as e:
-            print(f"[Paddle Config Read Error]: {e}")
-    return {
-        "environment": "sandbox",
-        "clientToken": "",
-        "prices": {"Starter": 29, "Professional": 99, "Enterprise": 299},
-        "priceIds": {
-            "Starter": "",
-            "Professional": "",
-            "Enterprise": ""
-        }
-    }
-
 @app.post("/api/admin/lemonsqueezy-config")
 def save_lemonsqueezy_config(req: payment_lemonsqueezy.LemonSqueezyConfigRequest, current_user: database.User = Depends(auth.get_current_user)):
     if not current_user.is_admin:

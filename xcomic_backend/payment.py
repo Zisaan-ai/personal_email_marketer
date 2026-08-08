@@ -113,11 +113,6 @@ async def paddle_webhook(request: Request, db: Session = Depends(database.get_db
 
     return {"status": "success"}
 
-from pydantic import BaseModel
-
-class TestCheckoutRequest(BaseModel):
-    plan: str
-
 @router.get("/status")
 def payment_status(user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     """Get the current user's subscription status, expiration, and custom overrides."""
@@ -156,30 +151,4 @@ def payment_status(user: database.User = Depends(auth.get_current_user), db: Ses
         "custom_daily_limit": getattr(user, 'custom_daily_limit', None),
         "custom_max_accounts": getattr(user, 'custom_max_accounts', None),
         "custom_ai_replies": getattr(user, 'custom_ai_replies', None),
-        "custom_support": getattr(user, 'custom_support', None)
-    }
-
-@router.post("/test-checkout")
-def test_checkout(req: TestCheckoutRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
-    """Simulate a successful payment for testing purposes."""
-    valid_plans = ["starter", "professional", "enterprise", "free"]
-    plan_clean = req.plan.strip().lower()
-    if plan_clean not in valid_plans:
-        plan_clean = "starter"
-        
-    current_user.subscription_plan = plan_clean
-    current_user.original_subscription_plan = plan_clean
-    current_user.subscription_status = "active" if plan_clean != "free" else "free"
-    
-    from datetime import datetime, timedelta
-    current_user.subscription_started_at = datetime.utcnow()
-    current_user.subscription_expires_at = datetime.utcnow() + timedelta(days=30)
-    
-    db.commit()
-    return {
-        "status": "success",
-        "message": f"Test Payment Successful! Subscription upgraded to {plan_clean.upper()}.",
-        "plan": current_user.subscription_plan,
-        "original_subscription_plan": current_user.original_subscription_plan,
-        "subscription_status": current_user.subscription_status
     }

@@ -4907,7 +4907,8 @@
 
 
 
-    <!-- Paddle.js loaded dynamically on checkout only -->
+    <!-- Paddle.js v2 SDK -->
+    <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
     <script>
         // Dynamic Pricing Sync Engine
         window.syncDynamicPrices = function() {
@@ -4964,70 +4965,7 @@
                 window.PADDLE_CONFIG = defaults;
             }
 
-            // ========== PADDLE DYNAMIC LOADER (loads only on checkout) ==========
-            window._paddleReady = false;
-            window._paddleLoading = false;
-
-            function loadAndInitPaddle(tok, envMode, callback) {
-                // Already ready? Just callback
-                if (window._paddleReady && typeof Paddle !== 'undefined') {
-                    if (callback) callback();
-                    return;
-                }
-                // Already loading? Wait for it
-                if (window._paddleLoading) {
-                    var waitInterval = setInterval(function() {
-                        if (window._paddleReady) {
-                            clearInterval(waitInterval);
-                            if (callback) callback();
-                        }
-                    }, 100);
-                    return;
-                }
-                window._paddleLoading = true;
-
-                // Step 1: Load paddle.js dynamically
-                var script = document.createElement('script');
-                script.src = 'https://cdn.paddle.com/paddle/v2/paddle.js';
-                script.onload = function() {
-                    try {
-                        // Step 2: Initialize properly for v2
-                        if (envMode === 'sandbox' && typeof Paddle.Environment !== 'undefined' && typeof Paddle.Environment.set === 'function') {
-                            Paddle.Environment.set('sandbox');
-                        }
-                        Paddle.Initialize({
-                            token: tok,
-                            eventCallback: function(event) {
-                                if (event.name === 'checkout.completed') {
-                                    console.log('Paddle Checkout Completed:', event);
-                                    if (typeof showToast === 'function') {
-                                        showToast('Payment successful! Subscription plan updated.', 'success');
-                                    } else {
-                                        alert('Payment successful!');
-                                    }
-                                    setTimeout(function() {
-                                        if (typeof window.APP_INIT === 'function') window.APP_INIT();
-                                        if (typeof window.LANDING !== 'undefined' && window.LANDING.closePayment) window.LANDING.closePayment();
-                                    }, 1500);
-                                }
-                            }
-                        });
-                        window._paddleReady = true;
-                        window._paddleLoading = false;
-                        if (callback) callback();
-                    } catch(e) {
-                        console.warn('Paddle init error:', e);
-                        window._paddleLoading = false;
-                    }
-                };
-                script.onerror = function() {
-                    console.warn('Failed to load paddle.js');
-                    window._paddleLoading = false;
-                };
-                document.head.appendChild(script);
-            }
-            // ========== END PADDLE DYNAMIC LOADER ==========
-
+            // Global Paddle config object initialized on page load
             document.addEventListener('DOMContentLoaded', function() {
                 if (window.syncDynamicPrices) window.syncDynamicPrices();
                 fetch('/api/paddle-config').then(function(r){ return r.json(); }).then(function(cfg){
@@ -22911,30 +22849,48 @@
                 return;
             }
 
-            // Directly launch official Paddle Checkout overlay
-            if (typeof showToast === 'function') showToast('Opening checkout...', 'info');
+            if (typeof Paddle === 'undefined') {
+                showToast('Paddle SDK failed to load. Please check your internet connection.', 'error');
+                return;
+            }
 
-            loadAndInitPaddle(token, env, function() {
-                try {
-                    let opts = {
-                        settings: {
-                            displayMode: 'overlay',
-                            theme: 'light',
-                            locale: 'en'
-                        },
-                        items: [{ priceId: priceId, quantity: 1 }]
-                    };
-                    let uid = window.APP && window.APP.user ? window.APP.user.id : '';
-                    if (uid) opts.customData = { user_id: uid };
-                    if (userEmail && userEmail.includes('@')) {
-                        opts.customer = { email: userEmail };
-                    }
-                    Paddle.Checkout.open(opts);
-                } catch(e) {
-                    console.warn('Paddle Checkout error:', e);
-                    showToast('Payment gateway error. Please verify your Paddle configuration.', 'error');
+            try {
+                if (env === 'sandbox' && typeof Paddle.Environment !== 'undefined' && typeof Paddle.Environment.set === 'function') {
+                    Paddle.Environment.set('sandbox');
                 }
-            });
+                Paddle.Initialize({
+                    token: token,
+                    eventCallback: function(event) {
+                        if (event.name === 'checkout.completed') {
+                            console.log('Paddle Checkout Completed:', event);
+                            if (typeof showToast === 'function') {
+                                showToast('Payment successful! Subscription plan updated.', 'success');
+                            }
+                            setTimeout(function() {
+                                if (typeof window.APP_INIT === 'function') window.APP_INIT();
+                            }, 1500);
+                        }
+                    }
+                });
+
+                let opts = {
+                    settings: {
+                        displayMode: 'overlay',
+                        theme: 'light',
+                        locale: 'en'
+                    },
+                    items: [{ priceId: priceId, quantity: 1 }]
+                };
+                let uid = window.APP && window.APP.user ? window.APP.user.id : '';
+                if (uid) opts.customData = { user_id: uid };
+                if (userEmail && userEmail.includes('@')) {
+                    opts.customer = { email: userEmail };
+                }
+                Paddle.Checkout.open(opts);
+            } catch(e) {
+                console.warn('Paddle Checkout error:', e);
+                showToast('Payment gateway error: ' + (e.message || 'Please check your configuration.'), 'error');
+            }
         },
 
         closePayment: function() {

@@ -517,14 +517,19 @@ def get_all_users(current_user: database.User = Depends(auth.get_current_user), 
         users = db.query(database.User).all()
         result = []
         for u in users:
+            sent_today = 0
+            acc_count = 0
             try:
-                sent_today = sum(c.sent_today_campaign or 0 for c in db.query(database.Campaign).filter(database.Campaign.user_id == str(u.id)).all())
+                c_list = db.query(database.Campaign).filter(database.Campaign.user_id == str(u.id)).all()
+                sent_today = sum(getattr(c, 'sent_today_campaign', 0) or 0 for c in c_list)
             except Exception:
+                db.rollback()
                 sent_today = 0
 
             try:
                 acc_count = db.query(database.SendingAccount).filter(database.SendingAccount.user_id == str(u.id)).count()
             except Exception:
+                db.rollback()
                 acc_count = 0
 
             started_at = getattr(u, 'subscription_started_at', None)
@@ -570,6 +575,10 @@ def get_all_users(current_user: database.User = Depends(auth.get_current_user), 
         print(f"[get_all_users ERROR] {e}")
         import traceback
         traceback.print_exc()
+        try:
+            db.rollback()
+        except Exception:
+            pass
         raise HTTPException(status_code=500, detail=f"Database query error: {str(e)}")
 
 @app.post("/api/admin/users/{user_id}/approve")

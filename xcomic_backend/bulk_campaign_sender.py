@@ -90,12 +90,6 @@ def _run_bulk_campaign(db, campaign_id):
         acc = accounts[account_idx % len(accounts)]
         account_idx += 1
         
-        # Free plan per-account lifetime email cap check (250 emails max)
-        acc_user = db.query(database.User).filter(database.User.id == acc.user_id).first()
-        if acc_user and (acc_user.subscription_plan or "free").lower() == "free":
-            if (acc.total_sent or 0) >= 250:
-                continue
-
         # Smart limit check
         if getattr(acc, "smart_limit_enabled", False):
             smart_limit = hm.suggest_daily_limit(acc)

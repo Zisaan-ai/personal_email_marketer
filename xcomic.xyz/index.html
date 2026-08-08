@@ -22763,12 +22763,12 @@
 
 
 
-    <script src="assets/templates.js?v=20260809_v1000"></script>
-    <script src="assets/app.js?v=20260809_v1000"></script>
-    <script src="assets/support_patch.js?v=20260809_v1000"></script>
+    <script src="assets/templates.js?v=20260809_v1100"></script>
+    <script src="assets/app.js?v=20260809_v1100"></script>
+    <script src="assets/support_patch.js?v=20260809_v1100"></script>
     <script src="assets/sending_accounts.js?v=20260809_v1000"></script>
-    <script src="assets/ai_features.js?v=20260809_v1000"></script>
-    <script src="assets/deliverability_v2.js?v=20260809_v1000"></script>
+    <script src="assets/ai_features.js?v=20260809_v1100"></script>
+    <script src="assets/deliverability_v2.js?v=20260809_v1100"></script>
 
 
 
@@ -23840,7 +23840,7 @@
                         <i class="fa-solid fa-box-open" style="color:#818cf8; margin-right:4px;"></i> Subscription Plan
                     </label>
                     <select id="adm-modal-plan" style="width:100%; padding:12px 14px; border-radius:10px; background:#1e293b; border:1px solid rgba(255,255,255,0.15); color:#fff; font-size:14px; outline:none; font-weight:600;">
-                        <option value="free">Free Plan (250 emails/acc · 5 Accounts)</option>
+                        <option value="free">Free Plan (250 emails overall · 5 Accounts)</option>
                         <option value="starter">Starter Plan (1,000 emails/day)</option>
                         <option value="professional">Professional Plan (2,000 emails/day)</option>
                         <option value="enterprise">Enterprise Plan (5,000 emails/day)</option>
@@ -23932,7 +23932,7 @@
             
             var userPlan = (stData.plan || localStorage.getItem('user_plan') || 'free').toLowerCase();
             var planDetails = {
-                'free': { name: 'FREE PLAN', details: '250 emails/account (Lifetime) • 5 Sending Accounts' },
+                'free': { name: 'FREE PLAN', details: '250 emails overall • 5 Sending Accounts' },
                 'starter': { name: 'STARTER PLAN', details: '1,000 emails/day • 10 Sending Accounts • Customer Support' },
                 'professional': { name: 'PROFESSIONAL PLAN', details: '2,000 emails/day • 20 Accounts • AI Replies & Sentiment' },
                 'pro': { name: 'PROFESSIONAL PLAN', details: '2,000 emails/day • 20 Accounts • AI Replies & Sentiment' },

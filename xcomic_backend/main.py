@@ -1296,11 +1296,6 @@ def _run_campaign(db, campaign_id):
             # Check sending window
             if not is_within_sending_window(acc_doc):
                 continue
-            # Check Free plan per-account 250 lifetime email cap
-            acc_owner = db.query(database.User).filter(database.User.id == acc_doc.user_id).first()
-            if acc_owner and (acc_owner.subscription_plan or "free").lower() == "free":
-                if (acc_doc.total_sent or 0) >= 250:
-                    continue
             # Use smart suggested limit if enabled, otherwise use raw daily_limit
             if getattr(acc_doc, "smart_limit_enabled", False):
                 smart_limit = health_monitor.suggest_daily_limit(acc_doc)

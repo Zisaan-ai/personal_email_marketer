@@ -7337,196 +7337,7 @@
 
 
 
-<div id="payment-modal">
-    <div class="pm-content" style="max-width:480px; border-radius:20px; padding:0; overflow:hidden;">
-        <!-- Header -->
-        <div style="background:linear-gradient(135deg, #f59e0b, #ea580c); padding:24px 28px 20px; position:relative;">
-            <button class="pm-close" onclick="LANDING.closePayment()" style="position:absolute; top:16px; right:16px; background:rgba(255,255,255,0.2); border:none; color:#fff; width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-xmark"></i></button>
-            <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
-                <div style="width:42px; height:42px; border-radius:12px; background:rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center;">
-                    <i class="fa-solid fa-lemon" style="color:#fff; font-size:22px;"></i>
-                </div>
-                <div>
-                    <div style="font-size:18px; font-weight:800; color:#fff;">Lemon Squeezy Checkout</div>
-                    <div style="font-size:12px; color:rgba(255,255,255,0.85);">256-bit SSL Encrypted · Lemon Squeezy Gateway</div>
-                </div>
-            </div>
-            <div style="background:rgba(255,255,255,0.15); border-radius:10px; padding:12px 16px; display:flex; align-items:center; justify-content:space-between;">
-                <div>
-                    <div style="font-size:11px; color:rgba(255,255,255,0.7); text-transform:uppercase; letter-spacing:0.5px;">Plan</div>
-                    <div id="pm-plan-name" style="font-size:16px; font-weight:700; color:#fff;">Starter</div>
-                </div>
-                <div style="text-align:right;">
-                    <div style="font-size:11px; color:rgba(255,255,255,0.7); text-transform:uppercase; letter-spacing:0.5px;">Amount</div>
-                    <div id="pm-plan-price" style="font-size:22px; font-weight:800; color:#fff;">$29<span style="font-size:13px; font-weight:400;">/mo</span></div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Form Body -->
-        <div style="padding:22px 28px 24px; background:var(--surface); overflow-y:auto; max-height:70vh;">
-
-            <!-- Payment Method Tabs -->
-            <div style="margin-bottom:18px;">
-                <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Payment Method</div>
-                <div style="display:flex; gap:8px;">
-                    <button id="pm-tab-card" onclick="LANDING.switchPayTab('card')" style="flex:1; padding:10px 8px; border-radius:10px; border:2px solid #6366f1; background:rgba(99,102,241,0.1); color:#6366f1; font-size:13px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.2s;">
-                        <i class="fa-solid fa-credit-card"></i> Card
-                    </button>
-                    <button id="pm-tab-paypal" onclick="LANDING.switchPayTab('paypal')" style="flex:1; padding:10px 8px; border-radius:10px; border:2px solid var(--border); background:transparent; color:var(--text-muted); font-size:13px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.2s;">
-                        <i class="fa-brands fa-paypal" style="color:#003087;"></i> PayPal
-                    </button>
-                    <button id="pm-tab-googlepay" onclick="LANDING.switchPayTab('googlepay')" style="flex:1; padding:10px 8px; border-radius:10px; border:2px solid var(--border); background:transparent; color:var(--text-muted); font-size:13px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.2s;">
-                        <i class="fa-brands fa-google-pay" style="font-size:18px;"></i>
-                    </button>
-                    <button id="pm-tab-applepay" onclick="LANDING.switchPayTab('applepay')" style="flex:1; padding:10px 8px; border-radius:10px; border:2px solid var(--border); background:transparent; color:var(--text-muted); font-size:13px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.2s;">
-                        <i class="fa-brands fa-apple" style="font-size:16px;"></i> Pay
-                    </button>
-                </div>
-            </div>
-
-            <!-- Card Form Panel -->
-            <div id="pm-panel-card">
-                <!-- Email -->
-                <div style="margin-bottom:14px;">
-                    <label style="display:block; font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.3px;">Email Address</label>
-                    <div style="position:relative;">
-                        <i class="fa-solid fa-envelope" style="position:absolute; left:13px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:13px;"></i>
-                        <input type="email" id="pm-email" placeholder="you@example.com" autocomplete="email" style="width:100%; padding:12px 14px 12px 36px; border:1.5px solid var(--border); border-radius:10px; background:var(--bg); color:var(--text); font-size:14px; font-weight:500; outline:none; transition:border-color 0.2s; box-sizing:border-box;" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='var(--border)'" />
-                    </div>
-                </div>
-
-                <!-- Cardholder Name -->
-                <div style="margin-bottom:14px;">
-                    <label style="display:block; font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.3px;">Cardholder Name</label>
-                    <input type="text" id="pm-card-name" placeholder="John Doe" autocomplete="cc-name" style="width:100%; padding:12px 14px; border:1.5px solid var(--border); border-radius:10px; background:var(--bg); color:var(--text); font-size:14px; font-weight:500; outline:none; transition:border-color 0.2s; box-sizing:border-box;" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='var(--border)'" />
-                </div>
-
-                <!-- Card Number -->
-                <div style="margin-bottom:14px;">
-                    <label style="display:block; font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.3px;">Card Number</label>
-                    <div style="position:relative;">
-                        <input type="text" id="pm-card-number" placeholder="4242 4242 4242 4242" maxlength="19" autocomplete="cc-number" style="width:100%; padding:12px 14px; padding-right:80px; border:1.5px solid var(--border); border-radius:10px; background:var(--bg); color:var(--text); font-size:15px; font-weight:600; font-family:monospace; letter-spacing:1px; outline:none; transition:border-color 0.2s; box-sizing:border-box;" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='var(--border)'" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/(.{4})/g,'$1 ').trim().substring(0,19)" />
-                        <div style="position:absolute; right:12px; top:50%; transform:translateY(-50%); display:flex; gap:4px;">
-                            <i class="fa-brands fa-cc-visa" style="font-size:24px; color:#1a1f71;"></i>
-                            <i class="fa-brands fa-cc-mastercard" style="font-size:24px; color:#eb001b;"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Expiry & CVC -->
-                <div style="display:flex; gap:12px; margin-bottom:14px;">
-                    <div style="flex:1;">
-                        <label style="display:block; font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.3px;">Expiry Date</label>
-                        <input type="text" id="pm-card-expiry" placeholder="MM/YY" maxlength="5" autocomplete="cc-exp" style="width:100%; padding:12px 14px; border:1.5px solid var(--border); border-radius:10px; background:var(--bg); color:var(--text); font-size:14px; font-weight:600; font-family:monospace; text-align:center; outline:none; transition:border-color 0.2s; box-sizing:border-box;" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='var(--border)'" oninput="let v=this.value.replace(/[^0-9]/g,''); if(v.length>=2) v=v.substring(0,2)+'/'+v.substring(2); this.value=v.substring(0,5);" />
-                    </div>
-                    <div style="flex:1;">
-                        <label style="display:block; font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.3px;">CVC / CVV</label>
-                        <input type="text" id="pm-card-cvc" placeholder="123" maxlength="4" autocomplete="cc-csc" style="width:100%; padding:12px 14px; border:1.5px solid var(--border); border-radius:10px; background:var(--bg); color:var(--text); font-size:14px; font-weight:600; font-family:monospace; text-align:center; outline:none; transition:border-color 0.2s; box-sizing:border-box;" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='var(--border)'" oninput="this.value=this.value.replace(/[^0-9]/g,'').substring(0,4)" />
-                    </div>
-                </div>
-
-                <!-- Billing Address -->
-                <div style="display:flex; gap:12px; margin-bottom:14px;">
-                    <div style="flex:1;">
-                        <label style="display:block; font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.3px;">Country</label>
-                        <select id="pm-country" autocomplete="country" style="width:100%; padding:12px 14px; border:1.5px solid var(--border); border-radius:10px; background:var(--bg); color:var(--text); font-size:13px; font-weight:500; outline:none; transition:border-color 0.2s; box-sizing:border-box;" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='var(--border)'">
-                            <option value="">Select country</option>
-                            <option value="BD">🇧🇩 Bangladesh</option>
-                            <option value="US">🇺🇸 United States</option>
-                            <option value="GB">🇬🇧 United Kingdom</option>
-                            <option value="CA">🇨🇦 Canada</option>
-                            <option value="AU">🇦🇺 Australia</option>
-                            <option value="DE">🇩🇪 Germany</option>
-                            <option value="FR">🇫🇷 France</option>
-                            <option value="IN">🇮🇳 India</option>
-                            <option value="PK">🇵🇰 Pakistan</option>
-                            <option value="NG">🇳🇬 Nigeria</option>
-                            <option value="ZA">🇿🇦 South Africa</option>
-                            <option value="SG">🇸🇬 Singapore</option>
-                            <option value="MY">🇲🇾 Malaysia</option>
-                            <option value="AE">🇦🇪 UAE</option>
-                            <option value="OTHER">🌍 Other</option>
-                        </select>
-                    </div>
-                    <div style="flex:1;">
-                        <label style="display:block; font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.3px;">Zip / Postal Code</label>
-                        <input type="text" id="pm-zip" placeholder="10001" autocomplete="postal-code" style="width:100%; padding:12px 14px; border:1.5px solid var(--border); border-radius:10px; background:var(--bg); color:var(--text); font-size:14px; font-weight:500; outline:none; transition:border-color 0.2s; box-sizing:border-box;" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='var(--border)'" />
-                    </div>
-                </div>
-
-                <!-- Promo Code -->
-                <div style="margin-bottom:16px;">
-                    <div id="pm-promo-toggle" onclick="LANDING.togglePromo()" style="font-size:12px; font-weight:600; color:#6366f1; cursor:pointer; display:flex; align-items:center; gap:4px; width:fit-content; margin-bottom:0;">
-                        <i class="fa-solid fa-tag" style="font-size:11px;"></i> Have a promo code? <i id="pm-promo-chevron" class="fa-solid fa-chevron-down" style="font-size:10px;"></i>
-                    </div>
-                    <div id="pm-promo-panel" style="display:none; margin-top:8px; display:none;">
-                        <div style="display:flex; gap:8px;">
-                            <input type="text" id="pm-promo-code" placeholder="PROMO2024" style="flex:1; padding:10px 14px; border:1.5px solid var(--border); border-radius:10px; background:var(--bg); color:var(--text); font-size:14px; font-weight:600; text-transform:uppercase; outline:none; transition:border-color 0.2s; box-sizing:border-box;" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='var(--border)'" />
-                            <button onclick="LANDING.applyPromo()" style="padding:10px 16px; background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; white-space:nowrap;">Apply</button>
-                        </div>
-                        <div id="pm-promo-msg" style="display:none; margin-top:6px; font-size:12px; font-weight:600;"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PayPal Panel -->
-            <div id="pm-panel-paypal" style="display:none; text-align:center; padding:16px 0 8px;">
-                <i class="fa-brands fa-paypal" style="font-size:44px; color:#003087; margin-bottom:10px;"></i>
-                <p style="color:var(--text-muted); font-size:13px; margin:0 0 16px;">You will be redirected to PayPal to complete your payment securely.</p>
-                <button onclick="LANDING.processPayment('paypal')" style="width:100%; padding:14px; background:#003087; color:#fff; border:none; border-radius:12px; font-weight:700; font-size:15px; cursor:pointer; box-shadow:0 4px 14px rgba(0,48,135,0.3); transition:all 0.2s; display:flex; align-items:center; justify-content:center; gap:8px;">
-                    <i class="fa-brands fa-paypal" style="font-size:18px;"></i> Pay with PayPal
-                </button>
-            </div>
-
-            <!-- Google Pay Panel -->
-            <div id="pm-panel-googlepay" style="display:none; text-align:center; padding:16px 0 8px;">
-                <div style="font-size:38px; font-weight:800; letter-spacing:-2px; margin-bottom:10px;"><span style="color:#4285f4;">G</span><span style="color:#ea4335;">o</span><span style="color:#fbbc04;">o</span><span style="color:#4285f4;">g</span><span style="color:#34a853;">l</span><span style="color:#ea4335;">e</span> <span style="color:var(--text);">Pay</span></div>
-                <p style="color:var(--text-muted); font-size:13px; margin:0 0 16px;">Google Pay is supported on eligible browsers.</p>
-                <button onclick="LANDING.processPayment('googlepay')" style="width:100%; padding:14px; background:#111; color:#fff; border:none; border-radius:12px; font-weight:700; font-size:15px; cursor:pointer; box-shadow:0 4px 14px rgba(0,0,0,0.3); transition:all 0.2s; display:flex; align-items:center; justify-content:center; gap:8px;">
-                    <i class="fa-brands fa-google-pay" style="font-size:22px;"></i> Pay with Google Pay
-                </button>
-            </div>
-
-            <!-- Apple Pay Panel -->
-            <div id="pm-panel-applepay" style="display:none; text-align:center; padding:16px 0 8px;">
-                <i class="fa-brands fa-apple" style="font-size:44px; color:var(--text); margin-bottom:10px;"></i>
-                <p style="color:var(--text-muted); font-size:13px; margin:0 0 16px;">Apple Pay is supported on Safari & Apple devices.</p>
-                <button onclick="LANDING.processPayment('applepay')" style="width:100%; padding:14px; background:#000; color:#fff; border:none; border-radius:12px; font-weight:700; font-size:15px; cursor:pointer; box-shadow:0 4px 14px rgba(0,0,0,0.3); transition:all 0.2s; display:flex; align-items:center; justify-content:center; gap:8px;">
-                    <i class="fa-brands fa-apple" style="font-size:18px;"></i> Pay with Apple Pay
-                </button>
-            </div>
-
-            <!-- Error message area -->
-            <div id="pm-card-error" style="display:none; background:#fef2f2; border:1px solid #fecaca; color:#dc2626; padding:10px 14px; border-radius:8px; font-size:13px; font-weight:500; margin-bottom:14px;">
-                <i class="fa-solid fa-circle-exclamation" style="margin-right:6px;"></i>
-                <span id="pm-card-error-text"></span>
-            </div>
-
-            <!-- Pay Button -->
-            <button id="pm-pay-btn" onclick="LANDING.processPayment()" style="width:100%; padding:15px; background:linear-gradient(135deg, #f59e0b, #ea580c); color:#fff; border:none; border-radius:12px; font-weight:700; font-size:15px; cursor:pointer; box-shadow:0 4px 14px rgba(245,158,11,0.35); transition:all 0.2s; display:flex; align-items:center; justify-content:center; gap:8px;">
-                <i class="fa-solid fa-lemon" style="font-size:16px;"></i>
-                <span id="pm-pay-btn-text">Pay via Lemon Squeezy Gateway</span>
-            </button>
-
-            <!-- Legal Footer -->
-            <div style="margin-top:12px; text-align:center; font-size:11px; color:var(--text-muted); line-height:1.6;">
-                By clicking <strong>Pay via Lemon Squeezy Gateway</strong>, you agree to our
-                <a href="#" style="color:#f59e0b; text-decoration:none;" onclick="return false;">Terms of Service</a> &amp;
-                <a href="#" style="color:#f59e0b; text-decoration:none;" onclick="return false;">Privacy Policy</a>.
-                Payments are processed securely via Lemon Squeezy.
-            </div>
-
-            <!-- Security & Branding Row -->
-            <div style="display:flex; align-items:center; justify-content:center; gap:14px; margin-top:14px; padding-top:12px; border-top:1px solid var(--border);">
-                <div style="display:flex; align-items:center; gap:4px; font-size:11px; color:var(--text-muted);"><i class="fa-solid fa-shield-halved" style="color:#10b981;"></i> Secure</div>
-                <div style="display:flex; align-items:center; gap:4px; font-size:11px; color:var(--text-muted);"><i class="fa-solid fa-lock" style="color:#f59e0b;"></i> Encrypted</div>
-                <div style="display:flex; align-items:center; gap:4px; font-size:11px; color:var(--text-muted);"><i class="fa-brands fa-cc-visa" style="color:#1a1f71;"></i><i class="fa-brands fa-cc-mastercard" style="color:#eb001b;"></i><i class="fa-brands fa-cc-amex" style="color:#006fcf;"></i></div>
-                <div style="font-size:11px; font-weight:700; color:#f59e0b; border-left:1px solid var(--border); padding-left:12px;">🍋 Lemon Squeezy Gateway</div>
-            </div>
-        </div>
-    </div>
-</div>
 
 
 
@@ -22671,8 +22482,9 @@
                 return;
             }
 
-            // Try Lemon Squeezy Checkout First
+            // Launch Lemon Squeezy Official Checkout
             try {
+                showToast('Connecting to Lemon Squeezy secure gateway...', 'info');
                 const res = await fetch('/api/payment/lemonsqueezy-checkout', {
                     method: 'POST',
                     headers: {
@@ -22691,38 +22503,14 @@
                         }
                         return;
                     }
+                } else {
+                    const errData = await res.json().catch(() => ({}));
+                    showToast(errData.detail || 'Lemon Squeezy gateway is not configured yet. Please set Store ID & Variant IDs in Admin Panel -> Payment Gateway.', 'error');
+                    return;
                 }
             } catch(e) {
-                console.warn('Lemon Squeezy checkout note:', e);
-            }
-
-            // Fallback payment modal UI
-            var modal = document.getElementById('payment-modal');
-            var pName = document.getElementById('pm-plan-name');
-            var pPrice = document.getElementById('pm-plan-price');
-
-            if (pName) pName.innerText = plan || 'Starter';
-            if (pPrice) pPrice.innerHTML = '$' + dynPrice + '<span style="font-size:13px;font-weight:400;">/mo</span>';
-
-            var nameEl = document.getElementById('pm-card-name');
-            var numEl = document.getElementById('pm-card-number');
-            var expEl = document.getElementById('pm-card-expiry');
-            var cvcEl = document.getElementById('pm-card-cvc');
-            var errEl = document.getElementById('pm-card-error');
-            var btnText = document.getElementById('pm-pay-btn-text');
-            var btn = document.getElementById('pm-pay-btn');
-
-            if (nameEl) nameEl.value = '';
-            if (numEl) numEl.value = '';
-            if (expEl) expEl.value = '';
-            if (cvcEl) cvcEl.value = '';
-            if (errEl) errEl.style.display = 'none';
-            if (btnText) btnText.innerText = 'Pay via Lemon Squeezy Gateway';
-            if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.style.background = 'linear-gradient(135deg, #f59e0b, #ea580c)'; }
-
-            if (modal) {
-                modal.style.display = 'flex';
-                modal.classList.add('active');
+                showToast('Unable to connect to Lemon Squeezy gateway: ' + e.message, 'error');
+                return;
             }
         },
 
@@ -22969,12 +22757,12 @@
 
 
 
-    <script src="assets/templates.js?v=20260808_v600"></script>
-    <script src="assets/app.js?v=20260808_v600"></script>
-    <script src="assets/support_patch.js?v=20260808_v600"></script>
-    <script src="assets/sending_accounts.js?v=20260808_v600"></script>
-    <script src="assets/ai_features.js?v=20260808_v600"></script>
-    <script src="assets/deliverability_v2.js?v=20260808_v600"></script>
+    <script src="assets/templates.js?v=20260808_v700"></script>
+    <script src="assets/app.js?v=20260808_v700"></script>
+    <script src="assets/support_patch.js?v=20260808_v700"></script>
+    <script src="assets/sending_accounts.js?v=20260808_v700"></script>
+    <script src="assets/ai_features.js?v=20260808_v700"></script>
+    <script src="assets/deliverability_v2.js?v=20260808_v700"></script>
 
 
 

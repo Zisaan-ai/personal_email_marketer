@@ -4992,8 +4992,8 @@
                 script.onload = function() {
                     try {
                         // Step 2: Initialize properly for v2
-                        if (typeof Paddle.Environment !== 'undefined' && typeof Paddle.Environment.set === 'function') {
-                            Paddle.Environment.set(envMode);
+                        if (envMode === 'sandbox' && typeof Paddle.Environment !== 'undefined' && typeof Paddle.Environment.set === 'function') {
+                            Paddle.Environment.set('sandbox');
                         }
                         Paddle.Initialize({
                             token: tok,
@@ -22885,44 +22885,59 @@
 
 
         openPayment: function(plan, price) {
-            var modal = document.getElementById('payment-modal');
-            var pName = document.getElementById('pm-plan-name');
-            var pPrice = document.getElementById('pm-plan-price');
-            let cfg = window.PADDLE_CONFIG || {};
-            let prices = cfg.prices || {};
-            let dynPrice = prices[plan] || price || (plan === 'Enterprise' ? 299 : plan === 'Professional' ? 99 : 29);
-
-            if (pName) pName.innerText = plan || 'Starter';
-            if (pPrice) pPrice.innerHTML = '$' + dynPrice + '<span style="font-size:13px;font-weight:400;">/mo</span>';
-            
             window._pendingUpgradePlan = plan || 'Starter';
+            let cfg = window.PADDLE_CONFIG || {};
             let priceIds = cfg.priceIds || {};
             let priceId = priceIds[plan] || priceIds['Starter'] || '';
             let token = cfg.clientToken || '';
             let env = cfg.environment || (token.startsWith('live_') ? 'production' : 'sandbox');
-            let isDemo = !token || !priceId;
 
-            // Reset card form fields to empty for real user entry
-            var nameEl = document.getElementById('pm-card-name');
-            var numEl = document.getElementById('pm-card-number');
-            var expEl = document.getElementById('pm-card-expiry');
-            var cvcEl = document.getElementById('pm-card-cvc');
-            var errEl = document.getElementById('pm-card-error');
-            var btnText = document.getElementById('pm-pay-btn-text');
-            var btn = document.getElementById('pm-pay-btn');
+            // Check login status
+            var userToken = localStorage.getItem('token') || localStorage.getItem('xcomic_token');
+            var userEmail = (window.APP?.user?.email || localStorage.getItem('pending_purchase_email') || '').trim();
 
-            if (nameEl) nameEl.value = '';
-            if (numEl) numEl.value = '';
-            if (expEl) expEl.value = '';
-            if (cvcEl) cvcEl.value = '';
-            if (errEl) errEl.style.display = 'none';
-            if (btnText) btnText.innerText = 'Pay Now';
-            if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.style.background = 'linear-gradient(135deg, #6366f1, #4f46e5)'; }
-
-            if (modal) {
-                modal.style.display = 'flex';
-                modal.classList.add('active');
+            if (!userToken) {
+                localStorage.setItem('pending_purchase_plan', (plan || 'Starter').toLowerCase());
+                showToast('Please create an account or log in to purchase a plan.', 'info');
+                setTimeout(function() {
+                    window.location.href = 'auth.html?mode=signup';
+                }, 1200);
+                return;
             }
+
+            if (!token || !priceId) {
+                if (typeof showToast === 'function') {
+                    showToast('Paddle is not configured yet! Please enter your Client Token & Price IDs in Admin Settings.', 'error');
+                } else {
+                    alert('Paddle is not configured yet! Please enter your Client Token & Price IDs in Admin Settings.');
+                }
+                return;
+            }
+
+            // Directly launch official Paddle Checkout overlay
+            if (typeof showToast === 'function') showToast('Opening checkout...', 'info');
+
+            loadAndInitPaddle(token, env, function() {
+                try {
+                    let opts = {
+                        settings: {
+                            displayMode: 'overlay',
+                            theme: 'light',
+                            locale: 'en'
+                        },
+                        items: [{ priceId: priceId, quantity: 1 }]
+                    };
+                    let uid = window.APP && window.APP.user ? window.APP.user.id : '';
+                    if (uid) opts.customData = { user_id: uid };
+                    if (userEmail && userEmail.includes('@')) {
+                        opts.customer = { email: userEmail };
+                    }
+                    Paddle.Checkout.open(opts);
+                } catch(e) {
+                    console.warn('Paddle Checkout error:', e);
+                    showToast('Payment gateway error. Please verify your Paddle configuration.', 'error');
+                }
+            });
         },
 
         closePayment: function() {
@@ -22933,250 +22948,17 @@
             }
         },
 
-        switchPayTab: function(tab) {
-            var tabs = ['card','paypal','googlepay','applepay'];
-            tabs.forEach(function(t) {
-                var btn = document.getElementById('pm-tab-'+t);
-                var panel = document.getElementById('pm-panel-'+t);
-                if (btn && panel) {
-                    if (t === tab) {
-                        btn.style.border = '2px solid #6366f1';
-                        btn.style.background = 'rgba(99,102,241,0.1)';
-                        btn.style.color = '#6366f1';
-                        panel.style.display = t === 'card' ? 'block' : 'block';
-                    } else {
-                        btn.style.border = '2px solid var(--border)';
-                        btn.style.background = 'transparent';
-                        btn.style.color = 'var(--text-muted)';
-                        panel.style.display = 'none';
-                    }
-                }
-            });
-            // Show/hide pay button for card only
-            var payBtn = document.getElementById('pm-pay-btn');
-            if (payBtn) payBtn.style.display = tab === 'card' ? 'flex' : 'none';
-        },
-
-        togglePromo: function() {
-            var panel = document.getElementById('pm-promo-panel');
-            var chevron = document.getElementById('pm-promo-chevron');
-            if (panel) {
-                var isHidden = panel.style.display === 'none' || panel.style.display === '';
-                panel.style.display = isHidden ? 'block' : 'none';
-                if (chevron) chevron.className = isHidden ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down';
-                if (isHidden) panel.style.cssText = 'display:block; margin-top:8px;';
-            }
-        },
-
-        applyPromo: function() {
-            var code = (document.getElementById('pm-promo-code') || {}).value || '';
-            var msgEl = document.getElementById('pm-promo-msg');
-            if (!code.trim()) {
-                if (msgEl) { msgEl.style.display='block'; msgEl.style.color='#ef4444'; msgEl.innerText='Please enter a promo code.'; }
-                return;
-            }
-            // Placeholder - real promo validation done server-side via Paddle
-            if (msgEl) { msgEl.style.display='block'; msgEl.style.color='#f59e0b'; msgEl.innerText='Promo codes will be validated at checkout via Paddle.'; }
-        },
-
+        switchPayTab: function(tab) {},
+        togglePromo: function() {},
+        applyPromo: function() {},
         _showCardError: function(msg) {
-            var errEl = document.getElementById('pm-card-error');
-            var errText = document.getElementById('pm-card-error-text');
-            if (errEl && errText) {
-                errText.innerText = msg;
-                errEl.style.display = 'block';
-                errEl.style.animation = 'none';
-                errEl.offsetHeight;
-                errEl.style.animation = 'fadeIn 0.3s';
-            }
+            if (typeof showToast === 'function') showToast(msg, 'error');
         },
-
-        _luhnCheck: function(num) {
-            let sum = 0;
-            let alt = false;
-            let digits = num.replace(/\s/g, '');
-            for (let i = digits.length - 1; i >= 0; i--) {
-                let n = parseInt(digits[i], 10);
-                if (alt) { n *= 2; if (n > 9) n -= 9; }
-                sum += n;
-                alt = !alt;
-            }
-            return sum % 10 === 0;
-        },
+        _luhnCheck: function(num) { return true; },
 
         processPayment: async function(method) {
-            method = method || 'card';
             var plan = window._pendingUpgradePlan || 'Starter';
-            let cfg = window.PADDLE_CONFIG || {};
-            let priceIds = cfg.priceIds || {};
-            let priceId = priceIds[plan] || priceIds['Starter'] || '';
-            let token = cfg.clientToken || '';
-            let env = cfg.environment || (token.startsWith('live_') ? 'production' : 'sandbox');
-            let isRealToken = token && (token.startsWith('test_') || token.startsWith('live_')) && !token.includes('xxx');
-            let isRealPrice = priceId && priceId.startsWith('pri_') && !priceId.includes('xxx');
-            let isDemo = !isRealToken || !isRealPrice;
-
-            var errEl = document.getElementById('pm-card-error');
-            if (errEl) errEl.style.display = 'none';
-
-            // Check login status & email
-            var userToken = localStorage.getItem('token') || localStorage.getItem('xcomic_token');
-            var userEmail = (document.getElementById('pm-email')?.value || '').trim();
-
-            if (!userToken) {
-                if (!userEmail || !userEmail.includes('@')) {
-                    LANDING._showCardError('Please enter your email address to continue with your purchase.');
-                    document.getElementById('pm-email')?.focus();
-                    return;
-                }
-                // Guest user: Save pending plan & email, then redirect to signup/login
-                localStorage.setItem('pending_purchase_plan', plan.toLowerCase());
-                localStorage.setItem('pending_purchase_email', userEmail);
-                showToast('Please create an account or log in to complete your subscription purchase.', 'info');
-                setTimeout(function() {
-                    window.location.href = 'auth.html?mode=signup&email=' + encodeURIComponent(userEmail);
-                }, 1200);
-                return;
-            }
-
-            if (!isDemo) {
-                // Load Paddle dynamically & open checkout
-                var _plan = plan;
-                var _priceId = priceId;
-                loadAndInitPaddle(token, env, function() {
-                    try {
-                        let opts = {
-                            settings: {
-                                displayMode: 'overlay',
-                                theme: 'light',
-                                locale: 'en'
-                            },
-                            items: [{ priceId: _priceId, quantity: 1 }]
-                        };
-                        let uid = window.APP && window.APP.user ? window.APP.user.id : '';
-                        if (uid) opts.customData = { user_id: uid };
-                        let email = (document.getElementById('pm-email')?.value || window.APP?.user?.email || '').trim();
-                        if (email && email.includes('@')) {
-                            opts.customer = { email: email };
-                        }
-                        Paddle.Checkout.open(opts);
-                        LANDING.closePayment();
-                    } catch(e) {
-                        console.warn('Paddle Checkout error:', e);
-                        showToast('Payment gateway error. Falling back to demo mode.', 'warning');
-                    }
-                });
-                return;
-            }
-
-            var errEl = document.getElementById('pm-card-error');
-            if (errEl) errEl.style.display = 'none';
-
-            // Demo mode processing
-            if (method === 'card') {
-                // === CARD VALIDATION ===
-                var cardName = (document.getElementById('pm-card-name')?.value || '').trim();
-                var cardNum = (document.getElementById('pm-card-number')?.value || '').replace(/\s/g, '');
-                var cardExp = (document.getElementById('pm-card-expiry')?.value || '').trim();
-                var cardCvc = (document.getElementById('pm-card-cvc')?.value || '').trim();
-
-                // Validate name
-                if (!cardName || cardName.length < 2) {
-                    LANDING._showCardError('Please enter the cardholder name.');
-                    document.getElementById('pm-card-name')?.focus();
-                    return;
-                }
-
-                // Validate card number
-                if (!cardNum || cardNum.length < 13 || cardNum.length > 19) {
-                    LANDING._showCardError('Please enter a valid card number (13-19 digits).');
-                    document.getElementById('pm-card-number')?.focus();
-                    return;
-                }
-                if (!LANDING._luhnCheck(cardNum)) {
-                    LANDING._showCardError('Invalid card number. Please check and try again.');
-                    document.getElementById('pm-card-number')?.focus();
-                    return;
-                }
-
-                // Validate expiry
-                if (!cardExp || !cardExp.match(/^\d{2}\/\d{2}$/)) {
-                    LANDING._showCardError('Please enter expiry date in MM/YY format.');
-                    document.getElementById('pm-card-expiry')?.focus();
-                    return;
-                }
-                var expParts = cardExp.split('/');
-                var expMonth = parseInt(expParts[0], 10);
-                var expYear = parseInt('20' + expParts[1], 10);
-                var now = new Date();
-                if (expMonth < 1 || expMonth > 12) {
-                    LANDING._showCardError('Invalid expiry month. Must be 01-12.');
-                    document.getElementById('pm-card-expiry')?.focus();
-                    return;
-                }
-                if (expYear < now.getFullYear() || (expYear === now.getFullYear() && expMonth < now.getMonth() + 1)) {
-                    LANDING._showCardError('This card has expired. Please use a different card.');
-                    document.getElementById('pm-card-expiry')?.focus();
-                    return;
-                }
-
-                // Validate CVC
-                if (!cardCvc || cardCvc.length < 3 || cardCvc.length > 4) {
-                    LANDING._showCardError('Please enter a valid CVC (3-4 digits).');
-                    document.getElementById('pm-card-cvc')?.focus();
-                    return;
-                }
-            } else {
-                if (method === 'paypal') showToast('Redirecting to PayPal securely...', 'info');
-                else if (method === 'googlepay') showToast('Opening Google Pay...', 'info');
-                else if (method === 'applepay') showToast('Opening Apple Pay...', 'info');
-            }
-
-            // === PROCESS PAYMENT ===
-            var btn = document.getElementById('pm-pay-btn');
-            var btnText = document.getElementById('pm-pay-btn-text');
-            if (btn) { btn.disabled = true; btn.style.opacity = '0.7'; }
-            if (btnText) btnText.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="margin-right:6px;"></i> Verifying Card...';
-
-            // Simulate card verification delay (like real gateway)
-            await new Promise(r => setTimeout(r, 1500));
-            if (btnText) btnText.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="margin-right:6px;"></i> Processing Payment...';
-            await new Promise(r => setTimeout(r, 2000));
-
-            try {
-                const tokenVal = localStorage.getItem('token') || localStorage.getItem('xcomic_token');
-                const res = await fetch('/api/payment/test-checkout', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + tokenVal
-                    },
-                    body: JSON.stringify({ plan: plan.toLowerCase() })
-                });
-                if (res.ok) {
-                    const data = await res.json();
-                    if (btnText) btnText.innerHTML = '<i class="fa-solid fa-circle-check" style="margin-right:6px;"></i> Payment Successful!';
-                    if (btn) btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
-                    
-                    await new Promise(r => setTimeout(r, 1500));
-                    
-                    if (typeof showToast === 'function') {
-                        showToast(data.message || 'Payment Successful! Subscription upgraded to ' + plan + '.', 'success');
-                    }
-                    localStorage.setItem('user_plan', plan.toLowerCase());
-                    if (typeof window.APP_INIT === 'function') window.APP_INIT();
-                    if (typeof window.updateFeatureLocks === 'function') window.updateFeatureLocks(plan.toLowerCase());
-                    LANDING.closePayment();
-                } else {
-                    const err = await res.json().catch(() => ({}));
-                    LANDING._showCardError(err.detail || 'Payment was declined. Please try a different card.');
-                }
-            } catch(e) {
-                LANDING._showCardError('Connection error. Please check your internet and try again.');
-            } finally {
-                if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.style.background = 'linear-gradient(135deg, #6366f1, #4f46e5)'; }
-                if (btnText) btnText.innerText = 'Pay Now';
-            }
+            LANDING.openPayment(plan);
         }
 
 

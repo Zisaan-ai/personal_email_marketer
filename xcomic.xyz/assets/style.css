@@ -1074,3 +1074,152 @@ button[onclick*="approveUser"] {
     }
 }
 
+/* ============================================================
+   UNIVERSAL MOBILE RESPONSIVE FIXES (PREVENT OVERFLOW)
+   ============================================================ */
+
+/* 1. Global Viewport Overflow Guard */
+html, body, #landing-page, #app-page {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+}
+
+/* 2. Responsive Landing Hero & Typography */
+@media (max-width: 900px) {
+    .landing-nav {
+        padding: 16px 20px !important;
+    }
+    .landing-nav-links {
+        gap: 8px !important;
+    }
+    .landing-nav-links a {
+        display: none !important;
+    }
+    .landing-hero {
+        padding: 90px 16px 40px !important;
+    }
+    .landing-hero h1 {
+        font-size: 34px !important;
+        line-height: 1.25 !important;
+    }
+    .landing-hero p {
+        font-size: 15px !important;
+        line-height: 1.6 !important;
+        padding: 0 8px !important;
+    }
+    .hero-ctas, .cta-btns {
+        flex-direction: column !important;
+        width: 100% !important;
+        gap: 12px !important;
+    }
+    .hero-cta-primary, .cta-primary, .cta-secondary, .landing-login-btn {
+        width: 100% !important;
+        padding: 14px 20px !important;
+        font-size: 15px !important;
+        text-align: center !important;
+        box-sizing: border-box !important;
+    }
+    .stats-strip {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        padding: 20px 12px !important;
+        gap: 16px !important;
+    }
+    .stat-item {
+        padding: 12px 8px !important;
+        border-right: none !important;
+        border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+        width: 100% !important;
+    }
+    .stat-num {
+        font-size: 28px !important;
+    }
+    .stat-label {
+        font-size: 11px !important;
+    }
+    .problem-section, #features, .landing-pricing, #affiliate, .landing-cta-final {
+        padding: 50px 16px !important;
+    }
+    .problem-title, .section-title, .pricing-title, .cta-final-title {
+        font-size: 26px !important;
+        line-height: 1.3 !important;
+        margin-bottom: 24px !important;
+    }
+    .problem-grid, .features-grid, .pricing-grid {
+        grid-template-columns: 1fr !important;
+        max-width: 100% !important;
+        gap: 16px !important;
+    }
+    .feature-highlight {
+        grid-template-columns: 1fr !important;
+        gap: 32px !important;
+        margin-top: 40px !important;
+        padding: 0 !important;
+    }
+    .fh-title {
+        font-size: 22px !important;
+    }
+    .hero-dashboard {
+        margin: 24px 0 0 !important;
+        border-radius: 12px !important;
+        max-width: 100% !important;
+    }
+    .hd-sidebar {
+        display: none !important;
+    }
+    .hd-stat-row {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+    }
+    .hd-stat {
+        padding: 10px !important;
+    }
+    .hd-sval {
+        font-size: 18px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .landing-hero h1 {
+        font-size: 26px !important;
+    }
+    .landing-logo span {
+        font-size: 16px !important;
+    }
+    .landing-login-btn, .landing-signup-btn {
+        padding: 8px 12px !important;
+        font-size: 13px !important;
+    }
+    .pricing-card {
+        padding: 24px 16px !important;
+    }
+    .p-price {
+        font-size: 36px !important;
+    }
+}
+
+/* 3. Dashboard Mobile Responsiveness & Floating AI Button */
+@media (max-width: 992px) {
+    .main-content {
+        padding: 68px 12px 32px 12px !important;
+    }
+    #ai-chat-panel {
+        width: calc(100vw - 20px) !important;
+        max-width: 400px !important;
+        right: 10px !important;
+        bottom: 80px !important;
+        height: calc(100vh - 120px) !important;
+        max-height: 520px !important;
+        border-radius: 16px !important;
+        z-index: 100005 !important;
+    }
+    #ai-chat-btn {
+        bottom: 16px !important;
+        right: 16px !important;
+        width: 52px !important;
+        height: 52px !important;
+        z-index: 100004 !important;
+    }
+}
+

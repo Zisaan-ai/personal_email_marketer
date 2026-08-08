@@ -742,7 +742,11 @@ window.navTo = function(targetId) {
 
         if (targetId === 'settings') loadSmtpStatus();
 
-        if (targetId === 'support-view' && typeof SUPPORT !== 'undefined' && SUPPORT.loadUserTickets) SUPPORT.loadUserTickets();
+        if (targetId === 'support-view' && typeof SUPPORT !== 'undefined') {
+            var isAdmin = localStorage.getItem('is_admin') === 'true' || localStorage.getItem('is_admin') === '1';
+            if (isAdmin && SUPPORT.loadAdminTickets) SUPPORT.loadAdminTickets();
+            if (SUPPORT.loadUserTickets) SUPPORT.loadUserTickets();
+        }
 
 
 

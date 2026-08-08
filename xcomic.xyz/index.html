@@ -22579,7 +22579,13 @@
 
 
 
-            try { isAdmin = localStorage.getItem('is_admin') === 'true'; } catch(e) {}
+            try { 
+                isAdmin = localStorage.getItem('is_admin') === 'true' || localStorage.getItem('is_admin') === '1';
+                if (!isAdmin) {
+                    var u = JSON.parse(localStorage.getItem('user') || '{}');
+                    if (u && u.is_admin) isAdmin = true;
+                }
+            } catch(e) {}
 
 
 
@@ -22613,6 +22619,12 @@
 
             }
 
+
+
+
+
+
+
             // Server-side admin verification on page load
             if (_token) {
                 fetch('/api/admin/users', { headers: { 'Authorization': 'Bearer ' + _token } })
@@ -22621,8 +22633,10 @@
                         localStorage.setItem('is_admin', 'true');
                         var n = document.getElementById('nav-admin'); if (n) n.style.display = 'flex';
                         var edc = document.getElementById('admin-email-delivery-card'); if (edc) edc.style.display = 'block';
-                    } else {
+                    } else if (r.status === 403) {
                         localStorage.setItem('is_admin', 'false');
+                        var n = document.getElementById('nav-admin'); if (n) n.style.display = 'none';
+                        var edc = document.getElementById('admin-email-delivery-card'); if (edc) edc.style.display = 'none';
                     }
                 }).catch(function(){});
             }

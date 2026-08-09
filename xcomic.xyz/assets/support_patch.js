@@ -337,8 +337,10 @@ window.SUPPORT.checkUnreadTickets = async function() {
                 if (adminBadge) {
                     if (totalAdmin > 0) {
                         adminBadge.innerText = totalAdmin;
+                        adminBadge.classList.add('has-unread');
                         adminBadge.style.display = 'inline-flex';
                     } else {
+                        adminBadge.classList.remove('has-unread');
                         adminBadge.style.display = 'none';
                     }
                 }
@@ -348,8 +350,10 @@ window.SUPPORT.checkUnreadTickets = async function() {
                 if (suppTabBadge) {
                     if (suppCount > 0) {
                         suppTabBadge.innerText = suppCount;
+                        suppTabBadge.classList.add('has-unread');
                         suppTabBadge.style.display = 'inline-flex';
                     } else {
+                        suppTabBadge.classList.remove('has-unread');
                         suppTabBadge.style.display = 'none';
                     }
                 }
@@ -359,8 +363,10 @@ window.SUPPORT.checkUnreadTickets = async function() {
                 if (userTabBadge) {
                     if (userCount > 0) {
                         userTabBadge.innerText = userCount;
+                        userTabBadge.classList.add('has-unread');
                         userTabBadge.style.display = 'inline-flex';
                     } else {
+                        userTabBadge.classList.remove('has-unread');
                         userTabBadge.style.display = 'none';
                     }
                 }
@@ -368,13 +374,19 @@ window.SUPPORT.checkUnreadTickets = async function() {
                 // API failed - hide all admin badges
                 ['admin-unread-badge', 'tab-tickets-unread-badge', 'tab-users-badge'].forEach(function(id) {
                     var el = document.getElementById(id);
-                    if (el) el.style.display = 'none';
+                    if (el) {
+                        el.classList.remove('has-unread');
+                        el.style.display = 'none';
+                    }
                 });
             }
         } else {
             // User Support Badge - ALWAYS hide first, only show if count > 0
             var userBadge = document.getElementById('user-support-badge');
-            if (userBadge) userBadge.style.display = 'none';
+            if (userBadge) {
+                userBadge.classList.remove('has-unread');
+                userBadge.style.display = 'none';
+            }
 
             var res = await safeApiCall('/support/tickets/unread-count', 'GET');
             if (res && res.ok) {
@@ -384,18 +396,21 @@ window.SUPPORT.checkUnreadTickets = async function() {
                 if (userBadge) {
                     if (count > 0) {
                         userBadge.innerText = count;
+                        userBadge.classList.add('has-unread');
                         userBadge.style.display = 'inline-flex';
                     } else {
+                        userBadge.classList.remove('has-unread');
                         userBadge.style.display = 'none';
                     }
                 }
             }
-            // If API fails, badge stays hidden (already set to none above)
         }
     } catch(e) {
-        // On any error, hide user support badge
         var userBadge = document.getElementById('user-support-badge');
-        if (userBadge) userBadge.style.display = 'none';
+        if (userBadge) {
+            userBadge.classList.remove('has-unread');
+            userBadge.style.display = 'none';
+        }
     }
 };
 

@@ -2293,12 +2293,22 @@ details summary::marker {
     }
 
     aside.sidebar .logo h2,
-    aside.sidebar .nav-item span,
+    aside.sidebar .nav-item > span:not(#user-support-badge):not(#admin-unread-badge),
     .sidebar .logo h2,
-    .nav-item span {
+    .nav-item > span:not(#user-support-badge):not(#admin-unread-badge) {
         display: inline-block !important;
         opacity: 1 !important;
         visibility: visible !important;
+    }
+
+    #user-support-badge,
+    #admin-unread-badge {
+        display: none !important;
+    }
+
+    #user-support-badge.has-unread,
+    #admin-unread-badge.has-unread {
+        display: inline-flex !important;
     }
 
     main.main-content,

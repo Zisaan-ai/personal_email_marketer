@@ -56,12 +56,13 @@
 
     <link rel="stylesheet" href="assets/style.css?v=20260809_v99999">
     <style>
-        /* IMMUTABLE INLINE PC LAYOUT GUARD */
+        /* IMMUTABLE INLINE PC LAYOUT GUARD v2 - position:fixed sidebar */
         @media (min-width: 769px) {
-            #app-page, #app-page.on { display: flex !important; flex-direction: row !important; width: 100% !important; min-height: 100vh !important; position: relative !important; }
-            aside.sidebar, .sidebar { display: flex !important; flex-direction: column !important; width: 260px !important; min-width: 260px !important; max-width: 260px !important; height: 100vh !important; min-height: 100vh !important; position: sticky !important; top: 0 !important; left: 0 !important; z-index: 100 !important; flex-shrink: 0 !important; background: var(--surface-0, #fff) !important; border-right: 1px solid var(--border, #e2e8f0) !important; transform: none !important; box-shadow: none !important; margin: 0 !important; padding: 32px 20px !important; visibility: visible !important; opacity: 1 !important; }
+            html, body { overflow-x: hidden !important; }
+            #app-page, #app-page.on { display: block !important; width: 100% !important; min-height: 100vh !important; position: relative !important; overflow: visible !important; }
+            aside.sidebar, .sidebar { display: flex !important; flex-direction: column !important; width: 260px !important; min-width: 260px !important; max-width: 260px !important; height: 100vh !important; position: fixed !important; top: 0 !important; left: 0 !important; z-index: 1000 !important; flex-shrink: 0 !important; background: var(--surface-0, #fff) !important; border-right: 1px solid var(--border, #e2e8f0) !important; transform: none !important; box-shadow: none !important; margin: 0 !important; padding: 32px 20px !important; visibility: visible !important; opacity: 1 !important; overflow-y: auto !important; }
             aside.sidebar .logo h2, aside.sidebar .nav-item span, .sidebar .logo h2, .nav-item span { display: inline-block !important; opacity: 1 !important; visibility: visible !important; }
-            main.main-content, .main-content { display: block !important; flex: 1 !important; min-width: 0 !important; max-width: calc(100vw - 260px) !important; margin-left: 0 !important; padding: 36px 48px !important; overflow-y: auto !important; position: relative !important; z-index: 1 !important; }
+            main.main-content, .main-content { display: block !important; width: calc(100% - 260px) !important; max-width: calc(100vw - 260px) !important; margin-left: 260px !important; padding: 36px 48px !important; min-height: 100vh !important; position: relative !important; z-index: 1 !important; }
             .mobile-app-header, .mobile-menu-btn, .sidebar-overlay, .sidebar-close-btn { display: none !important; }
         }
     </style>

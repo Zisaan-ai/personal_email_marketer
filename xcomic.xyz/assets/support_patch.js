@@ -364,15 +364,23 @@ window.SUPPORT.checkUnreadTickets = async function() {
                         userTabBadge.style.display = 'none';
                     }
                 }
+            } else {
+                // API failed - hide all admin badges
+                ['admin-unread-badge', 'tab-tickets-unread-badge', 'tab-users-badge'].forEach(function(id) {
+                    var el = document.getElementById(id);
+                    if (el) el.style.display = 'none';
+                });
             }
         } else {
-            // User Support Badge
+            // User Support Badge - ALWAYS hide first, only show if count > 0
+            var userBadge = document.getElementById('user-support-badge');
+            if (userBadge) userBadge.style.display = 'none';
+
             var res = await safeApiCall('/support/tickets/unread-count', 'GET');
             if (res && res.ok) {
                 var data = await res.json();
-                var count = data.count || 0;
+                var count = parseInt(data.count, 10) || 0;
                 
-                var userBadge = document.getElementById('user-support-badge');
                 if (userBadge) {
                     if (count > 0) {
                         userBadge.innerText = count;
@@ -382,8 +390,13 @@ window.SUPPORT.checkUnreadTickets = async function() {
                     }
                 }
             }
+            // If API fails, badge stays hidden (already set to none above)
         }
-    } catch(e) {}
+    } catch(e) {
+        // On any error, hide user support badge
+        var userBadge = document.getElementById('user-support-badge');
+        if (userBadge) userBadge.style.display = 'none';
+    }
 };
 
 // Auto-start polling badges immediately and every 15s

@@ -721,16 +721,19 @@ tbody tr:hover td { background: var(--surface-1); }
 /* ============================================================
    RESPONSIVE
    ============================================================ */
-@media (max-width: 1024px) {
-    .sidebar { width: 80px; padding: 24px 12px; }
-    .sidebar .logo h2, .nav-item span { display: none; }
-    .logo { justify-content: center; padding: 0; margin-bottom: 40px; }
-    .nav-item { justify-content: center; padding: 12px; }
-    .nav-item i { font-size: 20px; }
-    .main-content { padding: 32px; }
+/* PC Sidebar is 100% Full Width (240px) on Desktop screens (>768px) */
+.sidebar {
+    width: 240px;
+    min-width: 240px;
+    flex-shrink: 0;
+}
+.sidebar .logo h2,
+.nav-item span {
+    display: inline-block !important;
 }
 
 @media (max-width: 768px) {
+
     .sidebar {
         position: fixed; left: -100%; top: 0; bottom: 0; z-index: 1000;
         width: 260px !important; transition: left 0.3s ease;

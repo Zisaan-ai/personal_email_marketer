@@ -1,10 +1,49 @@
-import time
-import random
-import os
-import json
-import threading
-from datetime import datetime
-import pytz
+import re
+
+def process_spintax(text):
+    if not text:
+        return text
+    # Pattern to match {opt1|opt2} containing at least one pipe '|'
+    pattern = re.compile(r'\{([^{}]*\|[^{}]*)\}')
+    while True:
+        match = pattern.search(text)
+        if not match:
+            break
+        options = match.group(1).split('|')
+        choice = random.choice(options)
+        text = text[:match.start()] + choice + text[match.end():]
+    return text
+
+def personalize_email(text, lead):
+    if not text:
+        return ""
+    
+    email_val = getattr(lead, 'email', '') or ''
+    email_name = email_val.split('@')[0].capitalize() if email_val else 'There'
+    
+    first_name = getattr(lead, 'first_name', None) or getattr(lead, 'name', None) or email_name
+    last_name = getattr(lead, 'last_name', None) or ''
+    company = getattr(lead, 'company', None) or getattr(lead, 'company_name', None) or 'your company'
+
+    # 1. Tag replacements first
+    replacements = {
+        '{{firstName}}': first_name,
+        '{{first_name}}': first_name,
+        '{{lastName}}': last_name,
+        '{{last_name}}': last_name,
+        '{{company}}': company,
+        '{{company_name}}': company,
+        '{{email}}': email_val,
+    }
+
+    for tag, val in replacements.items():
+        text = text.replace(tag, str(val))
+
+    # 2. Spintax processing
+    text = process_spintax(text)
+
+    return text
+
 
 active_bulk_campaign_threads = set()
 bulk_campaign_thread_lock = threading.Lock()
@@ -101,13 +140,13 @@ def _run_bulk_campaign(db, campaign_id):
             # Skip if this account is exhausted
             continue
 
-        # Format HTML content
-        body = campaign.html_content or ""
-        # Basic variable replacement (can add more if needed)
-        body = body.replace("{{email}}", lead.email)
+        # Format HTML content & Subject with personalization & spintax
+        raw_body = campaign.html_content or ""
+        raw_subject = getattr(campaign, 'subject', None) or campaign.name or "Outreach"
+        
+        body = personalize_email(raw_body, lead)
+        subject = personalize_email(raw_subject, lead)
 
-        # Send email
-        subject = campaign.name
         
         # Free tier limit check
         campaign_user = db.query(database.User).filter(database.User.id == campaign.user_id).first()

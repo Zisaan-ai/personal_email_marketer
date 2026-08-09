@@ -2242,6 +2242,74 @@ details summary::marker {
     }
 }
 
+/* ============================================================
+   31. UNBEATABLE PC DESKTOP LAYOUT PROTECTION (min-width: 769px)
+   Guarantees 100% full fixed 260px sidebar on all PC screens
+   ============================================================ */
+@media (min-width: 769px) {
+    #app-page,
+    #app-page.on {
+        display: flex !important;
+        flex-direction: row !important;
+        width: 100% !important;
+        min-height: 100vh !important;
+        position: relative !important;
+    }
+
+    #app-page .sidebar,
+    .sidebar {
+        position: sticky !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 260px !important;
+        min-width: 260px !important;
+        max-width: 260px !important;
+        height: 100vh !important;
+        min-height: 100vh !important;
+        display: flex !important;
+        flex-direction: column !important;
+        background: var(--surface-0) !important;
+        border-right: 1px solid var(--border) !important;
+        z-index: 100 !important;
+        flex-shrink: 0 !important;
+        transform: none !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 32px 20px !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    #app-page .sidebar .logo h2,
+    #app-page .sidebar .nav-item span,
+    .sidebar .logo h2,
+    .nav-item span {
+        display: inline-block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    #app-page .main-content,
+    .main-content {
+        flex: 1 !important;
+        min-width: 0 !important;
+        width: auto !important;
+        margin-left: 0 !important;
+        padding: 36px 48px !important;
+        overflow-y: auto !important;
+        position: relative !important;
+        z-index: 1 !important;
+    }
+
+    .mobile-app-header,
+    .mobile-menu-btn,
+    .sidebar-overlay,
+    .sidebar-close-btn {
+        display: none !important;
+    }
+}
+
+
 
 
 

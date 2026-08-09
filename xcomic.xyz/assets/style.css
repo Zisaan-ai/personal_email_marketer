@@ -1485,3 +1485,146 @@ details summary::marker {
     content: "" !important;
 }
 
+/* ============================================================
+   MOBILE DASHBOARD & VISUAL BUILDER UX OPTIMIZATIONS
+   (Strictly scoped to max-width: 900px - NO CHANGES on PC)
+   ============================================================ */
+@media (max-width: 900px) {
+    /* 1. Mobile Visual Builder & Campaign Creation */
+    #campaigns-builder,
+    #cold-mail-builder,
+    .builder-container {
+        padding: 12px 8px !important;
+    }
+    
+    .builder-layout,
+    .visual-builder-layout {
+        flex-direction: column !important;
+        gap: 16px !important;
+    }
+    
+    .builder-sidebar,
+    .builder-sidebar-left,
+    .builder-sidebar-right {
+        width: 100% !important;
+        max-width: 100% !important;
+        max-height: 280px !important;
+        overflow-y: auto !important;
+        border-right: none !important;
+        border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+        padding: 12px !important;
+        box-sizing: border-box !important;
+    }
+    
+    .builder-canvas-wrapper,
+    .builder-canvas {
+        width: 100% !important;
+        min-height: 320px !important;
+        padding: 12px 8px !important;
+        overflow-x: auto !important;
+        box-sizing: border-box !important;
+    }
+
+    .vb-tab-bar,
+    .builder-tabs {
+        display: flex !important;
+        flex-direction: row !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        white-space: nowrap !important;
+        padding-bottom: 6px !important;
+        gap: 8px !important;
+    }
+
+    .vb-tab,
+    .builder-tab-btn {
+        flex-shrink: 0 !important;
+        padding: 8px 14px !important;
+        font-size: 13px !important;
+    }
+
+    /* Prevent mobile browser zoom on input focus */
+    .builder-container input,
+    .builder-container select,
+    .builder-container textarea,
+    .view input,
+    .view select,
+    .view textarea,
+    .modal-content input,
+    .modal-content select,
+    .modal-content textarea {
+        font-size: 16px !important;
+    }
+
+    /* 2. Mobile Dashboard Overview Cards & Grid */
+    .overview-grid,
+    .stats-cards-grid {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
+        gap: 10px !important;
+    }
+
+    .stat-card {
+        padding: 14px 12px !important;
+    }
+
+    .stat-card-value {
+        font-size: 22px !important;
+    }
+
+    /* 3. Mobile Tables (Leads, Campaigns, Accounts) */
+    .table-responsive,
+    .data-table-wrapper {
+        width: 100% !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        border-radius: 12px !important;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 10px 12px !important;
+        font-size: 13px !important;
+        white-space: nowrap !important;
+    }
+
+    /* Touch Friendly Action Buttons */
+    .action-btn,
+    .table-action-btn {
+        min-width: 36px !important;
+        min-height: 36px !important;
+        padding: 6px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border-radius: 8px !important;
+    }
+
+    /* 4. Mobile Modals & Slide-overs */
+    .modal-content,
+    .modal-card {
+        width: 94vw !important;
+        max-width: 480px !important;
+        max-height: 88vh !important;
+        overflow-y: auto !important;
+        padding: 20px 16px !important;
+        margin: 12px auto !important;
+        border-radius: 16px !important;
+    }
+
+    /* 5. Mobile Sticky Bottom Action Bar for Campaign Steps */
+    .builder-footer-actions,
+    .step-navigation-bar {
+        flex-direction: column !important;
+        gap: 10px !important;
+        width: 100% !important;
+    }
+
+    .builder-footer-actions button,
+    .step-navigation-bar button {
+        width: 100% !important;
+        padding: 12px 16px !important;
+        font-size: 14px !important;
+        font-weight: 700 !important;
+    }
+}
+

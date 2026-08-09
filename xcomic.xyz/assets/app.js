@@ -8995,6 +8995,33 @@ function setupSequenceBuilder() {
 
 
         document.getElementById('inst-ab-section').style.display = s.is_ab ? 'block' : 'none';
+        
+        const deleteBtn = document.getElementById('inst-delete-step-btn');
+        if (deleteBtn) {
+            deleteBtn.style.display = steps.length > 1 && currentStep > 1 ? 'inline-flex' : 'none';
+            deleteBtn.onclick = () => {
+                if (confirm(`Are you sure you want to delete Step ${currentStep}?`)) {
+                    steps.splice(currentStep - 1, 1);
+                    steps.forEach((st, idx) => { st.step = idx + 1; });
+                    currentStep = Math.min(currentStep, steps.length);
+                    loadStep();
+                    renderSteps();
+                    showToast('Step deleted');
+                }
+            };
+        }
+        
+        const waitInput = document.getElementById('inst-wait');
+        if (waitInput) {
+            if (currentStep === 1) {
+                waitInput.value = 0;
+                waitInput.disabled = true;
+                waitInput.title = "Step 1 sends immediately when campaign starts";
+            } else {
+                waitInput.disabled = false;
+                waitInput.title = "Days to wait after previous step";
+            }
+        }
 
 
 
@@ -9219,6 +9246,33 @@ function setupSequenceBuilder() {
 
 
         document.getElementById('inst-ab-section').style.display = s.is_ab ? 'block' : 'none';
+        
+        const deleteBtn = document.getElementById('inst-delete-step-btn');
+        if (deleteBtn) {
+            deleteBtn.style.display = steps.length > 1 && currentStep > 1 ? 'inline-flex' : 'none';
+            deleteBtn.onclick = () => {
+                if (confirm(`Are you sure you want to delete Step ${currentStep}?`)) {
+                    steps.splice(currentStep - 1, 1);
+                    steps.forEach((st, idx) => { st.step = idx + 1; });
+                    currentStep = Math.min(currentStep, steps.length);
+                    loadStep();
+                    renderSteps();
+                    showToast('Step deleted');
+                }
+            };
+        }
+        
+        const waitInput = document.getElementById('inst-wait');
+        if (waitInput) {
+            if (currentStep === 1) {
+                waitInput.value = 0;
+                waitInput.disabled = true;
+                waitInput.title = "Step 1 sends immediately when campaign starts";
+            } else {
+                waitInput.disabled = false;
+                waitInput.title = "Days to wait after previous step";
+            }
+        }
 
 
 
@@ -13807,6 +13861,76 @@ window.loadAdminUsers = async function() {
     } catch(e) {
         showToast('Error: ' + e.message, 'error');
         console.error(e);
+    }
+};
+
+
+    window.insertSeqVar = function(tag) {
+        const activeEl = document.activeElement;
+        if (activeEl && (activeEl.id === 'inst-subject' || activeEl.id === 'inst-body' || activeEl.id === 'inst-subject-b' || activeEl.id === 'inst-body-b')) {
+            const start = activeEl.selectionStart || 0;
+            const end = activeEl.selectionEnd || 0;
+            const text = activeEl.value;
+            activeEl.value = text.substring(0, start) + tag + text.substring(end);
+            activeEl.selectionStart = activeEl.selectionEnd = start + tag.length;
+            activeEl.focus();
+        } else {
+            const bodyEl = document.getElementById('inst-body');
+            if (bodyEl) { bodyEl.value += (bodyEl.value ? ' ' : '') + tag; bodyEl.focus(); }
+        }
+    };
+
+// --- Touch-First Mobile Helpers for Visual Builder & Cold Sequences ---
+document.addEventListener('DOMContentLoaded', () => {
+    // Enable 1-tap block insertion on Visual Builder block palette
+    document.addEventListener('click', (e) => {
+        const mcBlock = e.target.closest('.draggable-block.mc-block');
+        if (mcBlock) {
+            const type = mcBlock.getAttribute('data-type');
+            if (type && typeof window.addBlockToCanvas === 'function') {
+                window.addBlockToCanvas(type);
+                if (window.innerWidth <= 768) {
+                    window.toggleMobileVbView('canvas');
+                }
+            }
+        }
+    });
+});
+
+window.toggleMobileVbView = function(viewMode) {
+    const canvasWrap = document.querySelector('.builder-canvas-wrapper');
+    const sidebar = document.querySelector('.builder-sidebar');
+    const tabCanvas = document.getElementById('mobile-vb-tab-canvas');
+    const tabBlocks = document.getElementById('mobile-vb-tab-blocks');
+
+    if (!canvasWrap || !sidebar) return;
+
+    if (viewMode === 'canvas') {
+        canvasWrap.style.setProperty('display', 'flex', 'important');
+        sidebar.style.setProperty('display', 'none', 'important');
+        if (tabCanvas) { tabCanvas.style.background = 'linear-gradient(135deg,#4f46e5,#6366f1)'; tabCanvas.style.color = '#fff'; }
+        if (tabBlocks) { tabBlocks.style.background = 'rgba(255,255,255,0.1)'; tabBlocks.style.color = '#e2e8f0'; }
+    } else {
+        canvasWrap.style.setProperty('display', 'none', 'important');
+        sidebar.style.setProperty('display', 'flex', 'important');
+        if (tabBlocks) { tabBlocks.style.background = 'linear-gradient(135deg,#4f46e5,#6366f1)'; tabBlocks.style.color = '#fff'; }
+        if (tabCanvas) { tabCanvas.style.background = 'rgba(255,255,255,0.1)'; tabCanvas.style.color = '#e2e8f0'; }
+    }
+};
+
+window.moveBlockUp = function(btn) {
+    const block = btn.closest('.email-block');
+    if (block && block.previousElementSibling && !block.previousElementSibling.classList.contains('canvas-placeholder')) {
+        block.parentNode.insertBefore(block, block.previousElementSibling);
+        if (typeof showToast === 'function') showToast('Moved up');
+    }
+};
+
+window.moveBlockDown = function(btn) {
+    const block = btn.closest('.email-block');
+    if (block && block.nextElementSibling) {
+        block.parentNode.insertBefore(block.nextElementSibling, block);
+        if (typeof showToast === 'function') showToast('Moved down');
     }
 };
 

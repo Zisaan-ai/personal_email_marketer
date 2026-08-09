@@ -2181,7 +2181,15 @@ details summary::marker {
         font-size: 20px !important;
         margin-bottom: 6px !important;
     }
+
+    /* Mobile Bottom Floating Action Bars */
+    .mobile-vb-switcher,
+    .mobile-vb-bottom-bar,
+    .mobile-seq-bottom-bar {
+        display: flex !important;
+    }
 }
+
 
 
 

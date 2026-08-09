@@ -54,7 +54,7 @@
 
 
 
-    <link rel="stylesheet" href="assets/style.css?v=20260809_v2100">
+    <link rel="stylesheet" href="assets/style.css?v=20260809_v2200">
 
 
 
@@ -5008,6 +5008,31 @@
 
 
 
+    <script>
+    function toggleMobileNav() {
+        var d = document.getElementById('landing-mobile-drawer');
+        var b = document.getElementById('landing-mobile-backdrop');
+        if (d && b) {
+            var open = d.classList.contains('open');
+            if (open) {
+                d.classList.remove('open');
+                b.classList.remove('show');
+            } else {
+                d.classList.add('open');
+                b.classList.add('show');
+            }
+        }
+    }
+    function closeMobileNav() {
+        var d = document.getElementById('landing-mobile-drawer');
+        var b = document.getElementById('landing-mobile-backdrop');
+        if (d && b) {
+            d.classList.remove('open');
+            b.classList.remove('show');
+        }
+    }
+    </script>
+
     <nav class="landing-nav">
         <div class="landing-logo">
             <img src="/assets/logo.jpg" alt="logo">
@@ -5019,13 +5044,15 @@
             <a href="#pricing">Pricing</a>
             <a href="#affiliate">Affiliate</a>
             <a href="#faq">FAQ</a>
-            <button class="landing-login-btn" onclick="LANDING.goToLogin()">Sign In</button>
-            <button class="landing-signup-btn" onclick="LANDING.goToSignup()">Get Started</button>
         </div>
 
-        <button class="landing-nav-toggle" id="landing-nav-toggle" onclick="LANDING.toggleMobileNav()" aria-label="Toggle Menu">
-            <i class="fa-solid fa-bars"></i>
-        </button>
+        <div class="landing-nav-actions">
+            <button class="landing-login-btn" onclick="if(window.LANDING && LANDING.goToLogin) LANDING.goToLogin(); else location.href='auth.html?mode=login';">Sign In</button>
+            <button class="landing-signup-btn" onclick="if(window.LANDING && LANDING.goToSignup) LANDING.goToSignup(); else location.href='auth.html?mode=signup';">Get Started</button>
+            <button class="landing-nav-toggle" id="landing-nav-toggle" onclick="toggleMobileNav()" aria-label="Toggle Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
     </nav>
 
     <!-- Mobile Slide-out Menu Drawer for Landing Page -->
@@ -5035,20 +5062,20 @@
                 <img src="/assets/logo.jpg" alt="logo">
                 <span>XComic</span>
             </div>
-            <button class="lmd-close-btn" onclick="LANDING.closeMobileNav()"><i class="fa-solid fa-xmark"></i></button>
+            <button class="lmd-close-btn" onclick="closeMobileNav()"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="lmd-links">
-            <a href="#features" onclick="LANDING.closeMobileNav()"><i class="fa-solid fa-bolt" style="color:#818cf8;"></i> Features</a>
-            <a href="#pricing" onclick="LANDING.closeMobileNav()"><i class="fa-solid fa-tags" style="color:#34d399;"></i> Pricing Plans</a>
-            <a href="#affiliate" onclick="LANDING.closeMobileNav()"><i class="fa-solid fa-handshake" style="color:#fb923c;"></i> Affiliate Program</a>
-            <a href="#faq" onclick="LANDING.closeMobileNav()"><i class="fa-solid fa-circle-question" style="color:#c084fc;"></i> FAQ</a>
+            <a href="#features" onclick="closeMobileNav()"><i class="fa-solid fa-bolt" style="color:#818cf8;"></i> Features</a>
+            <a href="#pricing" onclick="closeMobileNav()"><i class="fa-solid fa-tags" style="color:#34d399;"></i> Pricing Plans</a>
+            <a href="#affiliate" onclick="closeMobileNav()"><i class="fa-solid fa-handshake" style="color:#fb923c;"></i> Affiliate Program</a>
+            <a href="#faq" onclick="closeMobileNav()"><i class="fa-solid fa-circle-question" style="color:#c084fc;"></i> FAQ</a>
         </div>
         <div class="lmd-actions">
-            <button class="landing-login-btn" style="width:100%; padding:14px; text-align:center;" onclick="LANDING.closeMobileNav(); LANDING.goToLogin();">Sign In</button>
-            <button class="landing-signup-btn" style="width:100%; padding:14px; text-align:center;" onclick="LANDING.closeMobileNav(); LANDING.goToSignup();">Get Started &rarr;</button>
+            <button class="landing-login-btn" style="width:100%; padding:14px; text-align:center;" onclick="closeMobileNav(); if(window.LANDING && LANDING.goToLogin) LANDING.goToLogin(); else location.href='auth.html?mode=login';">Sign In</button>
+            <button class="landing-signup-btn" style="width:100%; padding:14px; text-align:center;" onclick="closeMobileNav(); if(window.LANDING && LANDING.goToSignup) LANDING.goToSignup(); else location.href='auth.html?mode=signup';">Get Started &rarr;</button>
         </div>
     </div>
-    <div id="landing-mobile-backdrop" class="landing-mobile-backdrop" onclick="LANDING.closeMobileNav()"></div>
+    <div id="landing-mobile-backdrop" class="landing-mobile-backdrop" onclick="closeMobileNav()"></div>
 
 
 

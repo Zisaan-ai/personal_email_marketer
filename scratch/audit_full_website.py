@@ -6,76 +6,73 @@ async def run():
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
         artifacts_dir = os.path.dirname(os.path.abspath(__file__))
-        
-        # Test 1: Mobile Landing Page Drawer
-        context_landing = await browser.new_context(
-            viewport={'width': 375, 'height': 812},
-            user_agent='Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X)'
-        )
-        page_landing = await context_landing.new_page()
-        await page_landing.goto("https://xcomic.xyz", wait_until="domcontentloaded")
-        await asyncio.sleep(2)
-        
-        # Click landing nav toggle
-        toggle = page_landing.locator("#landing-nav-toggle")
-        if await toggle.count() > 0:
-            await toggle.click()
-            await asyncio.sleep(1)
-            await page_landing.screenshot(path=os.path.join(artifacts_dir, "landing_drawer_open.png"))
-            print("Captured landing_drawer_open.png")
 
-        # Test 2: Logged-In App Page Sub-Views Audit
         context_app = await browser.new_context(
             viewport={'width': 375, 'height': 812},
             user_agent='Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X)'
         )
         page_app = await context_app.new_page()
+
+        # Mock API calls so dashboard loads fully without 401 redirect
+        await page_app.route("**/api/user/me", lambda route: route.fulfill(
+            status=200,
+            content_type="application/json",
+            body='{"id":"1","email":"zmonemrahman@gmail.com","is_admin":true,"plan":"enterprise","is_approved":true,"free_emails_sent":0}'
+        ))
+        await page_app.route("**/api/stats", lambda route: route.fulfill(
+            status=200,
+            content_type="application/json",
+            body='{"emails_sent_today":142,"deliverability":99.2,"replies":18,"bounces":1,"sending_accounts_count":5}'
+        ))
+        await page_app.route("**/api/sending-accounts*", lambda route: route.fulfill(
+            status=200,
+            content_type="application/json",
+            body='[{"id":"1","email":"outreach@xcomic.xyz","provider":"smtp","status":"active","daily_limit":1000,"sent_today":142}]'
+        ))
+        await page_app.route("**/api/campaigns*", lambda route: route.fulfill(
+            status=200,
+            content_type="application/json",
+            body='[{"id":"1","name":"Q3 SaaS Founders Prospecting","status":"running","sent":540,"replies":32,"open_rate":68.4}]'
+        ))
+
+        # Set auth storage
         await page_app.goto("https://xcomic.xyz", wait_until="domcontentloaded")
-        
-        # Inject token
         await page_app.evaluate('''() => {
-            localStorage.setItem("xcomic_token", "dummy_test_token");
-            localStorage.setItem("token", "dummy_test_token");
+            localStorage.setItem('xcomic_token', 'mock_admin_token');
+            localStorage.setItem('token', 'mock_admin_token');
+            localStorage.setItem('user', JSON.stringify({ id: '1', is_admin: true, email: 'zmonemrahman@gmail.com', plan: 'enterprise' }));
+            localStorage.setItem('is_admin', 'true');
+            localStorage.setItem('user_plan', 'enterprise');
             location.reload();
         }''')
-        await page_app.wait_for_load_state("domcontentloaded")
+        await page_app.wait_for_load_state("networkidle")
         await asyncio.sleep(2)
 
-        # Audit app views
+        # Audit app tabs
         views = ['overview', 'campaigns', 'leads', 'inbox', 'accounts', 'analytics', 'settings']
         for v in views:
             try:
-                # Click nav link or switch tab via JS
-                await page_app.evaluate(f'''(viewId) => {{
-                    if (typeof window.switchNavTab === 'function') window.switchNavTab(viewId);
+                await page_app.evaluate(f'''(tName) => {{
+                    const btn = document.querySelector('[data-view="' + tName + '"]') || document.querySelector('#nav-' + tName);
+                    if (btn) btn.click();
+                    else if (typeof window.switchNavTab === 'function') window.switchNavTab(tName);
                 }}''', v)
                 await asyncio.sleep(1)
-                await page_app.screenshot(path=os.path.join(artifacts_dir, f"app_view_{v}.png"), full_page=False)
-                
-                # Check for overflows in this view
-                overflow_info = await page_app.evaluate('''() => {
-                    const bodyWidth = document.documentElement.clientWidth;
-                    const overflowing = [];
-                    document.querySelectorAll('#app-page *').forEach(el => {
-                        const rect = el.getBoundingClientRect();
-                        if (rect.right > bodyWidth + 5 || rect.left < -5) {
-                            overflowing.push({
-                                tagName: el.tagName,
-                                className: (el.className || '').toString(),
-                                width: Math.round(rect.width),
-                                left: Math.round(rect.left),
-                                right: Math.round(rect.right)
-                            });
-                        }
-                    });
-                    return overflowing.slice(0, 10);
-                }''')
-                print(f"View '{v}' - Overflow items: {len(overflow_info)}")
-                for item in overflow_info:
-                    print(f"  [{v} overflow]:", item)
-
+                await page_app.screenshot(path=os.path.join(artifacts_dir, f"app_mocked_{v}.png"))
+                print(f"Captured app_mocked_{v}.png")
             except Exception as e:
-                print(f"Error auditing view {v}: {e}")
+                print(f"Error capturing view {v}: {e}")
+
+        # Also open mobile sidebar inside dashboard
+        await page_app.evaluate('''() => {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            if (sidebar) sidebar.classList.add('open');
+            if (overlay) overlay.classList.add('show');
+        }''')
+        await asyncio.sleep(1)
+        await page_app.screenshot(path=os.path.join(artifacts_dir, "app_mocked_sidebar.png"))
+        print("Captured app_mocked_sidebar.png")
 
         await browser.close()
 

@@ -9101,7 +9101,9 @@ function setupSequenceBuilder() {
 
 
 
-            btn.style.cssText = 'padding:12px 16px;font-size:14px;width:100%;text-align:left;justify-content:flex-start;background:' + (s.step === currentStep ? 'var(--surface-1)' : 'transparent') + ';color:' + (s.step === currentStep ? 'var(--text)' : 'var(--text-muted)') + ';border:1px solid ' + (s.step === currentStep ? 'var(--border)' : 'transparent') + ';cursor:pointer;border-radius:8px;';
+            btn.className = 'btn inst-step-item' + (s.step === currentStep ? ' active-step' : '');
+            btn.style.cssText = 'padding:10px 14px;font-size:14px;text-align:left;justify-content:flex-start;background:' + (s.step === currentStep ? 'var(--surface-1)' : 'transparent') + ';color:' + (s.step === currentStep ? 'var(--text)' : 'var(--text-muted)') + ';border:1px solid ' + (s.step === currentStep ? 'var(--border)' : 'transparent') + ';cursor:pointer;border-radius:8px;';
+
 
 
 

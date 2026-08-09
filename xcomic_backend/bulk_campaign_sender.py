@@ -19,18 +19,31 @@ def personalize_email(text, lead):
         return ""
     
     email_val = getattr(lead, 'email', '') or ''
-    email_name = email_val.split('@')[0].capitalize() if email_val else 'There'
     
-    first_name = getattr(lead, 'first_name', None) or getattr(lead, 'name', None) or email_name
+    # Smart First Name Fallback Engine
+    lead_name_raw = getattr(lead, 'first_name', None) or getattr(lead, 'name', None) or getattr(lead, 'first_name_raw', None)
+    lead_name_str = str(lead_name_raw).strip() if lead_name_raw else ''
+    if not lead_name_str or lead_name_str.lower() in ['none', 'null', 'undefined']:
+        first_name = random.choice(['there', 'friend', 'there'])
+    else:
+        first_name = lead_name_str.capitalize()
+
+    # Smart Company Name Fallback Engine
+    company_raw = getattr(lead, 'company', None) or getattr(lead, 'company_name', None)
+    company_str = str(company_raw).strip() if company_raw else ''
+    if not company_str or company_str.lower() in ['none', 'null', 'undefined']:
+        company = random.choice(['your company', 'your team', 'your business'])
+    else:
+        company = company_str
+
     last_name = getattr(lead, 'last_name', None) or ''
-    company = getattr(lead, 'company', None) or getattr(lead, 'company_name', None) or 'your company'
 
     # 1. Tag replacements first
     replacements = {
         '{{firstName}}': first_name,
         '{{first_name}}': first_name,
-        '{{lastName}}': last_name,
-        '{{last_name}}': last_name,
+        '{{lastName}}': str(last_name),
+        '{{last_name}}': str(last_name),
         '{{company}}': company,
         '{{company_name}}': company,
         '{{email}}': email_val,
@@ -43,6 +56,7 @@ def personalize_email(text, lead):
     text = process_spintax(text)
 
     return text
+
 
 
 active_bulk_campaign_threads = set()

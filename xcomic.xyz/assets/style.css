@@ -1727,7 +1727,7 @@ details summary::marker {
         gap: 14px !important;
     }
 
-    /* 12. Mobile Top App Header & Sidebar Nav Polish */
+    /* 12. Mobile Top App Header */
     .mobile-app-header {
         display: flex !important;
         position: fixed !important;
@@ -1744,15 +1744,196 @@ details summary::marker {
         box-shadow: 0 4px 16px rgba(0,0,0,0.3) !important;
     }
 
+    .mobile-app-header .mobile-menu-btn {
+        position: static !important;
+        display: flex !important;
+    }
+
     .sidebar-close-btn {
         display: flex !important;
     }
 
+    /* 13. Sidebar Nav Touch Targets */
     .sidebar nav .nav-item {
         padding: 14px 18px !important;
         font-size: 15px !important;
         border-radius: 12px !important;
         margin-bottom: 4px !important;
+        min-height: 48px !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    /* 14. Main Content Area - proper padding below fixed header */
+    .main-content {
+        padding-top: 72px !important;
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+        padding-bottom: 32px !important;
+        margin-left: 0 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        overflow-x: hidden !important;
+    }
+
+    /* 15. Page Headers mobile sizing */
+    .page-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 12px !important;
+        padding-bottom: 16px !important;
+    }
+
+    .page-title {
+        font-size: 22px !important;
+        line-height: 1.2 !important;
+    }
+
+    .page-subtitle {
+        font-size: 13px !important;
+    }
+
+    /* 16. ALL Tables: force scrollable wrapper */
+    .view table,
+    .glass table,
+    #app-page table {
+        display: block !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        width: 100% !important;
+    }
+
+    .view thead,
+    .view tbody,
+    .view tr {
+        min-width: max-content !important;
+    }
+
+    .view th,
+    .view td {
+        padding: 10px 12px !important;
+        font-size: 13px !important;
+        white-space: nowrap !important;
+    }
+
+    /* 17. Visual Builder Tabs (vb-tab) - horizontal scroll */
+    .vb-tabs-row,
+    div:has(> .vb-tab) {
+        display: flex !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        white-space: nowrap !important;
+        gap: 0 !important;
+        flex-wrap: nowrap !important;
+    }
+
+    .vb-tab {
+        flex-shrink: 0 !important;
+        padding: 10px 14px !important;
+        font-size: 13px !important;
+        white-space: nowrap !important;
+    }
+
+    /* 18. Clean Tabs (cold-mail-builder) - horizontal scroll */
+    .clean-tabs-bar {
+        display: flex !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        white-space: nowrap !important;
+        flex-wrap: nowrap !important;
+        gap: 0 !important;
+        margin-bottom: 20px !important;
+    }
+
+    .clean-tab {
+        flex-shrink: 0 !important;
+        font-size: 13px !important;
+        padding-bottom: 10px !important;
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+        white-space: nowrap !important;
+    }
+
+    /* 19. Stat cards grid */
+    .stat-cards-row,
+    .stat-card-grid,
+    .overview-stats {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+
+    .stat-card {
+        padding: 16px !important;
+        border-radius: 14px !important;
+    }
+
+    .stat-card .stat-value,
+    .stat-card-value {
+        font-size: 24px !important;
+    }
+
+    /* 20. ALL Buttons - proper touch size */
+    .view .btn,
+    .view button,
+    #app-page .btn {
+        min-height: 44px !important;
+        font-size: 14px !important;
+        border-radius: 10px !important;
+    }
+
+    /* 21. All inline flex rows - stack on mobile */
+    .view div[style*="display:flex"][style*="gap:24px"],
+    .view div[style*="display:flex"][style*="gap:32px"] {
+        flex-wrap: wrap !important;
+    }
+
+    /* 22. View inner containers - prevent any horizontal overflow */
+    .view {
+        max-width: 100vw !important;
+        overflow-x: hidden !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 23. Input fields - prevent iOS zoom */
+    #app-page input,
+    #app-page select,
+    #app-page textarea {
+        font-size: 16px !important;
+    }
+
+    /* 24. Sending Accounts cards */
+    .view .glass,
+    .view .card {
+        padding: 16px 14px !important;
+        border-radius: 14px !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 25. Cold Mail Builder action buttons row */
+    #cold-tab-sequences > div:first-child {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+
+    #cold-tab-sequences > div:first-child .btn,
+    #cold-tab-sequences > div:first-child button {
+        width: 100% !important;
+    }
+
+    /* 26. Campaign list / Cold mail list action buttons */
+    .view .btn[style*="padding:6px 12px"],
+    .view button[style*="padding:6px 12px"] {
+        min-width: 40px !important;
+        min-height: 40px !important;
+        padding: 8px !important;
+    }
+
+    /* 27. Cold Mail Builder - autopilot button fix */
+    #autopilot-btn {
+        max-width: 100% !important;
+        white-space: normal !important;
+        word-break: break-word !important;
     }
 }
+
 

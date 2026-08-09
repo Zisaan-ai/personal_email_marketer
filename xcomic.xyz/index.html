@@ -54,7 +54,7 @@
 
 
 
-    <link rel="stylesheet" href="assets/style.css?v=20260809_v2900">
+    <link rel="stylesheet" href="assets/style.css?v=20260809_v3000">
 
 
 
@@ -7784,20 +7784,14 @@
 <div id="app-page">
     <!-- Dedicated Mobile App Header (Only visible on max-width: 900px) -->
     <div class="mobile-app-header">
-        <div style="display:flex; align-items:center; gap:10px;">
-            <button class="mobile-menu-btn" id="mobile-menu-btn" onclick="window.toggleMobileMenu()" aria-label="Open menu">
-                <i class="fa-solid fa-bars"></i>
-            </button>
-            <div style="display:flex; align-items:center; gap:8px;">
-                <img src="/assets/logo.jpg" style="width:28px; height:28px; border-radius:6px; object-fit:cover;">
-                <span style="font-weight:700; font-size:15px; color:#fff;">XComic</span>
-            </div>
-        </div>
+        <button class="mobile-menu-btn" id="mobile-menu-btn" onclick="window.toggleMobileMenu()" aria-label="Open menu">
+            <i class="fa-solid fa-bars"></i>
+        </button>
         <div style="display:flex; align-items:center; gap:8px;">
-            <button onclick="openUpgradeModal()" style="background:linear-gradient(135deg, #6366f1, #4f46e5); color:#fff; border:none; padding:6px 12px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:4px; box-shadow:0 2px 8px rgba(99,102,241,0.3);">
-                <i class="fa-solid fa-crown" style="color:#fbbf24;"></i> Upgrade
-            </button>
+            <img src="/assets/logo.jpg" style="width:28px; height:28px; border-radius:6px; object-fit:cover;">
+            <span style="font-weight:700; font-size:16px; color:#fff;">XComic</span>
         </div>
+        <div style="width:42px;"></div>
     </div>
 
     <aside class="sidebar" style="overflow-y: auto;">

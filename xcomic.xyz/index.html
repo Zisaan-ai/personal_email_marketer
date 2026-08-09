@@ -14333,7 +14333,10 @@
 
 
 
-                            <h3 id="inst-step-title" style="font-size:18px;font-weight:700;margin:0;">Step 1</h3>
+                            <div style="display:flex;align-items:center;gap:12px;">
+    <h3 id="inst-step-title" style="font-size:18px;font-weight:700;margin:0;">Step 1</h3>
+    <button id="inst-delete-step-btn" class="btn" style="padding:4px 10px;font-size:12px;color:#ef4444;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;cursor:pointer;display:none;"><i class="fa-solid fa-trash"></i> Delete Step</button>
+</div>
 
 
 
@@ -22300,7 +22303,8 @@
     var LANDING = {
 
 
-        goToLogin: function() {
+
+        goToLogin: function() {
             window.location.href = 'auth.html?mode=login';
         },
         goToSignup: function() {

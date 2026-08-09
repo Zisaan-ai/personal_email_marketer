@@ -1357,10 +1357,16 @@ def _run_campaign(db, campaign_id):
         delay_days = -1
         if steps and len(steps) > current_step_idx:
             step_data = steps[current_step_idx]
-            send_subject = step_data.get('subject', c.subject)
+            raw_subj = (step_data.get('subject') or '').strip()
+            if not raw_subj and current_step_idx > 0:
+                step1_subj = (steps[0].get('subject') or c.subject or '').strip()
+                send_subject = f"Re: {step1_subj}" if not step1_subj.lower().startswith('re:') else step1_subj
+            else:
+                send_subject = raw_subj or c.subject
             if variant_label == 'B' and step_data.get('is_ab'):
                 send_body = step_data.get('body_b') or step_data.get('body')
-                send_subject = step_data.get('subject_b') or send_subject
+                if step_data.get('subject_b'):
+                    send_subject = step_data.get('subject_b')
             else:
                 send_body = step_data.get('body', c.body)
             if len(steps) > current_step_idx + 1:

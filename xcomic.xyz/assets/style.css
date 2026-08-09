@@ -1936,6 +1936,12 @@ details summary::marker {
     }
 
     /* 28. Dedicated Mobile Sequence Builder Enhancements (PC Unchanged) */
+    .instantly-sequence-container {
+        flex-direction: column !important;
+        min-height: auto !important;
+        gap: 16px !important;
+    }
+
     .inst-step-item {
         width: auto !important;
         flex-shrink: 0 !important;
@@ -1976,6 +1982,7 @@ details summary::marker {
         font-size: 13px !important;
         flex-shrink: 0 !important;
     }
+
 
 
     .instantly-step-editor {

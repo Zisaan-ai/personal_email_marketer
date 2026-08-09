@@ -12168,89 +12168,63 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 window.previewInbox = function(subjectId, bodyId) {
-
-
-
     const subjectEl = document.getElementById(subjectId);
-
-
-
     const bodyEl = document.getElementById(bodyId);
-
-
-
     
-
-
-
     if (!subjectEl || !bodyEl) return;
-
-
-
     
-
-
-
-    const subjectText = subjectEl.value || "(No Subject)";
-
-
-
-    const bodyText = bodyEl.value || "(Empty Body)";
-
-
-
+    let subjectText = subjectEl.value || "(No Subject)";
+    let bodyText = bodyEl.value || "(Empty Body)";
     
+    // Sample lead replacement for realistic preview
+    const sampleData = {
+        '{{firstName}}': 'John',
+        '{{lastName}}': 'Doe',
+        '{{company}}': 'Acme Corp',
+        '{{email}}': 'john@acme.com',
+        '{Hello|Hi|Hey}': 'Hi',
+        '{Thanks|Best|Cheers}': 'Best',
+        '{chat|talk|speak}': 'chat'
+    };
 
+    Object.keys(sampleData).forEach(key => {
+        const regex = new RegExp(key.replace(/[{}]/g, '\\$&'), 'g');
+        subjectText = subjectText.replace(regex, sampleData[key]);
+        bodyText = bodyText.replace(regex, sampleData[key]);
+    });
 
-
-    document.getElementById('preview-subject').textContent = subjectText;
-
-
-
-    
-
-
-
-    // Inject into iframe for perfect HTML rendering without CSS leaks
-
-
-
-    const frame = document.getElementById('preview-body-frame');
-
-
-
-    if (frame) {
-
-
-
-        const doc = frame.contentWindow.document;
-
-
-
-        doc.open();
-
-
-
-        doc.write(bodyText);
-
-
-
-        doc.close();
-
-
-
+    // Format newlines if plain text
+    if (!bodyText.includes('<p>') && !bodyText.includes('<div>')) {
+        bodyText = bodyText.replace(/\n/g, '<br>');
     }
 
-
-
+    const previewSubject = document.getElementById('preview-subject');
+    if (previewSubject) previewSubject.textContent = subjectText;
     
-
-
-
-    document.getElementById('inbox-preview-modal').style.display = 'flex';
-
-
-
+    // Inject into iframe for perfect HTML rendering without CSS leaks
+    const frame = document.getElementById('preview-body-frame');
+    if (frame) {
+        const doc = frame.contentWindow.document;
+        doc.open();
+        doc.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <style>
+                    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 15px; color: #1e293b; line-height: 1.6; margin: 0; padding: 12px; }
+                    p { margin: 0 0 12px 0; }
+                    a { color: #4f46e5; text-decoration: underline; }
+                </style>
+            </head>
+            <body>${bodyText}</body>
+            </html>
+        `);
+        doc.close();
+    }
+    
+    const modal = document.getElementById('inbox-preview-modal');
+    if (modal) modal.style.display = 'flex';
 };
 
 

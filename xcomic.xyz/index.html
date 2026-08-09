@@ -54,7 +54,7 @@
 
 
 
-    <link rel="stylesheet" href="assets/style.css?v=20260809_v99999">
+    <link rel="stylesheet" href="assets/style.css?v=20260809_v9999999">
     <style>
         /* IMMUTABLE INLINE PC LAYOUT GUARD v2 - position:fixed sidebar */
         @media (min-width: 769px) {
@@ -8133,7 +8133,7 @@
 
 
 
-            <a class="nav-item" id="logout-btn" style="cursor:pointer; color:#ef4444; margin-top: 12px;" onclick="localStorage.clear(); location.reload();">
+            <a class="nav-item" id="logout-btn" style="cursor:pointer; color:#ef4444; margin-top: 16px;" onclick="if(window.toggleMobileMenu && document.querySelector('.sidebar.open')) window.toggleMobileMenu(); localStorage.clear(); location.reload();">
 
 
 

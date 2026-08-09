@@ -2240,6 +2240,88 @@ details summary::marker {
         min-height: 320px !important;
         border: none !important;
     }
+
+    /* 32. Mobile Sidebar & Logout Button Fixes (PC 100% Unchanged) */
+    aside.sidebar,
+    .sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        left: -100% !important;
+        width: 280px !important;
+        max-width: 85vw !important;
+        height: 100vh !important;
+        max-height: 100vh !important;
+        z-index: 10000 !important;
+        background: var(--surface-0, #fff) !important;
+        border-right: 1px solid var(--border, #e2e8f0) !important;
+        box-shadow: 6px 0 24px rgba(0,0,0,0.18) !important;
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        padding: 20px 16px 100px 16px !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    aside.sidebar.open,
+    .sidebar.open {
+        left: 0 !important;
+    }
+
+    .sidebar-overlay {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        background: rgba(15, 23, 42, 0.6) !important;
+        backdrop-filter: blur(4px) !important;
+        -webkit-backdrop-filter: blur(4px) !important;
+        z-index: 9999 !important;
+        display: none;
+    }
+
+    .sidebar-overlay.show {
+        display: block !important;
+    }
+
+    .sidebar-close-btn {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    /* Mobile Logout Button Fix */
+    #logout-btn {
+        margin-top: 20px !important;
+        margin-bottom: 40px !important;
+        padding: 12px 16px !important;
+        background: rgba(239, 68, 68, 0.08) !important;
+        border: 1px solid rgba(239, 68, 68, 0.2) !important;
+        border-radius: 12px !important;
+        color: #ef4444 !important;
+        font-weight: 700 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        cursor: pointer !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    #logout-btn i {
+        color: #ef4444 !important;
+        font-size: 16px !important;
+    }
+
+    #logout-btn span {
+        color: #ef4444 !important;
+        font-weight: 700 !important;
+        display: inline-block !important;
+    }
 }
 
 /* ============================================================

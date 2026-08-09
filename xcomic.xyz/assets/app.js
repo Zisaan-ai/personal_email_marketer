@@ -65,46 +65,21 @@ function escapeHtml(unsafe) {
 
 
 window.toggleMobileMenu = function() {
-
-
-
     var sidebar = document.querySelector('.sidebar');
-
-
-
     var overlay = document.getElementById('sidebar-overlay');
-
-
-
     if (!sidebar) return;
 
-
-
     var isOpen = sidebar.classList.contains('open');
-
-
-
     if (isOpen) {
-
-
-
         sidebar.classList.remove('open');
-
-
-
         if (overlay) overlay.classList.remove('show');
-
-
-
+        document.body.style.overflow = '';
     } else {
-
-
-
         sidebar.classList.add('open');
-
-
-
         if (overlay) overlay.classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+};
 
 
 

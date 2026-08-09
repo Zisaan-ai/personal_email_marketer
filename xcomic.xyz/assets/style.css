@@ -2060,7 +2060,129 @@ details summary::marker {
         flex-wrap: wrap !important;
         gap: 6px !important;
     }
+
+    /* 29. Visual Builder Design Editor Mobile Responsive (PC Unchanged) */
+    #vb-tab-design {
+        width: 100% !important;
+        max-width: 100vw !important;
+        overflow-x: hidden !important;
+        box-sizing: border-box !important;
+    }
+
+    .builder-top-bar {
+        flex-direction: column !important;
+        gap: 12px !important;
+        padding: 12px 14px !important;
+        align-items: stretch !important;
+    }
+
+    .builder-top-left {
+        width: 100% !important;
+        flex: none !important;
+    }
+
+    #campaign-subject {
+        width: 100% !important;
+        max-width: 100% !important;
+        border: 1px solid var(--border) !important;
+        background: #ffffff !important;
+        font-size: 15px !important;
+        padding: 10px 12px !important;
+        box-sizing: border-box !important;
+        border-radius: 8px !important;
+    }
+
+    /* Helper pills row */
+    .builder-top-left div[style*="display:inline-flex"],
+    .builder-top-left div:has(> button[onclick*="showToast"]) {
+        display: flex !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        white-space: nowrap !important;
+        gap: 6px !important;
+        margin-top: 8px !important;
+        margin-left: 0 !important;
+        padding-bottom: 4px !important;
+    }
+
+    .builder-top-left button[onclick*="showToast"] {
+        flex-shrink: 0 !important;
+        padding: 6px 10px !important;
+        font-size: 12px !important;
+    }
+
+    /* Top right actions (Undo, Redo, Save Template, Save Draft, Next) horizontal swipe */
+    .builder-top-right {
+        display: flex !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        gap: 8px !important;
+        white-space: nowrap !important;
+        width: 100% !important;
+        padding-bottom: 4px !important;
+        margin-top: 4px !important;
+    }
+
+    .builder-top-right .btn,
+    .builder-top-right button {
+        flex-shrink: 0 !important;
+        font-size: 12px !important;
+        padding: 8px 12px !important;
+        min-height: 40px !important;
+    }
+
+    /* Builder Layout canvas & sidebar stacked vertically on mobile */
+    .builder-layout {
+        flex-direction: column !important;
+        height: auto !important;
+        min-height: auto !important;
+        gap: 16px !important;
+    }
+
+    .builder-canvas-wrapper {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 12px !important;
+        box-sizing: border-box !important;
+        min-height: 380px !important;
+        border-radius: 12px !important;
+    }
+
+    #builder-canvas {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 16px 12px !important;
+        box-sizing: border-box !important;
+        min-height: 320px !important;
+    }
+
+    .builder-sidebar {
+        width: 100% !important;
+        max-width: 100% !important;
+        border-left: none !important;
+        border-top: 1px solid var(--border) !important;
+        box-sizing: border-box !important;
+        min-height: auto !important;
+        border-radius: 12px !important;
+    }
+
+    /* Block palette grid on mobile */
+    #block-palette {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+    }
+
+    .draggable-block {
+        padding: 16px 10px !important;
+        border-radius: 10px !important;
+    }
+
+    .draggable-block i {
+        font-size: 20px !important;
+        margin-bottom: 6px !important;
+    }
 }
+
 
 
 

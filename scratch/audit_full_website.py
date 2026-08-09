@@ -7,27 +7,35 @@ async def run():
         browser = await p.chromium.launch(headless=True)
         artifacts_dir = os.path.dirname(os.path.abspath(__file__))
 
-        context = await browser.new_context(
-            viewport={'width': 375, 'height': 812},
-            user_agent='Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X)'
+        # Desktop Viewport Audit (1920x1080)
+        context_desktop = await browser.new_context(
+            viewport={'width': 1920, 'height': 1080}
         )
-        page = await context.new_page()
-        await page.goto("https://xcomic.xyz", wait_until="domcontentloaded")
+        page_desktop = await context_desktop.new_page()
+        await page_desktop.goto("https://xcomic.xyz", wait_until="domcontentloaded")
         await asyncio.sleep(2)
 
-        # 1. Take screenshot of closed topbar (should show Logo + Sign In + Get Started + ☰ on same line)
-        await page.screenshot(path=os.path.join(artifacts_dir, "topbar_single_line.png"))
-        print("Captured topbar_single_line.png")
+        # 1. Take desktop full topbar screenshot
+        await page_desktop.screenshot(path=os.path.join(artifacts_dir, "desktop_topbar.png"))
+        print("Captured desktop_topbar.png")
 
-        # 2. Click ☰ hamburger toggle
-        toggle_btn = page.locator("#landing-nav-toggle")
-        if await toggle_btn.count() > 0:
-            await toggle_btn.click()
-            await asyncio.sleep(1)
-            await page.screenshot(path=os.path.join(artifacts_dir, "drawer_opened_by_click.png"))
-            print("Captured drawer_opened_by_click.png")
-        else:
-            print("ERROR: #landing-nav-toggle not found!")
+        # 2. Check hamburger button visibility on desktop
+        toggle_visible = await page_desktop.evaluate('''() => {
+            const el = document.getElementById('landing-nav-toggle');
+            if (!el) return false;
+            const style = window.getComputedStyle(el);
+            return style.display !== 'none' && style.visibility !== 'hidden';
+        }''')
+        print(f"Desktop hamburger button visible: {toggle_visible} (Should be False)")
+
+        # 3. Check desktop nav links visibility
+        links_visible = await page_desktop.evaluate('''() => {
+            const el = document.querySelector('.landing-nav-links');
+            if (!el) return false;
+            const style = window.getComputedStyle(el);
+            return style.display !== 'none';
+        }''')
+        print(f"Desktop nav links visible: {links_visible} (Should be True)")
 
         await browser.close()
 

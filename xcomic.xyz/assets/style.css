@@ -921,8 +921,8 @@ button[onclick*="approveUser"] {
     50% { box-shadow: 0 0 0 6px rgba(5, 150, 105, 0); }
 }
 
-/* Mobile menu button hidden by default */
-.mobile-menu-btn { display: none; }
+/* Mobile menu button & app header hidden by default */
+.mobile-menu-btn, .mobile-app-header { display: none; }
 
 /* Command Palette */
 .cmd-item { display:flex; align-items:center; gap:12px; padding:12px 24px; cursor:pointer; text-decoration:none; color:var(--text); transition:background 0.1s; }
@@ -1725,6 +1725,34 @@ details summary::marker {
     .cold-analytics-grid {
         grid-template-columns: 1fr !important;
         gap: 14px !important;
+    }
+
+    /* 12. Mobile Top App Header & Sidebar Nav Polish */
+    .mobile-app-header {
+        display: flex !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        height: 56px !important;
+        background: #091026 !important;
+        border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+        z-index: 99999 !important;
+        padding: 0 14px !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.3) !important;
+    }
+
+    .sidebar-close-btn {
+        display: flex !important;
+    }
+
+    .sidebar nav .nav-item {
+        padding: 14px 18px !important;
+        font-size: 15px !important;
+        border-radius: 12px !important;
+        margin-bottom: 4px !important;
     }
 }
 

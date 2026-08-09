@@ -54,7 +54,7 @@
 
 
 
-    <link rel="stylesheet" href="assets/style.css?v=20260809_v2800">
+    <link rel="stylesheet" href="assets/style.css?v=20260809_v2900">
 
 
 
@@ -7782,48 +7782,33 @@
 
 
 <div id="app-page">
-    <button class="mobile-menu-btn" id="mobile-menu-btn" onclick="window.toggleMobileMenu()" aria-label="Open menu">
-        <i class="fa-solid fa-bars"></i>
-    </button>
-
-
-
-
-
-
+    <!-- Dedicated Mobile App Header (Only visible on max-width: 900px) -->
+    <div class="mobile-app-header">
+        <div style="display:flex; align-items:center; gap:10px;">
+            <button class="mobile-menu-btn" id="mobile-menu-btn" onclick="window.toggleMobileMenu()" aria-label="Open menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <img src="/assets/logo.jpg" style="width:28px; height:28px; border-radius:6px; object-fit:cover;">
+                <span style="font-weight:700; font-size:15px; color:#fff;">XComic</span>
+            </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+            <button onclick="openUpgradeModal()" style="background:linear-gradient(135deg, #6366f1, #4f46e5); color:#fff; border:none; padding:6px 12px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:4px; box-shadow:0 2px 8px rgba(99,102,241,0.3);">
+                <i class="fa-solid fa-crown" style="color:#fbbf24;"></i> Upgrade
+            </button>
+        </div>
+    </div>
 
     <aside class="sidebar" style="overflow-y: auto;">
-
-
-
-
-
-
-
-        <div class="logo" style="gap:12px;">
-
-
-
-
-
-
-
-            <img src="/assets/logo.jpg" style="width:32px; height:32px; border-radius:8px; object-fit:cover; box-shadow:0 4px 6px -1px rgba(99,102,241,0.3);">
-
-
-
-
-
-
-
-            <h2>XComic Email Marketer</h2>
-
-
-
-
-
-
-
+        <div class="logo" style="gap:12px; display:flex; align-items:center; justify-content:space-between; width:100%;">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <img src="/assets/logo.jpg" style="width:32px; height:32px; border-radius:8px; object-fit:cover; box-shadow:0 4px 6px -1px rgba(99,102,241,0.3);">
+                <h2 style="font-size:16px; margin:0;">XComic</h2>
+            </div>
+            <button onclick="window.toggleMobileMenu()" class="sidebar-close-btn" aria-label="Close menu" style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); color:#cbd5e1; width:32px; height:32px; border-radius:8px; cursor:pointer; display:none; align-items:center; justify-content:center;">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
         </div>
 
 

@@ -654,9 +654,10 @@ window.APP_INIT = function() {
 
 
 window.navTo = function(targetId) {
-
-
-
+    var sidebar = document.querySelector('.sidebar');
+    if (sidebar && sidebar.classList.contains('open') && typeof window.toggleMobileMenu === 'function') {
+        window.toggleMobileMenu();
+    }
     document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
 
 

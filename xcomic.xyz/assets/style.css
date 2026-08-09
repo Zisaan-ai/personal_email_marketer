@@ -1408,3 +1408,13 @@ html, body, #landing-page, #app-page {
     border-top: 1px solid rgba(255,255,255,0.08);
 }
 
+/* FAQ Accordion Chevron Animation */
+details[open] summary .faq-icon {
+    transform: rotate(180deg) !important;
+}
+details summary::-webkit-details-marker,
+details summary::marker {
+    display: none !important;
+    content: "" !important;
+}
+

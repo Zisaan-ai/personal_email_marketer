@@ -1626,5 +1626,67 @@ details summary::marker {
         font-size: 14px !important;
         font-weight: 700 !important;
     }
+
+    /* 6. Mobile Dashboard Off-Canvas Sidebar & Header */
+    #app-page .main-content {
+        padding: 68px 12px 36px 12px !important;
+        margin-left: 0 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    #app-page .topbar,
+    #app-page .header {
+        left: 0 !important;
+        width: 100% !important;
+        padding: 10px 14px !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 7. Mobile Inbox View */
+    .inbox-layout,
+    .inbox-container {
+        flex-direction: column !important;
+        height: auto !important;
+    }
+
+    .inbox-sidebar,
+    .inbox-list {
+        width: 100% !important;
+        max-height: 300px !important;
+        overflow-y: auto !important;
+        border-right: none !important;
+        border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+    }
+
+    .inbox-detail,
+    .inbox-thread {
+        width: 100% !important;
+        padding: 12px 8px !important;
+    }
+
+    /* 8. Mobile Sending Accounts Grid */
+    .accounts-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+
+    /* 9. Mobile Analytics & Charts */
+    .analytics-grid,
+    .charts-container {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+    }
+
+    /* 10. Mobile Admin & Upgrade Modals */
+    #admin-user-modal > div,
+    #upgrade-modal > div {
+        width: 95vw !important;
+        max-width: 480px !important;
+        max-height: 90vh !important;
+        margin: auto !important;
+        border-radius: 16px !important;
+        overflow-y: auto !important;
+    }
 }
 

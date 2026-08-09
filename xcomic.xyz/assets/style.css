@@ -1071,6 +1071,73 @@ html, body, #landing-page, #app-page {
     }
 }
 
+/* Desktop Topbar Layout */
+.landing-nav {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 16px 64px !important;
+    position: fixed !important;
+    top: 0 !important; left: 0 !important; right: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    background: rgba(6, 13, 31, 0.85) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    z-index: 1000 !important;
+}
+
+.landing-logo {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+}
+
+.landing-logo img {
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 8px !important;
+}
+
+.landing-logo span {
+    font-size: 20px !important;
+    font-weight: 800 !important;
+    color: #fff !important;
+    letter-spacing: -0.02em !important;
+}
+
+.landing-nav-links {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 32px !important;
+}
+
+.landing-nav-links a {
+    color: #cbd5e1 !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    transition: color 0.2s !important;
+}
+
+.landing-nav-links a:hover {
+    color: #fff !important;
+}
+
+.landing-nav-actions {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 12px !important;
+}
+
+.landing-nav-toggle {
+    display: none !important;
+}
+
 /* 2. Responsive Landing Hero, Bento Grid & Typography */
 @media (max-width: 900px) {
     .landing-nav {

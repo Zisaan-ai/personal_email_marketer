@@ -376,11 +376,11 @@
         </div>
 
         <div class="social-login">
-            <button type="button" class="btn-social" onclick="alert('Social login via Google is currently unavailable. Please log in or sign up with Email below.')">
+            <button type="button" class="btn-social" onclick="window.location.href='/api/auth/google'">
                 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google">
                 Google
             </button>
-            <button type="button" class="btn-social" onclick="alert('Social login via GitHub is currently unavailable. Please log in or sign up with Email below.')">
+            <button type="button" class="btn-social" onclick="window.location.href='/api/auth/github'">
                 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" style="filter: invert(1);">
                 GitHub
             </button>
@@ -491,6 +491,19 @@
     </div>
 
     <script>
+        // Handle OAuth callback token if present
+        (function checkOAuthToken() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const oauthToken = urlParams.get('oauth_token');
+            const isAdmin = urlParams.get('is_admin');
+            if (oauthToken) {
+                localStorage.setItem('token', oauthToken);
+                localStorage.setItem('xcomic_token', oauthToken);
+                localStorage.setItem('is_admin', isAdmin === 'true' ? 'true' : 'false');
+                window.location.href = 'index.html';
+            }
+        })();
+
         // Check URL for mode
         function toggleMode(newMode) {
             document.documentElement.classList.remove('is-signup', 'is-verify', 'is-forgot', 'is-reset');

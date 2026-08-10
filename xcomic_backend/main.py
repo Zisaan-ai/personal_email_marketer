@@ -500,6 +500,124 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
         "user_plan": plan_name,
         "plan": plan_name
     }
+
+# --- GOOGLE & GITHUB OAUTH ENDPOINTS ---
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID", "")
+GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET", "")
+GITHUB_CLIENT_ID = os.getenv("GITHUB_CLIENT_ID", "")
+GITHUB_CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET", "")
+
+@app.get("/api/auth/google")
+def google_auth_redirect():
+    if not GOOGLE_CLIENT_ID:
+        raise HTTPException(status_code=400, detail="Google OAuth Client ID is not configured on the server yet.")
+    redirect_uri = "https://xcomic.xyz/api/auth/google/callback"
+    scope = "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile"
+    url = f"https://accounts.google.com/o/oauth2/v2/auth?client_id={GOOGLE_CLIENT_ID}&redirect_uri={redirect_uri}&response_type=code&scope={scope}"
+    return RedirectResponse(url)
+
+@app.get("/api/auth/google/callback")
+def google_auth_callback(code: str, db: Session = Depends(database.get_db)):
+    if not GOOGLE_CLIENT_ID or not GOOGLE_CLIENT_SECRET:
+        raise HTTPException(status_code=400, detail="Google OAuth is not configured")
+    import requests, secrets
+    token_url = "https://oauth2.googleapis.com/token"
+    data = {
+        "client_id": GOOGLE_CLIENT_ID,
+        "client_secret": GOOGLE_CLIENT_SECRET,
+        "code": code,
+        "grant_type": "authorization_code",
+        "redirect_uri": "https://xcomic.xyz/api/auth/google/callback"
+    }
+    r = requests.post(token_url, data=data)
+    if not r.ok:
+        raise HTTPException(status_code=400, detail="Failed to retrieve token from Google")
+    tokens = r.json()
+    access_token = tokens.get("access_token")
+    
+    user_info_res = requests.get("https://www.googleapis.com/oauth2/v2/userinfo", headers={"Authorization": f"Bearer {access_token}"})
+    if not user_info_res.ok:
+        raise HTTPException(status_code=400, detail="Failed to fetch user details from Google")
+    user_info = user_info_res.json()
+    email = user_info.get("email")
+    if not email:
+        raise HTTPException(status_code=400, detail="No email provided by Google account")
+        
+    user = db.query(database.User).filter(database.User.email.ilike(email.strip().lower())).first()
+    if not user:
+        dummy_password = auth.get_password_hash(secrets.token_hex(16))
+        user = database.User(email=email.strip().lower(), hashed_password=dummy_password, is_approved=True, is_email_verified=True)
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+    else:
+        user.is_approved = True
+        user.is_email_verified = True
+        db.commit()
+        
+    access_token_jwt = auth.create_access_token(data={"sub": user.email})
+    is_admin_str = "true" if user.is_admin else "false"
+    return RedirectResponse(f"/auth.html?oauth_token={access_token_jwt}&is_admin={is_admin_str}")
+
+@app.get("/api/auth/github")
+def github_auth_redirect():
+    if not GITHUB_CLIENT_ID:
+        raise HTTPException(status_code=400, detail="GitHub OAuth Client ID is not configured on the server yet.")
+    redirect_uri = "https://xcomic.xyz/api/auth/github/callback"
+    scope = "user:email"
+    url = f"https://github.com/login/oauth/authorize?client_id={GITHUB_CLIENT_ID}&redirect_uri={redirect_uri}&scope={scope}"
+    return RedirectResponse(url)
+
+@app.get("/api/auth/github/callback")
+def github_auth_callback(code: str, db: Session = Depends(database.get_db)):
+    if not GITHUB_CLIENT_ID or not GITHUB_CLIENT_SECRET:
+        raise HTTPException(status_code=400, detail="GitHub OAuth is not configured")
+    import requests, secrets
+    token_url = "https://github.com/login/oauth/access_token"
+    headers = {"Accept": "application/json"}
+    data = {
+        "client_id": GITHUB_CLIENT_ID,
+        "client_secret": GITHUB_CLIENT_SECRET,
+        "code": code,
+        "redirect_uri": "https://xcomic.xyz/api/auth/github/callback"
+    }
+    r = requests.post(token_url, data=data, headers=headers)
+    if not r.ok:
+        raise HTTPException(status_code=400, detail="Failed to retrieve token from GitHub")
+    tokens = r.json()
+    access_token = tokens.get("access_token")
+    
+    email = None
+    emails_res = requests.get("https://api.github.com/user/emails", headers={"Authorization": f"Bearer {access_token}"})
+    if emails_res.ok:
+        emails = emails_res.json()
+        primary_obj = next((e for e in emails if isinstance(e, dict) and e.get("primary")), None)
+        if primary_obj:
+            email = primary_obj.get("email")
+    if not email:
+        user_res = requests.get("https://api.github.com/user", headers={"Authorization": f"Bearer {access_token}"})
+        if user_res.ok:
+            email = user_res.json().get("email")
+            
+    if not email:
+        raise HTTPException(status_code=400, detail="Could not retrieve email from GitHub account")
+        
+    user = db.query(database.User).filter(database.User.email.ilike(email.strip().lower())).first()
+    if not user:
+        dummy_password = auth.get_password_hash(secrets.token_hex(16))
+        user = database.User(email=email.strip().lower(), hashed_password=dummy_password, is_approved=True, is_email_verified=True)
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+    else:
+        user.is_approved = True
+        user.is_email_verified = True
+        db.commit()
+        
+    access_token_jwt = auth.create_access_token(data={"sub": user.email})
+    is_admin_str = "true" if user.is_admin else "false"
+    return RedirectResponse(f"/auth.html?oauth_token={access_token_jwt}&is_admin={is_admin_str}")
+
 # --- ADMIN ENDPOINTS ---
 @app.get("/api/test-db")
 def test_db(db: Session = Depends(database.get_db)):

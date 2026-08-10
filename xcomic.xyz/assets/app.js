@@ -12727,26 +12727,41 @@ window.deleteUser = async function(id) {
 window.saveLeads = function(id) {
     const el = document.getElementById(id);
     if (!el) return;
-    const val = el.value.trim();
-    if (!val) {
+    const rawVal = el.value.trim();
+    if (!rawVal) {
         showToast('Please enter or paste leads first before saving!', 'warning');
         return;
     }
-    localStorage.setItem('saved_leads_' + id, el.value);
 
-
-        window.renderLeadsList(id);
-
-
-
+    const parsed = window.parseLeadsFromText ? window.parseLeadsFromText(rawVal) : [];
+    if (parsed.length === 0) {
+        showToast('No valid email addresses found in input!', 'error');
+        return;
     }
 
+    const cleanLines = parsed.map(l => {
+        let parts = [l.email];
+        if (l.name) parts.push(l.name);
+        if (l.company) parts.push(l.company);
+        return parts.join(', ');
+    });
 
+    const cleanText = cleanLines.join('\n');
+    el.value = cleanText;
+    localStorage.setItem('saved_leads_' + id, cleanText);
 
-    showToast('Leads saved successfully!', 'success');
+    if (typeof window.renderLeadsList === 'function') {
+        window.renderLeadsList(id);
+    }
 
+    const rawLineCount = rawVal.split('\n').filter(l => l.trim().length > 0).length;
+    const dupCount = rawLineCount - parsed.length;
 
-
+    if (dupCount > 0) {
+        showToast(`Saved ${parsed.length} unique leads! (${dupCount} duplicate(s) removed)`, 'success');
+    } else {
+        showToast(`Saved ${parsed.length} unique leads!`, 'success');
+    }
 };
 
 

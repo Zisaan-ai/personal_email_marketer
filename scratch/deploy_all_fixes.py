@@ -9,6 +9,7 @@ FTP_PASS = "(3#JCk2Vyn94hY"
 files = [
     (r"C:\Users\higan\.gemini\antigravity\scratch\personal_email_marketer\xcomic.xyz\assets\app.js", "/xcomic.xyz/assets/app.js"),
     (r"C:\Users\higan\.gemini\antigravity\scratch\personal_email_marketer\xcomic_backend\main.py", "/xcomic_backend/main.py"),
+    (r"C:\Users\higan\.gemini\antigravity\scratch\personal_email_marketer\xcomic_backend\ai_core.py", "/xcomic_backend/ai_core.py"),
     (r"C:\Users\higan\.gemini\antigravity\scratch\personal_email_marketer\xcomic.xyz\index.html", "/xcomic.xyz/index.html"),
     (r"C:\Users\higan\.gemini\antigravity\scratch\personal_email_marketer\xcomic.xyz\assets\style.css", "/xcomic.xyz/assets/style.css"),
     (r"C:\Users\higan\.gemini\antigravity\scratch\personal_email_marketer\xcomic.xyz\assets\support_patch.js", "/xcomic.xyz/assets/support_patch.js"),

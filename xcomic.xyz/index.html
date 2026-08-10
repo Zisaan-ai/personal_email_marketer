@@ -20635,7 +20635,7 @@
 
 
 
-<button id="ai-chat-btn" onclick="const p = document.getElementById('ai-chat-panel'); p.style.display = p.style.display === 'flex' ? 'none' : 'flex'; p.style.flexDirection='column';" style="display:none;position:fixed;bottom:32px;right:32px;width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg, #6366f1 0%, #a855f7 100%);border:none;color:#fff;font-size:24px;cursor:pointer;box-shadow:0 10px 25px -5px rgba(99,102,241,0.5);z-index:1000;align-items:center;justify-content:center;transition:transform 0.2s ease, box-shadow 0.2s ease;">
+<button id="ai-chat-btn" onclick="if(typeof window.toggleCopilotWithKeyCheck==='function')window.toggleCopilotWithKeyCheck();else{const p=document.getElementById('ai-chat-panel');p.style.display=p.style.display==='flex'?'none':'flex';p.style.flexDirection='column';}" style="display:none;position:fixed;bottom:32px;right:32px;width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg, #6366f1 0%, #a855f7 100%);border:none;color:#fff;font-size:24px;cursor:pointer;box-shadow:0 10px 25px -5px rgba(99,102,241,0.5);z-index:1000;align-items:center;justify-content:center;transition:transform 0.2s ease, box-shadow 0.2s ease;">
 
 
 
@@ -22766,12 +22766,12 @@
 
 
 
-    <script src="assets/templates.js?v=20260810_v1500000"></script>
-    <script src="assets/app.js?v=20260810_v1500000"></script>
-    <script src="assets/support_patch.js?v=20260810_v1500000"></script>
-    <script src="assets/sending_accounts.js?v=20260810_v1500000"></script>
-    <script src="assets/ai_features.js?v=20260810_v1500000"></script>
-    <script src="assets/deliverability_v2.js?v=20260810_v1500000"></script>
+    <script src="assets/templates.js?v=20260810_v1600000"></script>
+    <script src="assets/app.js?v=20260810_v1600000"></script>
+    <script src="assets/support_patch.js?v=20260810_v1600000"></script>
+    <script src="assets/sending_accounts.js?v=20260810_v1600000"></script>
+    <script src="assets/ai_features.js?v=20260810_v1600000"></script>
+    <script src="assets/deliverability_v2.js?v=20260810_v1600000"></script>
 
 
 

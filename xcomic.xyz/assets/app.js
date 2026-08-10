@@ -14,6 +14,26 @@ window.updateInputState = (id, hasKey) => {
     }
 };
 
+window.loadedAIKeys = window.loadedAIKeys || {};
+window.hasAnyAIKey = function() {
+    return !!(window.loadedAIKeys.gemini || window.loadedAIKeys.groq || window.loadedAIKeys.openai || window.loadedAIKeys.anthropic || window.loadedAIKeys.deepseek);
+};
+
+window.toggleCopilotWithKeyCheck = function() {
+    var p = document.getElementById('ai-chat-panel');
+    if (!p) return;
+    var isOpening = p.style.display !== 'flex';
+    p.style.display = isOpening ? 'flex' : 'none';
+    p.style.flexDirection = 'column';
+    if (isOpening) {
+        if (!window.hasAnyAIKey()) {
+            setTimeout(function() {
+                if (typeof window.showAiKeyRequiredModal === 'function') window.showAiKeyRequiredModal();
+            }, 150);
+        }
+    }
+};
+
 window.showAiKeyRequiredModal = function() {
     var modal = document.getElementById('ai-key-required-modal');
     if (modal) {

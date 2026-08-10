@@ -111,6 +111,11 @@ window.SUPPORT.loadUserTickets = async function() {
 
     try {
         var res = await safeApiCall('/support/tickets', 'GET');
+        if (res && res.status === 403) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:30px;"><div style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); border-radius:12px; padding:20px; max-width:400px; margin:0 auto; color:#fff;"><i class="fa-solid fa-lock" style="font-size:28px; color:#f87171; margin-bottom:10px;"></i><h4 style="margin:0 0 6px 0; font-size:15px;">🔒 Customer Support Locked</h4><p style="font-size:12px; color:#94a3b8; margin-bottom:14px;">Customer Support ticketing is available on Starter, Professional & Enterprise plans. Upgrade to unlock!</p><button onclick="window.showUpgradeModal(\'support\')" style="background:linear-gradient(to right, #3b82f6, #8b5cf6); color:white; border:none; padding:8px 18px; border-radius:8px; font-weight:700; cursor:pointer;">🚀 Upgrade Plan Now</button></div></td></tr>';
+            if (typeof window.showUpgradeModal === 'function') window.showUpgradeModal('support');
+            return;
+        }
         if (res && res.ok) {
             var data = await res.json();
             var tickets = data.tickets || [];

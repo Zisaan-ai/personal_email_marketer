@@ -702,6 +702,19 @@ window.navTo = function(targetId) {
     };
     if (aliases[targetId]) targetId = aliases[targetId];
 
+    // Gating for locked features
+    var userPlan = (localStorage.getItem('user_plan') || 'free').toLowerCase();
+    var isAdmin = localStorage.getItem('is_admin') === 'true' || localStorage.getItem('is_admin') === '1';
+
+    if (targetId === 'replies-view' && !isAdmin && (userPlan === 'free' || userPlan === 'starter')) {
+        if (typeof window.showUpgradeModal === 'function') window.showUpgradeModal('replies');
+        return;
+    }
+    if (targetId === 'support-view' && !isAdmin && userPlan === 'free') {
+        if (typeof window.showUpgradeModal === 'function') window.showUpgradeModal('support');
+        return;
+    }
+
     var sidebar = document.querySelector('.sidebar');
     if (sidebar && sidebar.classList.contains('open') && typeof window.toggleMobileMenu === 'function') {
         window.toggleMobileMenu();
@@ -10289,6 +10302,21 @@ async function loadReplies() {
 
 
 
+        if (res.status === 403) {
+            const tbody = document.getElementById('replies-table-body');
+            if (tbody) {
+                tbody.innerHTML = `<tr><td colspan="4" style="padding:40px; text-align:center;">
+                    <div style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); border-radius:12px; padding:24px; max-width:400px; margin:0 auto; color:#fff;">
+                        <i class="fa-solid fa-lock" style="font-size:32px; color:#f87171; margin-bottom:12px;"></i>
+                        <h4 style="margin:0 0 8px 0; font-size:16px;">🔒 Feature Locked on Current Plan</h4>
+                        <p style="font-size:13px; color:#94a3b8; margin-bottom:16px;">AI Automated Inbox Replies & Sentiment Analysis are locked on your current plan. Upgrade to Professional or Enterprise to unlock!</p>
+                        <button onclick="window.showUpgradeModal('replies')" style="background:linear-gradient(to right, #3b82f6, #8b5cf6); color:white; border:none; padding:8px 20px; border-radius:8px; font-weight:700; cursor:pointer;">🚀 Upgrade Plan Now</button>
+                    </div>
+                </td></tr>`;
+            }
+            if (typeof window.showUpgradeModal === 'function') window.showUpgradeModal('replies');
+            return;
+        }
         if (!res.ok) return;
 
 

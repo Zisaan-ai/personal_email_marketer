@@ -3166,12 +3166,27 @@ window.editCampaign = function(id) {
         
 
         if (window.renderSendingAccountsSelector) {
-
             window.renderSendingAccountsSelector('cold-sender-accounts-list', c.selected_sender_ids);
-
         }
 
-
+        apiCall(`/campaigns/${c.id}/leads`).then(res => {
+            if (res && res.ok) {
+                res.json().then(leadsData => {
+                    const leadsText = leadsData.map(l => {
+                        let p = [l.email];
+                        if (l.name) p.push(l.name);
+                        if (l.company) p.push(l.company);
+                        return p.join(', ');
+                    }).join('\n');
+                    const seqLeadsEl = document.getElementById('seq-leads');
+                    if (seqLeadsEl) {
+                        seqLeadsEl.value = leadsText;
+                        localStorage.setItem('saved_leads_seq-leads', leadsText);
+                        if (typeof window.renderLeadsList === 'function') window.renderLeadsList('seq-leads');
+                    }
+                }).catch(()=>{});
+            }
+        });
 
         window.switchColdTab('sequences');
 
@@ -3236,12 +3251,27 @@ window.editCampaign = function(id) {
         
 
         if (window.renderSendingAccountsSelector) {
-
             window.renderSendingAccountsSelector('vb-sender-accounts-list', c.selected_sender_ids);
-
         }
 
-
+        apiCall(`/campaigns/${c.id}/leads`).then(res => {
+            if (res && res.ok) {
+                res.json().then(leadsData => {
+                    const leadsText = leadsData.map(l => {
+                        let p = [l.email];
+                        if (l.name) p.push(l.name);
+                        if (l.company) p.push(l.company);
+                        return p.join(', ');
+                    }).join('\n');
+                    const nlLeadsEl = document.getElementById('newsletter-leads');
+                    if (nlLeadsEl) {
+                        nlLeadsEl.value = leadsText;
+                        localStorage.setItem('saved_leads_newsletter-leads', leadsText);
+                        if (typeof window.renderLeadsList === 'function') window.renderLeadsList('newsletter-leads');
+                    }
+                }).catch(()=>{});
+            }
+        });
 
         const canvas = document.getElementById('builder-canvas');
 
@@ -12779,6 +12809,10 @@ window.saveLeads = function(id) {
         showToast(`Saved ${parsed.length} unique leads! (${dupCount} duplicate(s) removed)`, 'success');
     } else {
         showToast(`Saved ${parsed.length} unique leads!`, 'success');
+    }
+
+    if (window.currentCampaignId) {
+        apiCall(`/campaigns/${window.currentCampaignId}/leads`, 'POST', { leads: parsed }).catch(console.error);
     }
 };
 

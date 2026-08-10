@@ -1160,6 +1160,53 @@ def get_campaign_leads(campaign_id: str, current_user: database.User = Depends(a
         "status": lead.status,
         "variant": getattr(lead, "variant", "")
     } for lead in leads]
+
+class LeadsUpdate(BaseModel):
+    leads: List[Union[str, dict]]
+
+@app.post("/api/campaigns/{campaign_id}/leads")
+def update_campaign_leads(campaign_id: str, req: LeadsUpdate, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    campaign = db.query(database.Campaign).filter(database.Campaign.id == campaign_id).first()
+    if not campaign:
+        raise HTTPException(status_code=404, detail="Campaign not found")
+    if campaign.user_id != str(current_user.id) and not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    if campaign.status == "processing":
+        raise HTTPException(status_code=400, detail="Cannot edit leads for a processing campaign. Pause it first.")
+        
+    db.query(database.CampaignLead).filter(database.CampaignLead.campaign_id == campaign_id).delete()
+    db.commit()
+    
+    mappings = []
+    if req.leads and len(req.leads) > 0:
+        seen_emails = set()
+        for lead_in in req.leads:
+            if isinstance(lead_in, str):
+                email_val = lead_in.strip()
+                name_val = ""
+                comp_val = ""
+            elif isinstance(lead_in, dict):
+                email_val = lead_in.get("email", "").strip() if lead_in.get("email") else ""
+                name_val = lead_in.get("name", "").strip() if lead_in.get("name") else ""
+                comp_val = lead_in.get("company", "").strip() if lead_in.get("company") else ""
+            else:
+                continue
+            
+            clean_email = email_val.lower()
+            if clean_email and "@" in clean_email and "." in clean_email:
+                if clean_email not in seen_emails:
+                    seen_emails.add(clean_email)
+                    mappings.append({
+                        "campaign_id": campaign_id,
+                        "name": name_val,
+                        "email": clean_email,
+                        "company": comp_val
+                    })
+        if mappings:
+            db.bulk_insert_mappings(database.CampaignLead, mappings)
+            db.commit()
+            
+    return {"ok": True, "message": "Leads updated successfully", "count": len(mappings)}
 @app.delete("/api/campaigns/{campaign_id}/leads/{lead_id}")
 def delete_campaign_lead(campaign_id: str, lead_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     campaign = db.query(database.Campaign).filter(database.Campaign.id == campaign_id).first()

@@ -22766,11 +22766,11 @@
 
 
 
-    <script src="assets/templates.js?v=20260810_v2100000"></script>
-    <script src="assets/app.js?v=20260810_v2100000"></script>
-    <script src="assets/support_patch.js?v=20260810_v2100000"></script>
-    <script src="assets/sending_accounts.js?v=20260810_v2100000"></script>
-    <script src="assets/ai_features.js?v=20260810_v2100000"></script>
+    <script src="assets/templates.js?v=20260810_v2200000"></script>
+    <script src="assets/app.js?v=20260810_v2200000"></script>
+    <script src="assets/support_patch.js?v=20260810_v2200000"></script>
+    <script src="assets/sending_accounts.js?v=20260810_v2200000"></script>
+    <script src="assets/ai_features.js?v=20260810_v2200000"></script>
     <script src="assets/deliverability_v2.js?v=20260810_v2000000"></script>
 
 
@@ -24076,8 +24076,8 @@
                     badge.style.cssText = 'margin-left:auto; font-size:10px; font-weight:700; background:#fef08a; color:#ca8a04; padding:2px 6px; border-radius:10px; display:inline-flex; align-items:center; gap:3px;';
                     repliesNav.appendChild(badge);
                 }
-                if (!isAdmin && plan === 'free') {
-                    badge.innerHTML = '<i class="fa-solid fa-lock"></i> STARTER';
+                if (!isAdmin && (plan === 'free' || plan === 'starter')) {
+                    badge.innerHTML = '<i class="fa-solid fa-lock"></i> PRO';
                     badge.style.display = 'inline-flex';
                     repliesNav.onclick = function(e) {
                         e.preventDefault();

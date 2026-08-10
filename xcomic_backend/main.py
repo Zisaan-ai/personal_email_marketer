@@ -2442,8 +2442,8 @@ def check_ai_replies_permission(user: database.User):
     if user.is_admin or user.custom_ai_replies is True:
         return
     plan = (user.subscription_plan or "free").lower()
-    if plan == "free":
-        raise HTTPException(status_code=403, detail="FEATURE_LOCKED: AI Automated Inbox Replies & Sentiment Analysis are locked on Free plan. Upgrade to Starter or higher to unlock!")
+    if plan in ["free", "starter"]:
+        raise HTTPException(status_code=403, detail="PRO_FEATURE_LOCKED: AI Automated Inbox Replies & Sentiment Analysis are locked on Free & Starter plans. Upgrade to Professional or Enterprise to unlock!")
 
 def check_support_permission(user: database.User):
     if user.is_admin or user.custom_support is True:

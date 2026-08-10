@@ -219,7 +219,11 @@ window.setupAICopilot = function() {
             if (typingEl) typingEl.remove();
 
             if (!res.ok || data.error) {
-                appendMsg('assistant', '❌ Error: ' + (data.error || data.detail || 'Something went wrong'));
+                const errText = data.error || data.detail || 'Something went wrong';
+                appendMsg('assistant', '🔑 <strong>AI Provider API Key Required</strong><br>' + errText + '<br><br><button onclick="if(typeof window.showAiKeyRequiredModal===\'function\')window.showAiKeyRequiredModal();else window.navTo(\'settings\');" style="background:linear-gradient(135deg, #f59e0b, #ea580c); color:#fff; border:none; padding:8px 16px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12px;"><i class="fa-solid fa-gear"></i> Open Settings to Add Key</button>');
+                setTimeout(function() {
+                    if (typeof window.showAiKeyRequiredModal === 'function') window.showAiKeyRequiredModal();
+                }, 300);
             } else {
                 const reply = data.reply || 'Sorry, I couldn\'t generate a response.';
                 chatHistory.push({ role: 'assistant', content: reply });
@@ -228,7 +232,10 @@ window.setupAICopilot = function() {
         } catch (e) {
             const typingEl = document.getElementById('copilot-typing');
             if (typingEl) typingEl.remove();
-            appendMsg('assistant', '⚠️ Connection error. Make sure Groq API key is set in Settings.');
+            appendMsg('assistant', '⚠️ Connection error. Please check your internet or add an AI Key in Settings.<br><br><button onclick="if(typeof window.showAiKeyRequiredModal===\'function\')window.showAiKeyRequiredModal();else window.navTo(\'settings\');" style="background:linear-gradient(135deg, #f59e0b, #ea580c); color:#fff; border:none; padding:8px 16px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12px;"><i class="fa-solid fa-gear"></i> Open Settings to Add Key</button>');
+            setTimeout(function() {
+                if (typeof window.showAiKeyRequiredModal === 'function') window.showAiKeyRequiredModal();
+            }, 300);
         }
 
         if (sendBtn) sendBtn.disabled = false;

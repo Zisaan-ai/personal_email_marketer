@@ -155,6 +155,9 @@ window.setupAICopilot = function() {
 
     function formatMarkdown(rawText) {
         if (!rawText) return '';
+        if (rawText.includes('<button') || rawText.includes('<div') || rawText.includes('<strong>')) {
+            return rawText;
+        }
         // Escape HTML to prevent XSS
         let html = rawText
             .replace(/&/g, '&amp;')

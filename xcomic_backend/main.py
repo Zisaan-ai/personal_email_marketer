@@ -501,30 +501,71 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
         "plan": plan_name
     }
 
-# --- GOOGLE & GITHUB OAUTH ENDPOINTS ---
-GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID", "")
-GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET", "")
-GITHUB_CLIENT_ID = os.getenv("GITHUB_CLIENT_ID", "")
-GITHUB_CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET", "")
+# --- GOOGLE & GITHUB OAUTH CONFIG & ENDPOINTS ---
+def get_oauth_config():
+    cfg_path = os.path.join(os.path.dirname(__file__), "oauth_config.json")
+    if os.path.exists(cfg_path):
+        try:
+            with open(cfg_path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return {}
+
+def get_google_id():
+    return os.getenv("GOOGLE_CLIENT_ID") or get_oauth_config().get("GOOGLE_CLIENT_ID", "")
+
+def get_google_secret():
+    return os.getenv("GOOGLE_CLIENT_SECRET") or get_oauth_config().get("GOOGLE_CLIENT_SECRET", "")
+
+def get_github_id():
+    return os.getenv("GITHUB_CLIENT_ID") or get_oauth_config().get("GITHUB_CLIENT_ID", "")
+
+def get_github_secret():
+    return os.getenv("GITHUB_CLIENT_SECRET") or get_oauth_config().get("GITHUB_CLIENT_SECRET", "")
+
+class OAuthConfigRequest(BaseModel):
+    google_client_id: Optional[str] = ""
+    google_client_secret: Optional[str] = ""
+    github_client_id: Optional[str] = ""
+    github_client_secret: Optional[str] = ""
+
+@app.post("/api/settings/oauth")
+def save_oauth_config(req: OAuthConfigRequest, current_user: database.User = Depends(auth.get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin privileges required")
+    cfg = {
+        "GOOGLE_CLIENT_ID": req.google_client_id.strip() if req.google_client_id else "",
+        "GOOGLE_CLIENT_SECRET": req.google_client_secret.strip() if req.google_client_secret else "",
+        "GITHUB_CLIENT_ID": req.github_client_id.strip() if req.github_client_id else "",
+        "GITHUB_CLIENT_SECRET": req.github_client_secret.strip() if req.github_client_secret else ""
+    }
+    cfg_path = os.path.join(os.path.dirname(__file__), "oauth_config.json")
+    with open(cfg_path, "w", encoding="utf-8") as f:
+        json.dump(cfg, f, indent=2)
+    return {"ok": True, "message": "OAuth configuration saved successfully"}
 
 @app.get("/api/auth/google")
 def google_auth_redirect():
-    if not GOOGLE_CLIENT_ID:
+    gid = get_google_id()
+    if not gid:
         raise HTTPException(status_code=400, detail="Google OAuth Client ID is not configured on the server yet.")
     redirect_uri = "https://xcomic.xyz/api/auth/google/callback"
     scope = "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile"
-    url = f"https://accounts.google.com/o/oauth2/v2/auth?client_id={GOOGLE_CLIENT_ID}&redirect_uri={redirect_uri}&response_type=code&scope={scope}"
+    url = f"https://accounts.google.com/o/oauth2/v2/auth?client_id={gid}&redirect_uri={redirect_uri}&response_type=code&scope={scope}"
     return RedirectResponse(url)
 
 @app.get("/api/auth/google/callback")
 def google_auth_callback(code: str, db: Session = Depends(database.get_db)):
-    if not GOOGLE_CLIENT_ID or not GOOGLE_CLIENT_SECRET:
+    gid = get_google_id()
+    gsec = get_google_secret()
+    if not gid or not gsec:
         raise HTTPException(status_code=400, detail="Google OAuth is not configured")
     import requests, secrets
     token_url = "https://oauth2.googleapis.com/token"
     data = {
-        "client_id": GOOGLE_CLIENT_ID,
-        "client_secret": GOOGLE_CLIENT_SECRET,
+        "client_id": gid,
+        "client_secret": gsec,
         "code": code,
         "grant_type": "authorization_code",
         "redirect_uri": "https://xcomic.xyz/api/auth/google/callback"
@@ -561,23 +602,26 @@ def google_auth_callback(code: str, db: Session = Depends(database.get_db)):
 
 @app.get("/api/auth/github")
 def github_auth_redirect():
-    if not GITHUB_CLIENT_ID:
+    ghid = get_github_id()
+    if not ghid:
         raise HTTPException(status_code=400, detail="GitHub OAuth Client ID is not configured on the server yet.")
     redirect_uri = "https://xcomic.xyz/api/auth/github/callback"
     scope = "user:email"
-    url = f"https://github.com/login/oauth/authorize?client_id={GITHUB_CLIENT_ID}&redirect_uri={redirect_uri}&scope={scope}"
+    url = f"https://github.com/login/oauth/authorize?client_id={ghid}&redirect_uri={redirect_uri}&scope={scope}"
     return RedirectResponse(url)
 
 @app.get("/api/auth/github/callback")
 def github_auth_callback(code: str, db: Session = Depends(database.get_db)):
-    if not GITHUB_CLIENT_ID or not GITHUB_CLIENT_SECRET:
+    ghid = get_github_id()
+    ghsec = get_github_secret()
+    if not ghid or not ghsec:
         raise HTTPException(status_code=400, detail="GitHub OAuth is not configured")
     import requests, secrets
     token_url = "https://github.com/login/oauth/access_token"
     headers = {"Accept": "application/json"}
     data = {
-        "client_id": GITHUB_CLIENT_ID,
-        "client_secret": GITHUB_CLIENT_SECRET,
+        "client_id": ghid,
+        "client_secret": ghsec,
         "code": code,
         "redirect_uri": "https://xcomic.xyz/api/auth/github/callback"
     }

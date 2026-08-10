@@ -20,6 +20,10 @@ window.aiToast = function(msg, type='info') {
 // AI: Generate Email (used in Visual Builder)
 // =============================================
 window.generateEmail = async function(targetId) {
+    if (typeof window.hasAnyAIKey === 'function' && !window.hasAnyAIKey()) {
+        if (typeof window.showAiKeyRequiredModal === 'function') window.showAiKeyRequiredModal();
+        return;
+    }
     const prompt = window.prompt('What should this email be about? (e.g. "Flash sale 50% off shoes for Black Friday")');
     if (!prompt || !prompt.trim()) return;
 
@@ -43,6 +47,10 @@ window.generateEmail = async function(targetId) {
 // AI: Optimize Subject Line
 // =============================================
 window.optimizeSubject = async function(targetId) {
+    if (typeof window.hasAnyAIKey === 'function' && !window.hasAnyAIKey()) {
+        if (typeof window.showAiKeyRequiredModal === 'function') window.showAiKeyRequiredModal();
+        return;
+    }
     const el = document.getElementById(targetId);
     if (!el || !el.value.trim()) {
         aiToast('Please enter a subject line first.', 'error');
@@ -69,6 +77,10 @@ window.optimizeSubject = async function(targetId) {
 // AI: Generate Icebreakers for leads CSV
 // =============================================
 window.generateIcebreakers = async function(targetId) {
+    if (typeof window.hasAnyAIKey === 'function' && !window.hasAnyAIKey()) {
+        if (typeof window.showAiKeyRequiredModal === 'function') window.showAiKeyRequiredModal();
+        return;
+    }
     const el = document.getElementById(targetId);
     if (!el || !el.value.trim()) {
         aiToast('Please paste CSV leads first.', 'error');
@@ -94,6 +106,10 @@ window.generateIcebreakers = async function(targetId) {
 // AI: Auto-Pilot (scrape URL + write campaign)
 // =============================================
 window.runAutopilot = async function() {
+    if (typeof window.hasAnyAIKey === 'function' && !window.hasAnyAIKey()) {
+        if (typeof window.showAiKeyRequiredModal === 'function') window.showAiKeyRequiredModal();
+        return;
+    }
     const inputEl = document.getElementById('autopilot-input');
     if (!inputEl || !inputEl.value.trim()) {
         aiToast('Please enter a link or product description!', 'error');

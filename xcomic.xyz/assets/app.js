@@ -10463,6 +10463,14 @@ function openReplyModal(item) {
 
 async function generateAiReplyDraft(btn) {
 
+    if (typeof window.hasAnyAIKey === 'function' && !window.hasAnyAIKey()) {
+
+        if (typeof window.showAiKeyRequiredModal === 'function') window.showAiKeyRequiredModal();
+
+        return;
+
+    }
+
     const replyId = document.getElementById('active-reply-id').value;
 
     const oldHtml = btn.innerHTML;

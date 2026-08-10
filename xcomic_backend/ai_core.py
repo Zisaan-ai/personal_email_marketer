@@ -15,7 +15,7 @@ MODEL_NAME_OPENAI = "gpt-4o-mini"
 MODEL_NAME_ANTHROPIC = "claude-3-haiku-20240307"
 MODEL_NAME_DEEPSEEK = "deepseek-chat"
 MODEL_NAME_GROQ = "llama-3.3-70b-versatile"
-MODEL_NAME_GEMINI = "gemini-2.0-flash"
+MODEL_NAME_GEMINI = "gemini-2.5-flash"
 
 API_URL_OPENAI = "https://api.openai.com/v1/chat/completions"
 API_URL_ANTHROPIC = "https://api.anthropic.com/v1/messages"

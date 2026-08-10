@@ -1018,8 +1018,10 @@ def send_campaign(campaign: CampaignCreate, background_tasks: BackgroundTasks, c
         target_campaign.current_daily_limit = min(campaign.daily_ramp_up, campaign.max_emails_per_day) if (campaign.daily_ramp_up and campaign.daily_ramp_up > 0) else campaign.max_emails_per_day
         target_campaign.selected_sender_ids = campaign.selected_sender_ids
         db.commit()
-        db.query(database.CampaignLead).filter(database.CampaignLead.campaign_id == str(target_campaign.id)).delete()
-        db.commit()
+        # Only delete existing leads if new leads are explicitly provided!
+        if campaign.leads is not None and len(campaign.leads) > 0:
+            db.query(database.CampaignLead).filter(database.CampaignLead.campaign_id == str(target_campaign.id)).delete()
+            db.commit()
         new_campaign = target_campaign
     else:
         new_campaign = database.Campaign(
@@ -1049,16 +1051,28 @@ def send_campaign(campaign: CampaignCreate, background_tasks: BackgroundTasks, c
         )
         db.add(new_campaign)
         db.commit()
-    if campaign.leads:
+    if campaign.leads and len(campaign.leads) > 0:
         mappings = []
         campaign_id_str = str(new_campaign.id)
         for lead_in in campaign.leads:
-            mappings.append({
-                "campaign_id": campaign_id_str,
-                "name": lead_in.get("name", ""),
-                "email": lead_in.get("email", ""),
-                "company": lead_in.get("company", "")
-            })
+            if isinstance(lead_in, str):
+                email_val = lead_in.strip()
+                name_val = ""
+                comp_val = ""
+            elif isinstance(lead_in, dict):
+                email_val = lead_in.get("email", "").strip() if lead_in.get("email") else ""
+                name_val = lead_in.get("name", "").strip() if lead_in.get("name") else ""
+                comp_val = lead_in.get("company", "").strip() if lead_in.get("company") else ""
+            else:
+                continue
+            
+            if email_val and "@" in email_val:
+                mappings.append({
+                    "campaign_id": campaign_id_str,
+                    "name": name_val,
+                    "email": email_val,
+                    "company": comp_val
+                })
         if mappings:
             db.bulk_insert_mappings(database.CampaignLead, mappings)
             db.commit()

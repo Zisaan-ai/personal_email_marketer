@@ -39,12 +39,41 @@ const API_URL = '/api';
 
 
 function escapeHtml(unsafe) {
-
     if (!unsafe) return '';
-
     return unsafe.toString().replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-
 }
+
+window.parseLeadsFromText = function(text) {
+    if (!text || typeof text !== 'string') return [];
+    const leads = [];
+    const seen = new Set();
+    const lines = text.split(/\r?\n/);
+    
+    for (let i = 0; i < lines.length; i++) {
+        let line = lines[i].trim();
+        if (!line) continue;
+        if (line.toLowerCase().startsWith('email,') || line.toLowerCase().startsWith('email\t') || line.toLowerCase().startsWith('email;')) continue;
+        
+        let delimiter = ',';
+        if (line.includes('\t')) delimiter = '\t';
+        else if (line.includes(';') && !line.includes(',')) delimiter = ';';
+        
+        const parts = line.split(delimiter).map(p => p.trim().replace(/^["']|["']$/g, ''));
+        const email = parts[0] ? parts[0].trim().toLowerCase() : '';
+        
+        if (email && email.includes('@') && email.includes('.')) {
+            if (!seen.has(email)) {
+                seen.add(email);
+                leads.push({
+                    email: email,
+                    name: parts[1] || '',
+                    company: parts[2] || ''
+                });
+            }
+        }
+    }
+    return leads;
+};
 
 
 
@@ -4426,16 +4455,14 @@ window.saveSchedule = async function() {
 
             const bodyEl = document.getElementById('inst-body');
 
+            const seqLeadsEl = document.getElementById('seq-leads');
+            const seqLeadsList = seqLeadsEl ? window.parseLeadsFromText(seqLeadsEl.value) : [];
+
             const draftPayload = {
-
                 subject: (subEl ? subEl.value : '') || 'Untitled Campaign',
-
                 body: bodyEl ? bodyEl.value : '',
-
                 type: 'cold_mail',
-
-                leads: [],
-
+                leads: seqLeadsList,
                 is_draft: true,
 
                 sending_days: payload.sending_days,
@@ -8121,27 +8148,7 @@ function setupCampaignBuilder() {
 
 
 
-        const leadsText = (document.getElementById('newsletter-leads') || {}).value || '';
-
-
-
-        const leads = [];
-
-
-
-        leadsText.split('\n').map(l => l.trim()).filter(l => l).forEach(line => {
-
-
-
-            const parts = line.split(',').map(p => p.trim());
-
-
-
-            leads.push({ email: parts[0], name: parts[1] || '', company: parts[2] || '' });
-
-
-
-        });
+        const leads = window.parseLeadsFromText((document.getElementById('newsletter-leads') || {}).value || '');
 
 
 
@@ -9374,27 +9381,7 @@ function setupSequenceBuilder() {
 
 
 
-        const leadsText = (document.getElementById('seq-leads') || {}).value || '';
-
-
-
-        const leads = [];
-
-
-
-        leadsText.split('\n').map(l => l.trim()).filter(l => l).forEach(line => {
-
-
-
-            const parts = line.split(',').map(p => p.trim());
-
-
-
-            leads.push({ email: parts[0], name: parts[1] || '', company: parts[2] || '' });
-
-
-
-        });
+        const leads = window.parseLeadsFromText((document.getElementById('seq-leads') || {}).value || '');
 
 
 
@@ -9652,27 +9639,7 @@ function setupSequenceBuilder() {
 
 
 
-        const leadsText = (document.getElementById('seq-leads') || {}).value || '';
-
-
-
-        const leads = [];
-
-
-
-        leadsText.split('\n').map(l => l.trim()).filter(l => l).forEach(line => {
-
-
-
-            const parts = line.split(',').map(p => p.trim());
-
-
-
-            leads.push({ email: parts[0], name: parts[1] || '', company: parts[2] || '' });
-
-
-
-        });
+        const leads = window.parseLeadsFromText((document.getElementById('seq-leads') || {}).value || '');
 
 
 
@@ -13065,16 +13032,14 @@ window.saveNewsletterSchedule = async function() {
 
             const subEl = document.getElementById('campaign-subject');
 
+            const newsLeadsEl = document.getElementById('newsletter-leads');
+            const newsLeadsList = newsLeadsEl ? window.parseLeadsFromText(newsLeadsEl.value) : [];
+
             const draftPayload = {
-
                 subject: (subEl ? subEl.value : '') || 'Untitled Newsletter',
-
                 body: '',
-
                 type: 'newsletter',
-
-                leads: [],
-
+                leads: newsLeadsList,
                 is_draft: true,
 
                 sending_days: payload.sending_days,

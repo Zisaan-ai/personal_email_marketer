@@ -99,15 +99,33 @@ window.parseLeadsFromText = function(text) {
         else if (line.includes(';') && !line.includes(',')) delimiter = ';';
         
         const parts = line.split(delimiter).map(p => p.trim().replace(/^["']|["']$/g, ''));
-        const email = parts[0] ? parts[0].trim().toLowerCase() : '';
         
-        if (email && email.includes('@') && email.includes('.')) {
+        let email = '';
+        let name = '';
+        let company = '';
+        
+        // Find the first part that looks like an email
+        let emailIdx = -1;
+        for (let j = 0; j < parts.length; j++) {
+            if (parts[j] && parts[j].includes('@') && parts[j].includes('.')) {
+                email = parts[j].toLowerCase();
+                emailIdx = j;
+                break;
+            }
+        }
+        
+        if (emailIdx !== -1) {
+            // Assign name and company from the remaining parts
+            let otherParts = parts.filter((_, idx) => idx !== emailIdx && parts[idx].length > 0);
+            name = otherParts[0] || '';
+            company = otherParts[1] || '';
+            
             if (!seen.has(email)) {
                 seen.add(email);
                 leads.push({
                     email: email,
-                    name: parts[1] || '',
-                    company: parts[2] || ''
+                    name: name,
+                    company: company
                 });
             }
         }

@@ -2135,30 +2135,30 @@ def verify_api_key(req: VerifyKeyRequest, current_user: database.User = Depends(
     import requests
     is_valid = False
     try:
-        if req.provider == "gemini" and key.startswith("AIza"):
+        if req.provider == "gemini":
             url = f"https://generativelanguage.googleapis.com/v1beta/models?key={key}"
             res = requests.get(url, timeout=5)
             if res.status_code == 200:
                 is_valid = True
-        elif req.provider == "groq" and key.startswith("gsk_"):
+        elif req.provider == "groq":
             url = "https://api.groq.com/openai/v1/models"
             headers = {"Authorization": f"Bearer {key}"}
             res = requests.get(url, headers=headers, timeout=5)
             if res.status_code == 200:
                 is_valid = True
-        elif req.provider == "openai" and key.startswith("sk-"):
+        elif req.provider == "openai":
             url = "https://api.openai.com/v1/models"
             headers = {"Authorization": f"Bearer {key}"}
             res = requests.get(url, headers=headers, timeout=5)
             if res.status_code == 200:
                 is_valid = True
-        elif req.provider == "anthropic" and key.startswith("sk-ant-"):
+        elif req.provider == "anthropic":
             url = "https://api.anthropic.com/v1/messages"
             headers = {"x-api-key": key, "anthropic-version": "2023-06-01"}
             res = requests.post(url, headers=headers, json={"max_tokens": 1, "messages": [{"role": "user", "content": "hi"}]} , timeout=5)
             if res.status_code != 401:
                 is_valid = True
-        elif req.provider == "deepseek" and key.startswith("sk-"):
+        elif req.provider == "deepseek":
             url = "https://api.deepseek.com/models"
             headers = {"Authorization": f"Bearer {key}"}
             res = requests.get(url, headers=headers, timeout=5)

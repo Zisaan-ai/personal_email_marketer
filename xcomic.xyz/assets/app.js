@@ -112,14 +112,6 @@ window.toggleMobileMenu = function() {
 
 
 
-    }
-
-
-
-};
-
-
-
 
 
 

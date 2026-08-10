@@ -8,7 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Union
 from datetime import datetime, timedelta
 import os
 import re

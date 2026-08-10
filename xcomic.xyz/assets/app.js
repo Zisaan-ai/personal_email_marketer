@@ -12154,14 +12154,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-        if (el) {
-            el.addEventListener('input', () => {
-                localStorage.setItem('saved_leads_' + id, el.value);
-                if (typeof window.renderLeadsList === 'function') {
-                    window.renderLeadsList(id);
-                }
-            });
-        }
         if (typeof window.renderLeadsList === 'function') {
 
 
@@ -12733,23 +12725,14 @@ window.deleteUser = async function(id) {
 
 
 window.saveLeads = function(id) {
-
-
-
     const el = document.getElementById(id);
-
-
-
     if (!el) return;
-
-
-
+    const val = el.value.trim();
+    if (!val) {
+        showToast('Please enter or paste leads first before saving!', 'warning');
+        return;
+    }
     localStorage.setItem('saved_leads_' + id, el.value);
-
-
-
-    if (typeof window.renderLeadsList === 'function') {
-
 
 
         window.renderLeadsList(id);

@@ -1053,6 +1053,7 @@ def send_campaign(campaign: CampaignCreate, background_tasks: BackgroundTasks, c
         db.commit()
     if campaign.leads and len(campaign.leads) > 0:
         mappings = []
+        seen_emails = set()
         campaign_id_str = str(new_campaign.id)
         for lead_in in campaign.leads:
             if isinstance(lead_in, str):
@@ -1066,13 +1067,16 @@ def send_campaign(campaign: CampaignCreate, background_tasks: BackgroundTasks, c
             else:
                 continue
             
-            if email_val and "@" in email_val:
-                mappings.append({
-                    "campaign_id": campaign_id_str,
-                    "name": name_val,
-                    "email": email_val,
-                    "company": comp_val
-                })
+            clean_email = email_val.lower()
+            if clean_email and "@" in clean_email and "." in clean_email:
+                if clean_email not in seen_emails:
+                    seen_emails.add(clean_email)
+                    mappings.append({
+                        "campaign_id": campaign_id_str,
+                        "name": name_val,
+                        "email": clean_email,
+                        "company": comp_val
+                    })
         if mappings:
             db.bulk_insert_mappings(database.CampaignLead, mappings)
             db.commit()

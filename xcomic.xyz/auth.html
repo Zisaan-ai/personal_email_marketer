@@ -376,11 +376,11 @@
         </div>
 
         <div class="social-login">
-            <button type="button" class="btn-social" onclick="window.location.href='/api/auth/google'">
+            <button type="button" class="btn-social" onclick="showSocialUnavailable('Google')">
                 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google">
                 Google
             </button>
-            <button type="button" class="btn-social" onclick="window.location.href='/api/auth/github'">
+            <button type="button" class="btn-social" onclick="showSocialUnavailable('GitHub')">
                 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" style="filter: invert(1);">
                 GitHub
             </button>
@@ -491,6 +491,39 @@
     </div>
 
     <script>
+        function showSocialUnavailable(provider) {
+            let modal = document.getElementById('social-modal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'social-modal';
+                modal.style.position = 'fixed';
+                modal.style.top = '0';
+                modal.style.left = '0';
+                modal.style.width = '100vw';
+                modal.style.height = '100vh';
+                modal.style.backgroundColor = 'rgba(0,0,0,0.6)';
+                modal.style.backdropFilter = 'blur(4px)';
+                modal.style.display = 'flex';
+                modal.style.alignItems = 'center';
+                modal.style.justifyContent = 'center';
+                modal.style.zIndex = '99999';
+                modal.innerHTML = `
+                    <div style="background:#0f172a; border:1px solid #334155; padding:24px 28px; border-radius:16px; max-width:400px; width:90%; text-align:center; color:#fff; box-shadow:0 20px 25px -5px rgba(0,0,0,0.5); animation: popIn 0.2s ease-out;">
+                        <div style="width:48px; height:48px; background:rgba(239,68,68,0.15); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
+                            <svg style="width:24px; height:24px; color:#ef4444;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        </div>
+                        <h3 style="margin:0 0 8px; font-size:18px; font-weight:700;" id="social-modal-title">Social Login Unavailable</h3>
+                        <p style="margin:0 0 20px; font-size:14px; color:#94a3b8; line-height:1.5;" id="social-modal-msg">Social login is currently unavailable. Please sign up or log in using your Email Address below.</p>
+                        <button onclick="document.getElementById('social-modal').style.display='none'" style="background:#3b82f6; color:#fff; border:none; padding:11px 20px; border-radius:8px; font-weight:600; cursor:pointer; width:100%; font-size:14px;">Got it, use Email</button>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+            }
+            document.getElementById('social-modal-title').textContent = provider + ' Login Unavailable';
+            document.getElementById('social-modal-msg').textContent = provider + ' login is currently unavailable. Please continue by signing up or logging in using your Email Address below.';
+            modal.style.display = 'flex';
+        }
+
         // Handle OAuth callback token if present
         (function checkOAuthToken() {
             const urlParams = new URLSearchParams(window.location.search);

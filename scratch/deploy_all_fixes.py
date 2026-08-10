@@ -12,6 +12,7 @@ files = [
     (r"C:\Users\higan\.gemini\antigravity\scratch\personal_email_marketer\xcomic_backend\ai_core.py", "/xcomic_backend/ai_core.py"),
     (r"C:\Users\higan\.gemini\antigravity\scratch\personal_email_marketer\xcomic_backend\database.py", "/xcomic_backend/database.py"),
     (r"C:\Users\higan\.gemini\antigravity\scratch\personal_email_marketer\xcomic.xyz\index.html", "/xcomic.xyz/index.html"),
+    (r"C:\Users\higan\.gemini\antigravity\scratch\personal_email_marketer\xcomic.xyz\auth.html", "/xcomic.xyz/auth.html"),
     (r"C:\Users\higan\.gemini\antigravity\scratch\personal_email_marketer\xcomic.xyz\assets\style.css", "/xcomic.xyz/assets/style.css"),
     (r"C:\Users\higan\.gemini\antigravity\scratch\personal_email_marketer\xcomic.xyz\assets\support_patch.js", "/xcomic.xyz/assets/support_patch.js"),
     (r"C:\Users\higan\.gemini\antigravity\scratch\personal_email_marketer\xcomic.xyz\assets\ai_features.js", "/xcomic.xyz/assets/ai_features.js"),

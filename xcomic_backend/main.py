@@ -509,21 +509,28 @@ def test_db(db: Session = Depends(database.get_db)):
 def get_all_users(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admin privileges required")
+    result = []
     try:
+        users = db.query(database.User).all()
+    except Exception as query_err:
+        print(f"[get_all_users Query Fallback]: {query_err}")
+        db.rollback()
         try:
             database.migrate_sqlite_columns()
         except Exception:
             pass
-
         try:
             users = db.query(database.User).all()
-        except Exception as query_err:
-            print(f"[get_all_users Query Fallback]: {query_err}")
+        except Exception as query_err2:
+            print(f"[get_all_users Second Fallback Error]: {query_err2}")
             db.rollback()
-            database.migrate_sqlite_columns()
-            users = db.query(database.User).all()
-        result = []
-        for u in users:
+            return []
+
+    from datetime import datetime
+    now_dt = datetime.utcnow()
+
+    for u in users:
+        try:
             sent_today = 0
             acc_count = 0
             try:
@@ -531,13 +538,11 @@ def get_all_users(current_user: database.User = Depends(auth.get_current_user), 
                 sent_today = sum(getattr(c, 'sent_today_campaign', 0) or 0 for c in c_list)
             except Exception:
                 db.rollback()
-                sent_today = 0
 
             try:
                 acc_count = db.query(database.SendingAccount).filter(database.SendingAccount.user_id == str(u.id)).count()
             except Exception:
                 db.rollback()
-                acc_count = 0
 
             started_at = getattr(u, 'subscription_started_at', None)
             expires_at = getattr(u, 'subscription_expires_at', None)
@@ -547,28 +552,42 @@ def get_all_users(current_user: database.User = Depends(auth.get_current_user), 
             orig_plan = (getattr(u, 'original_subscription_plan', None) or 'free').lower()
             plan_clean = (getattr(u, 'subscription_plan', 'free') or "free").lower()
             
+            # Format started_at
+            started_str = None
+            if started_at:
+                if hasattr(started_at, 'isoformat'):
+                    started_str = started_at.isoformat()
+                else:
+                    started_str = str(started_at)
+
+            # Format expires_at and calculate days_remaining
+            expires_str = None
             if expires_at:
+                if hasattr(expires_at, 'isoformat'):
+                    expires_str = expires_at.isoformat()
+                else:
+                    expires_str = str(expires_at)
+                
                 try:
-                    from datetime import datetime
-                    now_dt = datetime.utcnow()
-                    diff = (expires_at - now_dt).days
+                    exp_dt = expires_at if isinstance(expires_at, datetime) else datetime.fromisoformat(str(expires_at).replace('Z', ''))
+                    diff = (exp_dt - now_dt).days
                     days_remaining = max(0, diff) if diff >= 0 else 0
                     if diff < 0 and plan_clean != "free":
                         sub_status = "expired"
                 except Exception:
-                    pass
+                    days_remaining = None
 
             result.append({
                 "id": str(u.id),
-                "email": getattr(u, 'email', ''),
-                "is_admin": getattr(u, 'is_admin', False),
-                "is_approved": getattr(u, 'is_approved', False),
-                "is_email_verified": getattr(u, 'is_email_verified', False),
+                "email": getattr(u, 'email', '') or '',
+                "is_admin": getattr(u, 'is_admin', False) or False,
+                "is_approved": getattr(u, 'is_approved', False) or False,
+                "is_email_verified": getattr(u, 'is_email_verified', False) or False,
                 "subscription_plan": getattr(u, 'subscription_plan', 'free') or 'free',
                 "original_subscription_plan": orig_plan,
                 "subscription_status": sub_status,
-                "subscription_started_at": started_at.isoformat() if (started_at and hasattr(started_at, 'isoformat')) else None,
-                "subscription_expires_at": expires_at.isoformat() if (expires_at and hasattr(expires_at, 'isoformat')) else None,
+                "subscription_started_at": started_str,
+                "subscription_expires_at": expires_str,
                 "days_remaining": days_remaining,
                 "custom_daily_limit": getattr(u, 'custom_daily_limit', None),
                 "custom_max_accounts": getattr(u, 'custom_max_accounts', None),
@@ -577,16 +596,10 @@ def get_all_users(current_user: database.User = Depends(auth.get_current_user), 
                 "sending_accounts_count": acc_count,
                 "sent_today": sent_today
             })
-        return result
-    except Exception as e:
-        print(f"[get_all_users ERROR] {e}")
-        import traceback
-        traceback.print_exc()
-        try:
-            db.rollback()
-        except Exception:
-            pass
-        raise HTTPException(status_code=500, detail=f"Database query error: {str(e)}")
+        except Exception as user_err:
+            print(f"[get_all_users single user parse error]: {user_err}")
+
+    return result
 
 @app.post("/api/admin/users/{user_id}/approve")
 def approve_user(user_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
@@ -983,17 +996,6 @@ def send_campaign(campaign: CampaignCreate, background_tasks: BackgroundTasks, c
         target_campaign = db.query(database.Campaign).filter(database.Campaign.id == campaign.campaign_id, database.Campaign.user_id == str(current_user.id)).first()
         if target_campaign and target_campaign.status == "processing":
             raise HTTPException(status_code=400, detail="Cannot edit a campaign that is currently processing. Pause it first.")
-    else:
-        from datetime import datetime, timedelta
-        import pytz
-        recent_cutoff = datetime.utcnow() - timedelta(minutes=10)
-        duplicate = db.query(database.Campaign).filter(
-            database.Campaign.user_id == str(current_user.id),
-            database.Campaign.subject == campaign.subject,
-            database.Campaign.created_at >= recent_cutoff
-        ).order_by(database.Campaign.created_at.desc()).first()
-        if duplicate:
-            target_campaign = duplicate
     if target_campaign:
         target_campaign.subject = campaign.subject
         target_campaign.body = campaign.body

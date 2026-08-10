@@ -8205,6 +8205,86 @@
 
 
         <div id="dashboard" class="view active">
+            <!-- NEW USER ONBOARDING & SETUP GUIDE -->
+            <div id="onboarding-guide-card" style="background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(16,185,129,0.05)); border: 1px solid rgba(99,102,241,0.25); border-radius: 18px; padding: 24px 28px; margin-bottom: 32px; position: relative;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #6366f1, #4f46e5); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 4px 12px rgba(99,102,241,0.3); flex-shrink: 0;">
+                            <i class="fa-solid fa-rocket"></i>
+                        </div>
+                        <div>
+                            <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: var(--text);">Quick Start Guide — How to Use XComic</h3>
+                            <p style="margin: 2px 0 0 0; font-size: 13px; color: var(--text-muted);">Follow these 4 simple steps to launch your first AI email campaign in minutes.</p>
+                        </div>
+                    </div>
+                    <button onclick="document.getElementById('onboarding-guide-card').style.display='none'; localStorage.setItem('dismissed_onboarding', 'true');" style="background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 16px; padding: 4px;" title="Dismiss Guide">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- 4 SETUP STEPS GRID -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 18px;">
+                    <!-- STEP 1 -->
+                    <div style="background: var(--surface-0); border: 1px solid var(--border); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <span style="background: #e0e7ff; color: #4f46e5; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 20px;">STEP 1</span>
+                                <span style="font-weight: 700; font-size: 13px; color: var(--text);">Sending Accounts</span>
+                            </div>
+                            <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5; margin: 0 0 12px 0;">Connect your SMTP, Gmail, Outlook or SendGrid account to send emails.</p>
+                        </div>
+                        <a onclick="window.navTo('sending-accounts')" style="cursor: pointer; font-size: 12px; font-weight: 700; color: #6366f1; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+                            Connect Accounts &rarr;
+                        </a>
+                    </div>
+
+                    <!-- STEP 2: AI KEY SETUP -->
+                    <div style="background: var(--surface-0); border: 1px solid rgba(245,158,11,0.4); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 2px 8px rgba(245,158,11,0.08);">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <span style="background: #fef3c7; color: #d97706; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 20px;">STEP 2 (IMPORTANT)</span>
+                                <span style="font-weight: 700; font-size: 13px; color: var(--text);">Add Free AI Key</span>
+                            </div>
+                            <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5; margin: 0 0 12px 0;">
+                                <strong>Why:</strong> Unlocks automated AI replies, sentiment classification & AI email generation for FREE! Go to <strong>Settings &rarr; AI Provider API Keys</strong>.
+                            </p>
+                        </div>
+                        <a onclick="window.navTo('settings')" style="cursor: pointer; font-size: 12px; font-weight: 700; color: #d97706; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+                            Add AI Key in Settings &rarr;
+                        </a>
+                    </div>
+
+                    <!-- STEP 3 -->
+                    <div style="background: var(--surface-0); border: 1px solid var(--border); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <span style="background: #d1fae5; color: #059669; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 20px;">STEP 3</span>
+                                <span style="font-weight: 700; font-size: 13px; color: var(--text);">Create Campaign</span>
+                            </div>
+                            <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5; margin: 0 0 12px 0;">Build cold drip sequences in <strong>Cold Mail</strong> or newsletters in <strong>Visual Builder</strong>.</p>
+                        </div>
+                        <a onclick="window.navTo('cold-mail-list')" style="cursor: pointer; font-size: 12px; font-weight: 700; color: #10b981; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+                            Build Campaign &rarr;
+                        </a>
+                    </div>
+
+                    <!-- STEP 4 -->
+                    <div style="background: var(--surface-0); border: 1px solid var(--border); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <span style="background: #fce7f3; color: #db2777; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 20px;">STEP 4</span>
+                                <span style="font-weight: 700; font-size: 13px; color: var(--text);">Add Leads & Launch</span>
+                            </div>
+                            <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5; margin: 0 0 12px 0;">Paste prospect emails in Campaign Audience tab and click Launch Campaign!</p>
+                        </div>
+                        <span style="font-size: 12px; font-weight: 700; color: #db2777;">
+                            Ready to Send! 🚀
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-header" style="margin-bottom: 32px; display:flex; justify-content:space-between; align-items:flex-end;">
 
 
 
@@ -16356,7 +16436,7 @@
 
 
 
-            <div class="page-header" style="margin-bottom: 32px;">
+            <div class="page-header" style="margin-bottom: 24px;">
 
 
 
@@ -16380,6 +16460,20 @@
 
 
 
+            </div>
+
+            <!-- AI KEY GUIDANCE BANNER IN REPLIES -->
+            <div style="background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(16,185,129,0.04)); border: 1px solid rgba(99,102,241,0.25); border-radius: 14px; padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="width: 36px; height: 36px; border-radius: 10px; background: rgba(99,102,241,0.15); color: #6366f1; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;"><i class="fa-solid fa-key"></i></span>
+                    <div>
+                        <div style="font-weight: 700; font-size: 14px; color: var(--text);">How to Enable AI Replies & Sentiment Categorization?</div>
+                        <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Add your free Gemini / Groq key in <strong>Settings &rarr; AI Provider API Keys</strong> so AI can automatically classify replies (Hot, Warm, Cold) and write responses for free!</div>
+                    </div>
+                </div>
+                <button onclick="window.navTo('settings')" style="padding: 8px 16px; border-radius: 8px; background: #6366f1; color: #fff; border: none; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; box-shadow: 0 2px 6px rgba(99,102,241,0.3);">
+                    <i class="fa-solid fa-gear" style="margin-right: 6px;"></i>Go to Settings
+                </button>
             </div>
 
 
@@ -16891,6 +16985,20 @@
 
 
 
+
+                    <!-- AI API KEY EXPLANATION & GUIDANCE BOX -->
+                    <div style="background: linear-gradient(135deg, rgba(245,158,11,0.08), rgba(217,119,6,0.03)); border: 1px solid rgba(245,158,11,0.25); border-radius: 14px; padding: 18px 22px; margin-bottom: 24px;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                            <span style="width: 28px; height: 28px; border-radius: 8px; background: rgba(245,158,11,0.15); color: #d97706; display: flex; align-items: center; justify-content: center; font-size: 14px;"><i class="fa-solid fa-key"></i></span>
+                            <h4 style="margin: 0; font-size: 15px; font-weight: 800; color: var(--text);">Why & How to Add AI API Keys</h4>
+                        </div>
+                        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6; margin: 0 0 10px 0;">
+                            <strong>Why:</strong> Connecting a free AI API key enables 100% automated AI Reply Generation, Intent & Sentiment Classification (Hot, Warm, Cold), Cold Email Writing, and Subject Line Optimization — completely FREE without paying XComic extra subscription fees.
+                        </p>
+                        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6; margin: 0;">
+                            <strong>How:</strong> Click <strong>"Get Free Key"</strong> below (Google Gemini is 100% Free & Recommended), copy your key, paste it into the field, and click <strong>Save API Key</strong>!
+                        </p>
+                    </div>
 
                     <!-- Gemini -->
 
@@ -22633,12 +22741,12 @@
 
 
 
-    <script src="assets/templates.js?v=20260810_v500000"></script>
-    <script src="assets/app.js?v=20260810_v500000"></script>
-    <script src="assets/support_patch.js?v=20260810_v500000"></script>
-    <script src="assets/sending_accounts.js?v=20260810_v500000"></script>
-    <script src="assets/ai_features.js?v=20260810_v500000"></script>
-    <script src="assets/deliverability_v2.js?v=20260810_v500000"></script>
+    <script src="assets/templates.js?v=20260810_v600000"></script>
+    <script src="assets/app.js?v=20260810_v600000"></script>
+    <script src="assets/support_patch.js?v=20260810_v600000"></script>
+    <script src="assets/sending_accounts.js?v=20260810_v600000"></script>
+    <script src="assets/ai_features.js?v=20260810_v600000"></script>
+    <script src="assets/deliverability_v2.js?v=20260810_v600000"></script>
 
 
 

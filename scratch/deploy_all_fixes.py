@@ -12,6 +12,7 @@ files = [
     (r"C:\Users\higan\.gemini\antigravity\scratch\personal_email_marketer\xcomic.xyz\index.html", "/xcomic.xyz/index.html"),
     (r"C:\Users\higan\.gemini\antigravity\scratch\personal_email_marketer\xcomic.xyz\assets\style.css", "/xcomic.xyz/assets/style.css"),
     (r"C:\Users\higan\.gemini\antigravity\scratch\personal_email_marketer\xcomic.xyz\assets\support_patch.js", "/xcomic.xyz/assets/support_patch.js"),
+    (r"C:\Users\higan\.gemini\antigravity\scratch\personal_email_marketer\xcomic.xyz\assets\ai_features.js", "/xcomic.xyz/assets/ai_features.js"),
 ]
 
 for local_path, remote_path in files:

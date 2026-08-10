@@ -2,8 +2,16 @@
 // AI Features - Fixed to use proper apiCall (no hardcoded localhost)
 
 window.aiToast = function(msg, type='info') {
-    // BUG-36 FIX: was passing hex colors, but showToast expects type strings ('error'/'success'/'warning')
     showToast('🤖 ' + msg, type);
+    
+    const lower = String(msg || '').toLowerCase();
+    if (type === 'error' && (lower.includes('key') || lower.includes('settings') || lower.includes('groq') || lower.includes('gemini') || lower.includes('openai') || lower.includes('provider') || lower.includes('api_key') || lower.includes('401'))) {
+        setTimeout(function() {
+            if (confirm('🔑 AI Provider API Key is required for this feature!\n\nWould you like to open Settings now to add your free Gemini or Groq API key?')) {
+                if (typeof window.navTo === 'function') window.navTo('settings');
+            }
+        }, 400);
+    }
 };
 
 // =============================================

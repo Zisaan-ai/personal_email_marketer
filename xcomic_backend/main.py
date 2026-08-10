@@ -2101,6 +2101,21 @@ class AnthropicKeyRequest(BaseModel):
 class DeepSeekKeyRequest(BaseModel):
     deepseek_api_key: str
 
+@app.get("/api/payment/status")
+def get_payment_status(current_user: database.User = Depends(auth.get_current_user)):
+    plan = (current_user.subscription_plan or "free").lower()
+    return {
+        "status": current_user.subscription_status or "active",
+        "plan": plan,
+        "is_admin": bool(current_user.is_admin),
+        "is_approved": bool(current_user.is_approved),
+        "custom_daily_limit": current_user.custom_daily_limit,
+        "custom_max_accounts": current_user.custom_max_accounts,
+        "custom_ai_replies": current_user.custom_ai_replies,
+        "custom_support": current_user.custom_support,
+        "expires_at": current_user.subscription_expires_at.isoformat() if current_user.subscription_expires_at else None
+    }
+
 @app.get("/api/settings/all")
 def get_settings(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
     return {

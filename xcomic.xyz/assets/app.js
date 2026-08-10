@@ -552,6 +552,7 @@ window.APP_INIT = function() {
                 window._userPaymentStatusData = d;
                 if (d.plan) {
                     localStorage.setItem('user_plan', d.plan);
+                    if (d.is_admin !== undefined) localStorage.setItem('is_admin', d.is_admin ? 'true' : 'false');
                     if (typeof window.updateFeatureLocks === 'function') {
                         window.updateFeatureLocks(d.plan);
                     }

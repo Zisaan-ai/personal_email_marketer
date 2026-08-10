@@ -48,13 +48,13 @@ def _get_active_providers_list(user) -> list:
     """Returns a list of all active API providers based on user's saved keys or env vars, ordered by priority."""
     providers = []
     
-    # Priority: Anthropic > OpenAI > DeepSeek > Groq > Gemini
+    # Priority: Gemini > Groq > DeepSeek > OpenAI > Anthropic
     order = [
-        ("anthropic", "anthropic_api_key", "ANTHROPIC_API_KEY", API_URL_ANTHROPIC, MODEL_NAME_ANTHROPIC),
-        ("openai", "openai_api_key", "OPENAI_API_KEY", API_URL_OPENAI, MODEL_NAME_OPENAI),
-        ("deepseek", "deepseek_api_key", "DEEPSEEK_API_KEY", API_URL_DEEPSEEK, MODEL_NAME_DEEPSEEK),
-        ("groq", "groq_api_key", "GROQ_API_KEY", API_URL_GROQ, MODEL_NAME_GROQ),
         ("gemini", "gemini_api_key", "GEMINI_API_KEY", API_URL_GEMINI, MODEL_NAME_GEMINI),
+        ("groq", "groq_api_key", "GROQ_API_KEY", API_URL_GROQ, MODEL_NAME_GROQ),
+        ("deepseek", "deepseek_api_key", "DEEPSEEK_API_KEY", API_URL_DEEPSEEK, MODEL_NAME_DEEPSEEK),
+        ("openai", "openai_api_key", "OPENAI_API_KEY", API_URL_OPENAI, MODEL_NAME_OPENAI),
+        ("anthropic", "anthropic_api_key", "ANTHROPIC_API_KEY", API_URL_ANTHROPIC, MODEL_NAME_ANTHROPIC),
     ]
     
     for name, user_attr, env_var, url, model in order:

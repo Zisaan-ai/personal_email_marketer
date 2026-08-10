@@ -223,14 +223,15 @@ window.setupAICopilot = function() {
             const typingEl = document.getElementById('copilot-typing');
             if (typingEl) typingEl.remove();
 
-            if (!res.ok || data.error) {
-                const errText = data.error || data.detail || 'Something went wrong';
+            const reply = data.reply || '';
+            const isAiError = !res.ok || data.error || (typeof reply === 'string' && reply.toLowerCase().includes('ai error'));
+            if (isAiError) {
+                const errText = data.error || data.detail || reply || 'AI Provider API Key Required';
                 appendMsg('assistant', '🔑 <strong>AI Provider API Key Required</strong><br>' + errText + '<br><br><button onclick="if(typeof window.showAiKeyRequiredModal===\'function\')window.showAiKeyRequiredModal();else window.navTo(\'settings\');" style="background:linear-gradient(135deg, #f59e0b, #ea580c); color:#fff; border:none; padding:8px 16px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12px;"><i class="fa-solid fa-gear"></i> Open Settings to Add Key</button>');
                 setTimeout(function() {
                     if (typeof window.showAiKeyRequiredModal === 'function') window.showAiKeyRequiredModal();
-                }, 300);
+                }, 100);
             } else {
-                const reply = data.reply || 'Sorry, I couldn\'t generate a response.';
                 chatHistory.push({ role: 'assistant', content: reply });
                 appendMsg('assistant', reply);
             }

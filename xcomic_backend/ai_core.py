@@ -247,7 +247,7 @@ def chat_with_assistant(message: str, history: list = None, user=None) -> str:
         text = _call_ai_api(full_prompt, user, system_prompt=system_prompt, history=history).strip()
         return text
     except Exception as e:
-        return f'AI Error: {str(e)}'
+        raise ValueError(f"AI Error: {str(e)}")
 
 def draft_reply_to_email(client_message: str, user=None) -> str:
     try:

@@ -16,7 +16,16 @@ window.updateInputState = (id, hasKey) => {
 
 window.loadedAIKeys = window.loadedAIKeys || {};
 window.hasAnyAIKey = function() {
-    return !!(window.loadedAIKeys.gemini || window.loadedAIKeys.groq || window.loadedAIKeys.openai || window.loadedAIKeys.anthropic || window.loadedAIKeys.deepseek);
+    if (window.loadedAIKeys && (window.loadedAIKeys.gemini || window.loadedAIKeys.groq || window.loadedAIKeys.openai || window.loadedAIKeys.anthropic || window.loadedAIKeys.deepseek)) {
+        return true;
+    }
+    const badges = document.querySelectorAll('[id^="badge-"]');
+    for (let b of badges) {
+        if (b && (b.innerText.toLowerCase().includes('active') || b.innerText.toLowerCase().includes('valid'))) {
+            return true;
+        }
+    }
+    return false;
 };
 
 window.toggleCopilotWithKeyCheck = function() {

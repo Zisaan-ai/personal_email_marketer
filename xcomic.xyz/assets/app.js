@@ -11422,11 +11422,13 @@ window.openColdMailBuilder = async function(id) {
 
         document.getElementById('inst-body').value = '';
 
-        document.getElementById('seq-leads').value = '';
-
+        const savedSeqLeads = localStorage.getItem('saved_leads_seq-leads');
+        if (savedSeqLeads) {
+            document.getElementById('seq-leads').value = savedSeqLeads;
+        } else {
+            document.getElementById('seq-leads').value = '';
+        }
         if (typeof window.renderLeadsList === 'function') window.renderLeadsList('seq-leads');
-
-        localStorage.removeItem('saved_leads_seq-leads');
 
         
 
@@ -12152,6 +12154,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+        if (el) {
+            el.addEventListener('input', () => {
+                localStorage.setItem('saved_leads_' + id, el.value);
+                if (typeof window.renderLeadsList === 'function') {
+                    window.renderLeadsList(id);
+                }
+            });
+        }
         if (typeof window.renderLeadsList === 'function') {
 
 

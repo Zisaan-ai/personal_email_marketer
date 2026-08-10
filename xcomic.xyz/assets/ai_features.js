@@ -5,9 +5,9 @@ window.aiToast = function(msg, type='info') {
     showToast('🤖 ' + msg, type);
     
     const lower = String(msg || '').toLowerCase();
-    if (type === 'error' && (lower.includes('key') || lower.includes('settings') || lower.includes('groq') || lower.includes('gemini') || lower.includes('openai') || lower.includes('provider') || lower.includes('api_key') || lower.includes('401'))) {
+    if (type === 'error' && (lower.includes('key') || lower.includes('settings') || lower.includes('groq') || lower.includes('gemini') || lower.includes('openai') || lower.includes('claude') || lower.includes('deepseek') || lower.includes('provider') || lower.includes('api_key') || lower.includes('401'))) {
         setTimeout(function() {
-            if (confirm('🔑 AI Provider API Key is required for this feature!\n\nWould you like to open Settings now to add your free Gemini or Groq API key?')) {
+            if (confirm('🔑 AI Provider API Key Required!\n\nXComic supports Gemini, Groq, OpenAI, Claude & DeepSeek.\n\nWould you like to open Settings now to add your preferred AI API key?')) {
                 if (typeof window.navTo === 'function') window.navTo('settings');
             }
         }, 400);

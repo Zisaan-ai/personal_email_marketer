@@ -650,6 +650,17 @@ window.APP_INIT = function() {
 
 
 window.navTo = function(targetId) {
+    const aliases = {
+        'sending-accounts': 'sending-accounts-view',
+        'unsubscribes': 'unsubscribes-view',
+        'replies': 'replies-view',
+        'support': 'support-view',
+        'admin': 'admin-view',
+        'about': 'about-view',
+        'visual-builder': 'campaigns-list'
+    };
+    if (aliases[targetId]) targetId = aliases[targetId];
+
     var sidebar = document.querySelector('.sidebar');
     if (sidebar && sidebar.classList.contains('open') && typeof window.toggleMobileMenu === 'function') {
         window.toggleMobileMenu();

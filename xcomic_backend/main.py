@@ -1731,8 +1731,8 @@ def create_sending_account(acc: SendingAccountCreate, current_user: database.Use
     acc_count = db.query(database.SendingAccount).filter(database.SendingAccount.user_id == str(current_user.id)).count()
     if user_plan == "free" and acc_count >= 5:
         raise HTTPException(status_code=403, detail="FREE_LIMIT_REACHED: Free plan allows maximum 5 sending accounts.")
-    elif user_plan == "starter" and acc_count >= 5:
-        raise HTTPException(status_code=403, detail="STARTER_LIMIT_REACHED: Starter plan allows maximum 5 sending accounts.")
+    elif user_plan == "starter" and acc_count >= 10:
+        raise HTTPException(status_code=403, detail="STARTER_LIMIT_REACHED: Starter plan allows maximum 10 sending accounts.")
     elif user_plan == "professional" and acc_count >= 20:
         raise HTTPException(status_code=403, detail="PRO_LIMIT_REACHED: Professional plan allows maximum 20 sending accounts.")
     elif user_plan == "enterprise" and acc_count >= 50:
@@ -2438,8 +2438,23 @@ def reset_lead(campaign_id: str, current_user: database.User = Depends(auth.get_
     return {"status": "reset"}
 class ReplySendRequest(BaseModel):
     content: str
+def check_ai_replies_permission(user: database.User):
+    if user.is_admin or user.custom_ai_replies is True:
+        return
+    plan = (user.subscription_plan or "free").lower()
+    if plan in ["free", "starter"]:
+        raise HTTPException(status_code=403, detail="PRO_FEATURE_LOCKED: AI Automated Inbox Replies & Sentiment Analysis are locked on Free & Starter plans. Upgrade to Professional or Enterprise to unlock!")
+
+def check_support_permission(user: database.User):
+    if user.is_admin or user.custom_support is True:
+        return
+    plan = (user.subscription_plan or "free").lower()
+    if plan == "free":
+        raise HTTPException(status_code=403, detail="STARTER_FEATURE_LOCKED: Customer Support ticketing is available on Starter, Professional & Enterprise plans. Upgrade to unlock!")
+
 @app.post("/api/replies/{reply_id}/draft")
 def draft_reply(reply_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    check_ai_replies_permission(current_user)
     reply = db.query(database.Reply).join(database.SendingAccount).filter(
         database.Reply.id == reply_id, 
         database.SendingAccount.user_id == current_user.id
@@ -2451,6 +2466,7 @@ def draft_reply(reply_id: str, current_user: database.User = Depends(auth.get_cu
     return {"draft": draft}
 @app.post("/api/replies/{reply_id}/send")
 def send_ai_reply(reply_id: str, req: ReplySendRequest, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    check_ai_replies_permission(current_user)
     reply = db.query(database.Reply).join(database.SendingAccount).filter(
         database.Reply.id == reply_id, 
         database.SendingAccount.user_id == current_user.id
@@ -2471,6 +2487,7 @@ def send_ai_reply(reply_id: str, req: ReplySendRequest, current_user: database.U
         raise HTTPException(status_code=500, detail="Failed to send email. Check account settings.")
 @app.get('/api/replies')
 def get_replies(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    check_ai_replies_permission(current_user)
     replies = db.query(database.Reply).join(database.SendingAccount).filter(
         database.SendingAccount.user_id == current_user.id
     ).order_by(database.Reply.received_at.desc()).all()
@@ -2653,6 +2670,7 @@ class TicketReply(BaseModel):
     message: str
 @app.post("/api/support/tickets")
 def create_ticket(req: TicketCreate, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    check_support_permission(current_user)
     import uuid
     new_ticket = database.Ticket(
         id=str(uuid.uuid4()),
@@ -2674,6 +2692,7 @@ def create_ticket(req: TicketCreate, current_user: database.User = Depends(auth.
     return {"status": "success", "ticket_id": new_ticket.id}
 @app.get("/api/support/tickets")
 def get_user_tickets(current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    check_support_permission(current_user)
     tickets = db.query(database.Ticket).filter(database.Ticket.user_id == current_user.id).order_by(database.Ticket.created_at.desc()).all()
     result = []
     for t in tickets:

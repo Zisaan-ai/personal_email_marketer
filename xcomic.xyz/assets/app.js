@@ -14,6 +14,17 @@ window.updateInputState = (id, hasKey) => {
     }
 };
 
+window.showAiKeyRequiredModal = function() {
+    var modal = document.getElementById('ai-key-required-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+    } else {
+        if (confirm('🔑 AI Provider API Key Required!\n\nYou haven\'t connected an AI Provider Key yet. Connect Google Gemini, Groq, DeepSeek, OpenAI or Claude in Settings.\n\nWould you like to open Settings now?')) {
+            if (typeof window.navTo === 'function') window.navTo('settings');
+        }
+    }
+};
+
 // ============================================================
 
 
@@ -5213,17 +5224,6 @@ body.from_email = document.getElementById('smtp-from-email') ? document.getEleme
 
 
 
-
-window.showAiKeyRequiredModal = function() {
-    var modal = document.getElementById('ai-key-required-modal');
-    if (modal) {
-        modal.style.display = 'flex';
-    } else {
-        if (confirm('🔑 AI Provider API Key Required!\n\nYou haven\'t connected an AI Provider Key yet. Connect Google Gemini, Groq, DeepSeek, OpenAI or Claude in Settings.\n\nWould you like to open Settings now?')) {
-            if (typeof window.navTo === 'function') window.navTo('settings');
-        }
-    }
-};
 
     const saveGeminiBtn = document.getElementById('save-gemini-btn');
 

@@ -1836,35 +1836,65 @@ def _run_campaign(db, campaign_id):
         db.commit()
         if active_count == 0:
             trigger_webhook(c.user_id or "", "campaign_completed", {"campaign_id": str(c.id), "status": "completed"})
+# 1x1 Transparent GIF raw bytes
+GIF_BYTES = base64.b64decode("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7")
+
 @app.get("/api/track/lead_open/{campaign_id}/{lead_id}")
 def track_lead_open(campaign_id: str, lead_id: str, db: Session = Depends(database.get_db)):
-    existing = db.query(database.TrackingLog).filter(database.TrackingLog.campaign_id == campaign_id, database.TrackingLog.contact_id == lead_id, database.TrackingLog.event_type == 'lead_open').first()
-    if not existing:
-        log = database.TrackingLog(campaign_id=campaign_id, contact_id=lead_id, event_type="lead_open")
-        db.add(log)
-        db.commit()
+    try:
         campaign = db.query(database.Campaign).filter(database.Campaign.id == campaign_id).first()
         lead = db.query(database.CampaignLead).filter(database.CampaignLead.id == lead_id).first()
-        if campaign and lead:
-            if lead.status == 'sent':
-                lead.status = 'opened'
-            # Track open stat on the sending account
-            if getattr(lead, 'sending_account_id', None):
+        
+        # Update lead status to opened if sent or pending
+        if lead and lead.status in ['sent', 'pending']:
+            lead.status = 'opened'
+            db.commit()
+
+        # Log open event if first time for this lead
+        existing = db.query(database.TrackingLog).filter(
+            database.TrackingLog.campaign_id == campaign_id,
+            database.TrackingLog.contact_id == lead_id,
+            database.TrackingLog.event_type == 'lead_open'
+        ).first()
+
+        if not existing:
+            log = database.TrackingLog(campaign_id=campaign_id, contact_id=lead_id, event_type="lead_open")
+            db.add(log)
+            db.commit()
+            
+            if campaign:
+                if campaign.is_ab_test:
+                    if lead and lead.variant == 'B':
+                        campaign.opens_b = (campaign.opens_b or 0) + 1
+                    else:
+                        campaign.opens_a = (campaign.opens_a or 0) + 1
+                    campaign.opens = (campaign.opens_a or 0) + (campaign.opens_b or 0)
+                else:
+                    campaign.opens = (campaign.opens or 0) + 1
+                db.commit()
+            
+            if lead and getattr(lead, 'sending_account_id', None):
                 try:
                     import health_monitor
                     health_monitor.update_health_after_open(db, lead.sending_account_id)
-                except Exception as e:
-                    print(f"Error updating health after open: {e}")
-            if campaign.is_ab_test:
-                if lead.variant == 'A':
-                    campaign.opens_a = (campaign.opens_a or 0) + 1
-                elif lead.variant == 'B':
-                    campaign.opens_b = (campaign.opens_b or 0) + 1
-                campaign.opens = (campaign.opens_a or 0) + (campaign.opens_b or 0)
-            else:
-                campaign.opens = (campaign.opens or 0) + 1
-            db.commit()
-    return FileResponse(os.path.join(os.path.dirname(__file__), "pixel.gif"), media_type="image/gif")
+                except Exception as ex:
+                    print(f"Error updating health after open: {ex}")
+    except Exception as e:
+        print(f"[track_lead_open Error]: {e}")
+        try:
+            db.rollback()
+        except Exception:
+            pass
+
+    return Response(
+        content=GIF_BYTES,
+        media_type="image/gif",
+        headers={
+            "Cache-Control": "no-cache, no-store, must-revalidate, max-age=0",
+            "Pragma": "no-cache",
+            "Expires": "0"
+        }
+    )
 @app.get("/api/track/click/{campaign_id}/{contact_id}")
 def track_click(campaign_id: str, contact_id: str, url: str, db: Session = Depends(database.get_db)):
     existing = db.query(database.TrackingLog).filter(database.TrackingLog.campaign_id == campaign_id, database.TrackingLog.contact_id == contact_id, database.TrackingLog.event_type == 'click', database.TrackingLog.url == url).first()

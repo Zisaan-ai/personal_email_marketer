@@ -1799,7 +1799,7 @@ def _run_campaign(db, campaign_id):
             result = send_to_lead(db, lead, var_label)
             if result is False: break
             delay = random.randint(delay_min, delay_max)
-            time.sleep(max(1, min(delay, 60)))
+            time.sleep(max(0, delay))
     else:
         for lead in leads:
             c_refresh = db.query(database.Campaign).filter(database.Campaign.id == campaign_id).first()
@@ -1812,7 +1812,7 @@ def _run_campaign(db, campaign_id):
             result = send_to_lead(db, lead)
             if result is False: break
             delay = random.randint(delay_min, delay_max)
-            time.sleep(max(1, min(delay, 60)))
+            time.sleep(max(0, delay))
     # Final check of lead status to update campaign status
     c = db.query(database.Campaign).filter(database.Campaign.id == campaign_id).first()
     if c and c.status != "paused":

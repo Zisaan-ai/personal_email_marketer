@@ -151,56 +151,22 @@ def process_spintax(text: str) -> str:
 # ============================================================
 
 def personalize_content(text: str, lead_name: str = "", lead_company: str = "", sender_name: str = "") -> str:
-
-    """Replace merge tags like {{name}}, {{firstName}}, {{company}} with actual lead data."""
-
+    """Replace merge tags like {{firstName}}, {{lastName}}, {{company}}, {{email}} with actual lead data."""
     if not text:
-
         return text
-
     
+    full_name = (lead_name or "").strip()
+    name_parts = full_name.split() if full_name else []
+    first_name = name_parts[0] if name_parts else ""
+    last_name = " ".join(name_parts[1:]) if len(name_parts) > 1 else ""
+    company_val = (lead_company or "").strip()
 
-    first_name = lead_name.split()[0] if lead_name and lead_name.strip() else ""
-
-    last_name = lead_name.split()[-1] if lead_name and len(lead_name.split()) > 1 else ""
-
-    
-
-    replacements = {
-
-        "{{name}}": lead_name or "there",
-
-        "{{Name}}": lead_name or "There",
-
-        "{{firstName}}": first_name or "there",
-
-        "{{FirstName}}": first_name.capitalize() if first_name else "There",
-
-        "{{first_name}}": first_name or "there",
-
-        "{{lastName}}": last_name or "",
-
-        "{{last_name}}": last_name or "",
-
-        "{{company}}": lead_company or "your company",
-
-        "{{Company}}": lead_company or "Your Company",
-
-        "{{Your Name}}": sender_name or "",
-
-        "{{your_name}}": sender_name or "",
-
-        "{{Sender Name}}": sender_name or "",
-
-    }
-
-    
-
-    for tag, value in replacements.items():
-
-        text = text.replace(tag, value)
-
-    
+    # Flexible case-insensitive & space-tolerant tag replacements
+    text = re.sub(r'\{\{\s*first_?name\s*\}\}', first_name if first_name else "there", text, flags=re.IGNORECASE)
+    text = re.sub(r'\{\{\s*last_?name\s*\}\}', last_name, text, flags=re.IGNORECASE)
+    text = re.sub(r'\{\{\s*name\s*\}\}', full_name if full_name else "there", text, flags=re.IGNORECASE)
+    text = re.sub(r'\{\{\s*company\s*\}\}', company_val if company_val else "your company", text, flags=re.IGNORECASE)
+    text = re.sub(r'\{\{\s*(?:your_name|sender_name)\s*\}\}', sender_name or "", text, flags=re.IGNORECASE)
 
     return text
 

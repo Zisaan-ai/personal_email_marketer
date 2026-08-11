@@ -1673,8 +1673,7 @@ def _run_campaign(db, campaign_id):
         import random
         def process_spintax(text):
             if not text: return text
-            first_name = lead.name.split()[0] if lead.name else "Friend"
-            text = text.replace("{{FirstName}}", first_name)
+            text = email_service.personalize_content(text, lead_name=lead.name or "", lead_company=lead.company or "")
             pattern = re.compile(r'\{([^{}]+)\}')
             while True:
                 match = pattern.search(text)

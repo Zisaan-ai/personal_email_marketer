@@ -1383,7 +1383,65 @@ def delete_campaign_lead(campaign_id: str, lead_id: str, current_user: database.
         raise HTTPException(status_code=404, detail="Lead not found")
     db.delete(lead)
     db.commit()
-    return {"status": "success"}
+@app.get("/api/campaigns/{campaign_id}/debug-reasons")
+def debug_campaign_reasons(campaign_id: str, current_user: database.User = Depends(auth.get_current_user), db: Session = Depends(database.get_db)):
+    campaign = db.query(database.Campaign).filter(database.Campaign.id == campaign_id).first()
+    if not campaign:
+        return {"error": "Campaign not found"}
+    
+    reasons = []
+    user = db.query(database.User).filter(database.User.id == campaign.user_id).first()
+    if user:
+        plan = (user.subscription_plan or "free").lower()
+        sent_count = getattr(user, "free_emails_sent", 0) or 0
+        if plan == "free" and sent_count >= 250:
+            reasons.append("User reached Free tier email limit (250 emails).")
+    
+    within_schedule = is_campaign_within_schedule(campaign)
+    if not within_schedule:
+        reasons.append(f"Campaign is outside configured schedule window (start_hour={campaign.start_hour}, end_hour={campaign.end_hour}, days={campaign.sending_days}, tz={campaign.timezone}).")
+        
+    all_user_accounts = db.query(database.SendingAccount).filter(database.SendingAccount.user_id == campaign.user_id).all()
+    if not all_user_accounts:
+        reasons.append("No sending accounts configured for this user. Please add an SMTP sending account.")
+    else:
+        active_accounts = [acc for acc in all_user_accounts if acc.is_active and not acc.auto_paused]
+        if not active_accounts:
+            reasons.append(f"User has {len(all_user_accounts)} accounts, but NONE are active & unpaused.")
+        else:
+            if campaign.selected_sender_ids:
+                try:
+                    selected_ids = json.loads(campaign.selected_sender_ids)
+                    if selected_ids and isinstance(selected_ids, list) and len(selected_ids) > 0:
+                        active_accounts = [acc for acc in active_accounts if acc.id in selected_ids]
+                        if not active_accounts:
+                            reasons.append(f"Campaign has specific selected accounts, but none of those account IDs are active/unpaused.")
+                except Exception:
+                    pass
+            
+            usable_accounts = []
+            for acc in active_accounts:
+                effective_daily = acc.daily_limit or 500
+                if acc.sent_today >= effective_daily:
+                    reasons.append(f"Account {acc.email} reached daily limit ({acc.sent_today}/{effective_daily}).")
+                    continue
+                usable_accounts.append(acc)
+            
+            if active_accounts and not usable_accounts:
+                reasons.append("All active sending accounts have reached their daily sending limits.")
+
+    leads = db.query(database.CampaignLead).filter(database.CampaignLead.campaign_id == campaign_id).all()
+    pending_leads = [l for l in leads if l.status == 'pending']
+    
+    return {
+        "campaign_id": campaign_id,
+        "status": campaign.status,
+        "pending_leads_count": len(pending_leads),
+        "total_leads_count": len(leads),
+        "reasons_why_not_sending": reasons,
+        "is_ready_to_send": len(reasons) == 0 and len(pending_leads) > 0
+    }
+
 def process_isolated_campaign(campaign_id: str):
     """Background task: send all leads for a campaign with unsubscribe check & proper DB persistence."""
     with campaign_thread_lock:
@@ -1483,18 +1541,19 @@ def _run_campaign(db, campaign_id):
     def is_within_sending_window(acc_doc):
         """Check if current time is within the account's sending window, using user's timezone."""
         try:
-            # Use account's send_window_timezone — which is now auto-set from user's global timezone
-            tz_str = acc_doc.send_window_timezone or "UTC"
+            tz_str = acc_doc.send_window_timezone if (acc_doc.send_window_timezone and acc_doc.send_window_timezone != "UTC") else (campaign.timezone or "Asia/Dhaka")
             tz = pytz.timezone(tz_str)
             now_hour = datetime.now(tz).hour
-            # Default: 0 to 24 means always active (no restriction)
             start = acc_doc.send_window_start if acc_doc.send_window_start is not None else 0
             end = acc_doc.send_window_end if acc_doc.send_window_end is not None else 24
             if start == 0 and end == 24:
-                return True  # No window restriction — send anytime
-            return start <= now_hour < end
+                return True
+            if start <= end:
+                return start <= now_hour < end
+            else:
+                return now_hour >= start or now_hour < end
         except Exception:
-            return True  # If timezone is invalid, allow sending
+            return True
     def get_available_account(db_session):
         # SMART SELECTION: Health-based ordering, skip auto-paused, check sending window
         all_accounts = db_session.query(database.SendingAccount).filter(

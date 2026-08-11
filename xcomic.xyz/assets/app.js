@@ -995,22 +995,25 @@ window.renderAnalyticsInfo = async function(c, prefix) {
 
         
 
-        let startTime = c.start_hour !== undefined ? c.start_hour + ':00' : '00:00';
+        let startH = (c.start_hour !== undefined && c.start_hour !== null) ? c.start_hour : 0;
+        let endH = (c.end_hour !== undefined && c.end_hour !== null) ? c.end_hour : 24;
 
-        let endTime = c.end_hour !== undefined ? c.end_hour + ':00' : '23:59';
-
-        schedText += `<strong>Time:</strong> ${startTime} - ${endTime} (${c.timezone || 'UTC'})<br>`;
-
-        
-
-        if (c.delay_min !== undefined) {
-
-            schedText += `<strong>Delay:</strong> ${c.delay_min} to ${c.delay_max || c.delay_min} minutes`;
-
+        let timeText = '';
+        if (startH === 0 && (endH === 24 || endH === 0)) {
+            timeText = '24/7 (All Day)';
+        } else {
+            let formatH = (h) => {
+                let hh = h % 12 || 12;
+                let ampm = (h >= 12 && h < 24) ? 'PM' : 'AM';
+                return `${hh}:00 ${ampm}`;
+            };
+            timeText = `${formatH(startH)} - ${formatH(endH)}`;
         }
 
-        
-
+        schedText += `<strong>Time:</strong> ${timeText} (${c.timezone || 'Asia/Dhaka'})<br>`;
+        if (c.delay_min !== undefined && c.delay_min !== null) {
+            schedText += `<strong>Delay:</strong> ${c.delay_min} to ${c.delay_max || c.delay_min} seconds`;
+        }
         schedEl.innerHTML = schedText;
 
     }

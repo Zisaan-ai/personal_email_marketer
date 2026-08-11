@@ -1535,13 +1535,11 @@ def _run_campaign(db, campaign_id):
     success_count_a = 0
     success_count_b = 0
     base_url = os.getenv("BACKEND_URL", "https://xcomic.xyz")
-    delay_min = campaign.delay_min if campaign.delay_min is not None else 30
-    delay_max = campaign.delay_max if campaign.delay_max is not None else 90
     _last_domain_used = [None]  # Track for multi-domain rotation
     def is_within_sending_window(acc_doc):
         """Check if current time is within the account's sending window, using user's timezone."""
         try:
-            tz_str = acc_doc.send_window_timezone if (acc_doc.send_window_timezone and acc_doc.send_window_timezone != "UTC") else (campaign.timezone or "Asia/Dhaka")
+            tz_str = campaign.timezone or acc_doc.send_window_timezone or "UTC"
             tz = pytz.timezone(tz_str)
             now_hour = datetime.now(tz).hour
             start = acc_doc.send_window_start if acc_doc.send_window_start is not None else 0

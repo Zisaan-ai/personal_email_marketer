@@ -1010,7 +1010,8 @@ window.renderAnalyticsInfo = async function(c, prefix) {
             timeText = `${formatH(startH)} - ${formatH(endH)}`;
         }
 
-        schedText += `<strong>Time:</strong> ${timeText} (${c.timezone || 'Asia/Dhaka'})<br>`;
+        let tzDisplay = c.timezone ? ` (${c.timezone})` : '';
+        schedText += `<strong>Time:</strong> ${timeText}${tzDisplay}<br>`;
         if (c.delay_min !== undefined && c.delay_min !== null) {
             schedText += `<strong>Delay:</strong> ${c.delay_min} to ${c.delay_max || c.delay_min} seconds`;
         }

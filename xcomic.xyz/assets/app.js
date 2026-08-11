@@ -8,7 +8,7 @@ window.updateInputState = (id, hasKey) => {
         el.style.backgroundColor = 'var(--bg-light)';
         el.style.borderStyle = 'dashed';
     } else {
-        el.placeholder = id === 'gemini-api-key' ? 'AIzaSy...' : 'sk-...';
+        el.placeholder = id === 'gemini-api-key' ? 'Paste your Gemini API key...' : 'sk-...';
         el.style.backgroundColor = 'var(--bg)';
         el.style.borderStyle = 'solid';
     }

@@ -1790,35 +1790,29 @@ def _run_campaign(db, campaign_id):
         random.shuffle(all_ab_leads)
         for lead, var_label in all_ab_leads:
             c_refresh = db.query(database.Campaign).filter(database.Campaign.id == campaign_id).first()
-            if c_refresh and c_refresh.current_daily_limit and c_refresh.sent_today_campaign >= c_refresh.current_daily_limit:
+            if not c_refresh or c_refresh.status == "paused":
+                print(f"Campaign {campaign_id} paused/deleted. Stopping loop.")
+                break
+            if c_refresh.current_daily_limit and c_refresh.sent_today_campaign >= c_refresh.current_daily_limit:
                 print(f"Campaign {campaign_id} reached its daily limit of {c_refresh.current_daily_limit}.")
                 break
             result = send_to_lead(db, lead, var_label)
             if result is False: break
             delay = random.randint(delay_min, delay_max)
-            if (time.time() - start_time + delay > 50) or (delay > 45):
-                c = db.query(database.Campaign).filter(database.Campaign.id == campaign_id).first()
-                if c:
-                    c.scheduled_at = datetime.utcnow() + timedelta(seconds=delay)
-                    db.commit()
-                break
-            time.sleep(delay)
+            time.sleep(max(1, min(delay, 60)))
     else:
         for lead in leads:
             c_refresh = db.query(database.Campaign).filter(database.Campaign.id == campaign_id).first()
-            if c_refresh and c_refresh.current_daily_limit and c_refresh.sent_today_campaign >= c_refresh.current_daily_limit:
+            if not c_refresh or c_refresh.status == "paused":
+                print(f"Campaign {campaign_id} paused/deleted. Stopping loop.")
+                break
+            if c_refresh.current_daily_limit and c_refresh.sent_today_campaign >= c_refresh.current_daily_limit:
                 print(f"Campaign {campaign_id} reached its daily limit of {c_refresh.current_daily_limit}.")
                 break
             result = send_to_lead(db, lead)
             if result is False: break
             delay = random.randint(delay_min, delay_max)
-            if (time.time() - start_time + delay > 50) or (delay > 45):
-                c = db.query(database.Campaign).filter(database.Campaign.id == campaign_id).first()
-                if c:
-                    c.scheduled_at = datetime.utcnow() + timedelta(seconds=delay)
-                    db.commit()
-                break
-            time.sleep(delay)
+            time.sleep(max(1, min(delay, 60)))
     # Final check of lead status to update campaign status
     c = db.query(database.Campaign).filter(database.Campaign.id == campaign_id).first()
     if c and c.status != "paused":
